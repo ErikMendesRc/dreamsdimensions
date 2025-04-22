@@ -22,7 +22,7 @@ public class SleepTeleportHandler {
 
     private static final ResourceKey<Level> DREAMSCAPE_KEY = ResourceKey.create(
             Registries.DIMENSION,
-            ResourceLocation.fromNamespaceAndPath("dreamsdimensions", "dreamscape")
+            ResourceLocation.fromNamespaceAndPath(DreamsDimensions.MODID, "dreamscape")
     );
     private static final Logger LOGGER = DreamsDimensions.LOGGER;
 
@@ -33,36 +33,24 @@ public class SleepTeleportHandler {
     public void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        // conta até TICKS_BEFORE_TELEPORT
         if (player.isSleeping() && player.serverLevel().dimension() == Level.OVERWORLD) {
             int t = sleepingPlayers.merge(player, 1, Integer::sum);
             LOGGER.debug("sleepingPlayers tick #{} para {}", t, player.getGameProfile().getName());
             if (t >= TICKS_BEFORE_TELEPORT) {
-                LOGGER.info("TICKS_BEFORE_TELEPORT ({}) alcançado para {}, enviando pacote de transição",
+                LOGGER.info("Chegou em {} ticks de sono para {}, teleportando para Dreamscape",
                         TICKS_BEFORE_TELEPORT, player.getGameProfile().getName());
-                sendTransitionPacket(player);
+                actuallyTeleport(player);
                 sleepingPlayers.remove(player);
             }
         } else {
             if (sleepingPlayers.containsKey(player)) {
-                LOGGER.debug("reset sleepingPlayers para {} (acordou ou mudou de dimensão)",
+                LOGGER.debug("Reset do contador de sono para {} (acordou ou mudou de dimensão)",
                         player.getGameProfile().getName());
             }
             sleepingPlayers.remove(player);
         }
     }
 
-    private static void sendTransitionPacket(ServerPlayer player) {
-        LOGGER.info("sendTransitionPacket(): enviando MyPacket para {}", player.getGameProfile().getName());
-        com.dreamsdimensions.mod.network.MyPacket packet =
-                new com.dreamsdimensions.mod.network.MyPacket("Você está sonhando...");
-        net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player, packet);
-        // sem pendingTeleport agora
-    }
-
-    /**
-     * Chamado **somente** pelo handler do ReadyToTeleportPacket  
-     */
     public static void actuallyTeleport(ServerPlayer player) {
         LOGGER.info("actuallyTeleport(): iniciando teleporte de {}", player.getGameProfile().getName());
         MinecraftServer server = player.server;

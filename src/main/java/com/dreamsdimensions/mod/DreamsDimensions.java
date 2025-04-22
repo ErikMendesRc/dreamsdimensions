@@ -4,7 +4,6 @@ import com.dreamsdimensions.mod.event.SleepTeleportHandler;
 import com.dreamsdimensions.mod.init.ModBlocks;
 import com.dreamsdimensions.mod.init.ModCreativeTabs;
 import com.dreamsdimensions.mod.init.ModItems;
-import com.dreamsdimensions.mod.network.ModNetworkHandler;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;

@@ -1,43 +1,49 @@
 package com.dreamsdimensions.mod.client.screen;
 
-import com.dreamsdimensions.mod.DreamsDimensions;
-import com.dreamsdimensions.mod.network.ReadyToTeleportPacket;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.ReceivingLevelScreen;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
-public class DreamTransitionScreen extends Screen {
-    private int ticks = 0;
+import java.util.function.BooleanSupplier;
 
-    public DreamTransitionScreen() {
-        super(Component.literal("Sonhando..."));
+@OnlyIn(Dist.CLIENT)
+public class DreamTransitionScreen extends ReceivingLevelScreen {
+    private static final int MIN_TICKS = 100;
+
+    private int fadeTicks = 0;
+
+    public DreamTransitionScreen(BooleanSupplier levelReceived, Reason reason) {
+        super(levelReceived, reason);
     }
 
     @Override
     public void tick() {
-        super.tick();
-        ticks++;
-        if (ticks == 1) {
-            DreamsDimensions.LOGGER.info("DreamTransitionScreen aberta, iniciando contagem de ticks");
-        }
-        if (ticks >= 60) {
-            DreamsDimensions.LOGGER.info("DreamTransitionScreen atingiu {} ticks, enviando ReadyToTeleportPacket", ticks);
-            PacketDistributor.sendToServer(new ReadyToTeleportPacket());
+        fadeTicks++;
+
+        if (fadeTicks >= MIN_TICKS) {
+            super.tick();
         }
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        int alpha = Math.min(255, ticks * 5);
-        graphics.fill(0, 0, width, height, (alpha << 24));
+    public void render(GuiGraphics gg, int mouseX, int mouseY, float partialTick) {
+        // desenha o pano de fundo padrão (panorama/blur etc)
+        super.renderBackground(gg, mouseX, mouseY, partialTick);
 
-        graphics.drawCenteredString(this.font, Component.literal("Você está sonhando..."), width / 2, height / 2, 0xFFFFFF);
-    }
+        // overlay de fade
+        float progress = Math.min(1.0f, fadeTicks / (float) MIN_TICKS);
+        int alpha = (int)(progress * 255) << 24;
+        gg.fill(0, 0, width, height, alpha);
 
-    @Override
-    public boolean isPauseScreen() {
-        return false;
+        // seu texto
+        gg.drawCenteredString(
+                this.font,
+                Component.literal("Você está sonhando..."),
+                width  / 2,
+                height / 2,
+                0xFFFFFF
+        );
     }
 }

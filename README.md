@@ -1,27 +1,74 @@
+# 🌌 DreamsDimensions
 
-Installation information
-=======
+![DreamsDimensions Banner](src/resources/images/dreams.png)
 
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions at [github](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
+**Dreams Dimensions** é um mod em desenvolvimento para Minecraft 1.21.4+ criado com NeoForge que adiciona uma nova dimensão mística acessível através dos sonhos. Ao dormir no Overworld, os jogadores podem ser transportados para a **Dimensão Pacífica**, um mundo sereno repleto de blocos únicos, minérios raros e uma atmosfera encantadora.
 
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
+---
 
-> **Note**: For Eclipse, use tasks in `Launch Group` instead of ones founds in `Java Application`. A preparation task must run before launching the game. NeoGradle uses launch groups to do these subsequently.
+## ✨ Destaques
 
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
+- 🛏️ **Mecânica de Teleporte ao Dormir**  
+  Dormir no Overworld pode transportar você para a dimensão dos sonhos.
 
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
+- 🌿 **Blocos Inéditos**
+    - Grama Onírica
+    - Pedra Serena
+    - Tronco e Folhas de Árvore dos Sonhos
+    - Flor dos Sonhos
 
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+- 💎 **Minério dos Sonhos**  
+  Um recurso raro com potencial para crafting avançado.
+
+- 💨 **Pó de Sonho**  
+  Item de progressão para futuras mecânicas mágicas.
+
+- ⏰ **Despertador Onírico**  
+  Item usado para retornar ao mundo real.
+
+- 🌍 **World Generation Personalizada**  
+  Ilhas flutuantes e paisagens únicas criam uma atmosfera de outro mundo.
+
+---
+
+## 🚀 Instalação
+
+1. Certifique-se de estar usando o **Minecraft 1.21.4** com **NeoForge 21.4.124+**.
+2. Baixe a versão mais recente do mod na aba [Releases](https://github.com/SeuUsuario/DreamsDimensions/releases).
+3. Coloque o arquivo `.jar` na pasta `mods` do seu diretório `.minecraft`.
+4. Inicie o jogo e aproveite a viagem!
+
+---
+
+## 🛠️ Desenvolvimento
+
+Este mod está sendo desenvolvido em C++/Java com a biblioteca NeoForge e um sistema modular de fases:
+
+- ✅ Fase 1: Blocos e Itens
+- 🔄 Fase 2: Assets e Data Generation
+- 🔄 Fase 3: Criação da Dimensão
+- 🔄 Fase 4: Lógica de Teleporte e Retorno
+- 🔄 Fase 5: Geração de Minérios e Testes Finais
+
+---
+
+## 📸 Galeria
+
+*Imagens e gifs em breve!*
+
+---
+
+## 🤝 Contribuindo
+
+Sinta-se à vontade para abrir issues, sugerir ideias ou fazer pull requests!  
+Todas as contribuições são bem-vindas 💜
+
+---
+
+## 📄 Licença
+
+Distribuído sob a [MIT License](LICENSE).
+
+---
+
+> _"Sonhar é viajar sem sair da cama. E agora, com Dreams Dimensions, é também explorar um novo mundo."_ 🌙
