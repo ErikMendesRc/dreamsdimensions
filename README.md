@@ -6,7 +6,7 @@
 
 ---
 
-## ✨ Destaques
+## ✨ Destaques.
 
 - 🛏️ **Mecânica de Teleporte ao Dormir**  
   Dormir no Overworld pode transportar você para a dimensão dos sonhos.
