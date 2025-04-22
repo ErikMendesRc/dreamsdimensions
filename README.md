@@ -1,6 +1,6 @@
 # 🌌 DreamsDimensions
 
-![DreamsDimensions Banner](src/resources/images/dreams.png)
+![DreamsDimensions Banner](src/main/resources/images/dreams.png)
 
 **Dreams Dimensions** é um mod em desenvolvimento para Minecraft 1.21.4+ criado com NeoForge que adiciona uma nova dimensão mística acessível através dos sonhos. Ao dormir no Overworld, os jogadores podem ser transportados para a **Dimensão Pacífica**, um mundo sereno repleto de blocos únicos, minérios raros e uma atmosfera encantadora.
 
