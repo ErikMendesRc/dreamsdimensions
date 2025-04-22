@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "dreamsdimensions:block/dream_log_block",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "dreamsdimensions:block/dream_log_block"
+    },
+    "axis=z": {
+      "model": "dreamsdimensions:block/dream_log_block",
+      "x": 90
+    }
+  }
+}

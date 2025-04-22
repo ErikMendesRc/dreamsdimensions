@@ -1,0 +1,11 @@
+{
+  "type": "dreamsdimensions:dreamscape_type",
+  "generator": {
+    "type": "minecraft:noise",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "dreamsdimensions:dreamscape_biome"
+    },
+    "settings": "dreamsdimensions:dreamscape_noise"
+  }
+}

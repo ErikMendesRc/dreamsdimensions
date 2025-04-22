@@ -1,0 +1,88 @@
+# Este é um arquivo neoforge.mods.toml de exemplo. Ele contém os dados relativos ao carregamento de mods.
+# Existem vários campos obrigatórios (#mandatory) e muitos outros opcionais (#optional).
+# O formato geral é o formato TOML padrão, v0.5.0.
+# Nota: existem algumas listas TOML neste arquivo.
+# Encontre mais informações sobre o formato toml aqui: https://github.com/toml-lang/toml
+
+# O nome do tipo de mod loader a carregar - para mods @Mod FML regulares, deve ser javafml
+modLoader="javafml" #mandatory
+
+# Um intervalo de versão para corresponder ao mod loader mencionado - para FML @Mod regular será a versão do FML.
+# Deixe como está, o build script geralmente cuida disso.
+loaderVersion="${loader_version_range}" #mandatory
+
+# A licença para o seu mod. Este é um metadado obrigatório e permite uma compreensão mais fácil das suas propriedades redistributivas.
+# Revise suas opções em https://choosealicense.com/. "All rights reserved" (Todos os direitos reservados) é a postura padrão de direitos autorais.
+# Você pode mudar para "MIT", "Apache-2.0", etc., se desejar compartilhar seu código sob esses termos.
+license="ARR" #mandatory (ARR = All Rights Reserved - Mude se necessário)
+
+# (Opcional) Uma URL para onde as pessoas devem ir quando encontrarem problemas com este mod
+# issueTrackerURL="https://github.com/SEU_USUARIO/DreamsDimensions/issues" #optional
+
+# Uma lista de mods - quantos são permitidos aqui é determinado pelo mod loader individual
+[[mods]] #mandatory
+
+# O modId do mod. Use letras minúsculas, números, underscores ou hífens.
+modId="dreamsdimensions" #mandatory
+
+# O número da versão do mod. Geralmente gerenciado pelo gradle.properties.
+version="${mod_version}" #mandatory
+
+# Um nome de exibição para o mod que aparecerá na lista de mods do Minecraft.
+displayName="Dreams Dimensions" #mandatory
+
+# (Opcional) Uma URL para consultar atualizações para este mod. Veja a especificação JSON de atualização: https://docs.neoforged.net/docs/misc/updatechecker/
+# updateJSONURL="URL_PARA_SEU_ARQUIVO_DE_ATUALIZACOES.json" #optional
+
+# (Opcional) Uma URL para a "página inicial" deste mod, exibida na UI do mod.
+# displayURL="URL_DA_PAGINA_DO_SEU_MOD" #optional
+
+# (Opcional) Um nome de arquivo (na raiz do JAR do mod) contendo um logotipo para exibição.
+# logoFile="dreamsdimensions_logo.png" #optional
+
+# (Opcional) Um campo de texto exibido na UI do mod para créditos.
+# credits="Agradecimentos especiais a..." #optional
+
+# (Opcional mas recomendado) Um campo de texto exibido na UI do mod para autores. Geralmente gerenciado pelo gradle.properties.
+authors="${mod_authors}" #optional
+
+# O texto de descrição para o mod (multi-linhas!) (#mandatory)
+description='''
+    Um mod que te transporta para dimensões oníricas aleatórias quando você dorme. Explore sonhos e pesadelos para encontrar o caminho de volta!
+    ''' #mandatory
+
+# (Opcional) O bloco [[mixins]] permite declarar sua configuração de mixin para o FML carregá-la.
+# Descomente se você usar Mixins.
+#[[mixins]]
+#config="dreamsdimensions.mixins.json"
+
+# (Opcional) O bloco [[accessTransformers]] permite declarar onde está seu arquivo AT.
+# Se este bloco for omitido, uma tentativa de fallback será feita para carregar um AT de META-INF/accesstransformer.cfg
+# Descomente e ajuste se você usar Access Transformers.
+#[[accessTransformers]]
+#file="META-INF/dreamsdimensions_at.cfg"
+
+
+# Dependências são opcionais, mas é fortemente recomendado declarar dependências do NeoForge e Minecraft.
+# Certifique-se que o modId aqui corresponde ao seu modId acima (dreamsdimensions)
+[[dependencies.dreamsdimensions]] #optional
+modId="neoforge" #mandatory
+type="required" #mandatory (required, optional, incompatible, discouraged)
+# O intervalo de versão da dependência. Gerenciado pelo build script.
+versionRange="${neo_version_range}" #mandatory
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.dreamsdimensions]] #optional
+modId="minecraft" #mandatory
+type="required" #mandatory
+# Este intervalo de versão declara um mínimo da versão atual do Minecraft até, mas não incluindo, a próxima versão principal. Gerenciado pelo build script.
+versionRange="${minecraft_version_range}" #mandatory
+ordering="NONE"
+side="BOTH"
+
+# (Opcional) Features são propriedades específicas do ambiente do jogo que você pode querer declarar que requer.
+# Este exemplo declara que seu mod requer GL versão 3.2 ou superior.
+# Descomente e ajuste se necessário.
+#[features.dreamsdimensions]
+#openGLVersion="[3.2,)"

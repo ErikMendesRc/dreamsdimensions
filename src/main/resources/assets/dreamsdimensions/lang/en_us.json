@@ -1,0 +1,15 @@
+{
+  "block.dreamsdimensions.dream_grass_block": "Dream Grass",
+  "block.dreamsdimensions.serene_stone": "Serene Stone",
+  "block.dreamsdimensions.dream_ore": "Dream Ore",
+  "block.dreamsdimensions.dream_dirt_block": "Dream Dirt",
+
+  "item.dreamsdimensions.dream_dust": "Dream Dust",
+  "item.dreamsdimensions.oneiric_awakener": "Oneiric Awakener",
+
+  "itemGroup.dreamsdimensions.dreams_dimensions_tab": "Dreams Dimensions",
+
+  "tooltip.dreamsdimensions.oneiric_awakener.line1": "Used to pierce the veils of dreams.",
+  "tooltip.dreamsdimensions.oneiric_awakener.line2": "Use it to teleport... maybe."
+
+}

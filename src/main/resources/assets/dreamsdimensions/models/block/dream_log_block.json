@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "dreamsdimensions:block/dream_log_block_top",
+    "side": "dreamsdimensions:block/dream_log_block"
+  }
+}
