@@ -1,4 +1,4 @@
-package com.dreamsdimensions.mod.init;
+package com.dreamsdimensions.mod.registry;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.item.OneiricAwakenerItem;
@@ -9,18 +9,18 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-
-public class ModItems {
+/**
+ * Registro de itens do mod via {@link DeferredRegister}.
+ */
+public final class ModItems {
     public static final DeferredRegister.Items ITEMS =
             DeferredRegister.createItems(DreamsDimensions.MODID);
 
-    // --- Itens Simples ---
     public static final DeferredItem<Item> DREAM_DUST = ITEMS.registerSimpleItem(
             "dream_dust",
             new Item.Properties()
     );
 
-    // --- Itens Customizados ---
     public static final DeferredItem<OneiricAwakenerItem> ONEIRIC_AWAKENER = ITEMS.registerItem(
             "oneiric_awakener",
             OneiricAwakenerItem::new,
@@ -30,7 +30,6 @@ public class ModItems {
                     .useCooldown(100)
     );
 
-    // --- BlockItems ---
     public static final DeferredItem<BlockItem> DREAM_GRASS_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(
             ModBlocks.DREAM_GRASS_BLOCK
     );
@@ -39,13 +38,13 @@ public class ModItems {
             ModBlocks.DREAM_DIRT_BLOCK
     );
 
+    public static final DeferredItem<BlockItem> DREAM_SAND_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.DREAM_SAND_BLOCK
+    );
 
-    // --- Flores ---
     public static final DeferredItem<BlockItem> DREAM_FLOWER_ITEM = ITEMS.registerSimpleBlockItem(
             ModBlocks.DREAM_FLOWER_BLOCK
     );
-
-    // --- Arvores ---
 
     public static final DeferredItem<BlockItem> DREAM_LOG_ITEM = ITEMS.registerSimpleBlockItem(
             ModBlocks.DREAM_LOG_BLOCK
@@ -57,14 +56,14 @@ public class ModItems {
 
     public static final DeferredItem<BlockItem> SERENE_STONE_ITEM = ITEMS.registerSimpleBlockItem(
             ModBlocks.SERENE_STONE_BLOCK
-            //, new Item.Properties() // Opcional
     );
 
     public static final DeferredItem<BlockItem> DREAM_ORE_ITEM = ITEMS.registerSimpleBlockItem(
             ModBlocks.DREAM_ORE
-            //, new Item.Properties() // Opcional
     );
 
+    private ModItems() {
+    }
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);
