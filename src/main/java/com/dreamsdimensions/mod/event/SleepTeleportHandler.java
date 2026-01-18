@@ -10,7 +10,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.slf4j.Logger;
 
@@ -18,39 +17,54 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class SleepTeleportHandler {
-
+/**
+ * Handler de teleporte ao dormir, executado no lado servidor.
+ * <p>
+ * Este listener é registrado no {@link net.neoforged.neoforge.common.NeoForge#EVENT_BUS} e usa
+ * {@link PlayerTickEvent.Post} para contar ticks de sono antes de teleportar o jogador.
+ * </p>
+ */
+public final class SleepTeleportHandler {
     private static final ResourceKey<Level> DREAMSCAPE_KEY = ResourceKey.create(
             Registries.DIMENSION,
             ResourceLocation.fromNamespaceAndPath(DreamsDimensions.MODID, "dreamscape")
     );
     private static final Logger LOGGER = DreamsDimensions.LOGGER;
-
     private static final int TICKS_BEFORE_TELEPORT = 100;
-    private static final Map<ServerPlayer, Integer> sleepingPlayers = new HashMap<>();
+    private static final Map<ServerPlayer, Integer> SLEEPING_PLAYERS = new HashMap<>();
 
-    @SubscribeEvent
-    public void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+    private SleepTeleportHandler() {
+    }
+
+    /**
+     * Conta ticks enquanto o jogador está dormindo no Overworld e executa o teleporte após o limite.
+     */
+    public static void onPlayerTick(PlayerTickEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
 
         if (player.isSleeping() && player.serverLevel().dimension() == Level.OVERWORLD) {
-            int t = sleepingPlayers.merge(player, 1, Integer::sum);
+            int t = SLEEPING_PLAYERS.merge(player, 1, Integer::sum);
             LOGGER.debug("sleepingPlayers tick #{} para {}", t, player.getGameProfile().getName());
             if (t >= TICKS_BEFORE_TELEPORT) {
                 LOGGER.info("Chegou em {} ticks de sono para {}, teleportando para Dreamscape",
                         TICKS_BEFORE_TELEPORT, player.getGameProfile().getName());
                 actuallyTeleport(player);
-                sleepingPlayers.remove(player);
+                SLEEPING_PLAYERS.remove(player);
             }
         } else {
-            if (sleepingPlayers.containsKey(player)) {
+            if (SLEEPING_PLAYERS.containsKey(player)) {
                 LOGGER.debug("Reset do contador de sono para {} (acordou ou mudou de dimensão)",
                         player.getGameProfile().getName());
             }
-            sleepingPlayers.remove(player);
+            SLEEPING_PLAYERS.remove(player);
         }
     }
 
+    /**
+     * Realiza o teleporte efetivo para a dimensão Dreamscape.
+     */
     public static void actuallyTeleport(ServerPlayer player) {
         LOGGER.info("actuallyTeleport(): iniciando teleporte de {}", player.getGameProfile().getName());
         MinecraftServer server = player.server;

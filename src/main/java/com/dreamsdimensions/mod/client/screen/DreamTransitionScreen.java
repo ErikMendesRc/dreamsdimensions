@@ -8,6 +8,13 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.function.BooleanSupplier;
 
+/**
+ * Tela de transição exibida ao entrar na dimensão Dreamscape.
+ * <p>
+ * É uma classe client-only (ver {@link OnlyIn} e {@link Dist#CLIENT}) e registrada via
+ * {@link net.neoforged.neoforge.client.event.RegisterDimensionTransitionScreenEvent}.
+ * </p>
+ */
 @OnlyIn(Dist.CLIENT)
 public class DreamTransitionScreen extends ReceivingLevelScreen {
     private static final int MIN_TICKS = 100;
@@ -29,19 +36,16 @@ public class DreamTransitionScreen extends ReceivingLevelScreen {
 
     @Override
     public void render(GuiGraphics gg, int mouseX, int mouseY, float partialTick) {
-        // desenha o pano de fundo padrão (panorama/blur etc)
         super.renderBackground(gg, mouseX, mouseY, partialTick);
 
-        // overlay de fade
         float progress = Math.min(1.0f, fadeTicks / (float) MIN_TICKS);
-        int alpha = (int)(progress * 255) << 24;
+        int alpha = (int) (progress * 255) << 24;
         gg.fill(0, 0, width, height, alpha);
 
-        // seu texto
         gg.drawCenteredString(
                 this.font,
                 Component.literal("Você está sonhando..."),
-                width  / 2,
+                width / 2,
                 height / 2,
                 0xFFFFFF
         );

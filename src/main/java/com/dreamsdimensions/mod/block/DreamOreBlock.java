@@ -15,27 +15,26 @@ import net.minecraft.world.phys.BlockHitResult;
 
 /**
  * Bloco de Minério dos Sonhos.
- * Estende DropExperienceBlock para dropar orbes de XP quando minerado sem Silk Touch.
- * O item dropado (ex: Dream Dust) é definido pela loot table do bloco.
+ * <p>
+ * Usa {@link BooleanProperty} {@link #CLICKED} para controlar o estado interativo e garantir
+ * variantes válidas no blockstate JSON (ver javadoc de {@link BlockState} e {@link StateDefinition}).
+ * </p>
  */
 public class DreamOreBlock extends DropExperienceBlock {
     public static final BooleanProperty CLICKED = BooleanProperty.create("clicked");
 
     /**
-     * Construtor para o Bloco de Minério dos Sonhos.
-     *
-     * @param pProperties Propriedades do bloco (material, dureza, som, ferramenta necessária, etc.).
-     *                    Estas são definidas em ModBlocks ao registrar o bloco.
-     * @param pXpRange    Provedor para a quantidade de XP a ser dropada (ex: UniformInt.of(1, 3)).
-     *                    Também definido em ModBlocks.
+     * @param properties propriedades do bloco, definidas no registro.
+     * @param xpRange    provedor de XP dropado (ex: UniformInt.of(1, 3)).
      */
-    public DreamOreBlock(BlockBehaviour.Properties pProperties, IntProvider pXpRange) {
-        super(pXpRange, pProperties);
+    public DreamOreBlock(BlockBehaviour.Properties properties, IntProvider xpRange) {
+        super(xpRange, properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(CLICKED, Boolean.FALSE));
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if(!level.isClientSide()) {
+        if (!level.isClientSide()) {
             boolean currentState = state.getValue(CLICKED);
             level.setBlockAndUpdate(pos, state.setValue(CLICKED, !currentState));
         }

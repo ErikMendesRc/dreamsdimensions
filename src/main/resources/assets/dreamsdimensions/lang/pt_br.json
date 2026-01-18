@@ -1,16 +1,16 @@
 {
-  "block.dreamsdimensions.dream_grass_block": "Grama Onírica",
+  "block.dreamsdimensions.dream_grass_block": "Grama dos Sonhos",
   "block.dreamsdimensions.serene_stone": "Pedra Serena",
   "block.dreamsdimensions.dream_ore": "Minério dos Sonhos",
-  "block.dreamsdimensions.dream_dirt_block": "Terra Onírica",
+  "block.dreamsdimensions.dream_dirt_block": "Terra dos Sonhos",
+  "block.dreamsdimensions.dream_sand_block": "Areia dos Sonhos",
 
-  "item.dreamsdimensions.dream_dust": "Pó de Sonho",
+  "item.dreamsdimensions.dream_dust": "Pó dos Sonhos",
   "item.dreamsdimensions.oneiric_awakener": "Despertador Onírico",
 
   "itemGroup.dreamsdimensions.dreams_dimensions_tab": "Dimensões dos Sonhos",
 
-  "tooltip.dreamsdimensions.oneiric_awakener.line1": "Usado para atravessar os véus do sonho.",
-  "tooltip.dreamsdimensions.oneiric_awakener.line2": "Consuma para se teletransportar... talvez."
-
+  "tooltip.dreamsdimensions.oneiric_awakener.line1": "Usado para atravessar os véus dos sonhos.",
+  "tooltip.dreamsdimensions.oneiric_awakener.line2": "Use para teleportar... talvez."
 
 }
