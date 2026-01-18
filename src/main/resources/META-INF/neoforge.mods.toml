@@ -14,7 +14,7 @@ loaderVersion="${loader_version_range}" #mandatory
 # A licença para o seu mod. Este é um metadado obrigatório e permite uma compreensão mais fácil das suas propriedades redistributivas.
 # Revise suas opções em https://choosealicense.com/. "All rights reserved" (Todos os direitos reservados) é a postura padrão de direitos autorais.
 # Você pode mudar para "MIT", "Apache-2.0", etc., se desejar compartilhar seu código sob esses termos.
-license="ARR" #mandatory (ARR = All Rights Reserved - Mude se necessário)
+license="${mod_license}" #mandatory
 
 # (Opcional) Uma URL para onde as pessoas devem ir quando encontrarem problemas com este mod
 # issueTrackerURL="https://github.com/SEU_USUARIO/DreamsDimensions/issues" #optional
@@ -23,13 +23,13 @@ license="ARR" #mandatory (ARR = All Rights Reserved - Mude se necessário)
 [[mods]] #mandatory
 
 # O modId do mod. Use letras minúsculas, números, underscores ou hífens.
-modId="dreamsdimensions" #mandatory
+modId="${mod_id}" #mandatory
 
 # O número da versão do mod. Geralmente gerenciado pelo gradle.properties.
 version="${mod_version}" #mandatory
 
 # Um nome de exibição para o mod que aparecerá na lista de mods do Minecraft.
-displayName="Dreams Dimensions" #mandatory
+displayName="${mod_name}" #mandatory
 
 # (Opcional) Uma URL para consultar atualizações para este mod. Veja a especificação JSON de atualização: https://docs.neoforged.net/docs/misc/updatechecker/
 # updateJSONURL="URL_PARA_SEU_ARQUIVO_DE_ATUALIZACOES.json" #optional
@@ -48,7 +48,7 @@ authors="${mod_authors}" #optional
 
 # O texto de descrição para o mod (multi-linhas!) (#mandatory)
 description='''
-    Um mod que te transporta para dimensões oníricas aleatórias quando você dorme. Explore sonhos e pesadelos para encontrar o caminho de volta!
+${mod_description}
     ''' #mandatory
 
 # (Opcional) O bloco [[mixins]] permite declarar sua configuração de mixin para o FML carregá-la.
