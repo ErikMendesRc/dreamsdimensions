@@ -8,15 +8,33 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.UseCooldown;
 import net.minecraft.world.level.Level;
 import org.slf4j.Logger;
 
 import java.util.List;
 
+/**
+ * Item ritualístico que representa o foco da mente do jogador para “atravessar o véu”.
+ *
+ * <p>Comportamento atual: inicia um uso com duração fixa e, ao concluir, emite uma mensagem
+ * indicando que a lógica de teleporte ainda é um placeholder (não implementada).</p>
+ *
+ * <p>Regras de lado (side rules): alterações de estado (consumo do item e cooldown) e logs
+ * são feitas apenas no servidor com {@link Level#isClientSide()} para evitar duplicações.</p>
+ *
+ * <p>APIs do SDK referenciadas: {@link Item#use(Level, Player, InteractionHand)},
+ * {@link Item#finishUsingItem(ItemStack, Level, LivingEntity)}, {@link Player#getCooldowns()},
+ * {@link UseCooldown} via {@link DataComponents#USE_COOLDOWN} e {@link InteractionResult}.</p>
+ */
 public class OneiricAwakenerItem extends Item {
     private static final Logger LOGGER = LogUtils.getLogger();
+    private static final int USE_DURATION_TICKS = 60;
+    public static final int COOLDOWN_TICKS = 100;
 
     public OneiricAwakenerItem(Properties pProperties) {
         super(pProperties);
@@ -26,7 +44,7 @@ public class OneiricAwakenerItem extends Item {
 
     @Override
     public int getUseDuration(ItemStack pStack, LivingEntity pEntity) {
-        return 60;
+        return USE_DURATION_TICKS;
     }
 
     @Override
@@ -36,9 +54,7 @@ public class OneiricAwakenerItem extends Item {
 
     @Override
     public InteractionResult use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
-        ItemStack itemstack = pPlayer.getItemInHand(pUsedHand);
-
-        if (pPlayer.getCooldowns().isOnCooldown(itemstack)) {
+        if (pPlayer.getCooldowns().isOnCooldown(this)) {
             return InteractionResult.FAIL;
         }
 
@@ -58,14 +74,16 @@ public class OneiricAwakenerItem extends Item {
 
             player.displayClientMessage(Component.literal("Sua mente atravessa o véu! (Lógica de teleporte ainda não implementada)"), false);
 
-            // --- Consome o item AGORA ---
-            pStack.shrink(1);
+            if (!player.getAbilities().instabuild) {
+                pStack.shrink(1);
+            }
 
-            // --- Aplica o Cooldown ---
+            int cooldownTicks = COOLDOWN_TICKS;
             UseCooldown cooldown = pStack.get(DataComponents.USE_COOLDOWN);
             if (cooldown != null) {
-                player.getCooldowns().addCooldown(pStack, cooldown.ticks());
+                cooldownTicks = cooldown.ticks();
             }
+            player.getCooldowns().addCooldown(this, cooldownTicks);
 
             // Futura lógica de teleporte viria aqui...
         }
