@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": "dreamsdimensions:dream_dust",
+    "P": "minecraft:ender_pearl"
+  },
+  "pattern": [
+    "SSS",
+    "SPS",
+    "SSS"
+  ],
+  "result": {
+    "id": "dreamsdimensions:oneiric_awakener",
+    "count": 1
+  }
+}
