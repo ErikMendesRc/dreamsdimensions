@@ -27,6 +27,13 @@ import java.util.List;
  * <p>Regras de lado (side rules): alterações de estado (consumo do item e cooldown) e logs
  * são feitas apenas no servidor com {@link Level#isClientSide()} para evitar duplicações.</p>
  *
+ * <p>Cooldown é verificado com {@link ItemStack} porque o SDK de {@link net.minecraft.world.item.ItemCooldowns}
+ * aceita stack (não {@link Item}) nas assinaturas atuais, preservando componentes e comportamento vanilla.</p>
+ *
+ * <p>Cooldown e consumo são aplicados apenas no servidor para evitar duplicar efeitos e manter a autoridade
+ * do estado do jogo (o cliente apenas apresenta efeitos visuais).</p>
+ *
+ *
  * <p>APIs do SDK referenciadas: {@link Item#use(Level, Player, InteractionHand)},
  * {@link Item#finishUsingItem(ItemStack, Level, LivingEntity)}, {@link Player#getCooldowns()},
  * {@link UseCooldown} via {@link DataComponents#USE_COOLDOWN} e {@link InteractionResult}.</p>
@@ -54,7 +61,8 @@ public class OneiricAwakenerItem extends Item {
 
     @Override
     public InteractionResult use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
-        if (pPlayer.getCooldowns().isOnCooldown(this)) {
+        ItemStack stack = pPlayer.getItemInHand(pUsedHand);
+        if (pPlayer.getCooldowns().isOnCooldown(stack)) {
             return InteractionResult.FAIL;
         }
 
@@ -83,7 +91,7 @@ public class OneiricAwakenerItem extends Item {
             if (cooldown != null) {
                 cooldownTicks = cooldown.ticks();
             }
-            player.getCooldowns().addCooldown(this, cooldownTicks);
+            player.getCooldowns().addCooldown(pStack, cooldownTicks);
 
             // Futura lógica de teleporte viria aqui...
         }
