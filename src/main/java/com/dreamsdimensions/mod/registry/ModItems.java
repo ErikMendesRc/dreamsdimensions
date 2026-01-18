@@ -16,6 +16,9 @@ public final class ModItems {
     public static final DeferredRegister.Items ITEMS =
             DeferredRegister.createItems(DreamsDimensions.MODID);
 
+    /**
+     * Poeira dos sonhos usada na receita do Oneiric Awakener e dropada do minério dream_ore.
+     */
     public static final DeferredItem<Item> DREAM_DUST = ITEMS.registerSimpleItem(
             "dream_dust",
             new Item.Properties()
