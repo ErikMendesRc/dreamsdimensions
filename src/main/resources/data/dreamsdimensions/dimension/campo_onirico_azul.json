@@ -1,0 +1,11 @@
+{
+  "type": "dreamsdimensions:campo_onirico_azul_type",
+  "generator": {
+    "type": "minecraft:noise",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "dreamsdimensions:campo_onirico_azul"
+    },
+    "settings": "dreamsdimensions:campo_onirico_azul_noise"
+  }
+}

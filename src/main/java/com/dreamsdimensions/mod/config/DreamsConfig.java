@@ -32,7 +32,10 @@ public final class DreamsConfig {
             .comment("Lista de dimensoes consideradas como sonho (ResourceLocation).")
             .defineListAllowEmpty(
                     "dream_dimensions",
-                    List.of(DreamsDimensions.MODID + ":dreamscape"),
+                    List.of(
+                            DreamsDimensions.MODID + ":dreamscape",
+                            DreamsDimensions.MODID + ":campo_onirico_azul"
+                    ),
                     DreamsConfig::isValidResourceLocation
             );
 
