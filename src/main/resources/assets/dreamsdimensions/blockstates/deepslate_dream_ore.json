@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "clicked=false": { "model": "dreamsdimensions:block/deepslate_dream_ore" },
+    "clicked=true": { "model": "dreamsdimensions:block/deepslate_dream_ore" }
+  }
+}

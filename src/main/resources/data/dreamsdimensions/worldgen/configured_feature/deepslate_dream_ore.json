@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:ore",
+  "config": {
+    "targets": [
+      {
+        "target": "minecraft:deepslate_ore_replaceables",
+        "state": {
+          "Name": "dreamsdimensions:deepslate_dream_ore"
+        }
+      }
+    ],
+    "size": 5,
+    "discard_chance_on_air_exposure": 0.0
+  }
+}

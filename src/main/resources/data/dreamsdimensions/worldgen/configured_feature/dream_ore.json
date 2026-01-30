@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:ore",
+  "config": {
+    "targets": [
+      {
+        "target": "minecraft:stone_ore_replaceables",
+        "state": {
+          "Name": "dreamsdimensions:dream_ore"
+        }
+      }
+    ],
+    "size": 6,
+    "discard_chance_on_air_exposure": 0.0
+  }
+}
