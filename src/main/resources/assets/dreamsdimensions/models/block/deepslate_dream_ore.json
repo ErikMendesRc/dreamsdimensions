@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "dreamsdimensions:block/dream_ore"
+    "all": "dreamsdimensions:block/deepslate_dream_ore"
   }
 }

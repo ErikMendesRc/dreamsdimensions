@@ -3,7 +3,10 @@
   "config": {
     "targets": [
       {
-        "target": "minecraft:stone_ore_replaceables",
+        "target": {
+          "predicate_type": "minecraft:tag_match",
+          "tag": "minecraft:stone_ore_replaceables"
+        },
         "state": {
           "Name": "dreamsdimensions:dream_ore"
         }

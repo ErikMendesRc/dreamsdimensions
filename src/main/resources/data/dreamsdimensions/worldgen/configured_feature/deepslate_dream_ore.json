@@ -3,7 +3,10 @@
   "config": {
     "targets": [
       {
-        "target": "minecraft:deepslate_ore_replaceables",
+        "target": {
+          "predicate_type": "minecraft:tag_match",
+          "tag": "minecraft:deepslate_ore_replaceables"
+        },
         "state": {
           "Name": "dreamsdimensions:deepslate_dream_ore"
         }
