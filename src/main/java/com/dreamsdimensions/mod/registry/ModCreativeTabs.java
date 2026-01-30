@@ -27,9 +27,15 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.ONEIRIC_AWAKENER.get());
 
                         output.accept(ModBlocks.DREAM_GRASS_BLOCK.get());
+                        output.accept(ModBlocks.BLUE_DREAM_GRASS.get());
                         output.accept(ModBlocks.DREAM_DIRT_BLOCK.get());
+                        output.accept(ModBlocks.BLUE_DREAM_DIRT.get());
                         output.accept(ModBlocks.DREAM_SAND_BLOCK.get());
                         output.accept(ModBlocks.SERENE_STONE_BLOCK.get());
+                        output.accept(ModBlocks.BLUE_DREAM_STONE.get());
+                        output.accept(ModBlocks.BLUE_DREAM_COBBLESTONE.get());
+                        output.accept(ModBlocks.DREAM_SHIMMER_BLOCK.get());
+                        output.accept(ModBlocks.DREAM_GLOW_MOSS.get());
                         output.accept(ModBlocks.DREAM_ORE.get());
                         output.accept(ModBlocks.DREAM_FLOWER_BLOCK.get());
                         output.accept(ModBlocks.DREAM_LOG_BLOCK.get());

@@ -1,8 +1,14 @@
 {
   "block.dreamsdimensions.dream_grass_block": "Dream Grass",
+  "block.dreamsdimensions.blue_dream_grass": "Blue Dream Grass",
   "block.dreamsdimensions.serene_stone": "Serene Stone",
+  "block.dreamsdimensions.blue_dream_stone": "Blue Dream Stone",
+  "block.dreamsdimensions.blue_dream_cobblestone": "Blue Dream Cobblestone",
+  "block.dreamsdimensions.dream_shimmer_block": "Dream Shimmer Block",
+  "block.dreamsdimensions.dream_glow_moss": "Dream Glow Moss",
   "block.dreamsdimensions.dream_ore": "Dream Ore",
   "block.dreamsdimensions.dream_dirt_block": "Dream Dirt",
+  "block.dreamsdimensions.blue_dream_dirt": "Blue Dream Dirt",
   "block.dreamsdimensions.dream_sand_block": "Dream Sand",
 
   "item.dreamsdimensions.dream_dust": "Dream Dust",
