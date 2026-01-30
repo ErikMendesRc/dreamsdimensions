@@ -2,6 +2,7 @@ package com.dreamsdimensions.mod;
 
 import com.dreamsdimensions.mod.config.DreamsConfig;
 import com.dreamsdimensions.mod.event.CommonEvents;
+import com.dreamsdimensions.mod.event.DreamDimensionEffectsHandler;
 import com.dreamsdimensions.mod.event.DreamReturnAttachmentHandler;
 import com.dreamsdimensions.mod.event.SleepTeleportHandler;
 import com.dreamsdimensions.mod.registry.ModAttachments;
@@ -48,6 +49,7 @@ public class DreamsDimensions {
         modEventBus.addListener(this::commonSetup);
 
         NeoForge.EVENT_BUS.addListener(CommonEvents::onServerStarting);
+        NeoForge.EVENT_BUS.addListener(DreamDimensionEffectsHandler::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(DreamReturnAttachmentHandler::onPlayerSetSpawn);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerTick);
 
