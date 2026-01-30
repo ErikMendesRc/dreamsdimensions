@@ -1,0 +1,9 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": [
+    "dreamsdimensions:dream_ore",
+    "dreamsdimensions:deepslate_dream_ore"
+  ],
+  "step": "underground_ores"
+}

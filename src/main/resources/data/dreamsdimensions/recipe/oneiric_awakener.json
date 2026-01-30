@@ -1,15 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
-  "key": {
-    "S": "dreamsdimensions:dream_dust",
-    "P": "minecraft:ender_pearl"
-  },
   "pattern": [
-    "SSS",
-    "SPS",
-    "SSS"
+    " F ",
+    " K ",
+    " B "
   ],
+  "key": {
+    "F": "minecraft:feather",
+    "K": "dreamsdimensions:oneiric_core_block",
+    "B": "minecraft:glass_bottle"
+  },
   "result": {
     "id": "dreamsdimensions:oneiric_awakener",
     "count": 1

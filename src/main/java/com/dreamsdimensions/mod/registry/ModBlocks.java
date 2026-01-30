@@ -96,6 +96,26 @@ public final class ModBlocks {
                     .requiresCorrectToolForDrops()
     );
 
+    public static final DeferredBlock<Block> DEEPSLATE_DREAM_ORE = BLOCKS.registerBlock(
+            "deepslate_dream_ore",
+            (properties) -> new DreamOreBlock(properties, UniformInt.of(1, 3)),
+            BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE)
+                    .strength(4.5F, 3.0F)
+                    .requiresCorrectToolForDrops()
+    );
+
+    public static final DeferredBlock<Block> DREAM_INFUSED_STONE = BLOCKS.registerSimpleBlock(
+            "dream_infused_stone",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)
+                    .requiresCorrectToolForDrops()
+    );
+
+    public static final DeferredBlock<Block> ONEIRIC_CORE_BLOCK = BLOCKS.registerSimpleBlock(
+            "oneiric_core_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)
+                    .requiresCorrectToolForDrops()
+    );
+
     public static final DeferredBlock<Block> DREAM_FLOWER_BLOCK = BLOCKS.registerSimpleBlock(
             "dream_flower_block",
             BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)

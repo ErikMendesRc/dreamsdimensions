@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "IDI",
+    "DCD",
+    "IDI"
+  ],
+  "key": {
+    "I": "dreamsdimensions:dream_infused_stone",
+    "D": "dreamsdimensions:dream_dust",
+    "C": "minecraft:clock"
+  },
+  "result": {
+    "id": "dreamsdimensions:oneiric_core_block",
+    "count": 1
+  }
+}

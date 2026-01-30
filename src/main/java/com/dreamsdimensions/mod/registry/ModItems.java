@@ -91,6 +91,18 @@ public final class ModItems {
             ModBlocks.DREAM_ORE
     );
 
+    public static final DeferredItem<BlockItem> DEEPSLATE_DREAM_ORE_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.DEEPSLATE_DREAM_ORE
+    );
+
+    public static final DeferredItem<BlockItem> DREAM_INFUSED_STONE_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.DREAM_INFUSED_STONE
+    );
+
+    public static final DeferredItem<BlockItem> ONEIRIC_CORE_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.ONEIRIC_CORE_BLOCK
+    );
+
     private ModItems() {
     }
 

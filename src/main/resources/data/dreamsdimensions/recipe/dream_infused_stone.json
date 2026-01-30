@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "SD",
+    "DS"
+  ],
+  "key": {
+    "S": "minecraft:stone",
+    "D": "dreamsdimensions:dream_dust"
+  },
+  "result": {
+    "id": "dreamsdimensions:dream_infused_stone",
+    "count": 1
+  }
+}
