@@ -1,9 +1,12 @@
 package com.dreamsdimensions.mod.item;
 
+import com.dreamsdimensions.mod.config.DreamsConfig;
+import com.dreamsdimensions.mod.util.DreamReturnHelper;
 import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,8 +24,8 @@ import java.util.List;
 /**
  * Item ritualístico que representa o foco da mente do jogador para “atravessar o véu”.
  *
- * <p>Comportamento atual: inicia um uso com duração fixa e, ao concluir, emite uma mensagem
- * indicando que a lógica de teleporte ainda é um placeholder (não implementada).</p>
+ * <p>Comportamento atual: inicia um uso com duração fixa e, ao concluir, teleporta o jogador
+ * de volta ao Overworld quando usado em uma dimensão marcada como sonho.</p>
  *
  * <p>Regras de lado (side rules): alterações de estado (consumo do item e cooldown) e logs
  * são feitas apenas no servidor com {@link Level#isClientSide()} para evitar duplicações.</p>
@@ -41,7 +44,7 @@ import java.util.List;
 public class OneiricAwakenerItem extends Item {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int USE_DURATION_TICKS = 60;
-    public static final int COOLDOWN_TICKS = 100;
+    public static final int COOLDOWN_TICKS = 60;
 
     public OneiricAwakenerItem(Properties pProperties) {
         super(pProperties);
@@ -62,6 +65,9 @@ public class OneiricAwakenerItem extends Item {
     @Override
     public InteractionResult use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
         ItemStack stack = pPlayer.getItemInHand(pUsedHand);
+        if (!DreamsConfig.isDreamDimension(pLevel.dimension())) {
+            return InteractionResult.PASS;
+        }
         if (pPlayer.getCooldowns().isOnCooldown(stack)) {
             return InteractionResult.FAIL;
         }
@@ -77,24 +83,27 @@ public class OneiricAwakenerItem extends Item {
             return pStack;
         }
 
-        if (!pLevel.isClientSide()) {
-            LOGGER.info("Oneiric Awakener totalmente focado por {} na dimensão {}", player.getName().getString(), pLevel.dimension().location());
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return pStack;
+        }
 
-            player.displayClientMessage(Component.literal("Sua mente atravessa o véu! (Lógica de teleporte ainda não implementada)"), false);
+        if (!DreamReturnHelper.isDreamDimension(serverPlayer.serverLevel())) {
+            return pStack;
+        }
 
-            if (!player.getAbilities().instabuild) {
-                pStack.shrink(1);
-            }
+        LOGGER.info("Oneiric Awakener totalmente focado por {} na dimensão {}", player.getName().getString(), pLevel.dimension().location());
+
+        DreamReturnHelper.buildReturnTransition(serverPlayer).ifPresentOrElse(transition -> {
+            serverPlayer.teleport(transition);
+            serverPlayer.displayClientMessage(Component.translatable("message.dreamsdimensions.oneiric_awakener.success"), false);
 
             int cooldownTicks = COOLDOWN_TICKS;
             UseCooldown cooldown = pStack.get(DataComponents.USE_COOLDOWN);
             if (cooldown != null) {
                 cooldownTicks = cooldown.ticks();
             }
-            player.getCooldowns().addCooldown(pStack, cooldownTicks);
-
-            // Futura lógica de teleporte viria aqui...
-        }
+            serverPlayer.getCooldowns().addCooldown(pStack, cooldownTicks);
+        }, () -> serverPlayer.displayClientMessage(Component.translatable("message.dreamsdimensions.oneiric_awakener.fail"), true));
 
         // Efeitos visuais/sonoros do lado do cliente podem ser adicionados aqui
 

@@ -11,6 +11,8 @@
   "itemGroup.dreamsdimensions.dreams_dimensions_tab": "Dreams Dimensions",
 
   "tooltip.dreamsdimensions.oneiric_awakener.line1": "Used to pierce the veils of dreams.",
-  "tooltip.dreamsdimensions.oneiric_awakener.line2": "Use it to teleport... maybe."
+  "tooltip.dreamsdimensions.oneiric_awakener.line2": "Use it to teleport... maybe.",
+  "message.dreamsdimensions.oneiric_awakener.success": "You woke up from the dream.",
+  "message.dreamsdimensions.oneiric_awakener.fail": "The Overworld is unavailable right now."
 
 }
