@@ -29,10 +29,22 @@ public final class ModBlocks {
                     .mapColor(MapColor.GRASS)
     );
 
+    public static final DeferredBlock<Block> BLUE_DREAM_GRASS = BLOCKS.registerSimpleBlock(
+            "blue_dream_grass",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK)
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
+    );
+
     public static final DeferredBlock<Block> DREAM_DIRT_BLOCK = BLOCKS.registerSimpleBlock(
             "dream_dirt_block",
             BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT)
                     .mapColor(MapColor.DIRT)
+    );
+
+    public static final DeferredBlock<Block> BLUE_DREAM_DIRT = BLOCKS.registerSimpleBlock(
+            "blue_dream_dirt",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT)
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
     );
 
     public static final DeferredBlock<Block> DREAM_SAND_BLOCK = BLOCKS.registerSimpleBlock(
@@ -45,6 +57,35 @@ public final class ModBlocks {
             "serene_stone",
             BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)
                     .mapColor(MapColor.STONE)
+    );
+
+    public static final DeferredBlock<Block> BLUE_DREAM_STONE = BLOCKS.registerSimpleBlock(
+            "blue_dream_stone",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                    .requiresCorrectToolForDrops()
+    );
+
+    public static final DeferredBlock<Block> BLUE_DREAM_COBBLESTONE = BLOCKS.registerSimpleBlock(
+            "blue_dream_cobblestone",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.COBBLESTONE)
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                    .requiresCorrectToolForDrops()
+    );
+
+    public static final DeferredBlock<Block> DREAM_SHIMMER_BLOCK = BLOCKS.registerSimpleBlock(
+            "dream_shimmer_block",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_BLOCK)
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                    .strength(1.5F, 6.0F)
+                    .requiresCorrectToolForDrops()
+    );
+
+    public static final DeferredBlock<Block> DREAM_GLOW_MOSS = BLOCKS.registerSimpleBlock(
+            "dream_glow_moss",
+            BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_BLOCK)
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                    .lightLevel(state -> 8)
     );
 
     public static final DeferredBlock<Block> DREAM_ORE = BLOCKS.registerBlock(

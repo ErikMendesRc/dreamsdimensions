@@ -1,8 +1,14 @@
 {
   "block.dreamsdimensions.dream_grass_block": "Grama dos Sonhos",
+  "block.dreamsdimensions.blue_dream_grass": "Grama dos Sonhos Azul",
   "block.dreamsdimensions.serene_stone": "Pedra Serena",
+  "block.dreamsdimensions.blue_dream_stone": "Pedra dos Sonhos Azul",
+  "block.dreamsdimensions.blue_dream_cobblestone": "Pedregulho dos Sonhos Azul",
+  "block.dreamsdimensions.dream_shimmer_block": "Bloco Cintilante dos Sonhos",
+  "block.dreamsdimensions.dream_glow_moss": "Musgo Luminoso dos Sonhos",
   "block.dreamsdimensions.dream_ore": "Minério dos Sonhos",
   "block.dreamsdimensions.dream_dirt_block": "Terra dos Sonhos",
+  "block.dreamsdimensions.blue_dream_dirt": "Terra dos Sonhos Azul",
   "block.dreamsdimensions.dream_sand_block": "Areia dos Sonhos",
 
   "item.dreamsdimensions.dream_dust": "Pó dos Sonhos",

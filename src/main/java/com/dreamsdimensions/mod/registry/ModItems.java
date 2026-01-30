@@ -39,8 +39,16 @@ public final class ModItems {
             ModBlocks.DREAM_GRASS_BLOCK
     );
 
+    public static final DeferredItem<BlockItem> BLUE_DREAM_GRASS_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.BLUE_DREAM_GRASS
+    );
+
     public static final DeferredItem<BlockItem> DREAM_DIRT_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(
             ModBlocks.DREAM_DIRT_BLOCK
+    );
+
+    public static final DeferredItem<BlockItem> BLUE_DREAM_DIRT_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.BLUE_DREAM_DIRT
     );
 
     public static final DeferredItem<BlockItem> DREAM_SAND_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(
@@ -61,6 +69,22 @@ public final class ModItems {
 
     public static final DeferredItem<BlockItem> SERENE_STONE_ITEM = ITEMS.registerSimpleBlockItem(
             ModBlocks.SERENE_STONE_BLOCK
+    );
+
+    public static final DeferredItem<BlockItem> BLUE_DREAM_STONE_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.BLUE_DREAM_STONE
+    );
+
+    public static final DeferredItem<BlockItem> BLUE_DREAM_COBBLESTONE_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.BLUE_DREAM_COBBLESTONE
+    );
+
+    public static final DeferredItem<BlockItem> DREAM_SHIMMER_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.DREAM_SHIMMER_BLOCK
+    );
+
+    public static final DeferredItem<BlockItem> DREAM_GLOW_MOSS_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.DREAM_GLOW_MOSS
     );
 
     public static final DeferredItem<BlockItem> DREAM_ORE_ITEM = ITEMS.registerSimpleBlockItem(
