@@ -1,12 +1,12 @@
 package com.dreamsdimensions.mod.client.screen;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.ReceivingLevelScreen;
+import net.minecraft.client.gui.screens.LevelLoadingScreen;
+import net.minecraft.client.multiplayer.LevelLoadTracker;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-
-import java.util.function.BooleanSupplier;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Tela de transição exibida ao entrar na dimensão Dreamscape.
@@ -16,13 +16,13 @@ import java.util.function.BooleanSupplier;
  * </p>
  */
 @OnlyIn(Dist.CLIENT)
-public class DreamTransitionScreen extends ReceivingLevelScreen {
+public class DreamTransitionScreen extends LevelLoadingScreen {
     private static final int MIN_TICKS = 100;
 
     private int fadeTicks = 0;
 
-    public DreamTransitionScreen(BooleanSupplier levelReceived, Reason reason) {
-        super(levelReceived, reason);
+    public DreamTransitionScreen(LevelLoadTracker loadTracker, Reason reason) {
+        super(loadTracker, reason);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class DreamTransitionScreen extends ReceivingLevelScreen {
     }
 
     @Override
-    public void render(GuiGraphics gg, int mouseX, int mouseY, float partialTick) {
+    public void render(@NotNull GuiGraphics gg, int mouseX, int mouseY, float partialTick) {
         super.renderBackground(gg, mouseX, mouseY, partialTick);
 
         float progress = Math.min(1.0f, fadeTicks / (float) MIN_TICKS);
