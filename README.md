@@ -1,74 +1,128 @@
-# 🌌 DreamsDimensions
+# Dreams Dimensions Mod - Documentação Técnica
 
-![DreamsDimensions Banner](src/main/resources/images/dreams.png)
+## Visão Geral
 
-**Dreams Dimensions** é um mod em desenvolvimento para Minecraft 1.21.4+ criado com NeoForge que adiciona uma nova dimensão mística acessível através dos sonhos. Ao dormir no Overworld, os jogadores podem ser transportados para a **Dimensão Pacífica**, um mundo sereno repleto de blocos únicos, minérios raros e uma atmosfera encantadora.
-
----
-
-## ✨ Destaques.
-
-- 🛏️ **Mecânica de Teleporte ao Dormir**  
-  Dormir no Overworld pode transportar você para a dimensão dos sonhos.
-
-- 🌿 **Blocos Inéditos**
-    - Grama Onírica
-    - Pedra Serena
-    - Tronco e Folhas de Árvore dos Sonhos
-    - Flor dos Sonhos
-
-- 💎 **Minério dos Sonhos**  
-  Um recurso raro com potencial para crafting avançado.
-
-- 💨 **Pó de Sonho**  
-  Item de progressão para futuras mecânicas mágicas.
-
-- ⏰ **Despertador Onírico**  
-  Item usado para retornar ao mundo real.
-
-- 🌍 **World Generation Personalizada**  
-  Ilhas flutuantes e paisagens únicas criam uma atmosfera de outro mundo.
+O Dreams Dimensions é um mod para Minecraft que introduz múltiplas dimensões de sonho. Esta documentação detalha os aspectos técnicos, as regras de jogabilidade e o conteúdo do mod.
 
 ---
 
-## 🚀 Instalação
+## Mecânicas de Jogo e Regras
 
-1. Certifique-se de estar usando o **Minecraft 1.21.4** com **NeoForge 21.4.124+**.
-2. Baixe a versão mais recente do mod na aba [Releases](https://github.com/SeuUsuario/DreamsDimensions/releases).
-3. Coloque o arquivo `.jar` na pasta `mods` do seu diretório `.minecraft`.
-4. Inicie o jogo e aproveite a viagem!
+Esta seção detalha as regras que governam a interação entre o Overworld e as dimensões de sonho.
 
----
+### Entrando em uma Dimensão de Sonho (Sonhando)
 
-## 🛠️ Desenvolvimento
+Para entrar em uma das dimensões de sonho, o jogador deve seguir um procedimento específico:
 
-Este mod está sendo desenvolvido em C++/Java com a biblioteca NeoForge e um sistema modular de fases:
+*   **Ação Requerida**: Dormir em uma cama no Overworld.
+*   **Duração**: O jogador deve permanecer dormindo por **100 ticks (5 segundos)**.
+*   **Resultado**: Após o tempo de espera, o jogador é automaticamente transportado para uma das dimensões de sonho disponíveis, escolhida aleatoriamente. As dimensões disponíveis são `dreamscape` e `campo_onirico_azul`.
 
-- ✅ Fase 1: Blocos e Itens
-- 🔄 Fase 2: Assets e Data Generation
-- 🔄 Fase 3: Criação da Dimensão
-- 🔄 Fase 4: Lógica de Teleporte e Retorno
-- 🔄 Fase 5: Geração de Minérios e Testes Finais
+### Retornando do Sonho (Acordando)
 
----
+Para retornar ao Overworld, o jogador precisa usar o item `Despertador Onírico`.
 
-## 📸 Galeria
-
-*Imagens e gifs em breve!*
-
----
-
-## 🤝 Contribuindo
-
-Sinta-se à vontade para abrir issues, sugerir ideias ou fazer pull requests!  
-Todas as contribuições são bem-vindas 💜
+*   **Ação Requerida**: Usar o `Despertador Onírico` (`oneiric_awakener`).
+*   **Condição**: O jogador deve estar em qualquer uma das dimensões de sonho (`dreamscape` ou `campo_onirico_azul`).
+*   **Duração de Uso**: O item deve ser mantido em uso por **60 ticks (3 segundos)**.
+*   **Cooldown**: Após o uso bem-sucedido, o item entra em um tempo de recarga de **60 ticks (3 segundos)**.
+*   **Lógica de Ponto de Retorno**: O local para onde o jogador retorna no Overworld é determinado pela seguinte ordem de prioridade:
+    1.  **Local da Cama Original**: Ao lado da cama específica que o jogador usou para entrar no sonho.
+    2.  **Ponto de Spawn Pessoal**: Se a cama original não for válida, o jogador é enviado para seu ponto de respawn definido no Overworld.
+    3.  **Ponto de Spawn Global**: Se nenhum dos anteriores for válido, o jogador retorna ao ponto de spawn global do mundo.
 
 ---
 
-## 📄 Licença
+## As Dimensões dos Sonhos
 
-Distribuído sob a [MIT License](LICENSE).
+O mod atualmente inclui duas dimensões de sonho, cada uma com suas próprias características.
+
+### Dimensão `dreamscape`
+
+*   **Propriedades**: Luz ambiente constante, camas funcionam, âncoras de renascimento não.
+*   **Bioma Principal (`dreamscape_biome`)**:
+    *   **Descrição**: Um bioma sereno e vazio, caracterizado por uma atmosfera tranquila.
+    *   **Spawns de Criaturas**: Nenhuma criatura é gerada naturalmente.
+
+### Dimensão `campo_onirico_azul`
+
+*   **Propriedades**: Similares à `dreamscape`, com luz constante e camas funcionais.
+*   **Bioma Principal (`campo_onirico_azul`)**:
+    *   **Descrição**: Um bioma com uma paleta de cores azulada e vibrante.
+    *   **Spawns de Criaturas**: Este bioma é habitado por criaturas do Overworld (hostis e passivas).
 
 ---
 
-> _"Sonhar é viajar sem sair da cama. E agora, com Dreams Dimensions, é também explorar um novo mundo."_ 🌙
+## Blocos e Itens
+
+### Blocos por Dimensão
+
+#### Blocos do Overworld
+
+Estes são os blocos primários que o jogador deve encontrar para iniciar sua jornada.
+
+| Nome do Bloco                 | ID do Bloco                               | Geração                               |
+| ----------------------------- | ----------------------------------------- | ------------------------------------- |
+| Minério dos Sonhos            | `dreamsdimensions:dream_ore`              | Gerado no subsolo do Overworld.       |
+| Minério dos Sonhos de Ardósia | `dreamsdimensions:deepslate_dream_ore`    | Gerado nas camadas profundas do Overworld. |
+
+#### Blocos da Dimensão `dreamscape`
+
+Estes blocos formam a paisagem da dimensão `dreamscape`.
+
+| Nome do Bloco      | ID do Bloco                          |
+| ------------------ | ------------------------------------ |
+| Grama dos Sonhos   | `dreamsdimensions:dream_grass_block` |
+| Pedra Serena       | `dreamsdimensions:serene_stone`      |
+| Terra dos Sonhos   | `dreamsdimensions:dream_dirt_block`  |
+| Areia dos Sonhos   | `dreamsdimensions:dream_sand_block`  |
+
+#### Blocos da Dimensão `campo_onirico_azul`
+
+Estes blocos formam a paisagem da dimensão `campo_onirico_azul`.
+
+| Nome do Bloco                 | ID do Bloco                               |
+| ----------------------------- | ----------------------------------------- |
+| Grama dos Sonhos Azul         | `dreamsdimensions:blue_dream_grass`       |
+| Pedra dos Sonhos Azul         | `dreamsdimensions:blue_dream_stone`       |
+| Pedregulho dos Sonhos Azul    | `dreamsdimensions:blue_dream_cobblestone` |
+| Terra dos Sonhos Azul         | `dreamsdimensions:blue_dream_dirt`        |
+
+#### Blocos Criados pelo Jogador
+
+Estes blocos não são gerados naturalmente e devem ser criados.
+
+| Nome do Bloco                 | ID do Bloco                               |
+| ----------------------------- | ----------------------------------------- |
+| Bloco Cintilante dos Sonhos   | `dreamsdimensions:dream_shimmer_block`    |
+| Musgo Luminoso dos Sonhos     | `dreamsdimensions:dream_glow_moss`        |
+| Pedra Infundida dos Sonhos    | `dreamsdimensions:dream_infused_stone`    |
+| Bloco do Núcleo Onírico       | `dreamsdimensions:oneiric_core_block`     |
+
+### Itens
+
+Itens podem ser criados e transportados entre dimensões.
+
+| Nome do Item         | ID do Item                       | Descrição                                         |
+| -------------------- | -------------------------------- | ------------------------------------------------- |
+| Pó dos Sonhos        | `dreamsdimensions:dream_dust`    | Material obtido da mineração de Minérios dos Sonhos. |
+| Despertador Onírico  | `dreamsdimensions:oneiric_awakener` | Ferramenta para retornar ao Overworld.            |
+
+---
+
+## Receitas
+
+### Criação (Crafting)
+
+| Item Criado                  | Ingredientes                                                                                             | Padrão (Pattern)                                                                        |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| **Despertador Onírico**      | 1x Pena, 1x Bloco do Núcleo Onírico, 1x Garrafa de Vidro                                                  | Vertical: Pena (topo), Bloco do Núcleo Onírico (meio), Garrafa de Vidro (baixo)         |
+| **Bloco do Núcleo Onírico**  | 4x Pedra Infundida dos Sonhos, 4x Pó dos Sonhos, 1x Relógio                                              | Relógio no centro, cercado por Pedra Infundida e Pó dos Sonhos em padrão de xadrez.     |
+| **Pedra Infundida dos Sonhos** | 2x Pedra, 2x Pó dos Sonhos                                                                               | Padrão de xadrez 2x2 com Pedra e Pó dos Sonhos.                                         |
+
+### Fornalha (Smelting & Blasting)
+
+| Item Resultante         | Ingrediente                  | Método         | Tempo (Ticks) | Experiência |
+| ----------------------- | ---------------------------- | -------------- | ------------- | ----------- |
+| **Pedra dos Sonhos Azul** | Pedregulho dos Sonhos Azul   | Smelting       | 200           | 0.1         |
+| **Pedra dos Sonhos Azul** | Pedregulho dos Sonhos Azul   | Blasting       | 100           | 0.1         |

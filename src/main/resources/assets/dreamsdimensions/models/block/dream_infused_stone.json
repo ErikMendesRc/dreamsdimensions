@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "dreamsdimensions:block/serene_stone"
+    "all": "dreamsdimensions:block/dream_infused_stone"
   }
 }

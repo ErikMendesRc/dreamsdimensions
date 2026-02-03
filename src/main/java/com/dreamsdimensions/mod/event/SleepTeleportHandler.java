@@ -14,7 +14,9 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.slf4j.Logger;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -25,13 +27,14 @@ import java.util.Set;
  * </p>
  */
 public final class SleepTeleportHandler {
-    private static final ResourceKey<Level> DREAMSCAPE_KEY = ResourceKey.create(
-            Registries.DIMENSION,
-            ResourceLocation.fromNamespaceAndPath(DreamsDimensions.MODID, "dreamscape")
+    private static final List<ResourceKey<Level>> DREAM_DIMENSIONS = List.of(
+            ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath(DreamsDimensions.MODID, "dreamscape")),
+            ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath(DreamsDimensions.MODID, "campo_onirico_azul"))
     );
     private static final Logger LOGGER = DreamsDimensions.LOGGER;
     private static final int TICKS_BEFORE_TELEPORT = 100;
     private static final Map<ServerPlayer, Integer> SLEEPING_PLAYERS = new HashMap<>();
+    private static final Random RANDOM = new Random();
 
     private SleepTeleportHandler() {
     }
@@ -48,7 +51,7 @@ public final class SleepTeleportHandler {
             int t = SLEEPING_PLAYERS.merge(player, 1, Integer::sum);
             LOGGER.debug("sleepingPlayers tick #{} para {}", t, player.getGameProfile().getName());
             if (t >= TICKS_BEFORE_TELEPORT) {
-                LOGGER.info("Chegou em {} ticks de sono para {}, teleportando para Dreamscape",
+                LOGGER.info("Chegou em {} ticks de sono para {}, teleportando para uma dimensão dos sonhos",
                         TICKS_BEFORE_TELEPORT, player.getGameProfile().getName());
                 actuallyTeleport(player);
                 SLEEPING_PLAYERS.remove(player);
@@ -63,16 +66,18 @@ public final class SleepTeleportHandler {
     }
 
     /**
-     * Realiza o teleporte efetivo para a dimensão Dreamscape.
+     * Realiza o teleporte efetivo para uma dimensão de sonho aleatória.
      */
     public static void actuallyTeleport(ServerPlayer player) {
         LOGGER.info("actuallyTeleport(): iniciando teleporte de {}", player.getGameProfile().getName());
         MinecraftServer server = player.server;
-        ServerLevel targetLevel = server.getLevel(DREAMSCAPE_KEY);
+        
+        ResourceKey<Level> targetDimensionKey = DREAM_DIMENSIONS.get(RANDOM.nextInt(DREAM_DIMENSIONS.size()));
+        ServerLevel targetLevel = server.getLevel(targetDimensionKey);
 
         if (targetLevel == null) {
             LOGGER.error("Dimensão {} não encontrada para {}",
-                    DREAMSCAPE_KEY.location(), player.getGameProfile().getName());
+                    targetDimensionKey.location(), player.getGameProfile().getName());
             return;
         }
 
@@ -82,7 +87,7 @@ public final class SleepTeleportHandler {
         LOGGER.info("stopSleeping() para {}", player.getGameProfile().getName());
         player.stopSleeping();
 
-        LOGGER.info("teleportTo() para Dreamscape em {}", spawn);
+        LOGGER.info("teleportTo() para {} em {}", targetDimensionKey.location(), spawn);
         player.teleportTo(
                 targetLevel,
                 spawn.getX() + 0.5,

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "dreamsdimensions:block/dream_shimmer_block"
+    "all": "dreamsdimensions:block/oneiric_core_block"
   }
 }
