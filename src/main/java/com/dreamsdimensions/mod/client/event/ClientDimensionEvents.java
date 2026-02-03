@@ -20,7 +20,6 @@ import net.neoforged.neoforge.client.event.RegisterDimensionTransitionScreenEven
  */
 @EventBusSubscriber(
         modid = DreamsDimensions.MODID,
-        bus = EventBusSubscriber.Bus.MOD,
         value = Dist.CLIENT
 )
 public final class ClientDimensionEvents {
