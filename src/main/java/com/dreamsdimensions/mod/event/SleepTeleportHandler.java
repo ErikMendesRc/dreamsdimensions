@@ -3,8 +3,8 @@ package com.dreamsdimensions.mod.event;
 import com.dreamsdimensions.mod.DreamsDimensions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,10 +22,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class SleepTeleportHandler {
 
     private static final List<ResourceKey<Level>> DREAM_DIMENSIONS = List.of(
-            ResourceKey.create(Registries.DIMENSION,
-                    ResourceLocation.fromNamespaceAndPath(DreamsDimensions.MODID, "dreamscape")),
-            ResourceKey.create(Registries.DIMENSION,
-                    ResourceLocation.fromNamespaceAndPath(DreamsDimensions.MODID, "campo_onirico_azul"))
+            ResourceKey.create(
+                    Registries.DIMENSION,
+                    Identifier.fromNamespaceAndPath(DreamsDimensions.MODID, "dreamscape")
+            ),
+            ResourceKey.create(
+                    Registries.DIMENSION,
+                    Identifier.fromNamespaceAndPath(DreamsDimensions.MODID, "campo_onirico_azul")
+            )
     );
 
     private static final Logger LOGGER = DreamsDimensions.LOGGER;
@@ -85,7 +89,7 @@ public final class SleepTeleportHandler {
         ServerLevel targetLevel = server.getLevel(targetDimensionKey);
         if (targetLevel == null) {
             LOGGER.error("Dimensão {} não encontrada para {}",
-                    targetDimensionKey.location(),
+                    targetDimensionKey.identifier(),
                     player.getName().getString());
             return;
         }

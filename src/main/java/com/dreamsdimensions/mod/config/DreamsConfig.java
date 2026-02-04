@@ -3,8 +3,8 @@ package com.dreamsdimensions.mod.config;
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -25,11 +25,12 @@ import java.util.Set;
  */
 @EventBusSubscriber(modid = DreamsDimensions.MODID)
 public final class DreamsConfig {
+
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
     private static final ModConfigSpec.ConfigValue<List<? extends String>> DREAM_DIMENSION_IDS = BUILDER
-            .comment("Lista de dimensoes consideradas como sonho (ResourceLocation).")
+            .comment("Lista de dimensoes consideradas como sonho (Identifier).")
             .defineListAllowEmpty(
                     "dream_dimensions",
                     List.of(
@@ -37,7 +38,7 @@ public final class DreamsConfig {
                             DreamsDimensions.MODID + ":campo_onirico_azul"
                     ),
                     () -> DreamsDimensions.MODID + ":dreamscape",
-                    DreamsConfig::isValidResourceLocation
+                    DreamsConfig::isValidIdentifier
             );
 
     private static Set<ResourceKey<Level>> dreamDimensions = Set.of();
@@ -72,14 +73,14 @@ public final class DreamsConfig {
         return dreamDimensions.contains(dimension);
     }
 
-    private static boolean isValidResourceLocation(Object value) {
-        return value instanceof String string && ResourceLocation.tryParse(string) != null;
+    private static boolean isValidIdentifier(Object value) {
+        return value instanceof String string && Identifier.tryParse(string) != null;
     }
 
     private static void bake() {
         Set<ResourceKey<Level>> parsed = new HashSet<>();
         for (String entry : DREAM_DIMENSION_IDS.get()) {
-            ResourceLocation id = ResourceLocation.tryParse(entry);
+            Identifier id = Identifier.tryParse(entry);
             if (id == null) {
                 LOGGER.warn("Dimensão de sonho inválida na config: {}", entry);
                 continue;

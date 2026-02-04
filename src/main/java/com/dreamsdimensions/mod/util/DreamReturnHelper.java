@@ -8,6 +8,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.attribute.BedRule;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.vehicle.DismountHelper;
 import net.minecraft.world.level.Level;
@@ -58,18 +60,21 @@ public final class DreamReturnHelper {
 
     private static ReturnTarget resolveTarget(ServerPlayer player, ServerLevel overworld) {
         DreamReturnData data = player.getData(ModAttachments.DREAM_RETURN);
+
+        // 1) Stand-up de cama gravada (mais "natural" pra retorno)
         Optional<Vec3> bedStandUp = resolveBedStandUp(overworld, data);
         if (bedStandUp.isPresent()) {
             float yaw = data.getYawOr(player.getYRot());
             return new ReturnTarget(bedStandUp.get(), yaw);
         }
 
-        // 2) Respawn do player (cama/âncora) — em 1.21.10+ getters podem ter sumido,
-        // então usamos direto o helper vanilla que resolve isso.
+        // 2) Respawn do player (cama/âncora) — fallback vanilla
         try {
-            TeleportTransition respawn = player.findRespawnPositionAndUseSpawnBlock(false, TeleportTransition.DO_NOTHING);
+            TeleportTransition respawn = player.findRespawnPositionAndUseSpawnBlock(
+                    false,
+                    TeleportTransition.DO_NOTHING
+            );
             return new ReturnTarget(respawn.position(), respawn.yRot());
-
         } catch (Throwable ignored) {
             // cai pro fallback abaixo
         }
@@ -92,7 +97,14 @@ public final class DreamReturnHelper {
 
         overworld.getChunkAt(bedPos);
         BlockState state = overworld.getBlockState(bedPos);
-        if (!(state.getBlock() instanceof BedBlock) || !BedBlock.canSetSpawn(overworld)) {
+
+        if (!(state.getBlock() instanceof BedBlock)) {
+            return Optional.empty();
+        }
+
+        // 1.21.11+: BedBlock.canSetSpawn(...) sumiu; regra vem dos EnvironmentAttributes
+        BedRule bedRule = overworld.environmentAttributes().getValue(EnvironmentAttributes.BED_RULE, bedPos);
+        if (!bedRule.canSetSpawn(overworld)) {
             return Optional.empty();
         }
 
@@ -107,7 +119,13 @@ public final class DreamReturnHelper {
 
     private static Vec3 findSafeSpawn(ServerLevel level, BlockPos origin) {
         level.getChunkAt(origin);
-        int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, origin.getX(), origin.getZ());
+
+        int y = level.getHeight(
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                origin.getX(),
+                origin.getZ()
+        );
+
         if (y <= level.getMinY()) {
             y = level.getMinY() + 2;
         }
@@ -117,6 +135,7 @@ public final class DreamReturnHelper {
         if (safe != null) {
             return safe;
         }
+
         return Vec3.upFromBottomCenterOf(basePos, 1.0);
     }
 
@@ -124,7 +143,12 @@ public final class DreamReturnHelper {
     private static Vec3 findSafeDismount(ServerLevel level, BlockPos basePos) {
         BlockPos.MutableBlockPos mutable = basePos.mutable();
         for (int i = 0; i <= SAFE_SEARCH_UP; i++) {
-            Vec3 candidate = DismountHelper.findSafeDismountLocation(EntityType.PLAYER, level, mutable, false);
+            Vec3 candidate = DismountHelper.findSafeDismountLocation(
+                    EntityType.PLAYER,
+                    level,
+                    mutable,
+                    false
+            );
             if (candidate != null) {
                 return candidate;
             }

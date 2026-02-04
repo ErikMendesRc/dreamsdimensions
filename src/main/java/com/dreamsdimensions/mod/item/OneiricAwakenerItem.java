@@ -70,7 +70,7 @@ public class OneiricAwakenerItem extends Item {
         LOGGER.info(
                 "Oneiric Awakener totalmente focado por {} na dimensão {}",
                 serverPlayer.getName().getString(),
-                pLevel.dimension().location()
+                pLevel.dimension().identifier()
         );
 
         DreamReturnHelper.buildReturnTransition(serverPlayer).ifPresentOrElse(transition -> {

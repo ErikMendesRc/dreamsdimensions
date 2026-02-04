@@ -3,8 +3,8 @@ package com.dreamsdimensions.mod.client.event;
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.client.screen.DreamTransitionScreen;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -23,10 +23,11 @@ import net.neoforged.neoforge.client.event.RegisterDimensionTransitionScreenEven
         value = Dist.CLIENT
 )
 public final class ClientDimensionEvents {
+
     private static final ResourceKey<Level> DREAMSCAPE_KEY =
             ResourceKey.create(
                     Registries.DIMENSION,
-                    ResourceLocation.fromNamespaceAndPath(DreamsDimensions.MODID, "dreamscape")
+                    Identifier.fromNamespaceAndPath(DreamsDimensions.MODID, "dreamscape")
             );
 
     private ClientDimensionEvents() {
