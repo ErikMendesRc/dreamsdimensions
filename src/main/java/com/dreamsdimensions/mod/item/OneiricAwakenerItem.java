@@ -16,31 +16,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.UseCooldown;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import org.slf4j.Logger;
 
 import java.util.List;
+import java.util.function.Consumer;
 
-/**
- * Item ritualístico que representa o foco da mente do jogador para “atravessar o véu”.
- *
- * <p>Comportamento atual: inicia um uso com duração fixa e, ao concluir, teleporta o jogador
- * de volta ao Overworld quando usado em uma dimensão marcada como sonho.</p>
- *
- * <p>Regras de lado (side rules): alterações de estado (consumo do item e cooldown) e logs
- * são feitas apenas no servidor com {@link Level#isClientSide()} para evitar duplicações.</p>
- *
- * <p>Cooldown é verificado com {@link ItemStack} porque o SDK de {@link net.minecraft.world.item.ItemCooldowns}
- * aceita stack (não {@link Item}) nas assinaturas atuais, preservando componentes e comportamento vanilla.</p>
- *
- * <p>Cooldown e consumo são aplicados apenas no servidor para evitar duplicar efeitos e manter a autoridade
- * do estado do jogo (o cliente apenas apresenta efeitos visuais).</p>
- *
- *
- * <p>APIs do SDK referenciadas: {@link Item#use(Level, Player, InteractionHand)},
- * {@link Item#finishUsingItem(ItemStack, Level, LivingEntity)}, {@link Player#getCooldowns()},
- * {@link UseCooldown} via {@link DataComponents#USE_COOLDOWN} e {@link InteractionResult}.</p>
- */
 public class OneiricAwakenerItem extends Item {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int USE_DURATION_TICKS = 60;
@@ -49,8 +31,6 @@ public class OneiricAwakenerItem extends Item {
     public OneiricAwakenerItem(Properties pProperties) {
         super(pProperties);
     }
-
-    // --- Duração e Animação (Permanecem iguais) ---
 
     @Override
     public int getUseDuration(ItemStack pStack, LivingEntity pEntity) {
@@ -73,29 +53,32 @@ public class OneiricAwakenerItem extends Item {
         }
 
         pPlayer.startUsingItem(pUsedHand);
-
         return InteractionResult.CONSUME;
     }
 
     @Override
     public ItemStack finishUsingItem(ItemStack pStack, Level pLevel, LivingEntity pLivingEntity) {
-        if (!(pLivingEntity instanceof Player player)) {
+        if (!(pLivingEntity instanceof ServerPlayer serverPlayer)) {
             return pStack;
         }
 
-        if (!(player instanceof ServerPlayer serverPlayer)) {
+        // serverLevel() -> level()
+        if (!DreamReturnHelper.isDreamDimension(serverPlayer.level())) {
             return pStack;
         }
 
-        if (!DreamReturnHelper.isDreamDimension(serverPlayer.serverLevel())) {
-            return pStack;
-        }
-
-        LOGGER.info("Oneiric Awakener totalmente focado por {} na dimensão {}", player.getName().getString(), pLevel.dimension().location());
+        LOGGER.info(
+                "Oneiric Awakener totalmente focado por {} na dimensão {}",
+                serverPlayer.getName().getString(),
+                pLevel.dimension().location()
+        );
 
         DreamReturnHelper.buildReturnTransition(serverPlayer).ifPresentOrElse(transition -> {
             serverPlayer.teleport(transition);
-            serverPlayer.displayClientMessage(Component.translatable("message.dreamsdimensions.oneiric_awakener.success"), false);
+            serverPlayer.displayClientMessage(
+                    Component.translatable("message.dreamsdimensions.oneiric_awakener.success"),
+                    false
+            );
 
             int cooldownTicks = COOLDOWN_TICKS;
             UseCooldown cooldown = pStack.get(DataComponents.USE_COOLDOWN);
@@ -103,13 +86,14 @@ public class OneiricAwakenerItem extends Item {
                 cooldownTicks = cooldown.ticks();
             }
             serverPlayer.getCooldowns().addCooldown(pStack, cooldownTicks);
-        }, () -> serverPlayer.displayClientMessage(Component.translatable("message.dreamsdimensions.oneiric_awakener.fail"), true));
 
-        // Efeitos visuais/sonoros do lado do cliente podem ser adicionados aqui
+        }, () -> serverPlayer.displayClientMessage(
+                Component.translatable("message.dreamsdimensions.oneiric_awakener.fail"),
+                true
+        ));
 
         return pStack;
     }
-
 
     @Override
     public boolean isFoil(ItemStack pStack) {
@@ -117,9 +101,19 @@ public class OneiricAwakenerItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, Item.TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
-        pTooltipComponents.add(Component.translatable("tooltip.dreamsdimensions.oneiric_awakener.line1").withStyle(ChatFormatting.GRAY));
-        pTooltipComponents.add(Component.translatable("tooltip.dreamsdimensions.oneiric_awakener.line2").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
-        super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+    @SuppressWarnings("deprecation")
+    public void appendHoverText(
+            ItemStack stack,
+            Item.TooltipContext context,
+            TooltipDisplay tooltipDisplay,
+            java.util.function.Consumer<Component> tooltipAdder,
+            TooltipFlag flag
+    ) {
+        tooltipAdder.accept(Component.translatable("tooltip.dreamsdimensions.oneiric_awakener.line1")
+                .withStyle(ChatFormatting.GRAY));
+        tooltipAdder.accept(Component.translatable("tooltip.dreamsdimensions.oneiric_awakener.line2")
+                .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
+
+        super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);
     }
 }

@@ -32,13 +32,22 @@ public final class DreamDimensionEffectsHandler {
             return;
         }
 
-        if (player.serverLevel().dimension() != CAMPO_ONIRICO_AZUL_KEY) {
+        // serverLevel() -> level()
+        if (!player.level().dimension().equals(CAMPO_ONIRICO_AZUL_KEY)) {
             return;
         }
 
         MobEffectInstance current = player.getEffect(MobEffects.SLOW_FALLING);
         if (current == null || current.getDuration() < REAPPLY_THRESHOLD_TICKS) {
-            player.addEffect(new MobEffectInstance(MobEffects.SLOW_FALLING, EFFECT_DURATION_TICKS, 0, true, false, true));
+            player.addEffect(new MobEffectInstance(
+                    MobEffects.SLOW_FALLING,
+                    EFFECT_DURATION_TICKS,
+                    0,
+                    true,
+                    false,
+                    true
+            ));
         }
     }
+
 }

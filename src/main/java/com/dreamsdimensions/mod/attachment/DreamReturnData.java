@@ -1,6 +1,7 @@
 package com.dreamsdimensions.mod.attachment;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -10,13 +11,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-/**
- * Dados persistentes do jogador para retornar do mundo dos sonhos.
- *
- * <p>Armazena a última cama do Overworld onde o jogador dormiu com sucesso.</p>
- */
 public final class DreamReturnData {
-    public static final Codec<DreamReturnData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+
+    public static final MapCodec<DreamReturnData> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ResourceKey.codec(Registries.DIMENSION)
                     .optionalFieldOf("dimension")
                     .forGetter(data -> Optional.ofNullable(data.dimension)),
@@ -32,15 +29,11 @@ public final class DreamReturnData {
             yaw.orElse(null)
     )));
 
-    @Nullable
-    private ResourceKey<Level> dimension;
-    @Nullable
-    private BlockPos pos;
-    @Nullable
-    private Float yaw;
+    @Nullable private ResourceKey<Level> dimension;
+    @Nullable private BlockPos pos;
+    @Nullable private Float yaw;
 
-    public DreamReturnData() {
-    }
+    public DreamReturnData() {}
 
     private DreamReturnData(@Nullable ResourceKey<Level> dimension, @Nullable BlockPos pos, @Nullable Float yaw) {
         this.dimension = dimension;

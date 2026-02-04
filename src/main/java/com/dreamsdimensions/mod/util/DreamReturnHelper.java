@@ -5,6 +5,7 @@ import com.dreamsdimensions.mod.config.DreamsConfig;
 import com.dreamsdimensions.mod.registry.ModAttachments;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
@@ -26,20 +27,23 @@ import java.util.Set;
 public final class DreamReturnHelper {
     private static final int SAFE_SEARCH_UP = 6;
 
-    private DreamReturnHelper() {
-    }
+    private DreamReturnHelper() {}
 
     public static boolean isDreamDimension(ServerLevel level) {
         return DreamsConfig.isDreamDimension(level.dimension());
     }
 
     public static Optional<TeleportTransition> buildReturnTransition(ServerPlayer player) {
-        ServerLevel overworld = player.server.getLevel(Level.OVERWORLD);
+        ServerLevel currentLevel = player.level();
+
+        MinecraftServer server = currentLevel.getServer();
+        ServerLevel overworld = server.getLevel(Level.OVERWORLD);
         if (overworld == null) {
             return Optional.empty();
         }
 
         ReturnTarget target = resolveTarget(player, overworld);
+
         TeleportTransition transition = new TeleportTransition(
                 overworld,
                 target.position(),
@@ -60,13 +64,19 @@ public final class DreamReturnHelper {
             return new ReturnTarget(bedStandUp.get(), yaw);
         }
 
-        if (player.getRespawnDimension() == Level.OVERWORLD && player.getRespawnPosition() != null) {
-            TeleportTransition respawnTransition = player.findRespawnPositionAndUseSpawnBlock(false, TeleportTransition.DO_NOTHING);
-            return new ReturnTarget(respawnTransition.position(), respawnTransition.yRot());
+        // 2) Respawn do player (cama/âncora) — em 1.21.10+ getters podem ter sumido,
+        // então usamos direto o helper vanilla que resolve isso.
+        try {
+            TeleportTransition respawn = player.findRespawnPositionAndUseSpawnBlock(false, TeleportTransition.DO_NOTHING);
+            return new ReturnTarget(respawn.position(), respawn.yRot());
+
+        } catch (Throwable ignored) {
+            // cai pro fallback abaixo
         }
 
-        BlockPos sharedSpawn = overworld.getSharedSpawnPos();
-        Vec3 fallback = findSafeSpawn(overworld, sharedSpawn);
+        // 3) Fallback: spawn do mundo (1.21.10+: via RespawnData)
+        BlockPos worldSpawn = overworld.getLevelData().getRespawnData().pos();
+        Vec3 fallback = findSafeSpawn(overworld, worldSpawn);
         return new ReturnTarget(fallback, player.getYRot());
     }
 
@@ -101,6 +111,7 @@ public final class DreamReturnHelper {
         if (y <= level.getMinY()) {
             y = level.getMinY() + 2;
         }
+
         BlockPos basePos = new BlockPos(origin.getX(), y, origin.getZ());
         Vec3 safe = findSafeDismount(level, basePos);
         if (safe != null) {
@@ -122,6 +133,5 @@ public final class DreamReturnHelper {
         return null;
     }
 
-    private record ReturnTarget(Vec3 position, float yaw) {
-    }
+    private record ReturnTarget(Vec3 position, float yaw) {}
 }

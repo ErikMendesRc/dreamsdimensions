@@ -23,7 +23,7 @@ import java.util.Set;
  * {@link ModConfigEvent.Loading} e {@link ModConfigEvent.Reloading} descritos no SDK.
  * </p>
  */
-@EventBusSubscriber(modid = DreamsDimensions.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = DreamsDimensions.MODID)
 public final class DreamsConfig {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
@@ -36,6 +36,7 @@ public final class DreamsConfig {
                             DreamsDimensions.MODID + ":dreamscape",
                             DreamsDimensions.MODID + ":campo_onirico_azul"
                     ),
+                    () -> DreamsDimensions.MODID + ":dreamscape",
                     DreamsConfig::isValidResourceLocation
             );
 

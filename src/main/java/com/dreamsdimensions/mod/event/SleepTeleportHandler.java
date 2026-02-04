@@ -10,84 +10,95 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.storage.LevelData;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.slf4j.Logger;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Handler de teleporte ao dormir, executado no lado servidor.
- * <p>
- * Este listener é registrado no {@link net.neoforged.neoforge.common.NeoForge#EVENT_BUS} e usa
- * {@link PlayerTickEvent.Post} para contar ticks de sono antes de teleportar o jogador.
- * </p>
- */
 public final class SleepTeleportHandler {
-    private static final List<ResourceKey<Level>> DREAM_DIMENSIONS = List.of(
-            ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath(DreamsDimensions.MODID, "dreamscape")),
-            ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath(DreamsDimensions.MODID, "campo_onirico_azul"))
-    );
-    private static final Logger LOGGER = DreamsDimensions.LOGGER;
-    private static final int TICKS_BEFORE_TELEPORT = 100;
-    private static final Map<ServerPlayer, Integer> SLEEPING_PLAYERS = new HashMap<>();
-    private static final Random RANDOM = new Random();
 
-    private SleepTeleportHandler() {
-    }
+    private static final List<ResourceKey<Level>> DREAM_DIMENSIONS = List.of(
+            ResourceKey.create(Registries.DIMENSION,
+                    ResourceLocation.fromNamespaceAndPath(DreamsDimensions.MODID, "dreamscape")),
+            ResourceKey.create(Registries.DIMENSION,
+                    ResourceLocation.fromNamespaceAndPath(DreamsDimensions.MODID, "campo_onirico_azul"))
+    );
+
+    private static final Logger LOGGER = DreamsDimensions.LOGGER;
 
     /**
-     * Conta ticks enquanto o jogador está dormindo no Overworld e executa o teleporte após o limite.
+     * Guarda quem já foi teleportado "neste ciclo de sono".
+     * Assim: quando atingir 100 ticks, teleportamos 1x e não repetimos todo tick.
      */
+    private static final Set<UUID> TELEPORTED_THIS_SLEEP = ConcurrentHashMap.newKeySet();
+
+    private SleepTeleportHandler() {}
+
     public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        // Garantir que estamos no servidor
+        if (!(player.level() instanceof ServerLevel serverLevel)) {
+            TELEPORTED_THIS_SLEEP.remove(player.getUUID());
             return;
         }
 
-        if (player.isSleeping() && player.serverLevel().dimension() == Level.OVERWORLD) {
-            int t = SLEEPING_PLAYERS.merge(player, 1, Integer::sum);
-            LOGGER.debug("sleepingPlayers tick #{} para {}", t, player.getGameProfile().getName());
-            if (t >= TICKS_BEFORE_TELEPORT) {
-                LOGGER.info("Chegou em {} ticks de sono para {}, teleportando para uma dimensão dos sonhos",
-                        TICKS_BEFORE_TELEPORT, player.getGameProfile().getName());
-                actuallyTeleport(player);
-                SLEEPING_PLAYERS.remove(player);
-            }
-        } else {
-            if (SLEEPING_PLAYERS.containsKey(player)) {
-                LOGGER.debug("Reset do contador de sono para {} (acordou ou mudou de dimensão)",
-                        player.getGameProfile().getName());
-            }
-            SLEEPING_PLAYERS.remove(player);
+        // Só no Overworld
+        if (serverLevel.dimension() != Level.OVERWORLD) {
+            TELEPORTED_THIS_SLEEP.remove(player.getUUID());
+            return;
         }
+
+        // Se não está dormindo, reseta o "ciclo"
+        if (!player.isSleeping()) {
+            TELEPORTED_THIS_SLEEP.remove(player.getUUID());
+            return;
+        }
+
+        // Timer vanilla (>= 100 ticks de sono)
+        if (!player.isSleepingLongEnough()) {
+            return;
+        }
+
+        // Garante 1x por ciclo de sono
+        if (!TELEPORTED_THIS_SLEEP.add(player.getUUID())) {
+            return;
+        }
+
+        LOGGER.info("Dormiu >= 100 ticks: teleportando {} para dimensão dos sonhos",
+                player.getName().getString());
+
+        actuallyTeleport(player);
     }
 
-    /**
-     * Realiza o teleporte efetivo para uma dimensão de sonho aleatória.
-     */
     public static void actuallyTeleport(ServerPlayer player) {
-        LOGGER.info("actuallyTeleport(): iniciando teleporte de {}", player.getGameProfile().getName());
-        MinecraftServer server = player.server;
-        
-        ResourceKey<Level> targetDimensionKey = DREAM_DIMENSIONS.get(RANDOM.nextInt(DREAM_DIMENSIONS.size()));
-        ServerLevel targetLevel = server.getLevel(targetDimensionKey);
+        ServerLevel currentLevel = (ServerLevel) player.level();
+        MinecraftServer server = currentLevel.getServer();
 
+        ResourceKey<Level> targetDimensionKey =
+                DREAM_DIMENSIONS.get(player.getRandom().nextInt(DREAM_DIMENSIONS.size()));
+
+        ServerLevel targetLevel = server.getLevel(targetDimensionKey);
         if (targetLevel == null) {
             LOGGER.error("Dimensão {} não encontrada para {}",
-                    targetDimensionKey.location(), player.getGameProfile().getName());
+                    targetDimensionKey.location(),
+                    player.getName().getString());
             return;
         }
 
-        BlockPos spawn = findSafeSpawnLocation(targetLevel, targetLevel.getSharedSpawnPos());
-        LOGGER.info("findSafeSpawnLocation resultou em {}", spawn);
-
-        LOGGER.info("stopSleeping() para {}", player.getGameProfile().getName());
+        // Atualiza estado de sono corretamente
         player.stopSleeping();
 
-        LOGGER.info("teleportTo() para {} em {}", targetDimensionKey.location(), spawn);
+        // 1.21.10+: spawn/respawn vem do LevelData.RespawnData
+        LevelData.RespawnData respawn = targetLevel.getLevelData().getRespawnData();
+        BlockPos worldSpawn = respawn.pos();
+
+        BlockPos spawn = findSafeSpawnLocation(targetLevel, worldSpawn);
+
         player.teleportTo(
                 targetLevel,
                 spawn.getX() + 0.5,
@@ -102,11 +113,17 @@ public final class SleepTeleportHandler {
 
     private static BlockPos findSafeSpawnLocation(ServerLevel level, BlockPos origin) {
         level.getChunkAt(origin);
-        int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, origin.getX(), origin.getZ());
+
+        int y = level.getHeight(
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                origin.getX(),
+                origin.getZ()
+        );
+
         if (y <= level.getMinY()) {
-            LOGGER.warn("findSafeSpawnLocation: fallback para Y=150 pois getHeight retornou {}", y);
-            y = 150;
+            y = 150; // fallback
         }
+
         return new BlockPos(origin.getX(), y, origin.getZ());
     }
 }
