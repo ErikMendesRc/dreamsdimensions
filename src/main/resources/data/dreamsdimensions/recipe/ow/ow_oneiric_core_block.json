@@ -2,13 +2,13 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "pattern": [
-    "IDI",
-    "DCD",
-    "IDI"
+    "IFI",
+    "FCF",
+    "IFI"
   ],
   "key": {
     "I": "dreamsdimensions:ow_dream_infused_stone",
-    "D": "dreamsdimensions:ow_dream_dust",
+    "F": "dreamsdimensions:ow_condensed_dream_crystal",
     "C": "minecraft:clock"
   },
   "result": {

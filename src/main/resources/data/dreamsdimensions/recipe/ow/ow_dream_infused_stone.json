@@ -2,12 +2,12 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "pattern": [
-    "SD",
-    "DS"
+    "SP",
+    "PS"
   ],
   "key": {
     "S": "minecraft:stone",
-    "D": "dreamsdimensions:ow_dream_dust"
+    "P": "dreamsdimensions:ow_refined_oneiric_powder"
   },
   "result": {
     "id": "dreamsdimensions:ow_dream_infused_stone",

@@ -188,18 +188,15 @@ A arquitetura separa claramente:
 
 ### Sprint 2 — Economia Overworld
 
-Fluxo de refino onírico OW:
-`ow_dream_dust -> ow_oneiric_residue -> ow_refined_oneiric_powder -> ow_stabilized_dream_fragment -> ow_condensed_dream_crystal`
+Fluxo oficial obrigatório de progressão OW:
+`ow_dream_dust -> ow_oneiric_residue -> ow_refined_oneiric_powder -> ow_stabilized_dream_fragment -> ow_condensed_dream_crystal -> ow_dream_infused_stone -> ow_oneiric_core_block -> ow_oneiric_awakener`
 
-Receitas implementadas nesta etapa:
-- `ow_oneiric_residue`: shapeless `2x ow_dream_dust -> 1x ow_oneiric_residue`.
-- `ow_refined_oneiric_powder`: smelting `ow_oneiric_residue` (200 ticks, 0.1 XP).
-- `ow_refined_oneiric_powder`: blasting `ow_oneiric_residue` (100 ticks, 0.1 XP).
-- `ow_stabilized_dream_fragment`: shaped 2x2 com `ow_refined_oneiric_powder`.
-- `ow_condensed_dream_crystal`: shaped `8x ow_stabilized_dream_fragment` + `minecraft:glass` no centro.
-- `ow_dream_binding_thread`: shapeless `minecraft:string + ow_refined_oneiric_powder`.
-- `ow_dream_catalyst`: shapeless `minecraft:blaze_powder + ow_refined_oneiric_powder`.
-- `ow_stabilizing_essence`: shapeless `minecraft:ghast_tear + ow_stabilized_dream_fragment`.
+Task 3 ("Casar tudo") consolidou as receitas existentes para eliminar caminhos legacy/fallback.
+A `ow_dream_infused_stone` agora exige `ow_refined_oneiric_powder` (não aceita mais `ow_dream_dust`).
+O `ow_oneiric_core_block` passou a exigir `ow_condensed_dream_crystal` no lugar do pó bruto.
+O `ow_oneiric_awakener` agora exige `ow_stabilizing_essence` e mantém o `ow_oneiric_core_block` como componente obrigatório.
+Com isso, a progressão de refino onírico virou gate real do avanço no Overworld até o item de retorno.
+As mecânicas de teleporte/retorno não foram alteradas nesta task, apenas a economia de crafting.
 
 Exemplo de lógica do item despertador (resumo):
 
