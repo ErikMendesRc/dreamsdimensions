@@ -1,18 +1,21 @@
 {
-  "block.dreamsdimensions.dream_grass_block": "Grama dos Sonhos",
-  "block.dreamsdimensions.blue_dream_grass": "Grama dos Sonhos Azul",
-  "block.dreamsdimensions.serene_stone": "Pedra Serena",
-  "block.dreamsdimensions.blue_dream_stone": "Pedra dos Sonhos Azul",
-  "block.dreamsdimensions.blue_dream_cobblestone": "Pedregulho dos Sonhos Azul",
-  "block.dreamsdimensions.dream_shimmer_block": "Bloco Cintilante dos Sonhos",
-  "block.dreamsdimensions.dream_glow_moss": "Musgo Luminoso dos Sonhos",
+  "block.dreamsdimensions.ds_dream_grass": "Grama dos Sonhos",
+  "block.dreamsdimensions.ds_dream_dirt": "Terra dos Sonhos",
+  "block.dreamsdimensions.ds_dream_sand": "Areia dos Sonhos",
+  "block.dreamsdimensions.ds_serene_stone": "Pedra Serena",
+  "block.dreamsdimensions.ds_dream_shimmer_block": "Bloco Cintilante dos Sonhos",
+  "block.dreamsdimensions.ds_dream_glow_moss": "Musgo Luminoso dos Sonhos",
+  "block.dreamsdimensions.ds_dream_flower": "Flor dos Sonhos",
+  "block.dreamsdimensions.ds_dream_log": "Tronco dos Sonhos",
+  "block.dreamsdimensions.ds_dream_leaves": "Folhas dos Sonhos",
+  "block.dreamsdimensions.az_dream_grass": "Grama Onírica Azul",
+  "block.dreamsdimensions.az_dream_dirt": "Terra Onírica Azul",
+  "block.dreamsdimensions.az_dream_stone": "Pedra Onírica Azul",
+  "block.dreamsdimensions.az_dream_cobblestone": "Pedregulho Onírico Azul",
   "block.dreamsdimensions.ow_dream_ore": "Minério dos Sonhos",
   "block.dreamsdimensions.ow_deepslate_dream_ore": "Minério dos Sonhos de Ardósia",
   "block.dreamsdimensions.ow_dream_infused_stone": "Pedra Infundida dos Sonhos",
   "block.dreamsdimensions.ow_oneiric_core_block": "Bloco do Núcleo Onírico",
-  "block.dreamsdimensions.dream_dirt_block": "Terra dos Sonhos",
-  "block.dreamsdimensions.blue_dream_dirt": "Terra dos Sonhos Azul",
-  "block.dreamsdimensions.dream_sand_block": "Areia dos Sonhos",
 
   "item.dreamsdimensions.ow_dream_dust": "Pó dos Sonhos",
   "item.dreamsdimensions.ow_oneiric_awakener": "Despertador Onírico",
@@ -23,5 +26,4 @@
   "tooltip.dreamsdimensions.ow_oneiric_awakener.line2": "Use para teleportar... talvez.",
   "message.dreamsdimensions.ow_oneiric_awakener.success": "Você acordou do sonho.",
   "message.dreamsdimensions.ow_oneiric_awakener.fail": "O Overworld não está disponível no momento."
-
 }

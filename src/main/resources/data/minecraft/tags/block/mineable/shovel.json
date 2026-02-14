@@ -1,11 +1,11 @@
 {
   "replace": false,
   "values": [
-    "dreamsdimensions:blue_dream_grass",
-    "dreamsdimensions:blue_dream_dirt",
-    "dreamsdimensions:dream_dirt_block",
-    "dreamsdimensions:dream_grass_block",
-    "dreamsdimensions:dream_sand_block",
-    "dreamsdimensions:dream_glow_moss"
+    "dreamsdimensions:az_dream_grass",
+    "dreamsdimensions:az_dream_dirt",
+    "dreamsdimensions:ds_dream_dirt",
+    "dreamsdimensions:ds_dream_grass",
+    "dreamsdimensions:ds_dream_sand",
+    "dreamsdimensions:ds_dream_glow_moss"
   ]
 }
