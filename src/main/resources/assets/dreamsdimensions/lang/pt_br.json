@@ -29,5 +29,13 @@
   "item.dreamsdimensions.ow_condensed_dream_crystal": "Cristal Onírico Condensado",
   "item.dreamsdimensions.ow_dream_binding_thread": "Fio de Ligação dos Sonhos",
   "item.dreamsdimensions.ow_dream_catalyst": "Catalisador dos Sonhos",
-  "item.dreamsdimensions.ow_stabilizing_essence": "Essência Estabilizadora"
+  "item.dreamsdimensions.ow_stabilizing_essence": "Essência Estabilizadora",
+  "effect.dreamsdimensions.ow_anchoring": "Ancoragem Onírica",
+  "effect.dreamsdimensions.ow_clarity": "Clareza Onírica",
+  "effect.dreamsdimensions.ow_ethereal_phase": "Fase Etérea",
+  "effect.dreamsdimensions.ow_early_awakening": "Despertar Prematuro",
+  "item.minecraft.potion.effect.ow_potion_of_anchoring": "Poção de Ancoragem Onírica",
+  "item.minecraft.potion.effect.ow_potion_of_clarity": "Poção de Clareza Onírica",
+  "item.minecraft.potion.effect.ow_potion_of_ethereal_phase": "Poção de Fase Etérea",
+  "item.minecraft.potion.effect.ow_potion_of_early_awakening": "Poção de Despertar Prematuro"
 }

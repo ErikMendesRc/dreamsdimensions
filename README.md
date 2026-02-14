@@ -468,3 +468,21 @@ Caso queira adicionar uma terceira dimensão onírica:
 5. Teste o fluxo de entrada/retorno para nova dimensão.
 
 Isso mantém o design atual escalável sem alterar o contrato principal do mod.
+
+## Sprint 3 — Poções Exclusivas (Task 3.1)
+
+Infra base de efeitos e poções exclusivas do eixo Overworld (`ow_`) registrada no mod.
+
+### MobEffects registrados
+- `dreamsdimensions:ow_anchoring` — base para ancoragem onírica (lógica detalhada na Task 3.2).
+- `dreamsdimensions:ow_clarity` — base para clareza onírica (lógica detalhada na Task 3.2).
+- `dreamsdimensions:ow_ethereal_phase` — base para fase etérea (lógica detalhada na Task 3.2).
+- `dreamsdimensions:ow_early_awakening` — base para despertar prematuro (lógica detalhada na Task 3.2).
+
+### Potions registradas
+- `dreamsdimensions:ow_potion_of_anchoring`
+- `dreamsdimensions:ow_potion_of_clarity`
+- `dreamsdimensions:ow_potion_of_ethereal_phase`
+- `dreamsdimensions:ow_potion_of_early_awakening`
+
+> Nota: nesta task foi implementado apenas o registro base (efeitos + poções + lang). A lógica de gameplay dos efeitos entra na **Task 3.2** e as receitas de brewing entram na **Task 3.3**.
