@@ -66,7 +66,7 @@ public final class SleepTeleportHandler {
 
         if (isUsingAwakener(player)) {
             if (BLOCKED_SLEEP_TELEPORT_THIS_CYCLE.add(player.getUUID())) {
-                LOGGER.info("[SleepTeleport][BLOCKED] player={} reason=using_awakener remainingTicks={}", player.getGameProfile().getName(), player.getUseItemRemainingTicks());
+                LOGGER.info("[SleepTeleport][BLOCKED] player={} reason=using_awakener remainingTicks={}", player.getGameProfile().name(), player.getUseItemRemainingTicks());
             }
             return;
         }
@@ -92,7 +92,7 @@ public final class SleepTeleportHandler {
                 .toList();
 
         LOGGER.info("[SleepTeleport][PICK] player={} candidates={} size={}",
-                player.getGameProfile().getName(),
+                player.getGameProfile().name(),
                 candidates.stream().map(key -> key.identifier().toString()).toList(),
                 candidates.size()
         );
@@ -121,7 +121,7 @@ public final class SleepTeleportHandler {
         ResourceKey<Level> chosen = pool.get(chosenIndex);
 
         LOGGER.info("[SleepTeleport][PICK] player={} lastDream={} pool={} poolSize={} chosenIndex={} chosen={}",
-                player.getGameProfile().getName(),
+                player.getGameProfile().name(),
                 last == null ? "<none>" : last.identifier(),
                 pool.stream().map(key -> key.identifier().toString()).toList(),
                 pool.size(),
@@ -155,7 +155,7 @@ public final class SleepTeleportHandler {
         BlockPos spawn = findSafeSpawnLocation(targetLevel, worldSpawn);
 
         LOGGER.info("[SleepTeleport] player={} from={} to={} spawn=({}, {}, {})",
-                player.getGameProfile().getName(),
+                player.getGameProfile().name(),
                 currentLevel.dimension().identifier(),
                 targetDimensionKey.identifier(),
                 spawn.getX(),

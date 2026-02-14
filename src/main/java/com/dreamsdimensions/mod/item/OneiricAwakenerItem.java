@@ -190,7 +190,7 @@ public class OneiricAwakenerItem extends Item {
 
         if (lastRemaining == null || lastRemaining != remaining) {
             LOGGER.info("[Awakener][TICK][SERVER] player={} using={} remaining={} dim={} isSleeping={}",
-                    serverPlayer.getGameProfile().getName(),
+                    serverPlayer.getGameProfile().name(),
                     usingAwakener,
                     remaining,
                     serverPlayer.level().dimension().identifier(),
