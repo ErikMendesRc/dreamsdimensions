@@ -5,6 +5,7 @@ import com.dreamsdimensions.mod.event.CommonEvents;
 import com.dreamsdimensions.mod.event.DreamDimensionEffectsHandler;
 import com.dreamsdimensions.mod.event.DreamReturnAttachmentHandler;
 import com.dreamsdimensions.mod.event.SleepTeleportHandler;
+import com.dreamsdimensions.mod.item.OneiricAwakenerItem;
 import com.dreamsdimensions.mod.registry.ModAttachments;
 import com.dreamsdimensions.mod.registry.ModBlocks;
 import com.dreamsdimensions.mod.registry.ModCreativeTabs;
@@ -52,6 +53,7 @@ public class DreamsDimensions {
         NeoForge.EVENT_BUS.addListener(DreamDimensionEffectsHandler::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(DreamReturnAttachmentHandler::onPlayerSetSpawn);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(OneiricAwakenerItem::onServerPlayerTick);
 
         LOGGER.info("Registros e listeners de Dreams Dimensions configurados.");
     }

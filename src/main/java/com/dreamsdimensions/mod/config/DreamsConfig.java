@@ -5,6 +5,7 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -41,10 +42,6 @@ public final class DreamsConfig {
 
     private DreamsConfig() {}
 
-    // =========================
-    // CONFIG LOAD EVENTS
-    // =========================
-
     @SubscribeEvent
     static void onLoad(final ModConfigEvent.Loading event) {
         if (!isOwnConfig(event)) return;
@@ -66,10 +63,6 @@ public final class DreamsConfig {
                 && event.getConfig().getSpec() == SPEC;
     }
 
-    // =========================
-    // PUBLIC API
-    // =========================
-
     public static boolean isDreamDimension(ResourceKey<Level> dimension) {
 
         if (!baked) {
@@ -85,19 +78,39 @@ public final class DreamsConfig {
                     dimension.identifier(),
                     dreamDimensions.stream().map(key -> key.identifier().toString()).toList()
             );
-        } else {
-            LOGGER.debug(
-                    "[DreamsConfig] Dream check OK. asked={}",
-                    dimension.identifier()
-            );
         }
 
         return result;
     }
 
-    // =========================
-    // INTERNAL
-    // =========================
+    public static Set<ResourceKey<Level>> getDreamDimensions() {
+        if (!baked) {
+            LOGGER.warn("[DreamsConfig] getDreamDimensions called before bake. Forcing bake.");
+            bake();
+        }
+        return dreamDimensions;
+    }
+
+    public static void logResolvedDreamDimensions(MinecraftServer server) {
+        Set<ResourceKey<Level>> configured = getDreamDimensions();
+        List<String> existing = configured.stream()
+                .filter(key -> server.getLevel(key) != null)
+                .map(key -> key.identifier().toString())
+                .sorted()
+                .toList();
+        List<String> missing = configured.stream()
+                .filter(key -> server.getLevel(key) == null)
+                .map(key -> key.identifier().toString())
+                .sorted()
+                .toList();
+
+        LOGGER.info("[DreamsConfig] dream_dimensions baked={} configured={} existingOnServer={} missingOnServer={}",
+                baked,
+                configured.stream().map(key -> key.identifier().toString()).sorted().toList(),
+                existing,
+                missing
+        );
+    }
 
     private static boolean isValidIdentifier(Object value) {
         return value instanceof String string && Identifier.tryParse(string) != null;

@@ -1,6 +1,10 @@
 package com.dreamsdimensions.mod.event;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
+import com.dreamsdimensions.mod.attachment.DreamReturnData;
+import com.dreamsdimensions.mod.config.DreamsConfig;
+import com.dreamsdimensions.mod.registry.ModAttachments;
+import com.dreamsdimensions.mod.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -8,12 +12,14 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.storage.LevelData;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.slf4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -21,87 +27,141 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class SleepTeleportHandler {
 
-    private static final List<ResourceKey<Level>> DREAM_DIMENSIONS = List.of(
-            ResourceKey.create(
-                    Registries.DIMENSION,
-                    Identifier.fromNamespaceAndPath(DreamsDimensions.MODID, "dreamscape")
-            ),
-            ResourceKey.create(
-                    Registries.DIMENSION,
-                    Identifier.fromNamespaceAndPath(DreamsDimensions.MODID, "campo_onirico_azul")
-            )
+    private static final ResourceKey<Level> FALLBACK_DREAM_DIMENSION = ResourceKey.create(
+            Registries.DIMENSION,
+            Identifier.fromNamespaceAndPath(DreamsDimensions.MODID, "dreamscape")
     );
 
     private static final Logger LOGGER = DreamsDimensions.LOGGER;
 
-    /**
-     * Guarda quem já foi teleportado "neste ciclo de sono".
-     * Assim: quando atingir 100 ticks, teleportamos 1x e não repetimos todo tick.
-     */
     private static final Set<UUID> TELEPORTED_THIS_SLEEP = ConcurrentHashMap.newKeySet();
+    private static final Set<UUID> BLOCKED_SLEEP_TELEPORT_THIS_CYCLE = ConcurrentHashMap.newKeySet();
 
     private SleepTeleportHandler() {}
 
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        // Garantir que estamos no servidor
         if (!(player.level() instanceof ServerLevel serverLevel)) {
             TELEPORTED_THIS_SLEEP.remove(player.getUUID());
+            BLOCKED_SLEEP_TELEPORT_THIS_CYCLE.remove(player.getUUID());
             return;
         }
 
-        // Só no Overworld
         if (serverLevel.dimension() != Level.OVERWORLD) {
             TELEPORTED_THIS_SLEEP.remove(player.getUUID());
+            BLOCKED_SLEEP_TELEPORT_THIS_CYCLE.remove(player.getUUID());
             return;
         }
 
-        // Se não está dormindo, reseta o "ciclo"
         if (!player.isSleeping()) {
             TELEPORTED_THIS_SLEEP.remove(player.getUUID());
+            BLOCKED_SLEEP_TELEPORT_THIS_CYCLE.remove(player.getUUID());
             return;
         }
 
-        // Timer vanilla (>= 100 ticks de sono)
         if (!player.isSleepingLongEnough()) {
             return;
         }
 
-        // Garante 1x por ciclo de sono
+        if (isUsingAwakener(player)) {
+            if (BLOCKED_SLEEP_TELEPORT_THIS_CYCLE.add(player.getUUID())) {
+                LOGGER.info("[SleepTeleport][BLOCKED] player={} reason=using_awakener remainingTicks={}", player.getGameProfile().getName(), player.getUseItemRemainingTicks());
+            }
+            return;
+        }
+
         if (!TELEPORTED_THIS_SLEEP.add(player.getUUID())) {
             return;
         }
 
-        LOGGER.info("Dormiu >= 100 ticks: teleportando {} para dimensão dos sonhos",
-                player.getName().getString());
-
+        LOGGER.info("[SleepTeleport][READY] player={} slept>=100 starting teleport", player.getName().getString());
         actuallyTeleport(player);
+    }
+
+    private static boolean isUsingAwakener(ServerPlayer player) {
+        return player.isUsingItem() && player.getUseItem().is(ModItems.ONEIRIC_AWAKENER.get());
+    }
+
+    public static ResourceKey<Level> pickDreamDimension(ServerPlayer player, MinecraftServer server) {
+        DreamsConfig.logResolvedDreamDimensions(server);
+
+        List<ResourceKey<Level>> candidates = DreamsConfig.getDreamDimensions().stream()
+                .filter(key -> server.getLevel(key) != null)
+                .sorted((a, b) -> a.identifier().toString().compareTo(b.identifier().toString()))
+                .toList();
+
+        LOGGER.info("[SleepTeleport][PICK] player={} candidates={} size={}",
+                player.getGameProfile().getName(),
+                candidates.stream().map(key -> key.identifier().toString()).toList(),
+                candidates.size()
+        );
+
+        if (candidates.isEmpty()) {
+            LOGGER.error("[SleepTeleport][PICK] No configured dream dimension exists on server. fallback={}", FALLBACK_DREAM_DIMENSION.identifier());
+            return FALLBACK_DREAM_DIMENSION;
+        }
+
+        if (candidates.size() == 1) {
+            return candidates.getFirst();
+        }
+
+        DreamReturnData data = player.getData(ModAttachments.DREAM_RETURN);
+        ResourceKey<Level> last = data.getLastDreamDimension();
+
+        List<ResourceKey<Level>> withoutLast = new ArrayList<>(candidates);
+        if (last != null) {
+            withoutLast.remove(last);
+        }
+
+        List<ResourceKey<Level>> pool = withoutLast.isEmpty() ? candidates : withoutLast;
+
+        RandomSource rng = server.overworld().getRandom();
+        int chosenIndex = rng.nextInt(pool.size());
+        ResourceKey<Level> chosen = pool.get(chosenIndex);
+
+        LOGGER.info("[SleepTeleport][PICK] player={} lastDream={} pool={} poolSize={} chosenIndex={} chosen={}",
+                player.getGameProfile().getName(),
+                last == null ? "<none>" : last.identifier(),
+                pool.stream().map(key -> key.identifier().toString()).toList(),
+                pool.size(),
+                chosenIndex,
+                chosen.identifier()
+        );
+
+        data.setLastDreamDimension(chosen);
+        return chosen;
     }
 
     public static void actuallyTeleport(ServerPlayer player) {
         ServerLevel currentLevel = (ServerLevel) player.level();
         MinecraftServer server = currentLevel.getServer();
 
-        ResourceKey<Level> targetDimensionKey =
-                DREAM_DIMENSIONS.get(player.getRandom().nextInt(DREAM_DIMENSIONS.size()));
+        ResourceKey<Level> targetDimensionKey = pickDreamDimension(player, server);
 
         ServerLevel targetLevel = server.getLevel(targetDimensionKey);
         if (targetLevel == null) {
-            LOGGER.error("Dimensão {} não encontrada para {}",
+            LOGGER.error("[SleepTeleport] Target dimension {} not found for {}",
                     targetDimensionKey.identifier(),
                     player.getName().getString());
             return;
         }
 
-        // Atualiza estado de sono corretamente
         player.stopSleeping();
 
-        // 1.21.10+: spawn/respawn vem do LevelData.RespawnData
         LevelData.RespawnData respawn = targetLevel.getLevelData().getRespawnData();
         BlockPos worldSpawn = respawn.pos();
 
         BlockPos spawn = findSafeSpawnLocation(targetLevel, worldSpawn);
+
+        LOGGER.info("[SleepTeleport] player={} from={} to={} spawn=({}, {}, {})",
+                player.getGameProfile().getName(),
+                currentLevel.dimension().identifier(),
+                targetDimensionKey.identifier(),
+                spawn.getX(),
+                spawn.getY(),
+                spawn.getZ()
+        );
 
         player.teleportTo(
                 targetLevel,
@@ -125,7 +185,7 @@ public final class SleepTeleportHandler {
         );
 
         if (y <= level.getMinY()) {
-            y = 150; // fallback
+            y = 150;
         }
 
         return new BlockPos(origin.getX(), y, origin.getZ());
