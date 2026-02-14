@@ -35,6 +35,34 @@ public final class ModItems {
                     .useCooldown(OneiricAwakenerItem.COOLDOWN_TICKS)
     );
 
+    public static final DeferredItem<Item> OW_ONEIRIC_RESIDUE = ITEMS.registerSimpleItem(
+            "ow_oneiric_residue"
+    );
+
+    public static final DeferredItem<Item> OW_REFINED_ONEIRIC_POWDER = ITEMS.registerSimpleItem(
+            "ow_refined_oneiric_powder"
+    );
+
+    public static final DeferredItem<Item> OW_STABILIZED_DREAM_FRAGMENT = ITEMS.registerSimpleItem(
+            "ow_stabilized_dream_fragment"
+    );
+
+    public static final DeferredItem<Item> OW_CONDENSED_DREAM_CRYSTAL = ITEMS.registerSimpleItem(
+            "ow_condensed_dream_crystal"
+    );
+
+    public static final DeferredItem<Item> OW_DREAM_BINDING_THREAD = ITEMS.registerSimpleItem(
+            "ow_dream_binding_thread"
+    );
+
+    public static final DeferredItem<Item> OW_DREAM_CATALYST = ITEMS.registerSimpleItem(
+            "ow_dream_catalyst"
+    );
+
+    public static final DeferredItem<Item> OW_STABILIZING_ESSENCE = ITEMS.registerSimpleItem(
+            "ow_stabilizing_essence"
+    );
+
     public static final DeferredItem<BlockItem> DREAM_GRASS_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(
             ModBlocks.DREAM_GRASS_BLOCK
     );

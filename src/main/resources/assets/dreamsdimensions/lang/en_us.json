@@ -16,14 +16,18 @@
   "block.dreamsdimensions.ow_deepslate_dream_ore": "Deepslate Dream Ore",
   "block.dreamsdimensions.ow_dream_infused_stone": "Dream-Infused Stone",
   "block.dreamsdimensions.ow_oneiric_core_block": "Oneiric Core Block",
-
   "item.dreamsdimensions.ow_dream_dust": "Dream Dust",
   "item.dreamsdimensions.ow_oneiric_awakener": "Oneiric Awakener",
-
   "itemGroup.dreamsdimensions.dreams_dimensions_tab": "Dreams Dimensions",
-
   "tooltip.dreamsdimensions.ow_oneiric_awakener.line1": "Used to pierce the veils of dreams.",
   "tooltip.dreamsdimensions.ow_oneiric_awakener.line2": "Use it to teleport... maybe.",
   "message.dreamsdimensions.ow_oneiric_awakener.success": "You woke up from the dream.",
-  "message.dreamsdimensions.ow_oneiric_awakener.fail": "The Overworld is unavailable right now."
+  "message.dreamsdimensions.ow_oneiric_awakener.fail": "The Overworld is unavailable right now.",
+  "item.dreamsdimensions.ow_oneiric_residue": "Oneiric Residue",
+  "item.dreamsdimensions.ow_refined_oneiric_powder": "Refined Oneiric Powder",
+  "item.dreamsdimensions.ow_stabilized_dream_fragment": "Stabilized Dream Fragment",
+  "item.dreamsdimensions.ow_condensed_dream_crystal": "Condensed Dream Crystal",
+  "item.dreamsdimensions.ow_dream_binding_thread": "Dream Binding Thread",
+  "item.dreamsdimensions.ow_dream_catalyst": "Dream Catalyst",
+  "item.dreamsdimensions.ow_stabilizing_essence": "Stabilizing Essence"
 }
