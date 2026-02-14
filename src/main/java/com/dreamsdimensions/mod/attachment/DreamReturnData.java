@@ -22,23 +22,34 @@ public final class DreamReturnData {
                     .forGetter(data -> Optional.ofNullable(data.pos)),
             Codec.FLOAT
                     .optionalFieldOf("yaw")
-                    .forGetter(data -> Optional.ofNullable(data.yaw))
-    ).apply(instance, (dimension, pos, yaw) -> new DreamReturnData(
+                    .forGetter(data -> Optional.ofNullable(data.yaw)),
+            ResourceKey.codec(Registries.DIMENSION)
+                    .optionalFieldOf("last_dream_dimension")
+                    .forGetter(data -> Optional.ofNullable(data.lastDreamDimension))
+    ).apply(instance, (dimension, pos, yaw, lastDreamDimension) -> new DreamReturnData(
             dimension.orElse(null),
             pos.orElse(null),
-            yaw.orElse(null)
+            yaw.orElse(null),
+            lastDreamDimension.orElse(null)
     )));
 
     @Nullable private ResourceKey<Level> dimension;
     @Nullable private BlockPos pos;
     @Nullable private Float yaw;
+    @Nullable private ResourceKey<Level> lastDreamDimension;
 
     public DreamReturnData() {}
 
-    private DreamReturnData(@Nullable ResourceKey<Level> dimension, @Nullable BlockPos pos, @Nullable Float yaw) {
+    private DreamReturnData(
+            @Nullable ResourceKey<Level> dimension,
+            @Nullable BlockPos pos,
+            @Nullable Float yaw,
+            @Nullable ResourceKey<Level> lastDreamDimension
+    ) {
         this.dimension = dimension;
         this.pos = pos;
         this.yaw = yaw;
+        this.lastDreamDimension = lastDreamDimension;
     }
 
     public void setOverworldBed(BlockPos pos, float yaw) {
@@ -63,5 +74,14 @@ public final class DreamReturnData {
 
     public float getYawOr(float fallback) {
         return yaw != null ? yaw : fallback;
+    }
+
+    public void setLastDreamDimension(@Nullable ResourceKey<Level> lastDreamDimension) {
+        this.lastDreamDimension = lastDreamDimension;
+    }
+
+    @Nullable
+    public ResourceKey<Level> getLastDreamDimension() {
+        return lastDreamDimension;
     }
 }

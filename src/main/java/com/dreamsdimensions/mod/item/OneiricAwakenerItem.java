@@ -18,13 +18,19 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.component.UseCooldown;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.slf4j.Logger;
+
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class OneiricAwakenerItem extends Item {
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int USE_DURATION_TICKS = 60;
     public static final int COOLDOWN_TICKS = 60;
+    private static final Map<UUID, Integer> LAST_REMAINING_TICKS = new ConcurrentHashMap<>();
 
     public OneiricAwakenerItem(Properties pProperties) {
         super(pProperties);
@@ -40,10 +46,6 @@ public class OneiricAwakenerItem extends Item {
         return ItemUseAnimation.BOW;
     }
 
-    // =========================
-    // USE (Right Click)
-    // =========================
-
     @Override
     public InteractionResult use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
 
@@ -55,14 +57,15 @@ public class OneiricAwakenerItem extends Item {
         boolean onCooldown = pPlayer.getCooldowns().isOnCooldown(stack);
 
         LOGGER.info(
-                "[Awakener][USE][{}] Player={} Dimension={} Allowed={} Cooldown={} isUsingItem={} isSleeping={}",
+                "[Awakener][USE][{}] Player={} Dimension={} Allowed={} Cooldown={} isUsingItem={} held={} gameTime={}",
                 isClient ? "CLIENT" : "SERVER",
                 pPlayer.getName().getString(),
                 dimensionId,
                 allowed,
                 onCooldown,
                 pPlayer.isUsingItem(),
-                (pPlayer instanceof ServerPlayer sp) ? sp.isSleeping() : "N/A"
+                stack,
+                pLevel.getGameTime()
         );
 
         if (!allowed) {
@@ -75,20 +78,20 @@ public class OneiricAwakenerItem extends Item {
             return InteractionResult.FAIL;
         }
 
+        if (!isClient && pPlayer instanceof ServerPlayer serverPlayer && serverPlayer.isSleepingLongEnough()) {
+            LOGGER.warn("[Awakener][USE] Blocked: player is in sleep teleport flow.");
+            return InteractionResult.FAIL;
+        }
+
         pPlayer.startUsingItem(pUsedHand);
         LOGGER.info("[Awakener][USE] startUsingItem triggered successfully.");
 
-        return InteractionResult.CONSUME;
+        return pLevel.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     }
-
-    // =========================
-    // FINISH (After 60 ticks)
-    // =========================
 
     @Override
     public ItemStack finishUsingItem(ItemStack pStack, Level pLevel, LivingEntity pLivingEntity) {
 
-        // Esse método roda nos dois lados; teleporte só no server.
         if (!(pLivingEntity instanceof ServerPlayer serverPlayer)) {
             if (pLevel.isClientSide()) {
                 LOGGER.debug("[Awakener][FINISH][CLIENT] Ignored: client-side finish.");
@@ -102,12 +105,14 @@ public class OneiricAwakenerItem extends Item {
         boolean allowed = DreamReturnHelper.isDreamDimension(serverPlayer.level());
 
         LOGGER.info(
-                "[Awakener][FINISH][SERVER] Player={} Dimension={} Allowed={} isUsingItem={} isSleeping={}",
+                "[Awakener][FINISH][SERVER] Player={} Dimension={} Allowed={} isUsingItem={} remaining={} isSleeping={} gameTime={}",
                 serverPlayer.getName().getString(),
                 dimBefore,
                 allowed,
                 serverPlayer.isUsingItem(),
-                serverPlayer.isSleeping()
+                serverPlayer.getUseItemRemainingTicks(),
+                serverPlayer.isSleeping(),
+                serverPlayer.level().getGameTime()
         );
 
         if (!allowed) {
@@ -126,35 +131,17 @@ public class OneiricAwakenerItem extends Item {
                     serverPlayer.isSleeping()
             );
 
-            LOGGER.info("[Awakener][FINISH] Teleport transition created. Executing teleport...");
             serverPlayer.teleport(transition);
 
             LOGGER.info(
-                    "[Awakener][FINISH] AFTER TELEPORT: Level={} Pos=({}, {}, {}) Rot=({}, {}) isUsingItem={} isSleeping={}",
+                    "[Awakener][FINISH] AFTER TELEPORT: Level={} Pos=({}, {}, {}) Rot=({}, {})",
                     serverPlayer.level().dimension().identifier(),
                     serverPlayer.getX(), serverPlayer.getY(), serverPlayer.getZ(),
-                    serverPlayer.getYRot(), serverPlayer.getXRot(),
-                    serverPlayer.isUsingItem(),
-                    serverPlayer.isSleeping()
+                    serverPlayer.getYRot(), serverPlayer.getXRot()
             );
 
-            // ===== Hard sync / limpar estados que podem prender o client =====
             serverPlayer.stopUsingItem();
             serverPlayer.closeContainer();
-
-            // Força o client a aceitar imediatamente a posição/rotação atual (resolve “precisa usar 2x” em muitos casos)
-            if (serverPlayer.connection != null) {
-                serverPlayer.connection.teleport(
-                        serverPlayer.getX(),
-                        serverPlayer.getY(),
-                        serverPlayer.getZ(),
-                        serverPlayer.getYRot(),
-                        serverPlayer.getXRot()
-                );
-                LOGGER.info("[Awakener][FINISH] Post-teleport hard sync sent to client.");
-            } else {
-                LOGGER.warn("[Awakener][FINISH] Post-teleport hard sync skipped: connection is null.");
-            }
 
             serverPlayer.displayClientMessage(
                     Component.translatable("message.dreamsdimensions.ow_oneiric_awakener.success"),
@@ -182,7 +169,35 @@ public class OneiricAwakenerItem extends Item {
         return pStack;
     }
 
-    // =========================
+    public static void onServerPlayerTick(PlayerTickEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
+
+        UUID id = serverPlayer.getUUID();
+
+        boolean hasAwakenerInHand = serverPlayer.getMainHandItem().getItem() instanceof OneiricAwakenerItem
+                || serverPlayer.getOffhandItem().getItem() instanceof OneiricAwakenerItem;
+        boolean usingAwakener = serverPlayer.isUsingItem() && serverPlayer.getUseItem().getItem() instanceof OneiricAwakenerItem;
+
+        if (!hasAwakenerInHand && !usingAwakener) {
+            LAST_REMAINING_TICKS.remove(id);
+            return;
+        }
+
+        int remaining = serverPlayer.getUseItemRemainingTicks();
+        Integer lastRemaining = LAST_REMAINING_TICKS.get(id);
+
+        if (lastRemaining == null || lastRemaining != remaining) {
+            LOGGER.info("[Awakener][TICK][SERVER] player={} using={} remaining={} dim={} isSleeping={}",
+                    serverPlayer.getGameProfile().getName(),
+                    usingAwakener,
+                    remaining,
+                    serverPlayer.level().dimension().identifier(),
+                    serverPlayer.isSleeping());
+            LAST_REMAINING_TICKS.put(id, remaining);
+        }
+    }
 
     @Override
     public boolean isFoil(ItemStack pStack) {
