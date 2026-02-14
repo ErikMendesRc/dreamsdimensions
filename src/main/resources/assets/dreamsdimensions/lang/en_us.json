@@ -29,5 +29,13 @@
   "item.dreamsdimensions.ow_condensed_dream_crystal": "Condensed Dream Crystal",
   "item.dreamsdimensions.ow_dream_binding_thread": "Dream Binding Thread",
   "item.dreamsdimensions.ow_dream_catalyst": "Dream Catalyst",
-  "item.dreamsdimensions.ow_stabilizing_essence": "Stabilizing Essence"
+  "item.dreamsdimensions.ow_stabilizing_essence": "Stabilizing Essence",
+  "effect.dreamsdimensions.ow_anchoring": "Oneiric Anchoring",
+  "effect.dreamsdimensions.ow_clarity": "Oneiric Clarity",
+  "effect.dreamsdimensions.ow_ethereal_phase": "Ethereal Phase",
+  "effect.dreamsdimensions.ow_early_awakening": "Early Awakening",
+  "item.minecraft.potion.effect.ow_potion_of_anchoring": "Potion of Oneiric Anchoring",
+  "item.minecraft.potion.effect.ow_potion_of_clarity": "Potion of Oneiric Clarity",
+  "item.minecraft.potion.effect.ow_potion_of_ethereal_phase": "Potion of Ethereal Phase",
+  "item.minecraft.potion.effect.ow_potion_of_early_awakening": "Potion of Early Awakening"
 }

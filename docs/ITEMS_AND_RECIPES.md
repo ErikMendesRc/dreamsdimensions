@@ -348,3 +348,17 @@ O mod registra **26 entradas jogáveis** (9 itens diretos + 17 blocos com BlockI
   - `block.dreamsdimensions.dream_flower_block`
   - `block.dreamsdimensions.dream_log_block`
   - `block.dreamsdimensions.dream_leaves_block`
+
+## Sprint 3 — Task 3.1 (MobEffects + Potions)
+
+### MobEffects (origem `ow_`)
+- `dreamsdimensions:ow_anchoring` — efeito benéfico base de ancoragem onírica.
+- `dreamsdimensions:ow_clarity` — efeito benéfico base de clareza onírica.
+- `dreamsdimensions:ow_ethereal_phase` — efeito benéfico base de fase etérea.
+- `dreamsdimensions:ow_early_awakening` — efeito benéfico base de despertar prematuro.
+
+### Potions (origem `ow_`)
+- `dreamsdimensions:ow_potion_of_anchoring` — como obter: a definir na Task 3.3 (brewing).
+- `dreamsdimensions:ow_potion_of_clarity` — como obter: a definir na Task 3.3 (brewing).
+- `dreamsdimensions:ow_potion_of_ethereal_phase` — como obter: a definir na Task 3.3 (brewing).
+- `dreamsdimensions:ow_potion_of_early_awakening` — como obter: a definir na Task 3.3 (brewing).
