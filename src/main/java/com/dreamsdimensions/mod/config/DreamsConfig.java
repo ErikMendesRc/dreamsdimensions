@@ -16,14 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Configuração do mod baseada em {@link ModConfigSpec}.
- * <p>
- * A classe é inscrita no MOD bus via {@link EventBusSubscriber}, conforme eventos
- * {@link ModConfigEvent.Loading} e {@link ModConfigEvent.Reloading} descritos no SDK.
- * </p>
- */
-@EventBusSubscriber(modid = DreamsDimensions.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = DreamsDimensions.MODID)
 public final class DreamsConfig {
 
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -42,71 +35,100 @@ public final class DreamsConfig {
             );
 
     private static Set<ResourceKey<Level>> dreamDimensions = Set.of();
-    private static volatile boolean baked;
+    private static boolean baked = false;
 
-    /**
-     * Especificação final registrada no {@link net.neoforged.fml.ModContainer#registerConfig}.
-     */
     public static final ModConfigSpec SPEC = BUILDER.build();
 
-    private DreamsConfig() {
-    }
+    private DreamsConfig() {}
 
-    /**
-     * Disparado quando a configuração é carregada.
-     */
+    // =========================
+    // CONFIG LOAD EVENTS
+    // =========================
+
     @SubscribeEvent
     static void onLoad(final ModConfigEvent.Loading event) {
-        if (!isOwnConfigEvent(event)) {
-            return;
-        }
-        LOGGER.info("Carregando configuração de Dreams Dimensions: {}", event.getConfig().getFileName());
+        if (!isOwnConfig(event)) return;
+
+        LOGGER.info("[DreamsConfig] Loading config file: {}", event.getConfig().getFileName());
         bake();
     }
 
-    /**
-     * Disparado quando a configuração é recarregada (ex: /reload).
-     */
     @SubscribeEvent
     static void onReload(final ModConfigEvent.Reloading event) {
-        if (!isOwnConfigEvent(event)) {
-            return;
-        }
-        LOGGER.info("Recarregando configuração de Dreams Dimensions: {}", event.getConfig().getFileName());
+        if (!isOwnConfig(event)) return;
+
+        LOGGER.info("[DreamsConfig] Reloading config file: {}", event.getConfig().getFileName());
         bake();
     }
 
-    public static boolean isDreamDimension(ResourceKey<Level> dimension) {
-        if (!baked) {
-            bake();
-        }
-        return dreamDimensions.contains(dimension);
-    }
-
-    private static boolean isOwnConfigEvent(ModConfigEvent event) {
+    private static boolean isOwnConfig(ModConfigEvent event) {
         return event.getConfig().getModId().equals(DreamsDimensions.MODID)
                 && event.getConfig().getSpec() == SPEC;
     }
+
+    // =========================
+    // PUBLIC API
+    // =========================
+
+    public static boolean isDreamDimension(ResourceKey<Level> dimension) {
+
+        if (!baked) {
+            LOGGER.warn("[DreamsConfig] isDreamDimension called before bake. Forcing bake.");
+            bake();
+        }
+
+        boolean result = dreamDimensions.contains(dimension);
+
+        if (!result) {
+            LOGGER.warn(
+                    "[DreamsConfig] Dream check FAILED. asked={} bakedSet={}",
+                    dimension.identifier(),
+                    dreamDimensions.stream().map(key -> key.identifier().toString()).toList()
+            );
+        } else {
+            LOGGER.debug(
+                    "[DreamsConfig] Dream check OK. asked={}",
+                    dimension.identifier()
+            );
+        }
+
+        return result;
+    }
+
+    // =========================
+    // INTERNAL
+    // =========================
 
     private static boolean isValidIdentifier(Object value) {
         return value instanceof String string && Identifier.tryParse(string) != null;
     }
 
     private static void bake() {
-        LOGGER.info("Dream dimension IDs raw: {}", DREAM_DIMENSION_IDS.get());
+
+        LOGGER.info("[DreamsConfig] Raw dream_dimensions from config: {}", DREAM_DIMENSION_IDS.get());
 
         Set<ResourceKey<Level>> parsed = new HashSet<>();
+
         for (String entry : DREAM_DIMENSION_IDS.get()) {
+
             Identifier id = Identifier.tryParse(entry);
+
             if (id == null) {
-                LOGGER.warn("Dimensão de sonho inválida na config: {}", entry);
+                LOGGER.warn("[DreamsConfig] Invalid dream dimension entry: {}", entry);
                 continue;
             }
-            parsed.add(ResourceKey.create(Registries.DIMENSION, id));
+
+            ResourceKey<Level> key = ResourceKey.create(Registries.DIMENSION, id);
+            parsed.add(key);
+
+            LOGGER.info("[DreamsConfig] Registered dream dimension: {}", id);
         }
+
         dreamDimensions = Set.copyOf(parsed);
         baked = true;
 
-        LOGGER.info("Dream dimensions baked: {}", dreamDimensions);
+        LOGGER.info("[DreamsConfig] Dream dimensions baked successfully: {}",
+                dreamDimensions.stream().map(key -> key.identifier().toString()).toList()
+        );
     }
 }

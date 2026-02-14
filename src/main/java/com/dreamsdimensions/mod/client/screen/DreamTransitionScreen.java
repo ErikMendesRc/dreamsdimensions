@@ -24,18 +24,22 @@ public class DreamTransitionScreen extends LevelLoadingScreen {
 
     @Override
     public void render(@NotNull GuiGraphics gg, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(gg, mouseX, mouseY, partialTick);
-
+        gg.fill(0, 0, this.width, this.height, 0xFF000000);
         float progress = Math.min(1.0f, fadeTicks / (float) MIN_TICKS);
-        int alpha = ((int) (progress * 255)) << 24;
-        gg.fill(0, 0, width, height, alpha);
+        int alpha = (int) (progress * 255.0f);
+        int color = (alpha << 24);
+        gg.fill(0, 0, this.width, this.height, color);
 
         gg.drawCenteredString(
                 this.font,
                 Component.literal("Você está sonhando..."),
-                width / 2,
-                height / 2,
+                this.width / 2,
+                this.height / 2,
                 0xFFFFFF
         );
+
+        // Se você ainda quiser o loading/progresso do LevelLoadingScreen,
+        // pode chamar super.render(...) MAS ELE PODE voltar a chamar blur dependendo da implementação.
+        // Então, por segurança, não chamamos super.render aqui.
     }
 }
