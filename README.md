@@ -485,4 +485,24 @@ Infra base de efeitos e poções exclusivas do eixo Overworld (`ow_`) registrada
 - `dreamsdimensions:ow_potion_of_ethereal_phase`
 - `dreamsdimensions:ow_potion_of_early_awakening`
 
-> Nota: nesta task foi implementado apenas o registro base (efeitos + poções + lang). A lógica de gameplay dos efeitos entra na **Task 3.2** e as receitas de brewing entram na **Task 3.3**.
+> Nota: Task 3.1 cobriu o registro base. A **Task 3.2** (abaixo) implementa a lógica funcional em runtime; a Task 3.3 seguirá com receitas de brewing.
+
+## Sprint 3 — Task 3.2 (Lógica funcional dos 4 efeitos custom)
+
+Implementação concluída com listeners no `NeoForge.EVENT_BUS`:
+
+- `ow_anchoring`
+  - Reduz dano de queda em ~90% enquanto ativo usando `LivingFallEvent#setDamageMultiplier`.
+  - Não altera gravidade e não afeta outros tipos de dano.
+
+- `ow_clarity`
+  - Ao entrar no jogador, remove: `poison`, `wither`, `slowness`, `mining_fatigue` e `blindness`.
+  - Enquanto ativo, bloqueia aplicação de efeitos negativos via `MobEffectEvent.Applicable`.
+
+- `ow_ethereal_phase`
+  - Enquanto ativo, aplica regra de colisão `Team.CollisionRule.NEVER` ao jogador para atravessar entidades (sem atravessar blocos).
+  - Reduz knockback com `LivingKnockBackEvent` (forte redução de empurrão).
+
+- `ow_early_awakening`
+  - Em morte de jogador dentro de dimensão onírica, intercepta `LivingDeathEvent`, consome o efeito, evita a morte/drop e teleporta de volta ao Overworld usando `DreamReturnHelper`.
+  - Não afeta mortes no Overworld.
