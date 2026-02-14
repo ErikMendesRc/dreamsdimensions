@@ -178,6 +178,25 @@ A arquitetura separa claramente:
 - Itens-chave:
   - `ow_dream_dust`
   - `ow_oneiric_awakener`
+  - `ow_oneiric_residue`
+  - `ow_refined_oneiric_powder`
+  - `ow_stabilized_dream_fragment`
+  - `ow_condensed_dream_crystal`
+  - `ow_dream_binding_thread`
+  - `ow_dream_catalyst`
+  - `ow_stabilizing_essence`
+
+### Sprint 2 — Economia Overworld (Passo 1)
+
+Novos itens OW (prefixo `ow_`) adicionados nesta sprint, sem receitas e sem mecânicas extras:
+
+- `dreamsdimensions:ow_oneiric_residue` — resíduo base de energia onírica do Overworld.
+- `dreamsdimensions:ow_refined_oneiric_powder` — versão refinada do resíduo para estágios intermediários.
+- `dreamsdimensions:ow_stabilized_dream_fragment` — fragmento estabilizado usado em composição avançada.
+- `dreamsdimensions:ow_condensed_dream_crystal` — cristal condensado de energia onírica.
+- `dreamsdimensions:ow_dream_binding_thread` — fio de ligação para integrar componentes oníricos.
+- `dreamsdimensions:ow_dream_catalyst` — catalisador de processos de transmutação onírica.
+- `dreamsdimensions:ow_stabilizing_essence` — essência final de estabilização para progressão OW.
 
 Exemplo de lógica do item despertador (resumo):
 

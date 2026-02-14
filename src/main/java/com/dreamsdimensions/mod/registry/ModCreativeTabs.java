@@ -25,6 +25,13 @@ public final class ModCreativeTabs {
                     .displayItems((params, output) -> {
                         output.accept(ModItems.DREAM_DUST.get());
                         output.accept(ModItems.ONEIRIC_AWAKENER.get());
+                        output.accept(ModItems.OW_ONEIRIC_RESIDUE.get());
+                        output.accept(ModItems.OW_REFINED_ONEIRIC_POWDER.get());
+                        output.accept(ModItems.OW_STABILIZED_DREAM_FRAGMENT.get());
+                        output.accept(ModItems.OW_CONDENSED_DREAM_CRYSTAL.get());
+                        output.accept(ModItems.OW_DREAM_BINDING_THREAD.get());
+                        output.accept(ModItems.OW_DREAM_CATALYST.get());
+                        output.accept(ModItems.OW_STABILIZING_ESSENCE.get());
 
                         output.accept(ModBlocks.DREAM_GRASS_BLOCK.get());
                         output.accept(ModBlocks.BLUE_DREAM_GRASS.get());

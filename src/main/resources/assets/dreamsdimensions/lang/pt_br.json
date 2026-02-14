@@ -16,14 +16,18 @@
   "block.dreamsdimensions.ow_deepslate_dream_ore": "Minério dos Sonhos de Ardósia",
   "block.dreamsdimensions.ow_dream_infused_stone": "Pedra Infundida dos Sonhos",
   "block.dreamsdimensions.ow_oneiric_core_block": "Bloco do Núcleo Onírico",
-
   "item.dreamsdimensions.ow_dream_dust": "Pó dos Sonhos",
   "item.dreamsdimensions.ow_oneiric_awakener": "Despertador Onírico",
-
   "itemGroup.dreamsdimensions.dreams_dimensions_tab": "Dimensões dos Sonhos",
-
   "tooltip.dreamsdimensions.ow_oneiric_awakener.line1": "Usado para atravessar os véus dos sonhos.",
   "tooltip.dreamsdimensions.ow_oneiric_awakener.line2": "Use para teleportar... talvez.",
   "message.dreamsdimensions.ow_oneiric_awakener.success": "Você acordou do sonho.",
-  "message.dreamsdimensions.ow_oneiric_awakener.fail": "O Overworld não está disponível no momento."
+  "message.dreamsdimensions.ow_oneiric_awakener.fail": "O Overworld não está disponível no momento.",
+  "item.dreamsdimensions.ow_oneiric_residue": "Resíduo Onírico",
+  "item.dreamsdimensions.ow_refined_oneiric_powder": "Pó Onírico Refinado",
+  "item.dreamsdimensions.ow_stabilized_dream_fragment": "Fragmento Onírico Estabilizado",
+  "item.dreamsdimensions.ow_condensed_dream_crystal": "Cristal Onírico Condensado",
+  "item.dreamsdimensions.ow_dream_binding_thread": "Fio de Ligação dos Sonhos",
+  "item.dreamsdimensions.ow_dream_catalyst": "Catalisador dos Sonhos",
+  "item.dreamsdimensions.ow_stabilizing_essence": "Essência Estabilizadora"
 }
