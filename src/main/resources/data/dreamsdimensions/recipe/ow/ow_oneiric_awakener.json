@@ -4,11 +4,12 @@
   "pattern": [
     " F ",
     " K ",
-    " B "
+    "EBB"
   ],
   "key": {
     "F": "minecraft:feather",
     "K": "dreamsdimensions:ow_oneiric_core_block",
+    "E": "dreamsdimensions:ow_stabilizing_essence",
     "B": "minecraft:glass_bottle"
   },
   "result": {
