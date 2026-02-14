@@ -23,7 +23,7 @@ import java.util.Set;
  * {@link ModConfigEvent.Loading} e {@link ModConfigEvent.Reloading} descritos no SDK.
  * </p>
  */
-@EventBusSubscriber(modid = DreamsDimensions.MODID)
+@EventBusSubscriber(modid = DreamsDimensions.MODID, bus = EventBusSubscriber.Bus.MOD)
 public final class DreamsConfig {
 
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -42,6 +42,7 @@ public final class DreamsConfig {
             );
 
     private static Set<ResourceKey<Level>> dreamDimensions = Set.of();
+    private static volatile boolean baked;
 
     /**
      * Especificação final registrada no {@link net.neoforged.fml.ModContainer#registerConfig}.
@@ -56,6 +57,9 @@ public final class DreamsConfig {
      */
     @SubscribeEvent
     static void onLoad(final ModConfigEvent.Loading event) {
+        if (!isOwnConfigEvent(event)) {
+            return;
+        }
         LOGGER.info("Carregando configuração de Dreams Dimensions: {}", event.getConfig().getFileName());
         bake();
     }
@@ -65,12 +69,23 @@ public final class DreamsConfig {
      */
     @SubscribeEvent
     static void onReload(final ModConfigEvent.Reloading event) {
+        if (!isOwnConfigEvent(event)) {
+            return;
+        }
         LOGGER.info("Recarregando configuração de Dreams Dimensions: {}", event.getConfig().getFileName());
         bake();
     }
 
     public static boolean isDreamDimension(ResourceKey<Level> dimension) {
+        if (!baked) {
+            bake();
+        }
         return dreamDimensions.contains(dimension);
+    }
+
+    private static boolean isOwnConfigEvent(ModConfigEvent event) {
+        return event.getConfig().getModId().equals(DreamsDimensions.MODID)
+                && event.getConfig().getSpec() == SPEC;
     }
 
     private static boolean isValidIdentifier(Object value) {
@@ -78,6 +93,8 @@ public final class DreamsConfig {
     }
 
     private static void bake() {
+        LOGGER.info("Dream dimension IDs raw: {}", DREAM_DIMENSION_IDS.get());
+
         Set<ResourceKey<Level>> parsed = new HashSet<>();
         for (String entry : DREAM_DIMENSION_IDS.get()) {
             Identifier id = Identifier.tryParse(entry);
@@ -88,5 +105,8 @@ public final class DreamsConfig {
             parsed.add(ResourceKey.create(Registries.DIMENSION, id));
         }
         dreamDimensions = Set.copyOf(parsed);
+        baked = true;
+
+        LOGGER.info("Dream dimensions baked: {}", dreamDimensions);
     }
 }
