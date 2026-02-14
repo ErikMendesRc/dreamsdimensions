@@ -32,7 +32,7 @@
 O mod implementa um ciclo “**dormir → sonhar → despertar**”:
 
 - O jogador dorme no Overworld por tempo suficiente e é teleportado para uma dimensão de sonho aleatória.
-- O jogador usa o item `oneiric_awakener` para retornar ao Overworld.
+- O jogador usa o item `ow_oneiric_awakener` para retornar ao Overworld.
 - O retorno prioriza posição da cama original e mantém fallback seguro para respawn ou spawn global.
 
 ---
@@ -169,15 +169,15 @@ A arquitetura separa claramente:
 #### Blocos
 
 - Registrados em `ModBlocks`.
-- Incluem blocos temáticos de sonho (`dream_grass_block`, `blue_dream_stone`, `oneiric_core_block`, etc.).
+- Incluem blocos temáticos de sonho (`dream_grass_block`, `blue_dream_stone`, `ow_oneiric_core_block`, etc.).
 - Recursos associados: `blockstates`, `models`, `textures`, `loot_tables`, tags de mineração e recipes.
 
 #### Itens
 
 - Registrados em `ModItems`.
 - Itens-chave:
-  - `dream_dust`
-  - `oneiric_awakener`
+  - `ow_dream_dust`
+  - `ow_oneiric_awakener`
 
 Exemplo de lógica do item despertador (resumo):
 
@@ -369,7 +369,7 @@ Artefato esperado:
 - Use `./gradlew runClient` para validar gameplay completo.
 - Cenários mínimos de teste manual:
   1. Dormir no Overworld e confirmar teleporte após ~5 segundos.
-  2. Usar `oneiric_awakener` e validar retorno correto.
+  2. Usar `ow_oneiric_awakener` e validar retorno correto.
   3. Validar fallback de retorno removendo/invalidando cama.
   4. Confirmar efeito `Slow Falling` no `campo_onirico_azul`.
 

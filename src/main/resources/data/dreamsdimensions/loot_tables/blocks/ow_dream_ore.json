@@ -9,7 +9,7 @@
           "children": [
             {
               "type": "minecraft:item",
-              "name": "dreamsdimensions:dream_ore",
+              "name": "dreamsdimensions:ow_dream_ore",
               "conditions": [
                 {
                   "condition": "minecraft:match_tool",
@@ -28,7 +28,7 @@
             },
             {
               "type": "minecraft:item",
-              "name": "dreamsdimensions:dream_dust",
+              "name": "dreamsdimensions:ow_dream_dust",
               "functions": [
                 {
                   "function": "minecraft:apply_bonus",

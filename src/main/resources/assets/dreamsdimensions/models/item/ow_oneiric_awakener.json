@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "dreamsdimensions:item/oneiric_awakener"
+    "layer0": "dreamsdimensions:item/ow_oneiric_awakener"
   }
 }

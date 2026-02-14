@@ -76,7 +76,7 @@ public class OneiricAwakenerItem extends Item {
         DreamReturnHelper.buildReturnTransition(serverPlayer).ifPresentOrElse(transition -> {
             serverPlayer.teleport(transition);
             serverPlayer.displayClientMessage(
-                    Component.translatable("message.dreamsdimensions.oneiric_awakener.success"),
+                    Component.translatable("message.dreamsdimensions.ow_oneiric_awakener.success"),
                     false
             );
 
@@ -88,7 +88,7 @@ public class OneiricAwakenerItem extends Item {
             serverPlayer.getCooldowns().addCooldown(pStack, cooldownTicks);
 
         }, () -> serverPlayer.displayClientMessage(
-                Component.translatable("message.dreamsdimensions.oneiric_awakener.fail"),
+                Component.translatable("message.dreamsdimensions.ow_oneiric_awakener.fail"),
                 true
         ));
 
@@ -109,9 +109,9 @@ public class OneiricAwakenerItem extends Item {
             java.util.function.Consumer<Component> tooltipAdder,
             TooltipFlag flag
     ) {
-        tooltipAdder.accept(Component.translatable("tooltip.dreamsdimensions.oneiric_awakener.line1")
+        tooltipAdder.accept(Component.translatable("tooltip.dreamsdimensions.ow_oneiric_awakener.line1")
                 .withStyle(ChatFormatting.GRAY));
-        tooltipAdder.accept(Component.translatable("tooltip.dreamsdimensions.oneiric_awakener.line2")
+        tooltipAdder.accept(Component.translatable("tooltip.dreamsdimensions.ow_oneiric_awakener.line2")
                 .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
 
         super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, flag);

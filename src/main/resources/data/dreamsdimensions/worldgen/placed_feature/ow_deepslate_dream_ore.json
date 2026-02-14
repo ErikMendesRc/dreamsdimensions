@@ -1,5 +1,5 @@
 {
-  "feature": "dreamsdimensions:deepslate_dream_ore",
+  "feature": "dreamsdimensions:ow_deepslate_dream_ore",
   "placement": [
     { "type": "minecraft:count", "count": 2 },
     { "type": "minecraft:in_square" },
