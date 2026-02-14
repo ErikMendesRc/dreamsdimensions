@@ -362,3 +362,23 @@ O mod registra **26 entradas jogáveis** (9 itens diretos + 17 blocos com BlockI
 - `dreamsdimensions:ow_potion_of_clarity` — como obter: a definir na Task 3.3 (brewing).
 - `dreamsdimensions:ow_potion_of_ethereal_phase` — como obter: a definir na Task 3.3 (brewing).
 - `dreamsdimensions:ow_potion_of_early_awakening` — como obter: a definir na Task 3.3 (brewing).
+
+## Sprint 3 — Task 3.2 (Implementado)
+
+### Status
+- **Implementado**: `ow_anchoring`, `ow_clarity`, `ow_ethereal_phase`, `ow_early_awakening`.
+
+### Comportamento funcional
+- `dreamsdimensions:ow_anchoring`
+  - Reduz dano de queda em ~90% enquanto ativo.
+  - Não altera gravidade.
+- `dreamsdimensions:ow_clarity`
+  - Remove `poison`, `wither`, `slowness`, `mining_fatigue`, `blindness` ao ser aplicado.
+  - Bloqueia novos efeitos negativos enquanto ativo.
+- `dreamsdimensions:ow_ethereal_phase`
+  - Remove colisão com entidades (players/mobs) usando regra de colisão de time.
+  - Reduz knockback/empurrão.
+  - Não remove colisão com blocos.
+- `dreamsdimensions:ow_early_awakening`
+  - Ao “morrer” em dimensão onírica com o efeito ativo: consome efeito, evita morte/drop e retorna ao Overworld.
+
