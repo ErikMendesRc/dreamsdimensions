@@ -382,3 +382,14 @@ O mod registra **26 entradas jogáveis** (9 itens diretos + 17 blocos com BlockI
 - `dreamsdimensions:ow_early_awakening`
   - Ao “morrer” em dimensão onírica com o efeito ativo: consome efeito, evita morte/drop e retorna ao Overworld.
 
+## Sprint 3 — Task 3.3 (Brewing)
+
+Todas as poções abaixo estão marcadas como **Obtido via Brewing (Sprint 3 — Task 3.3)**.
+
+| Poção | Base | Ingrediente | Resultado |
+|---|---|---|---|
+| Base Onírica | awkward + `ow_refined_oneiric_powder` | — | `ow_oneiric_base` |
+| Anchoring | `ow_oneiric_base` | `phantom_membrane` | `ow_potion_of_anchoring` |
+| Clarity | `ow_oneiric_base` | `ow_dream_catalyst` | `ow_potion_of_clarity` |
+| Ethereal | `ow_oneiric_base` | `ow_condensed_dream_crystal` | `ow_potion_of_ethereal_phase` |
+| Early Awakening | `ow_oneiric_base` | `ow_stabilizing_essence` | `ow_potion_of_early_awakening` |
