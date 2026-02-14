@@ -1,7 +1,7 @@
 {
   "aquifers_enabled": true,
   "default_block": {
-    "Name": "dreamsdimensions:blue_dream_stone"
+    "Name": "dreamsdimensions:az_dream_stone"
   },
   "default_fluid": {
     "Name": "minecraft:water",
@@ -613,7 +613,7 @@
         "then_run": {
           "type": "minecraft:block",
           "result_state": {
-            "Name": "dreamsdimensions:blue_dream_grass"
+            "Name": "dreamsdimensions:az_dream_grass"
           }
         }
       },
@@ -629,7 +629,7 @@
         "then_run": {
           "type": "minecraft:block",
           "result_state": {
-            "Name": "dreamsdimensions:blue_dream_dirt"
+            "Name": "dreamsdimensions:az_dream_dirt"
           }
         }
       },
@@ -645,14 +645,14 @@
         "then_run": {
           "type": "minecraft:block",
           "result_state": {
-            "Name": "dreamsdimensions:blue_dream_dirt"
+            "Name": "dreamsdimensions:az_dream_dirt"
           }
         }
       },
       {
         "type": "minecraft:block",
         "result_state": {
-          "Name": "dreamsdimensions:blue_dream_stone"
+          "Name": "dreamsdimensions:az_dream_stone"
         }
       }
     ]

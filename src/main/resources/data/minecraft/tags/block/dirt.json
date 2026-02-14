@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "dreamsdimensions:dream_dirt_block",
-    "dreamsdimensions:dream_grass_block"
+    "dreamsdimensions:ds_dream_dirt",
+    "dreamsdimensions:ds_dream_grass"
   ]
 }

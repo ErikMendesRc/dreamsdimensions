@@ -17,9 +17,9 @@ Este arquivo documenta os ajustes aplicados no `campo_onirico_azul_noise.json` p
   - Mantém o nível de água baixo, evitando oceanos grandes e reforçando o aspecto “campo” da dimensão.
 
 ## Substituição de blocos de terreno
-- **Base rochosa:** `dreamsdimensions:blue_dream_stone`
-- **Subsolo:** `dreamsdimensions:blue_dream_dirt`
-- **Superfície:** `dreamsdimensions:blue_dream_grass`
-- **Camadas profundas:** `dreamsdimensions:blue_dream_cobblestone`
+- **Base rochosa:** `dreamsdimensions:az_dream_stone`
+- **Subsolo:** `dreamsdimensions:az_dream_dirt`
+- **Superfície:** `dreamsdimensions:az_dream_grass`
+- **Camadas profundas:** `dreamsdimensions:az_dream_cobblestone`
 
 Essas trocas garantem que nenhum bloco vanilla de terreno (stone/dirt/grass_block/deepslate) apareça na dimensão, mantendo a compatibilidade com cavernas, minérios e estruturas vanilla.

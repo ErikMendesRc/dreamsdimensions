@@ -2,7 +2,7 @@
   "aquifers_enabled": false,
 
   "default_block": {
-    "Name": "dreamsdimensions:serene_stone"
+    "Name": "dreamsdimensions:ds_serene_stone"
   },
 
   "default_fluid": {
@@ -183,14 +183,14 @@
               "then_run": {
                 "type": "minecraft:block",
                 "result_state": {
-                  "Name": "dreamsdimensions:dream_grass_block"
+                  "Name": "dreamsdimensions:ds_dream_grass"
                 }
               }
             },
             {
               "type": "minecraft:block",
               "result_state": {
-                "Name": "dreamsdimensions:dream_dirt_block"
+                "Name": "dreamsdimensions:ds_dream_dirt"
               }
             }
           ]
@@ -199,7 +199,7 @@
       {
         "type": "minecraft:block",
         "result_state": {
-          "Name": "dreamsdimensions:serene_stone"
+          "Name": "dreamsdimensions:ds_serene_stone"
         }
       }
     ]

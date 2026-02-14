@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "dreamsdimensions:block/ds_dream_flower"
+  },
+  "render_type": "cutout"
+}

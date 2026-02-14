@@ -11,23 +11,23 @@
 - [5. Detalhamento por item/bloco](#5-detalhamento-por-itembloco)
   - [5.1 Pó dos Sonhos (`dreamsdimensions:ow_dream_dust`)](#51-pó-dos-sonhos-dreamsdimensionsow_dream_dust)
   - [5.2 Despertador Onírico (`dreamsdimensions:ow_oneiric_awakener`)](#52-despertador-onírico-dreamsdimensionsow_oneiric_awakener)
-  - [5.3 Grama dos Sonhos (`dreamsdimensions:dream_grass_block`)](#53-grama-dos-sonhos-dreamsdimensionsdream_grass_block)
-  - [5.4 Grama dos Sonhos Azul (`dreamsdimensions:blue_dream_grass`)](#54-grama-dos-sonhos-azul-dreamsdimensionsblue_dream_grass)
-  - [5.5 Terra dos Sonhos (`dreamsdimensions:dream_dirt_block`)](#55-terra-dos-sonhos-dreamsdimensionsdream_dirt_block)
-  - [5.6 Terra dos Sonhos Azul (`dreamsdimensions:blue_dream_dirt`)](#56-terra-dos-sonhos-azul-dreamsdimensionsblue_dream_dirt)
-  - [5.7 Areia dos Sonhos (`dreamsdimensions:dream_sand_block`)](#57-areia-dos-sonhos-dreamsdimensionsdream_sand_block)
-  - [5.8 Pedra Serena (`dreamsdimensions:serene_stone`)](#58-pedra-serena-dreamsdimensionsserene_stone)
-  - [5.9 Pedra dos Sonhos Azul (`dreamsdimensions:blue_dream_stone`)](#59-pedra-dos-sonhos-azul-dreamsdimensionsblue_dream_stone)
-  - [5.10 Pedregulho dos Sonhos Azul (`dreamsdimensions:blue_dream_cobblestone`)](#510-pedregulho-dos-sonhos-azul-dreamsdimensionsblue_dream_cobblestone)
-  - [5.11 Bloco Cintilante dos Sonhos (`dreamsdimensions:dream_shimmer_block`)](#511-bloco-cintilante-dos-sonhos-dreamsdimensionsdream_shimmer_block)
-  - [5.12 Musgo Luminoso dos Sonhos (`dreamsdimensions:dream_glow_moss`)](#512-musgo-luminoso-dos-sonhos-dreamsdimensionsdream_glow_moss)
+  - [5.3 Grama dos Sonhos (`dreamsdimensions:ds_dream_grass`)](#53-grama-dos-sonhos-dreamsdimensionsdream_grass_block)
+  - [5.4 Grama dos Sonhos Azul (`dreamsdimensions:az_dream_grass`)](#54-grama-dos-sonhos-azul-dreamsdimensionsblue_dream_grass)
+  - [5.5 Terra dos Sonhos (`dreamsdimensions:ds_dream_dirt`)](#55-terra-dos-sonhos-dreamsdimensionsdream_dirt_block)
+  - [5.6 Terra dos Sonhos Azul (`dreamsdimensions:az_dream_dirt`)](#56-terra-dos-sonhos-azul-dreamsdimensionsblue_dream_dirt)
+  - [5.7 Areia dos Sonhos (`dreamsdimensions:ds_dream_sand`)](#57-areia-dos-sonhos-dreamsdimensionsdream_sand_block)
+  - [5.8 Pedra Serena (`dreamsdimensions:ds_serene_stone`)](#58-pedra-serena-dreamsdimensionsserene_stone)
+  - [5.9 Pedra dos Sonhos Azul (`dreamsdimensions:az_dream_stone`)](#59-pedra-dos-sonhos-azul-dreamsdimensionsblue_dream_stone)
+  - [5.10 Pedregulho dos Sonhos Azul (`dreamsdimensions:az_dream_cobblestone`)](#510-pedregulho-dos-sonhos-azul-dreamsdimensionsblue_dream_cobblestone)
+  - [5.11 Bloco Cintilante dos Sonhos (`dreamsdimensions:ds_dream_shimmer_block`)](#511-bloco-cintilante-dos-sonhos-dreamsdimensionsdream_shimmer_block)
+  - [5.12 Musgo Luminoso dos Sonhos (`dreamsdimensions:ds_dream_glow_moss`)](#512-musgo-luminoso-dos-sonhos-dreamsdimensionsdream_glow_moss)
   - [5.13 Minério dos Sonhos (`dreamsdimensions:ow_dream_ore`)](#513-minério-dos-sonhos-dreamsdimensionsow_dream_ore)
   - [5.14 Minério dos Sonhos de Ardósia (`dreamsdimensions:ow_deepslate_dream_ore`)](#514-minério-dos-sonhos-de-ardósia-dreamsdimensionsow_deepslate_dream_ore)
   - [5.15 Pedra Infundida dos Sonhos (`dreamsdimensions:ow_dream_infused_stone`)](#515-pedra-infundida-dos-sonhos-dreamsdimensionsow_dream_infused_stone)
   - [5.16 Bloco do Núcleo Onírico (`dreamsdimensions:ow_oneiric_core_block`)](#516-bloco-do-núcleo-onírico-dreamsdimensionsow_oneiric_core_block)
-  - [5.17 `dreamsdimensions:dream_flower_block`](#517-dreamsdimensionsdream_flower_block)
-  - [5.18 `dreamsdimensions:dream_log_block`](#518-dreamsdimensionsdream_log_block)
-  - [5.19 `dreamsdimensions:dream_leaves_block`](#519-dreamsdimensionsdream_leaves_block)
+  - [5.17 `dreamsdimensions:ds_dream_flower`](#517-dreamsdimensionsdream_flower_block)
+  - [5.18 `dreamsdimensions:ds_dream_log`](#518-dreamsdimensionsdream_log_block)
+  - [5.19 `dreamsdimensions:ds_dream_leaves`](#519-dreamsdimensionsdream_leaves_block)
 - [6. Fluxo detalhado: Oneiric Awakener e retorno](#6-fluxo-detalhado-oneiric-awakener-e-retorno)
 - [Apêndice A: lista de receitas (por arquivo)](#apêndice-a-lista-de-receitas-por-arquivo)
 - [Apêndice B: lista de loot tables](#apêndice-b-lista-de-loot-tables)
@@ -42,23 +42,23 @@ O mod registra **19 entradas jogáveis** (2 itens diretos + 17 blocos com BlockI
 |---|---|---|---|---|---|
 | Pó dos Sonhos | `dreamsdimensions:ow_dream_dust` | Item (custom) | `dreams_dimensions_tab` | Drop de `ow_dream_ore`/`ow_deepslate_dream_ore` (sem Silk Touch); ingrediente de craft | `ModItems.java`, `DreamDustItem.java`, loot tables de minério |
 | Despertador Onírico | `dreamsdimensions:ow_oneiric_awakener` | Item utilitário (custom) | `dreams_dimensions_tab` | Craft (`ow_oneiric_awakener.json`) | `ModItems.java`, `OneiricAwakenerItem.java`, `recipe/ow_oneiric_awakener.json` |
-| Grama dos Sonhos | `dreamsdimensions:dream_grass_block` | BlockItem | `dreams_dimensions_tab` | Dropa `dream_dirt_block` (loot); SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/dream_grass_block.json` |
-| Grama dos Sonhos Azul | `dreamsdimensions:blue_dream_grass` | BlockItem | `dreams_dimensions_tab` | Drop com Silk Touch, senão `blue_dream_dirt`; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/blue_dream_grass.json` |
-| Terra dos Sonhos | `dreamsdimensions:dream_dirt_block` | BlockItem | `dreams_dimensions_tab` | Drop próprio; também drop de `dream_grass_block`; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/dream_dirt_block.json`, `dream_grass_block.json` |
-| Terra dos Sonhos Azul | `dreamsdimensions:blue_dream_dirt` | BlockItem | `dreams_dimensions_tab` | Drop próprio e de `blue_dream_grass` sem Silk Touch; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/blue_dream_dirt.json`, `blue_dream_grass.json` |
-| Areia dos Sonhos | `dreamsdimensions:dream_sand_block` | BlockItem | `dreams_dimensions_tab` | Drop próprio; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/dream_sand_block.json` |
-| Pedra Serena | `dreamsdimensions:serene_stone` | BlockItem | `dreams_dimensions_tab` | Drop próprio; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/serene_stone.json` |
-| Pedra dos Sonhos Azul | `dreamsdimensions:blue_dream_stone` | BlockItem | `dreams_dimensions_tab` | Smelting/blasting de `blue_dream_cobblestone` ou drop próprio | `ModBlocks.java`, `recipe/blue_dream_stone_*.json`, `loot_tables/blocks/blue_dream_stone.json` |
-| Pedregulho dos Sonhos Azul | `dreamsdimensions:blue_dream_cobblestone` | BlockItem | `dreams_dimensions_tab` | Drop próprio; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/blue_dream_cobblestone.json` |
-| Bloco Cintilante dos Sonhos | `dreamsdimensions:dream_shimmer_block` | BlockItem | `dreams_dimensions_tab` | Drop próprio; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/dream_shimmer_block.json` |
-| Musgo Luminoso dos Sonhos | `dreamsdimensions:dream_glow_moss` | BlockItem | `dreams_dimensions_tab` | Drop próprio; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/dream_glow_moss.json` |
+| Grama dos Sonhos | `dreamsdimensions:ds_dream_grass` | BlockItem | `dreams_dimensions_tab` | Dropa `dream_dirt_block` (loot); SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/dream_grass_block.json` |
+| Grama dos Sonhos Azul | `dreamsdimensions:az_dream_grass` | BlockItem | `dreams_dimensions_tab` | Drop com Silk Touch, senão `blue_dream_dirt`; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/blue_dream_grass.json` |
+| Terra dos Sonhos | `dreamsdimensions:ds_dream_dirt` | BlockItem | `dreams_dimensions_tab` | Drop próprio; também drop de `dream_grass_block`; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/dream_dirt_block.json`, `dream_grass_block.json` |
+| Terra dos Sonhos Azul | `dreamsdimensions:az_dream_dirt` | BlockItem | `dreams_dimensions_tab` | Drop próprio e de `blue_dream_grass` sem Silk Touch; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/blue_dream_dirt.json`, `blue_dream_grass.json` |
+| Areia dos Sonhos | `dreamsdimensions:ds_dream_sand` | BlockItem | `dreams_dimensions_tab` | Drop próprio; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/dream_sand_block.json` |
+| Pedra Serena | `dreamsdimensions:ds_serene_stone` | BlockItem | `dreams_dimensions_tab` | Drop próprio; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/serene_stone.json` |
+| Pedra dos Sonhos Azul | `dreamsdimensions:az_dream_stone` | BlockItem | `dreams_dimensions_tab` | Smelting/blasting de `blue_dream_cobblestone` ou drop próprio | `ModBlocks.java`, `recipe/blue_dream_stone_*.json`, `loot_tables/blocks/blue_dream_stone.json` |
+| Pedregulho dos Sonhos Azul | `dreamsdimensions:az_dream_cobblestone` | BlockItem | `dreams_dimensions_tab` | Drop próprio; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/blue_dream_cobblestone.json` |
+| Bloco Cintilante dos Sonhos | `dreamsdimensions:ds_dream_shimmer_block` | BlockItem | `dreams_dimensions_tab` | Drop próprio; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/dream_shimmer_block.json` |
+| Musgo Luminoso dos Sonhos | `dreamsdimensions:ds_dream_glow_moss` | BlockItem | `dreams_dimensions_tab` | Drop próprio; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/dream_glow_moss.json` |
 | Minério dos Sonhos | `dreamsdimensions:ow_dream_ore` | BlockItem (bloco custom) | `dreams_dimensions_tab` | Worldgen Overworld + loot (Silk Touch ou `ow_dream_dust`) | `ModBlocks.java`, `DreamOreBlock.java`, worldgen + loot |
 | Minério dos Sonhos de Ardósia | `dreamsdimensions:ow_deepslate_dream_ore` | BlockItem (bloco custom) | `dreams_dimensions_tab` | Worldgen Overworld + loot (Silk Touch ou `ow_dream_dust`) | `ModBlocks.java`, `DreamOreBlock.java`, worldgen + loot |
 | Pedra Infundida dos Sonhos | `dreamsdimensions:ow_dream_infused_stone` | BlockItem | `dreams_dimensions_tab` | Craft (`ow_dream_infused_stone.json`) + drop próprio | `ModBlocks.java`, `recipe/ow_dream_infused_stone.json`, loot table |
 | Bloco do Núcleo Onírico | `dreamsdimensions:ow_oneiric_core_block` | BlockItem | `dreams_dimensions_tab` | Craft (`ow_oneiric_core_block.json`) + drop próprio | `ModBlocks.java`, `recipe/ow_oneiric_core_block.json`, loot table |
-| NÃO ENCONTRADO em lang | `dreamsdimensions:dream_flower_block` | BlockItem | `dreams_dimensions_tab` | SEM RECEITA / SEM LOOT TABLE / SEM WORLDGEN ENCONTRADO | `ModBlocks.java` |
-| NÃO ENCONTRADO em lang | `dreamsdimensions:dream_log_block` | BlockItem | `dreams_dimensions_tab` | SEM RECEITA / SEM LOOT TABLE / SEM WORLDGEN ENCONTRADO | `ModBlocks.java` |
-| NÃO ENCONTRADO em lang | `dreamsdimensions:dream_leaves_block` | BlockItem | `dreams_dimensions_tab` | SEM RECEITA / SEM LOOT TABLE / SEM WORLDGEN ENCONTRADO | `ModBlocks.java` |
+| NÃO ENCONTRADO em lang | `dreamsdimensions:ds_dream_flower` | BlockItem | `dreams_dimensions_tab` | SEM RECEITA / SEM LOOT TABLE / SEM WORLDGEN ENCONTRADO | `ModBlocks.java` |
+| NÃO ENCONTRADO em lang | `dreamsdimensions:ds_dream_log` | BlockItem | `dreams_dimensions_tab` | SEM RECEITA / SEM LOOT TABLE / SEM WORLDGEN ENCONTRADO | `ModBlocks.java` |
+| NÃO ENCONTRADO em lang | `dreamsdimensions:ds_dream_leaves` | BlockItem | `dreams_dimensions_tab` | SEM RECEITA / SEM LOOT TABLE / SEM WORLDGEN ENCONTRADO | `ModBlocks.java` |
 
 ## 3. Matriz de Receitas (por output)
 - `dreamsdimensions:ow_oneiric_awakener`
@@ -79,15 +79,15 @@ O mod registra **19 entradas jogáveis** (2 itens diretos + 17 blocos com BlockI
   - Ingredientes: `minecraft:stone`, `dreamsdimensions:ow_dream_dust`
   - Output: 1x `dreamsdimensions:ow_dream_infused_stone`
   - Conditions: **NÃO ENCONTRADO**
-- `dreamsdimensions:blue_dream_stone`
+- `dreamsdimensions:az_dream_stone`
   - `minecraft:smelting` — `src/main/resources/data/dreamsdimensions/recipe/blue_dream_stone_from_smelting.json`
-  - Ingrediente: `dreamsdimensions:blue_dream_cobblestone`
-  - Output: 1x `dreamsdimensions:blue_dream_stone`
+  - Ingrediente: `dreamsdimensions:az_dream_cobblestone`
+  - Output: 1x `dreamsdimensions:az_dream_stone`
   - Cooking time: 200 ticks; XP: 0.1
   - Conditions: **NÃO ENCONTRADO**
   - `minecraft:blasting` — `src/main/resources/data/dreamsdimensions/recipe/blue_dream_stone_from_blasting.json`
-  - Ingrediente: `dreamsdimensions:blue_dream_cobblestone`
-  - Output: 1x `dreamsdimensions:blue_dream_stone`
+  - Ingrediente: `dreamsdimensions:az_dream_cobblestone`
+  - Output: 1x `dreamsdimensions:az_dream_stone`
   - Cooking time: 100 ticks; XP: 0.1
   - Conditions: **NÃO ENCONTRADO**
 - Demais IDs do catálogo: **SEM RECEITA (até o momento)**.
@@ -125,62 +125,62 @@ O mod registra **19 entradas jogáveis** (2 itens diretos + 17 blocos com BlockI
 - **Receitas (detalhadas):** shaped com `feather` + `ow_oneiric_core_block` + `glass_bottle`.
 - **Notas técnicas:** brilho (`isFoil=true`), tooltip custom, mensagem de sucesso/falha translatável.
 
-## 5.3 Grama dos Sonhos (`dreamsdimensions:dream_grass_block`)
+## 5.3 Grama dos Sonhos (`dreamsdimensions:ds_dream_grass`)
 - **Tipo:** BlockItem
 - **Classe/Registro:** `ModBlocks.DREAM_GRASS_BLOCK` + BlockItem em `ModItems`
 - **Descrição / Função:** bloco de solo tipo grama.
 - **Como obter:** quebrando bloco (dropa `dream_dirt_block`), SEM RECEITA.
 - **Receitas (detalhadas):** **SEM RECEITA (até o momento)**.
 
-## 5.4 Grama dos Sonhos Azul (`dreamsdimensions:blue_dream_grass`)
+## 5.4 Grama dos Sonhos Azul (`dreamsdimensions:az_dream_grass`)
 - **Tipo:** BlockItem
 - **Classe/Registro:** `ModBlocks.BLUE_DREAM_GRASS`
 - **Como obter:** Silk Touch => próprio bloco; sem Silk Touch => `blue_dream_dirt`.
 - **Receitas (detalhadas):** **SEM RECEITA (até o momento)**.
 
-## 5.5 Terra dos Sonhos (`dreamsdimensions:dream_dirt_block`)
+## 5.5 Terra dos Sonhos (`dreamsdimensions:ds_dream_dirt`)
 - **Tipo:** BlockItem
 - **Classe/Registro:** `ModBlocks.DREAM_DIRT_BLOCK`
 - **Como obter:** loot próprio; também vem de `dream_grass_block`.
 - **Receitas (detalhadas):** **SEM RECEITA (até o momento)**.
 
-## 5.6 Terra dos Sonhos Azul (`dreamsdimensions:blue_dream_dirt`)
+## 5.6 Terra dos Sonhos Azul (`dreamsdimensions:az_dream_dirt`)
 - **Tipo:** BlockItem
 - **Classe/Registro:** `ModBlocks.BLUE_DREAM_DIRT`
 - **Como obter:** loot próprio; também vem de `blue_dream_grass` sem Silk Touch.
 - **Receitas (detalhadas):** **SEM RECEITA (até o momento)**.
 
-## 5.7 Areia dos Sonhos (`dreamsdimensions:dream_sand_block`)
+## 5.7 Areia dos Sonhos (`dreamsdimensions:ds_dream_sand`)
 - **Tipo:** BlockItem
 - **Classe/Registro:** `ModBlocks.DREAM_SAND_BLOCK`
 - **Como obter:** loot próprio.
 - **Receitas (detalhadas):** **SEM RECEITA (até o momento)**.
 
-## 5.8 Pedra Serena (`dreamsdimensions:serene_stone`)
+## 5.8 Pedra Serena (`dreamsdimensions:ds_serene_stone`)
 - **Tipo:** BlockItem
 - **Classe/Registro:** `ModBlocks.SERENE_STONE_BLOCK`
 - **Como obter:** loot próprio.
 - **Receitas (detalhadas):** **SEM RECEITA (até o momento)**.
 
-## 5.9 Pedra dos Sonhos Azul (`dreamsdimensions:blue_dream_stone`)
+## 5.9 Pedra dos Sonhos Azul (`dreamsdimensions:az_dream_stone`)
 - **Tipo:** BlockItem
 - **Classe/Registro:** `ModBlocks.BLUE_DREAM_STONE`
 - **Como obter:** smelting/blasting de `blue_dream_cobblestone`; loot próprio.
 - **Receitas (detalhadas):** `blue_dream_stone_from_smelting.json` e `blue_dream_stone_from_blasting.json`.
 
-## 5.10 Pedregulho dos Sonhos Azul (`dreamsdimensions:blue_dream_cobblestone`)
+## 5.10 Pedregulho dos Sonhos Azul (`dreamsdimensions:az_dream_cobblestone`)
 - **Tipo:** BlockItem
 - **Classe/Registro:** `ModBlocks.BLUE_DREAM_COBBLESTONE`
 - **Como obter:** loot próprio.
 - **Receitas (detalhadas):** output **SEM RECEITA (até o momento)**.
 
-## 5.11 Bloco Cintilante dos Sonhos (`dreamsdimensions:dream_shimmer_block`)
+## 5.11 Bloco Cintilante dos Sonhos (`dreamsdimensions:ds_dream_shimmer_block`)
 - **Tipo:** BlockItem
 - **Classe/Registro:** `ModBlocks.DREAM_SHIMMER_BLOCK`
 - **Como obter:** loot próprio.
 - **Receitas (detalhadas):** **SEM RECEITA (até o momento)**.
 
-## 5.12 Musgo Luminoso dos Sonhos (`dreamsdimensions:dream_glow_moss`)
+## 5.12 Musgo Luminoso dos Sonhos (`dreamsdimensions:ds_dream_glow_moss`)
 - **Tipo:** BlockItem
 - **Classe/Registro:** `ModBlocks.DREAM_GLOW_MOSS`
 - **Como obter:** loot próprio.
@@ -213,19 +213,19 @@ O mod registra **19 entradas jogáveis** (2 itens diretos + 17 blocos com BlockI
 - **Como obter:** craft com `ow_dream_infused_stone`, `ow_dream_dust`, `clock`; loot próprio.
 - **Receitas (detalhadas):** shaped em `recipe/ow_oneiric_core_block.json`.
 
-## 5.17 `dreamsdimensions:dream_flower_block`
+## 5.17 `dreamsdimensions:ds_dream_flower`
 - **Tipo:** BlockItem
 - **Classe/Registro:** `ModBlocks.DREAM_FLOWER_BLOCK`
 - **Nome amigável:** **NÃO ENCONTRADO** em `lang/en_us.json` e `lang/pt_br.json`.
 - **Como obter:** **SEM RECEITA**, **SEM LOOT TABLE**, **SEM WORLDGEN ENCONTRADO**.
 
-## 5.18 `dreamsdimensions:dream_log_block`
+## 5.18 `dreamsdimensions:ds_dream_log`
 - **Tipo:** BlockItem (RotatedPillarBlock)
 - **Classe/Registro:** `ModBlocks.DREAM_LOG_BLOCK`
 - **Nome amigável:** **NÃO ENCONTRADO** em `lang/en_us.json` e `lang/pt_br.json`.
 - **Como obter:** **SEM RECEITA**, **SEM LOOT TABLE**, **SEM WORLDGEN ENCONTRADO**.
 
-## 5.19 `dreamsdimensions:dream_leaves_block`
+## 5.19 `dreamsdimensions:ds_dream_leaves`
 - **Tipo:** BlockItem
 - **Classe/Registro:** `ModBlocks.DREAM_LEAVES_BLOCK`
 - **Nome amigável:** **NÃO ENCONTRADO** em `lang/en_us.json` e `lang/pt_br.json`.

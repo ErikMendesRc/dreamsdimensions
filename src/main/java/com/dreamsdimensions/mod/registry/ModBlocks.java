@@ -24,57 +24,57 @@ public final class ModBlocks {
             DeferredRegister.createBlocks(DreamsDimensions.MODID);
 
     public static final DeferredBlock<Block> DREAM_GRASS_BLOCK = BLOCKS.registerSimpleBlock(
-            "dream_grass_block",
+            "ds_dream_grass",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK)
                     .mapColor(MapColor.GRASS)
     );
 
     public static final DeferredBlock<Block> BLUE_DREAM_GRASS = BLOCKS.registerSimpleBlock(
-            "blue_dream_grass",
+            "az_dream_grass",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.GRASS_BLOCK)
                     .mapColor(MapColor.COLOR_LIGHT_BLUE)
     );
 
     public static final DeferredBlock<Block> DREAM_DIRT_BLOCK = BLOCKS.registerSimpleBlock(
-            "dream_dirt_block",
+            "ds_dream_dirt",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT)
                     .mapColor(MapColor.DIRT)
     );
 
     public static final DeferredBlock<Block> BLUE_DREAM_DIRT = BLOCKS.registerSimpleBlock(
-            "blue_dream_dirt",
+            "az_dream_dirt",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT)
                     .mapColor(MapColor.COLOR_LIGHT_BLUE)
     );
 
     public static final DeferredBlock<Block> DREAM_SAND_BLOCK = BLOCKS.registerSimpleBlock(
-            "dream_sand_block",
+            "ds_dream_sand",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.SAND)
                     .mapColor(MapColor.SAND)
     );
 
     public static final DeferredBlock<Block> SERENE_STONE_BLOCK = BLOCKS.registerSimpleBlock(
-            "serene_stone",
+            "ds_serene_stone",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)
                     .mapColor(MapColor.STONE)
     );
 
     public static final DeferredBlock<Block> BLUE_DREAM_STONE = BLOCKS.registerSimpleBlock(
-            "blue_dream_stone",
+            "az_dream_stone",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)
                     .mapColor(MapColor.COLOR_LIGHT_BLUE)
                     .requiresCorrectToolForDrops()
     );
 
     public static final DeferredBlock<Block> BLUE_DREAM_COBBLESTONE = BLOCKS.registerSimpleBlock(
-            "blue_dream_cobblestone",
+            "az_dream_cobblestone",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.COBBLESTONE)
                     .mapColor(MapColor.COLOR_LIGHT_BLUE)
                     .requiresCorrectToolForDrops()
     );
 
     public static final DeferredBlock<Block> DREAM_SHIMMER_BLOCK = BLOCKS.registerSimpleBlock(
-            "dream_shimmer_block",
+            "ds_dream_shimmer_block",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_BLOCK)
                     .mapColor(MapColor.COLOR_LIGHT_BLUE)
                     .strength(1.5F, 6.0F)
@@ -82,7 +82,7 @@ public final class ModBlocks {
     );
 
     public static final DeferredBlock<Block> DREAM_GLOW_MOSS = BLOCKS.registerSimpleBlock(
-            "dream_glow_moss",
+            "ds_dream_glow_moss",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_BLOCK)
                     .mapColor(MapColor.COLOR_LIGHT_BLUE)
                     .lightLevel(state -> 8)
@@ -117,20 +117,20 @@ public final class ModBlocks {
     );
 
     public static final DeferredBlock<Block> DREAM_FLOWER_BLOCK = BLOCKS.registerSimpleBlock(
-            "dream_flower_block",
+            "ds_dream_flower",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)
                     .instabreak()
     );
 
     public static final DeferredBlock<RotatedPillarBlock> DREAM_LOG_BLOCK = BLOCKS.registerBlock(
-            "dream_log_block",
+            "ds_dream_log",
             RotatedPillarBlock::new,
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LOG)
                     .strength(2.0f)
     );
 
     public static final DeferredBlock<Block> DREAM_LEAVES_BLOCK = BLOCKS.registerSimpleBlock(
-            "dream_leaves_block",
+            "ds_dream_leaves",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)
                     .noOcclusion()
                     .strength(0.2f)
