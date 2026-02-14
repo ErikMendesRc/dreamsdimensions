@@ -3,6 +3,7 @@ package com.dreamsdimensions.mod.event;
 import com.dreamsdimensions.mod.registry.ModEffects;
 import com.dreamsdimensions.mod.util.DreamReturnHelper;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -46,8 +47,8 @@ public final class EffectEventHandler {
         if (newEffect != null && newEffect.getEffect().is(ModEffects.OW_CLARITY)) {
             living.removeEffect(MobEffects.POISON);
             living.removeEffect(MobEffects.WITHER);
-            living.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
-            living.removeEffect(MobEffects.DIG_SLOWDOWN);
+            living.removeEffect(MobEffects.SLOWNESS);
+            living.removeEffect(MobEffects.MINING_FATIGUE);
             living.removeEffect(MobEffects.BLINDNESS);
         }
     }
@@ -67,7 +68,7 @@ public final class EffectEventHandler {
             return;
         }
 
-        if (incoming.getEffect().value().getCategory().isBeneficial()) {
+        if (incoming.getEffect().value().getCategory() == MobEffectCategory.BENEFICIAL) {
             return;
         }
 
@@ -98,7 +99,7 @@ public final class EffectEventHandler {
             return;
         }
 
-        if (!DreamReturnHelper.isDreamDimension(player.serverLevel())) {
+        if (!DreamReturnHelper.isDreamDimension(player.level())) {
             return;
         }
 
@@ -117,7 +118,7 @@ public final class EffectEventHandler {
     }
 
     private static void applyEtherealCollision(ServerPlayer player) {
-        Scoreboard scoreboard = player.serverLevel().getScoreboard();
+        Scoreboard scoreboard = player.level().getScoreboard();
         PlayerTeam currentTeam = scoreboard.getPlayersTeam(player.getScoreboardName());
 
         if (currentTeam != null && !currentTeam.getName().equals(ETHEREAL_TEAM_NAME)) {
@@ -147,7 +148,7 @@ public final class EffectEventHandler {
             return;
         }
 
-        Scoreboard scoreboard = player.serverLevel().getScoreboard();
+        Scoreboard scoreboard = player.level().getScoreboard();
         PlayerTeam currentTeam = scoreboard.getPlayersTeam(player.getScoreboardName());
         if (currentTeam != null && currentTeam.getName().equals(ETHEREAL_TEAM_NAME)) {
             scoreboard.removePlayerFromTeam(player.getScoreboardName(), currentTeam);
