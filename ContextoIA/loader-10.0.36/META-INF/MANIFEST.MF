@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Git-Commit: 805fe3e7
+Build-Number: 10.0.36
+Automatic-Module-Name: fml_loader
+Specification-Title: FMLloader
+Specification-Vendor: NeoForged
+Specification-Version: 10
+Implementation-Title: FML loader
+Implementation-Version: 10.0
+Implementation-Vendor: NeoForged
+
