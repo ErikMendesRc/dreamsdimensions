@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.1,
+  "ingredient": "dreamsdimensions:ow_oneiric_residue",
+  "result": {
+    "id": "dreamsdimensions:ow_refined_oneiric_powder"
+  }
+}

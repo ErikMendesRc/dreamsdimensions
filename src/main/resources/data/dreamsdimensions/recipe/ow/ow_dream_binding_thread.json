@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:string",
+    "dreamsdimensions:ow_refined_oneiric_powder"
+  ],
+  "result": {
+    "id": "dreamsdimensions:ow_dream_binding_thread",
+    "count": 1
+  }
+}

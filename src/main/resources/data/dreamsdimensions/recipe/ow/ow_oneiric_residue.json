@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "dreamsdimensions:ow_dream_dust",
+    "dreamsdimensions:ow_dream_dust"
+  ],
+  "result": {
+    "id": "dreamsdimensions:ow_oneiric_residue",
+    "count": 1
+  }
+}

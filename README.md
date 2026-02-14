@@ -186,17 +186,20 @@ A arquitetura separa claramente:
   - `ow_dream_catalyst`
   - `ow_stabilizing_essence`
 
-### Sprint 2 — Economia Overworld (Passo 1)
+### Sprint 2 — Economia Overworld
 
-Novos itens OW (prefixo `ow_`) adicionados nesta sprint, sem receitas e sem mecânicas extras:
+Fluxo de refino onírico OW:
+`ow_dream_dust -> ow_oneiric_residue -> ow_refined_oneiric_powder -> ow_stabilized_dream_fragment -> ow_condensed_dream_crystal`
 
-- `dreamsdimensions:ow_oneiric_residue` — resíduo base de energia onírica do Overworld.
-- `dreamsdimensions:ow_refined_oneiric_powder` — versão refinada do resíduo para estágios intermediários.
-- `dreamsdimensions:ow_stabilized_dream_fragment` — fragmento estabilizado usado em composição avançada.
-- `dreamsdimensions:ow_condensed_dream_crystal` — cristal condensado de energia onírica.
-- `dreamsdimensions:ow_dream_binding_thread` — fio de ligação para integrar componentes oníricos.
-- `dreamsdimensions:ow_dream_catalyst` — catalisador de processos de transmutação onírica.
-- `dreamsdimensions:ow_stabilizing_essence` — essência final de estabilização para progressão OW.
+Receitas implementadas nesta etapa:
+- `ow_oneiric_residue`: shapeless `2x ow_dream_dust -> 1x ow_oneiric_residue`.
+- `ow_refined_oneiric_powder`: smelting `ow_oneiric_residue` (200 ticks, 0.1 XP).
+- `ow_refined_oneiric_powder`: blasting `ow_oneiric_residue` (100 ticks, 0.1 XP).
+- `ow_stabilized_dream_fragment`: shaped 2x2 com `ow_refined_oneiric_powder`.
+- `ow_condensed_dream_crystal`: shaped `8x ow_stabilized_dream_fragment` + `minecraft:glass` no centro.
+- `ow_dream_binding_thread`: shapeless `minecraft:string + ow_refined_oneiric_powder`.
+- `ow_dream_catalyst`: shapeless `minecraft:blaze_powder + ow_refined_oneiric_powder`.
+- `ow_stabilizing_essence`: shapeless `minecraft:ghast_tear + ow_stabilized_dream_fragment`.
 
 Exemplo de lógica do item despertador (resumo):
 
