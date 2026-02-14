@@ -45,7 +45,10 @@ public class OneiricAwakenerItem extends Item {
     @Override
     public InteractionResult use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
         ItemStack stack = pPlayer.getItemInHand(pUsedHand);
-        if (!DreamsConfig.isDreamDimension(pLevel.dimension())) {
+        boolean allowed = DreamsConfig.isDreamDimension(pLevel.dimension());
+        LOGGER.info("Current dimension: {}", pLevel.dimension().location());
+        LOGGER.info("Allowed: {}", allowed);
+        if (!allowed) {
             return InteractionResult.PASS;
         }
         if (pPlayer.getCooldowns().isOnCooldown(stack)) {
@@ -63,6 +66,7 @@ public class OneiricAwakenerItem extends Item {
         }
 
         // serverLevel() -> level()
+        LOGGER.info("Finish dimension: {}", serverPlayer.level().dimension().location());
         if (!DreamReturnHelper.isDreamDimension(serverPlayer.level())) {
             return pStack;
         }
