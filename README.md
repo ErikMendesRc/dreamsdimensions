@@ -487,6 +487,24 @@ Infra base de efeitos e poções exclusivas do eixo Overworld (`ow_`) registrada
 
 > Nota: Task 3.1 cobriu o registro base. A **Task 3.2** (abaixo) implementa a lógica funcional em runtime; a Task 3.3 seguirá com receitas de brewing.
 
+## Sprint 3 — Task 3.3 (Brewing)
+
+Implementado o fluxo completo de brewing das poções `ow_`, com uma base intermediária obrigatória:
+
+- `dreamsdimensions:ow_oneiric_base`
+
+### Fluxo de Brewing
+
+1. `awkward potion` + `dreamsdimensions:ow_refined_oneiric_powder` → `dreamsdimensions:ow_oneiric_base`
+2. `ow_oneiric_base` + `minecraft:phantom_membrane` → `dreamsdimensions:ow_potion_of_anchoring`
+3. `ow_oneiric_base` + `dreamsdimensions:ow_dream_catalyst` → `dreamsdimensions:ow_potion_of_clarity`
+4. `ow_oneiric_base` + `dreamsdimensions:ow_condensed_dream_crystal` → `dreamsdimensions:ow_potion_of_ethereal_phase`
+5. `ow_oneiric_base` + `dreamsdimensions:ow_stabilizing_essence` → `dreamsdimensions:ow_potion_of_early_awakening`
+
+### Integração criativa
+
+As 5 poções (`ow_oneiric_base` + 4 poções finais) agora são adicionadas à aba criativa do mod (`dreams_dimensions_tab`) usando stacks de `minecraft:potion` com `potion_contents` apontando para as potions registradas.
+
 ## Sprint 3 — Task 3.2 (Lógica funcional dos 4 efeitos custom)
 
 Implementação concluída com listeners no `NeoForge.EVENT_BUS`:

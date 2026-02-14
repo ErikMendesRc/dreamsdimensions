@@ -14,6 +14,11 @@ public final class ModPotions {
     public static final DeferredRegister<Potion> POTIONS =
             DeferredRegister.create(Registries.POTION, DreamsDimensions.MODID);
 
+    public static final DeferredHolder<Potion, Potion> OW_ONEIRIC_BASE = POTIONS.register(
+            "ow_oneiric_base",
+            () -> new Potion("ow_oneiric_base")
+    );
+
     public static final DeferredHolder<Potion, Potion> OW_POTION_OF_ANCHORING = POTIONS.register(
             "ow_potion_of_anchoring",
             () -> new Potion("ow_potion_of_anchoring", new MobEffectInstance(ModEffects.OW_ANCHORING, DEFAULT_DURATION_TICKS, 0))

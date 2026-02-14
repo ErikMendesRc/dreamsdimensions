@@ -2,9 +2,11 @@ package com.dreamsdimensions.mod;
 
 import com.dreamsdimensions.mod.config.DreamsConfig;
 import com.dreamsdimensions.mod.event.CommonEvents;
+import com.dreamsdimensions.mod.event.CreativeTabEvents;
 import com.dreamsdimensions.mod.event.DreamDimensionEffectsHandler;
 import com.dreamsdimensions.mod.event.DreamReturnAttachmentHandler;
 import com.dreamsdimensions.mod.event.EffectEventHandler;
+import com.dreamsdimensions.mod.event.BrewingRecipesHandler;
 import com.dreamsdimensions.mod.event.SleepTeleportHandler;
 import com.dreamsdimensions.mod.item.OneiricAwakenerItem;
 import com.dreamsdimensions.mod.registry.ModAttachments;
@@ -53,8 +55,10 @@ public class DreamsDimensions {
         ModPotions.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(CreativeTabEvents::onBuildCreativeTabContents);
 
         NeoForge.EVENT_BUS.addListener(CommonEvents::onServerStarting);
+        NeoForge.EVENT_BUS.addListener(BrewingRecipesHandler::onRegisterBrewingRecipes);
         NeoForge.EVENT_BUS.addListener(DreamDimensionEffectsHandler::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(DreamReturnAttachmentHandler::onPlayerSetSpawn);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerTick);
