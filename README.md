@@ -1,128 +1,451 @@
-# Dreams Dimensions Mod - Documentação Técnica
+# Dreams Dimensions — Documentação Técnica Completa
 
-## Visão Geral
+## Sumário
 
-O Dreams Dimensions é um mod para Minecraft que introduz múltiplas dimensões de sonho. Esta documentação detalha os aspectos técnicos, as regras de jogabilidade e o conteúdo do mod.
-
----
-
-## Mecânicas de Jogo e Regras
-
-Esta seção detalha as regras que governam a interação entre o Overworld e as dimensões de sonho.
-
-### Entrando em uma Dimensão de Sonho (Sonhando)
-
-Para entrar em uma das dimensões de sonho, o jogador deve seguir um procedimento específico:
-
-*   **Ação Requerida**: Dormir em uma cama no Overworld.
-*   **Duração**: O jogador deve permanecer dormindo por **100 ticks (5 segundos)**.
-*   **Resultado**: Após o tempo de espera, o jogador é automaticamente transportado para uma das dimensões de sonho disponíveis, escolhida aleatoriamente. As dimensões disponíveis são `dreamscape` e `campo_onirico_azul`.
-
-### Retornando do Sonho (Acordando)
-
-Para retornar ao Overworld, o jogador precisa usar o item `Despertador Onírico`.
-
-*   **Ação Requerida**: Usar o `Despertador Onírico` (`oneiric_awakener`).
-*   **Condição**: O jogador deve estar em qualquer uma das dimensões de sonho (`dreamscape` ou `campo_onirico_azul`).
-*   **Duração de Uso**: O item deve ser mantido em uso por **60 ticks (3 segundos)**.
-*   **Cooldown**: Após o uso bem-sucedido, o item entra em um tempo de recarga de **60 ticks (3 segundos)**.
-*   **Lógica de Ponto de Retorno**: O local para onde o jogador retorna no Overworld é determinado pela seguinte ordem de prioridade:
-    1.  **Local da Cama Original**: Ao lado da cama específica que o jogador usou para entrar no sonho.
-    2.  **Ponto de Spawn Pessoal**: Se a cama original não for válida, o jogador é enviado para seu ponto de respawn definido no Overworld.
-    3.  **Ponto de Spawn Global**: Se nenhum dos anteriores for válido, o jogador retorna ao ponto de spawn global do mundo.
+1. [Título e Informações do Projeto](#1-título-e-informações-do-projeto)
+2. [Visão Geral do Sistema](#2-visão-geral-do-sistema)
+3. [Instalação e Ambiente de Desenvolvimento](#3-instalação-e-ambiente-de-desenvolvimento)
+4. [Estrutura de Pacotes / Módulos](#4-estrutura-de-pacotes--módulos)
+5. [Componentes Principais](#5-componentes-principais)
+6. [Fluxos de Uso](#6-fluxos-de-uso)
+7. [Diagramas de Arquitetura](#7-diagramas-de-arquitetura)
+8. [Teste, Build e Release](#8-teste-build-e-release)
+9. [Contribuindo](#9-contribuindo)
+10. [Referências e Recursos](#10-referências-e-recursos)
 
 ---
 
-## As Dimensões dos Sonhos
+## 1. Título e Informações do Projeto
 
-O mod atualmente inclui duas dimensões de sonho, cada uma com suas próprias características.
+- **Nome do mod:** Dreams Dimensions  
+- **mod_id:** `dreamsdimensions`  
+- **Versão alvo do Minecraft:** `1.21.11`  
+- **API de modding usada:** **NeoForge** (`21.11.37-beta`)  
+- **Loader:** Java FML (`loader_version_range=[4,)`)  
+- **Linguagem:** Java 21  
+- **Build tool:** Gradle + plugin `net.neoforged.gradle.userdev` (`7.1.20`)  
+- **Mappings:** mapeamentos oficiais via toolchain do NeoForge (não há configuração explícita de Parchment no build atual)  
+- **Objetivo do mod:** adicionar dimensões oníricas acessadas ao dormir no Overworld e um mecanismo controlado de retorno via item (Despertador Onírico).
 
-### Dimensão `dreamscape`
+### Contexto funcional
 
-*   **Propriedades**: Luz ambiente constante, camas funcionam, âncoras de renascimento não.
-*   **Bioma Principal (`dreamscape_biome`)**:
-    *   **Descrição**: Um bioma sereno e vazio, caracterizado por uma atmosfera tranquila.
-    *   **Spawns de Criaturas**: Nenhuma criatura é gerada naturalmente.
+O mod implementa um ciclo “**dormir → sonhar → despertar**”:
 
-### Dimensão `campo_onirico_azul`
-
-*   **Propriedades**: Similares à `dreamscape`, com luz constante e camas funcionais.
-*   **Bioma Principal (`campo_onirico_azul`)**:
-    *   **Descrição**: Um bioma com uma paleta de cores azulada e vibrante.
-    *   **Spawns de Criaturas**: Este bioma é habitado por criaturas do Overworld (hostis e passivas).
-
----
-
-## Blocos e Itens
-
-### Blocos por Dimensão
-
-#### Blocos do Overworld
-
-Estes são os blocos primários que o jogador deve encontrar para iniciar sua jornada.
-
-| Nome do Bloco                 | ID do Bloco                               | Geração                               |
-| ----------------------------- | ----------------------------------------- | ------------------------------------- |
-| Minério dos Sonhos            | `dreamsdimensions:dream_ore`              | Gerado no subsolo do Overworld.       |
-| Minério dos Sonhos de Ardósia | `dreamsdimensions:deepslate_dream_ore`    | Gerado nas camadas profundas do Overworld. |
-
-#### Blocos da Dimensão `dreamscape`
-
-Estes blocos formam a paisagem da dimensão `dreamscape`.
-
-| Nome do Bloco      | ID do Bloco                          |
-| ------------------ | ------------------------------------ |
-| Grama dos Sonhos   | `dreamsdimensions:dream_grass_block` |
-| Pedra Serena       | `dreamsdimensions:serene_stone`      |
-| Terra dos Sonhos   | `dreamsdimensions:dream_dirt_block`  |
-| Areia dos Sonhos   | `dreamsdimensions:dream_sand_block`  |
-
-#### Blocos da Dimensão `campo_onirico_azul`
-
-Estes blocos formam a paisagem da dimensão `campo_onirico_azul`.
-
-| Nome do Bloco                 | ID do Bloco                               |
-| ----------------------------- | ----------------------------------------- |
-| Grama dos Sonhos Azul         | `dreamsdimensions:blue_dream_grass`       |
-| Pedra dos Sonhos Azul         | `dreamsdimensions:blue_dream_stone`       |
-| Pedregulho dos Sonhos Azul    | `dreamsdimensions:blue_dream_cobblestone` |
-| Terra dos Sonhos Azul         | `dreamsdimensions:blue_dream_dirt`        |
-
-#### Blocos Criados pelo Jogador
-
-Estes blocos não são gerados naturalmente e devem ser criados.
-
-| Nome do Bloco                 | ID do Bloco                               |
-| ----------------------------- | ----------------------------------------- |
-| Bloco Cintilante dos Sonhos   | `dreamsdimensions:dream_shimmer_block`    |
-| Musgo Luminoso dos Sonhos     | `dreamsdimensions:dream_glow_moss`        |
-| Pedra Infundida dos Sonhos    | `dreamsdimensions:dream_infused_stone`    |
-| Bloco do Núcleo Onírico       | `dreamsdimensions:oneiric_core_block`     |
-
-### Itens
-
-Itens podem ser criados e transportados entre dimensões.
-
-| Nome do Item         | ID do Item                       | Descrição                                         |
-| -------------------- | -------------------------------- | ------------------------------------------------- |
-| Pó dos Sonhos        | `dreamsdimensions:dream_dust`    | Material obtido da mineração de Minérios dos Sonhos. |
-| Despertador Onírico  | `dreamsdimensions:oneiric_awakener` | Ferramenta para retornar ao Overworld.            |
+- O jogador dorme no Overworld por tempo suficiente e é teleportado para uma dimensão de sonho aleatória.
+- O jogador usa o item `oneiric_awakener` para retornar ao Overworld.
+- O retorno prioriza posição da cama original e mantém fallback seguro para respawn ou spawn global.
 
 ---
 
-## Receitas
+## 2. Visão Geral do Sistema
 
-### Criação (Crafting)
+### Descrição de alto nível
 
-| Item Criado                  | Ingredientes                                                                                             | Padrão (Pattern)                                                                        |
-| ---------------------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| **Despertador Onírico**      | 1x Pena, 1x Bloco do Núcleo Onírico, 1x Garrafa de Vidro                                                  | Vertical: Pena (topo), Bloco do Núcleo Onírico (meio), Garrafa de Vidro (baixo)         |
-| **Bloco do Núcleo Onírico**  | 4x Pedra Infundida dos Sonhos, 4x Pó dos Sonhos, 1x Relógio                                              | Relógio no centro, cercado por Pedra Infundida e Pó dos Sonhos em padrão de xadrez.     |
-| **Pedra Infundida dos Sonhos** | 2x Pedra, 2x Pó dos Sonhos                                                                               | Padrão de xadrez 2x2 com Pedra e Pó dos Sonhos.                                         |
+O Dreams Dimensions é estruturado em torno de **eventos de servidor** (ticks e spawn), **registros NeoForge** (itens, blocos, attachments, creative tab), e **datapacks** (dimensões, tipos de dimensão, biomas, noise settings, receitas e worldgen).
 
-### Fornalha (Smelting & Blasting)
+### Componentes principais
 
-| Item Resultante         | Ingrediente                  | Método         | Tempo (Ticks) | Experiência |
-| ----------------------- | ---------------------------- | -------------- | ------------- | ----------- |
-| **Pedra dos Sonhos Azul** | Pedregulho dos Sonhos Azul   | Smelting       | 200           | 0.1         |
-| **Pedra dos Sonhos Azul** | Pedregulho dos Sonhos Azul   | Blasting       | 100           | 0.1         |
+- **Bootstrap do mod** (`DreamsDimensions`): registra config, registries e listeners.
+- **Teleporte por sono** (`SleepTeleportHandler`): envia jogador para dimensão onírica após 100 ticks de sono.
+- **Retorno ao Overworld** (`OneiricAwakenerItem` + `DreamReturnHelper`): controla uso do item, cooldown e destino seguro.
+- **Persistência de ponto de retorno** (`DreamReturnData` + attachment `dream_return`): salva cama/posição/yaw do jogador.
+- **Configuração dinâmica** (`DreamsConfig`): lista quais dimensões são tratadas como “de sonho”.
+- **Client-side visuals** (`ClientDimensionEvents` / `DreamTransitionScreen`): tela de transição ao trocar entre dimensões.
+
+### Diagrama conceitual (alto nível)
+
+```text
+┌─────────────────────┐
+│ Jogador no Overworld│
+└──────────┬──────────┘
+           │ dorme >= 100 ticks
+           ▼
+┌──────────────────────────────┐
+│ SleepTeleportHandler         │
+│ - escolhe dreamscape/campo   │
+│ - teleporta com spawn seguro │
+└──────────┬───────────────────┘
+           ▼
+┌──────────────────────────────┐
+│ Dimensão de sonho            │
+│ - exploração                 │
+│ - efeitos especiais (azul)   │
+└──────────┬───────────────────┘
+           │ usa Oneiric Awakener
+           ▼
+┌──────────────────────────────┐
+│ DreamReturnHelper            │
+│ prioridade de retorno:       │
+│ 1) cama salva                │
+│ 2) respawn do player         │
+│ 3) spawn global seguro       │
+└──────────┬───────────────────┘
+           ▼
+┌─────────────────────┐
+│ Overworld           │
+└─────────────────────┘
+```
+
+---
+
+## 3. Instalação e Ambiente de Desenvolvimento
+
+### Requisitos
+
+- **JDK 21** (obrigatório para MC 1.21.11)
+- **Gradle wrapper** (já incluso no projeto)
+- **IDE recomendada:** IntelliJ IDEA (ou Eclipse)
+- **Git** para versionamento
+
+### Passo a passo para importar o projeto
+
+1. Clone o repositório.
+2. Abra a pasta raiz no IntelliJ/Eclipse.
+3. Aguarde sincronização Gradle.
+4. Confirme SDK/JDK 21 no projeto.
+
+### Plugins/extensões úteis
+
+- **IntelliJ:** Minecraft Development (opcional), Lombok plugin (não obrigatório neste projeto), EditorConfig.
+- **Eclipse:** Buildship Gradle Integration.
+
+### Run Configurations (Client/Server)
+
+O `build.gradle` já define `runs { client, server, gameTestServer, clientData }`.
+
+Comandos práticos:
+
+```bash
+./gradlew runClient
+./gradlew runServer
+./gradlew runGameTestServer
+./gradlew runClientData
+```
+
+Observações:
+- `runServer` já passa `--nogui`.
+- As propriedades `neoforge.enabledGameTestNamespaces` são configuradas automaticamente para `dreamsdimensions`.
+
+---
+
+## 4. Estrutura de Pacotes / Módulos
+
+### Convenções de pacotes
+
+Base package: `com.dreamsdimensions.mod`
+
+Submódulos principais:
+
+- `attachment` → dados persistentes por entidade (player)
+- `block` → blocos customizados
+- `client.event` / `client.screen` → eventos e UI client-only
+- `config` → `ModConfigSpec` e parsing de configuração
+- `event` → handlers de gameplay no servidor
+- `item` → itens customizados
+- `registry` → registros NeoForge (itens, blocos, tabs, attachments)
+- `util` → regras utilitárias de teleporte/retorno
+
+### Justificativa arquitetural
+
+A arquitetura separa claramente:
+
+- **Lifecycle / registry** (mod bus) de **runtime gameplay** (NeoForge event bus).
+- **Lógica de domínio** (retorno e segurança de spawn) em utilitário dedicado (`DreamReturnHelper`).
+- **Estado persistente de jogador** em attachment serializável (`DreamReturnData`) com `Codec`, seguindo padrão moderno NeoForge.
+
+### Padrões utilizados
+
+- **Singleton utilitário estático** para handlers (`final class` + construtor privado).
+- **Registro declarativo** com `DeferredRegister`.
+- **Event-driven architecture** (listeners de tick e spawn).
+- **Attachment-based persistence** para dados do jogador (copy on death).
+
+---
+
+## 5. Componentes Principais
+
+### 5.1 Blocos e Itens
+
+#### Blocos
+
+- Registrados em `ModBlocks`.
+- Incluem blocos temáticos de sonho (`dream_grass_block`, `blue_dream_stone`, `oneiric_core_block`, etc.).
+- Recursos associados: `blockstates`, `models`, `textures`, `loot_tables`, tags de mineração e recipes.
+
+#### Itens
+
+- Registrados em `ModItems`.
+- Itens-chave:
+  - `dream_dust`
+  - `oneiric_awakener`
+
+Exemplo de lógica do item despertador (resumo):
+
+```java
+@Override
+public InteractionResult use(Level level, Player player, InteractionHand hand) {
+    if (!DreamsConfig.isDreamDimension(level.dimension())) return InteractionResult.PASS;
+    player.startUsingItem(hand);
+    return InteractionResult.CONSUME;
+}
+```
+
+No `finishUsingItem`, o código:
+1. valida se é `ServerPlayer`,
+2. valida dimensão onírica,
+3. calcula transição de retorno,
+4. teleporta,
+5. aplica cooldown.
+
+### 5.2 Dimensões oníricas
+
+Dimensões principais:
+
+- `dreamsdimensions:dreamscape`
+- `dreamsdimensions:campo_onirico_azul`
+
+Arquivos relacionados:
+
+- `data/dreamsdimensions/dimension/*.json`
+- `data/dreamsdimensions/dimension_type/*.json`
+- `data/dreamsdimensions/worldgen/biome/*.json`
+- `data/dreamsdimensions/worldgen/noise_settings/*.json`
+
+Teleporte de entrada:
+- `SleepTeleportHandler` escolhe dimensão aleatória da lista fixa.
+- Usa `player.isSleepingLongEnough()` (>= 100 ticks).
+- Evita retrigger por ciclo de sono com `Set<UUID>` concorrente.
+
+### 5.3 Listeners / Events
+
+Eventos tratados:
+
+- `PlayerTickEvent.Post`:
+  - `SleepTeleportHandler` (entrada no sonho)
+  - `DreamDimensionEffectsHandler` (Slow Falling no campo onírico azul)
+- `PlayerSetSpawnEvent`:
+  - `DreamReturnAttachmentHandler` (atualiza cama/posição de retorno)
+- Client event:
+  - `RegisterDimensionTransitionScreenEvent` para `DreamTransitionScreen`
+
+### 5.4 Configurações e JSON
+
+- Config Java: `DreamsConfig` (`ModConfigSpec`)
+  - Chave: `dream_dimensions` (lista de IDs de dimensões tratadas como sonho)
+- JSON/datapack:
+  - dimensão e tipo de dimensão
+  - biomas e noise settings
+  - worldgen de minério (`configured_feature`, `placed_feature`, `biome_modifier`)
+  - receitas, loot tables, tags
+
+---
+
+## 6. Fluxos de Uso
+
+### Fluxo A — Entrar em dimensão de sonho
+
+1. Jogador dorme no Overworld.
+2. Tick listener verifica `isSleepingLongEnough`.
+3. Handler evita duplicidade de teleporte naquele ciclo.
+4. Seleciona uma das dimensões de sonho.
+5. Teleporta para spawn seguro da dimensão alvo.
+
+#### Diagrama de sequência (Fluxo A)
+
+```text
+Jogador      SleepTeleportHandler      MinecraftServer      ServerLevel(target)
+   |                 |                        |                    |
+   |--dorme---------->|                        |                    |
+   |                 |--consulta dimensão---->|                    |
+   |                 |<-----ServerLevel-------|                    |
+   |                 |--findSafeSpawn----------------------------->|
+   |                 |<-------------pos segura---------------------|
+   |<----------------|--teleportTo--------------------------------|
+```
+
+### Fluxo B — Retornar com Oneiric Awakener
+
+1. Jogador usa item na dimensão onírica.
+2. Ao concluir uso (`finishUsingItem`), mod chama `DreamReturnHelper`.
+3. Helper decide destino por prioridade:
+   - cama salva no attachment,
+   - respawn do jogador,
+   - spawn global seguro.
+4. Servidor executa teleporte para Overworld.
+5. Item entra em cooldown.
+
+#### Diagrama de sequência (Fluxo B)
+
+```text
+Jogador  OneiricAwakenerItem  DreamReturnHelper  Attachment/Respawn  Overworld
+   |            |                    |                  |              |
+   |--use------>|                    |                  |              |
+   |            |--finishUsingItem-->|                  |              |
+   |            |                    |--resolveTarget-->|              |
+   |            |                    |<--target---------|              |
+   |<-----------|--teleport---------------------------->|              |
+   |<-----------|--cooldown aplicado                                   |
+```
+
+### Exemplo de pseudo-código de resolução de retorno
+
+```pseudo
+if attachment.temCamaValidaNoOverworld():
+    return standUpPositionDaCama
+else if player.temRespawnValido():
+    return respawnDoPlayer
+else:
+    return spawnGlobalComBuscaDePosicaoSegura
+```
+
+---
+
+## 7. Diagramas de Arquitetura
+
+### 7.1 Diagrama de pacotes
+
+```text
+com.dreamsdimensions.mod
+├── DreamsDimensions (bootstrap)
+├── attachment
+│   └── DreamReturnData
+├── config
+│   └── DreamsConfig
+├── event
+│   ├── SleepTeleportHandler
+│   ├── DreamReturnAttachmentHandler
+│   └── DreamDimensionEffectsHandler
+├── item
+│   └── OneiricAwakenerItem, DreamDustItem
+├── block
+│   └── DreamOreBlock
+├── registry
+│   ├── ModItems
+│   ├── ModBlocks
+│   ├── ModCreativeTabs
+│   └── ModAttachments
+├── util
+│   └── DreamReturnHelper
+└── client
+    ├── event (ClientModEvents, ClientDimensionEvents)
+    └── screen (DreamTransitionScreen)
+```
+
+### 7.2 Diagrama de dependências (simplificado)
+
+```text
+DreamsDimensions
+  ├─> ModItems / ModBlocks / ModCreativeTabs / ModAttachments
+  ├─> DreamsConfig
+  └─> Event Handlers (runtime)
+
+OneiricAwakenerItem
+  ├─> DreamsConfig
+  └─> DreamReturnHelper
+        ├─> ModAttachments (DreamReturnData)
+        └─> APIs de TeleportTransition/Respawn
+
+SleepTeleportHandler
+  └─> dimensões de sonho + teleporte seguro
+```
+
+---
+
+## 8. Teste, Build e Release
+
+### Build do mod
+
+Comandos principais:
+
+```bash
+./gradlew clean build
+```
+
+Artefato esperado:
+- `build/libs/dreamsdimensions-<versão>.jar`
+
+### Teste local no Minecraft
+
+- Use `./gradlew runClient` para validar gameplay completo.
+- Cenários mínimos de teste manual:
+  1. Dormir no Overworld e confirmar teleporte após ~5 segundos.
+  2. Usar `oneiric_awakener` e validar retorno correto.
+  3. Validar fallback de retorno removendo/invalidando cama.
+  4. Confirmar efeito `Slow Falling` no `campo_onirico_azul`.
+
+### Checklist de QA pré-release
+
+- [ ] Compila sem warnings críticos.
+- [ ] `runClient` inicializa sem crash.
+- [ ] Entrar/sair das dimensões funciona em singleplayer.
+- [ ] Localizações (`en_us`, `pt_br`) contêm textos de itens/mensagens.
+- [ ] Recipes e loot tables válidos em datapack reload.
+- [ ] JAR final contém assets e data esperados.
+
+---
+
+## 9. Contribuindo
+
+### Guidelines de contribuição
+
+1. Crie branch por feature/fix.
+2. Mantenha commits pequenos e descritivos.
+3. Abra PR com:
+   - problema resolvido,
+   - abordagem adotada,
+   - impacto em gameplay,
+   - passos de validação.
+
+### Normas de estilo
+
+- Manter organização por pacote (`event`, `registry`, `util`, etc.).
+- Evitar lógica de negócio em classe de bootstrap.
+- Preferir métodos pequenos e com responsabilidade única.
+- Seguir convenções Java/NeoForge existentes no projeto.
+
+### Issues e Pull Requests
+
+Sugestão para issue template:
+- Contexto
+- Comportamento atual
+- Comportamento esperado
+- Logs / stack trace
+- Versões (Minecraft, NeoForge, mod)
+
+---
+
+## 10. Referências e Recursos
+
+### Documentação oficial
+
+- NeoForge docs: https://docs.neoforged.net/
+- NeoForge javadocs (conforme versão em uso)
+- Minecraft Wiki (datapacks, dimensions, worldgen): https://minecraft.wiki/
+
+### Tópicos úteis para este mod
+
+- Deferred Register e ciclo de vida (`IEventBus`, MOD bus vs EVENT_BUS)
+- Data Attachments no NeoForge
+- `TeleportTransition` e regras de respawn
+- Definição de dimensão/bioma/noise via datapack JSON
+
+### Boas práticas de modding aplicáveis
+
+- Validar sempre client vs server side em eventos.
+- Evitar side effects em ticks sem guards (como set de controle por UUID).
+- Implementar fallback seguro para teleporte/respawn.
+- Manter dados persistentes com codec e compatibilidade forward.
+
+---
+
+## Exemplo prático de extensão futura
+
+Caso queira adicionar uma terceira dimensão onírica:
+
+1. Adicione JSONs de `dimension_type`, `dimension`, `biome`, `noise_settings`.
+2. Inclua o novo ID em `dream_dimensions` da config.
+3. (Opcional) Adicione efeitos específicos em novo handler.
+4. Garanta assets/loot/recipes associados.
+5. Teste o fluxo de entrada/retorno para nova dimensão.
+
+Isso mantém o design atual escalável sem alterar o contrato principal do mod.
