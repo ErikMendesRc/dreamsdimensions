@@ -35,20 +35,20 @@
 - [Apêndice D: chaves de tradução relevantes](#apêndice-d-chaves-de-tradução-relevantes)
 
 ## 1. Sumário executivo
-O mod registra **26 entradas jogáveis** (9 itens diretos + 17 blocos com BlockItem), todas exibidas na aba criativa própria `itemGroup.dreamsdimensions.dreams_dimensions_tab`. Há **5 receitas JSON** no datapack (crafting/smelting/blasting), com progressão principal atual em torno de `ow_dream_dust -> ow_dream_infused_stone -> ow_oneiric_core_block -> ow_oneiric_awakener`, e os novos itens OW da Sprint 2 (`ow_oneiric_residue`, `ow_refined_oneiric_powder`, `ow_stabilized_dream_fragment`, `ow_condensed_dream_crystal`, `ow_dream_binding_thread`, `ow_dream_catalyst`, `ow_stabilizing_essence`) foram adicionados para futura cadeia de refinamento do `ow_dream_dust`. A aquisição survival de vários blocos depende de loot tabelas e, para minérios, de worldgen no Overworld via `neoforge:add_features`; diversos blocos não têm receita nem worldgen explícitos e, no estado atual, ficam como obtenção indireta/creative-only (quando não há outra fonte definida).
+O mod registra **26 entradas jogáveis** (9 itens diretos + 17 blocos com BlockItem), todas exibidas na aba criativa própria `itemGroup.dreamsdimensions.dreams_dimensions_tab`. Há **13 receitas JSON** no datapack (crafting/smelting/blasting). Além da cadeia do despertador (`ow_dream_dust -> ow_dream_infused_stone -> ow_oneiric_core_block -> ow_oneiric_awakener`), a Sprint 2 implementa o refino OW completo: `ow_dream_dust -> ow_oneiric_residue -> ow_refined_oneiric_powder -> ow_stabilized_dream_fragment -> ow_condensed_dream_crystal`, com derivados `ow_dream_binding_thread`, `ow_dream_catalyst` e `ow_stabilizing_essence`. A aquisição survival de vários blocos depende de loot tabelas e, para minérios, de worldgen no Overworld via `neoforge:add_features`; diversos blocos não têm receita nem worldgen explícitos e, no estado atual, ficam como obtenção indireta/creative-only (quando não há outra fonte definida).
 
 ## 2. Catálogo Completo de Itens
 | Nome (pt-BR) | ID | Tipo | Onde aparece | Como obter | Arquivos relevantes |
 |---|---|---|---|---|---|
 | Pó dos Sonhos | `dreamsdimensions:ow_dream_dust` | Item (custom) | `dreams_dimensions_tab` | Drop de `ow_dream_ore`/`ow_deepslate_dream_ore` (sem Silk Touch); ingrediente de craft | `ModItems.java`, `DreamDustItem.java`, loot tables de minério |
 | Despertador Onírico | `dreamsdimensions:ow_oneiric_awakener` | Item utilitário (custom) | `dreams_dimensions_tab` | Craft (`ow_oneiric_awakener.json`) | `ModItems.java`, `OneiricAwakenerItem.java`, `recipe/ow_oneiric_awakener.json` |
-| Resíduo Onírico | `dreamsdimensions:ow_oneiric_residue` | Item | Overworld | a definir na Sprint 2 — receitas | Item OW base para refinamento de `ow_dream_dust` |
-| Pó Onírico Refinado | `dreamsdimensions:ow_refined_oneiric_powder` | Item | Overworld | a definir na Sprint 2 — receitas | Etapa intermediária da economia OW |
-| Fragmento Onírico Estabilizado | `dreamsdimensions:ow_stabilized_dream_fragment` | Item | Overworld | a definir na Sprint 2 — receitas | Componente estável para síntese avançada |
-| Cristal Onírico Condensado | `dreamsdimensions:ow_condensed_dream_crystal` | Item | Overworld | a definir na Sprint 2 — receitas | Condensado de energia onírica |
-| Fio de Ligação dos Sonhos | `dreamsdimensions:ow_dream_binding_thread` | Item | Overworld | a definir na Sprint 2 — receitas | Elemento de ligação de componentes |
-| Catalisador dos Sonhos | `dreamsdimensions:ow_dream_catalyst` | Item | Overworld | a definir na Sprint 2 — receitas | Agente catalítico de transformação |
-| Essência Estabilizadora | `dreamsdimensions:ow_stabilizing_essence` | Item | Overworld | a definir na Sprint 2 — receitas | Essência final de estabilização |
+| Resíduo Onírico | `dreamsdimensions:ow_oneiric_residue` | Item | Overworld | Crafting shapeless: `2x ow_dream_dust -> 1x ow_oneiric_residue` | Item OW base para refinamento de `ow_dream_dust` |
+| Pó Onírico Refinado | `dreamsdimensions:ow_refined_oneiric_powder` | Item | Overworld | Smelting/Blasting de `ow_oneiric_residue` | Etapa intermediária da economia OW |
+| Fragmento Onírico Estabilizado | `dreamsdimensions:ow_stabilized_dream_fragment` | Item | Overworld | Crafting shaped 2x2 com `ow_refined_oneiric_powder` | Componente estável para síntese avançada |
+| Cristal Onírico Condensado | `dreamsdimensions:ow_condensed_dream_crystal` | Item | Overworld | Crafting shaped com `ow_stabilized_dream_fragment` + `minecraft:glass` | Condensado de energia onírica |
+| Fio de Ligação dos Sonhos | `dreamsdimensions:ow_dream_binding_thread` | Item | Overworld | Crafting shapeless: `minecraft:string + ow_refined_oneiric_powder` | Elemento de ligação de componentes |
+| Catalisador dos Sonhos | `dreamsdimensions:ow_dream_catalyst` | Item | Overworld | Crafting shapeless: `minecraft:blaze_powder + ow_refined_oneiric_powder` | Agente catalítico de transformação |
+| Essência Estabilizadora | `dreamsdimensions:ow_stabilizing_essence` | Item | Overworld | Crafting shapeless: `minecraft:ghast_tear + ow_stabilized_dream_fragment` | Essência final de estabilização |
 | Grama dos Sonhos | `dreamsdimensions:ds_dream_grass` | BlockItem | `dreams_dimensions_tab` | Dropa `dream_dirt_block` (loot); SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/dream_grass_block.json` |
 | Grama dos Sonhos Azul | `dreamsdimensions:az_dream_grass` | BlockItem | `dreams_dimensions_tab` | Drop com Silk Touch, senão `blue_dream_dirt`; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/blue_dream_grass.json` |
 | Terra dos Sonhos | `dreamsdimensions:ds_dream_dirt` | BlockItem | `dreams_dimensions_tab` | Drop próprio; também drop de `dream_grass_block`; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/dream_dirt_block.json`, `dream_grass_block.json` |
@@ -97,10 +97,44 @@ O mod registra **26 entradas jogáveis** (9 itens diretos + 17 blocos com BlockI
   - Output: 1x `dreamsdimensions:az_dream_stone`
   - Cooking time: 100 ticks; XP: 0.1
   - Conditions: **NÃO ENCONTRADO**
-- Demais IDs do catálogo: **SEM RECEITA (até o momento)**.
+- `dreamsdimensions:ow_oneiric_residue`
+  - `minecraft:crafting_shapeless` — `src/main/resources/data/dreamsdimensions/recipe/ow/ow_oneiric_residue.json`
+  - Ingredientes: `2x dreamsdimensions:ow_dream_dust`
+  - Output: 1x `dreamsdimensions:ow_oneiric_residue`
+- `dreamsdimensions:ow_refined_oneiric_powder`
+  - `minecraft:smelting` — `src/main/resources/data/dreamsdimensions/recipe/ow/ow_refined_oneiric_powder_from_smelting.json`
+  - Ingrediente: `dreamsdimensions:ow_oneiric_residue`
+  - Output: 1x `dreamsdimensions:ow_refined_oneiric_powder`
+  - Cooking time: 200 ticks; XP: 0.1
+  - `minecraft:blasting` — `src/main/resources/data/dreamsdimensions/recipe/ow/ow_refined_oneiric_powder_from_blasting.json`
+  - Ingrediente: `dreamsdimensions:ow_oneiric_residue`
+  - Output: 1x `dreamsdimensions:ow_refined_oneiric_powder`
+  - Cooking time: 100 ticks; XP: 0.1
+- `dreamsdimensions:ow_stabilized_dream_fragment`
+  - `minecraft:crafting_shaped` — `src/main/resources/data/dreamsdimensions/recipe/ow/ow_stabilized_dream_fragment.json`
+  - Pattern: `"PP"`, `"PP"`
+  - Ingrediente-chave: `P = dreamsdimensions:ow_refined_oneiric_powder`
+  - Output: 1x `dreamsdimensions:ow_stabilized_dream_fragment`
+- `dreamsdimensions:ow_condensed_dream_crystal`
+  - `minecraft:crafting_shaped` — `src/main/resources/data/dreamsdimensions/recipe/ow/ow_condensed_dream_crystal.json`
+  - Pattern: `"FFF"`, `"FGF"`, `"FFF"`
+  - Ingredientes-chave: `F = dreamsdimensions:ow_stabilized_dream_fragment`, `G = minecraft:glass`
+  - Output: 1x `dreamsdimensions:ow_condensed_dream_crystal`
+- `dreamsdimensions:ow_dream_binding_thread`
+  - `minecraft:crafting_shapeless` — `src/main/resources/data/dreamsdimensions/recipe/ow/ow_dream_binding_thread.json`
+  - Ingredientes: `minecraft:string`, `dreamsdimensions:ow_refined_oneiric_powder`
+  - Output: 1x `dreamsdimensions:ow_dream_binding_thread`
+- `dreamsdimensions:ow_dream_catalyst`
+  - `minecraft:crafting_shapeless` — `src/main/resources/data/dreamsdimensions/recipe/ow/ow_dream_catalyst.json`
+  - Ingredientes: `minecraft:blaze_powder`, `dreamsdimensions:ow_refined_oneiric_powder`
+  - Output: 1x `dreamsdimensions:ow_dream_catalyst`
+- `dreamsdimensions:ow_stabilizing_essence`
+  - `minecraft:crafting_shapeless` — `src/main/resources/data/dreamsdimensions/recipe/ow/ow_stabilizing_essence.json`
+  - Ingredientes: `minecraft:ghast_tear`, `dreamsdimensions:ow_stabilized_dream_fragment`
+  - Output: 1x `dreamsdimensions:ow_stabilizing_essence`
 
 ## 4. Matriz de Aquisição / Geração
-- Crafting direto: `ow_oneiric_awakener`, `ow_oneiric_core_block`, `ow_dream_infused_stone`, `blue_dream_stone`.
+- Crafting direto: `ow_oneiric_awakener`, `ow_oneiric_core_block`, `ow_dream_infused_stone`, `ow_oneiric_residue`, `ow_stabilized_dream_fragment`, `ow_condensed_dream_crystal`, `ow_dream_binding_thread`, `ow_dream_catalyst`, `ow_stabilizing_essence`, `blue_dream_stone`.
 - Drop por loot table de bloco: `dream_dirt_block`, `blue_dream_dirt`, `dream_sand_block`, `serene_stone`, `blue_dream_cobblestone`, `dream_shimmer_block`, `dream_glow_moss`, `ow_dream_infused_stone`, `ow_oneiric_core_block`, `blue_dream_stone`.
 - Minérios (`ow_dream_ore`, `ow_deepslate_dream_ore`):
   - Geram no Overworld por biome modifier `ow_dream_ore_overworld.json` no passo `underground_ores`.
@@ -255,6 +289,14 @@ O mod registra **26 entradas jogáveis** (9 itens diretos + 17 blocos com BlockI
 - `src/main/resources/data/dreamsdimensions/recipe/ow_dream_infused_stone.json`
 - `src/main/resources/data/dreamsdimensions/recipe/ow_oneiric_core_block.json`
 - `src/main/resources/data/dreamsdimensions/recipe/ow_oneiric_awakener.json`
+- `src/main/resources/data/dreamsdimensions/recipe/ow/ow_oneiric_residue.json`
+- `src/main/resources/data/dreamsdimensions/recipe/ow/ow_refined_oneiric_powder_from_smelting.json`
+- `src/main/resources/data/dreamsdimensions/recipe/ow/ow_refined_oneiric_powder_from_blasting.json`
+- `src/main/resources/data/dreamsdimensions/recipe/ow/ow_stabilized_dream_fragment.json`
+- `src/main/resources/data/dreamsdimensions/recipe/ow/ow_condensed_dream_crystal.json`
+- `src/main/resources/data/dreamsdimensions/recipe/ow/ow_dream_binding_thread.json`
+- `src/main/resources/data/dreamsdimensions/recipe/ow/ow_dream_catalyst.json`
+- `src/main/resources/data/dreamsdimensions/recipe/ow/ow_stabilizing_essence.json`
 
 ## Apêndice B: lista de loot tables
 - `src/main/resources/data/dreamsdimensions/loot_tables/blocks/blue_dream_cobblestone.json`

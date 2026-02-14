@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "FFF",
+    "FGF",
+    "FFF"
+  ],
+  "key": {
+    "F": "dreamsdimensions:ow_stabilized_dream_fragment",
+    "G": "minecraft:glass"
+  },
+  "result": {
+    "id": "dreamsdimensions:ow_condensed_dream_crystal",
+    "count": 1
+  }
+}

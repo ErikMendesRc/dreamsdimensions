@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:ghast_tear",
+    "dreamsdimensions:ow_stabilized_dream_fragment"
+  ],
+  "result": {
+    "id": "dreamsdimensions:ow_stabilizing_essence",
+    "count": 1
+  }
+}

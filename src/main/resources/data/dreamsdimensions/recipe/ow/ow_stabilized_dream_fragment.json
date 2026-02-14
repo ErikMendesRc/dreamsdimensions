@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "PP",
+    "PP"
+  ],
+  "key": {
+    "P": "dreamsdimensions:ow_refined_oneiric_powder"
+  },
+  "result": {
+    "id": "dreamsdimensions:ow_stabilized_dream_fragment",
+    "count": 1
+  }
+}
