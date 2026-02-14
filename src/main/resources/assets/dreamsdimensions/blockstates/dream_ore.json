@@ -1,6 +1,0 @@
-{
-  "variants": {
-    "clicked=false": { "model": "dreamsdimensions:block/dream_ore" },
-    "clicked=true": { "model": "dreamsdimensions:block/dream_ore" }
-  }
-}

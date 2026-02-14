@@ -18,16 +18,16 @@ public final class ModItems {
             DeferredRegister.createItems(DreamsDimensions.MODID);
 
     /**
-     * Poeira dos sonhos usada na receita do Oneiric Awakener e dropada do minério dream_ore.
+     * Poeira dos sonhos usada na receita do Oneiric Awakener e dropada do minério ow_dream_ore.
      */
     public static final DeferredItem<DreamDustItem> DREAM_DUST = ITEMS.registerItem(
-            "dream_dust",
+            "ow_dream_dust",
             DreamDustItem::new,
             Item.Properties::new
     );
 
     public static final DeferredItem<OneiricAwakenerItem> ONEIRIC_AWAKENER = ITEMS.registerItem(
-            "oneiric_awakener",
+            "ow_oneiric_awakener",
             OneiricAwakenerItem::new,
             () -> new Item.Properties()
                     .stacksTo(1)

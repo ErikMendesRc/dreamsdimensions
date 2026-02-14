@@ -6,22 +6,22 @@
   "block.dreamsdimensions.blue_dream_cobblestone": "Pedregulho dos Sonhos Azul",
   "block.dreamsdimensions.dream_shimmer_block": "Bloco Cintilante dos Sonhos",
   "block.dreamsdimensions.dream_glow_moss": "Musgo Luminoso dos Sonhos",
-  "block.dreamsdimensions.dream_ore": "Minério dos Sonhos",
-  "block.dreamsdimensions.deepslate_dream_ore": "Minério dos Sonhos de Ardósia",
-  "block.dreamsdimensions.dream_infused_stone": "Pedra Infundida dos Sonhos",
-  "block.dreamsdimensions.oneiric_core_block": "Bloco do Núcleo Onírico",
+  "block.dreamsdimensions.ow_dream_ore": "Minério dos Sonhos",
+  "block.dreamsdimensions.ow_deepslate_dream_ore": "Minério dos Sonhos de Ardósia",
+  "block.dreamsdimensions.ow_dream_infused_stone": "Pedra Infundida dos Sonhos",
+  "block.dreamsdimensions.ow_oneiric_core_block": "Bloco do Núcleo Onírico",
   "block.dreamsdimensions.dream_dirt_block": "Terra dos Sonhos",
   "block.dreamsdimensions.blue_dream_dirt": "Terra dos Sonhos Azul",
   "block.dreamsdimensions.dream_sand_block": "Areia dos Sonhos",
 
-  "item.dreamsdimensions.dream_dust": "Pó dos Sonhos",
-  "item.dreamsdimensions.oneiric_awakener": "Despertador Onírico",
+  "item.dreamsdimensions.ow_dream_dust": "Pó dos Sonhos",
+  "item.dreamsdimensions.ow_oneiric_awakener": "Despertador Onírico",
 
   "itemGroup.dreamsdimensions.dreams_dimensions_tab": "Dimensões dos Sonhos",
 
-  "tooltip.dreamsdimensions.oneiric_awakener.line1": "Usado para atravessar os véus dos sonhos.",
-  "tooltip.dreamsdimensions.oneiric_awakener.line2": "Use para teleportar... talvez.",
-  "message.dreamsdimensions.oneiric_awakener.success": "Você acordou do sonho.",
-  "message.dreamsdimensions.oneiric_awakener.fail": "O Overworld não está disponível no momento."
+  "tooltip.dreamsdimensions.ow_oneiric_awakener.line1": "Usado para atravessar os véus dos sonhos.",
+  "tooltip.dreamsdimensions.ow_oneiric_awakener.line2": "Use para teleportar... talvez.",
+  "message.dreamsdimensions.ow_oneiric_awakener.success": "Você acordou do sonho.",
+  "message.dreamsdimensions.ow_oneiric_awakener.fail": "O Overworld não está disponível no momento."
 
 }

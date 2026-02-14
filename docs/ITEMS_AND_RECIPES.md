@@ -9,8 +9,8 @@
 - [3. Matriz de Receitas (por output)](#3-matriz-de-receitas-por-output)
 - [4. Matriz de Aquisição / Geração](#4-matriz-de-aquisição--geração)
 - [5. Detalhamento por item/bloco](#5-detalhamento-por-itembloco)
-  - [5.1 Pó dos Sonhos (`dreamsdimensions:dream_dust`)](#51-pó-dos-sonhos-dreamsdimensionsdream_dust)
-  - [5.2 Despertador Onírico (`dreamsdimensions:oneiric_awakener`)](#52-despertador-onírico-dreamsdimensionsoneiric_awakener)
+  - [5.1 Pó dos Sonhos (`dreamsdimensions:ow_dream_dust`)](#51-pó-dos-sonhos-dreamsdimensionsow_dream_dust)
+  - [5.2 Despertador Onírico (`dreamsdimensions:ow_oneiric_awakener`)](#52-despertador-onírico-dreamsdimensionsow_oneiric_awakener)
   - [5.3 Grama dos Sonhos (`dreamsdimensions:dream_grass_block`)](#53-grama-dos-sonhos-dreamsdimensionsdream_grass_block)
   - [5.4 Grama dos Sonhos Azul (`dreamsdimensions:blue_dream_grass`)](#54-grama-dos-sonhos-azul-dreamsdimensionsblue_dream_grass)
   - [5.5 Terra dos Sonhos (`dreamsdimensions:dream_dirt_block`)](#55-terra-dos-sonhos-dreamsdimensionsdream_dirt_block)
@@ -21,10 +21,10 @@
   - [5.10 Pedregulho dos Sonhos Azul (`dreamsdimensions:blue_dream_cobblestone`)](#510-pedregulho-dos-sonhos-azul-dreamsdimensionsblue_dream_cobblestone)
   - [5.11 Bloco Cintilante dos Sonhos (`dreamsdimensions:dream_shimmer_block`)](#511-bloco-cintilante-dos-sonhos-dreamsdimensionsdream_shimmer_block)
   - [5.12 Musgo Luminoso dos Sonhos (`dreamsdimensions:dream_glow_moss`)](#512-musgo-luminoso-dos-sonhos-dreamsdimensionsdream_glow_moss)
-  - [5.13 Minério dos Sonhos (`dreamsdimensions:dream_ore`)](#513-minério-dos-sonhos-dreamsdimensionsdream_ore)
-  - [5.14 Minério dos Sonhos de Ardósia (`dreamsdimensions:deepslate_dream_ore`)](#514-minério-dos-sonhos-de-ardósia-dreamsdimensionsdeepslate_dream_ore)
-  - [5.15 Pedra Infundida dos Sonhos (`dreamsdimensions:dream_infused_stone`)](#515-pedra-infundida-dos-sonhos-dreamsdimensionsdream_infused_stone)
-  - [5.16 Bloco do Núcleo Onírico (`dreamsdimensions:oneiric_core_block`)](#516-bloco-do-núcleo-onírico-dreamsdimensionsoneiric_core_block)
+  - [5.13 Minério dos Sonhos (`dreamsdimensions:ow_dream_ore`)](#513-minério-dos-sonhos-dreamsdimensionsow_dream_ore)
+  - [5.14 Minério dos Sonhos de Ardósia (`dreamsdimensions:ow_deepslate_dream_ore`)](#514-minério-dos-sonhos-de-ardósia-dreamsdimensionsow_deepslate_dream_ore)
+  - [5.15 Pedra Infundida dos Sonhos (`dreamsdimensions:ow_dream_infused_stone`)](#515-pedra-infundida-dos-sonhos-dreamsdimensionsow_dream_infused_stone)
+  - [5.16 Bloco do Núcleo Onírico (`dreamsdimensions:ow_oneiric_core_block`)](#516-bloco-do-núcleo-onírico-dreamsdimensionsow_oneiric_core_block)
   - [5.17 `dreamsdimensions:dream_flower_block`](#517-dreamsdimensionsdream_flower_block)
   - [5.18 `dreamsdimensions:dream_log_block`](#518-dreamsdimensionsdream_log_block)
   - [5.19 `dreamsdimensions:dream_leaves_block`](#519-dreamsdimensionsdream_leaves_block)
@@ -35,13 +35,13 @@
 - [Apêndice D: chaves de tradução relevantes](#apêndice-d-chaves-de-tradução-relevantes)
 
 ## 1. Sumário executivo
-O mod registra **19 entradas jogáveis** (2 itens diretos + 17 blocos com BlockItem), todas exibidas na aba criativa própria `itemGroup.dreamsdimensions.dreams_dimensions_tab`. Há **5 receitas JSON** no datapack (crafting/smelting/blasting), com progressão principal em torno de `dream_dust -> dream_infused_stone -> oneiric_core_block -> oneiric_awakener`. A aquisição survival de vários blocos depende de loot tabelas e, para minérios, de worldgen no Overworld via `neoforge:add_features`; diversos blocos não têm receita nem worldgen explícitos e, no estado atual, ficam como obtenção indireta/creative-only (quando não há outra fonte definida).
+O mod registra **19 entradas jogáveis** (2 itens diretos + 17 blocos com BlockItem), todas exibidas na aba criativa própria `itemGroup.dreamsdimensions.dreams_dimensions_tab`. Há **5 receitas JSON** no datapack (crafting/smelting/blasting), com progressão principal em torno de `ow_dream_dust -> ow_dream_infused_stone -> ow_oneiric_core_block -> ow_oneiric_awakener`. A aquisição survival de vários blocos depende de loot tabelas e, para minérios, de worldgen no Overworld via `neoforge:add_features`; diversos blocos não têm receita nem worldgen explícitos e, no estado atual, ficam como obtenção indireta/creative-only (quando não há outra fonte definida).
 
 ## 2. Catálogo Completo de Itens
 | Nome (pt-BR) | ID | Tipo | Onde aparece | Como obter | Arquivos relevantes |
 |---|---|---|---|---|---|
-| Pó dos Sonhos | `dreamsdimensions:dream_dust` | Item (custom) | `dreams_dimensions_tab` | Drop de `dream_ore`/`deepslate_dream_ore` (sem Silk Touch); ingrediente de craft | `ModItems.java`, `DreamDustItem.java`, loot tables de minério |
-| Despertador Onírico | `dreamsdimensions:oneiric_awakener` | Item utilitário (custom) | `dreams_dimensions_tab` | Craft (`oneiric_awakener.json`) | `ModItems.java`, `OneiricAwakenerItem.java`, `recipe/oneiric_awakener.json` |
+| Pó dos Sonhos | `dreamsdimensions:ow_dream_dust` | Item (custom) | `dreams_dimensions_tab` | Drop de `ow_dream_ore`/`ow_deepslate_dream_ore` (sem Silk Touch); ingrediente de craft | `ModItems.java`, `DreamDustItem.java`, loot tables de minério |
+| Despertador Onírico | `dreamsdimensions:ow_oneiric_awakener` | Item utilitário (custom) | `dreams_dimensions_tab` | Craft (`ow_oneiric_awakener.json`) | `ModItems.java`, `OneiricAwakenerItem.java`, `recipe/ow_oneiric_awakener.json` |
 | Grama dos Sonhos | `dreamsdimensions:dream_grass_block` | BlockItem | `dreams_dimensions_tab` | Dropa `dream_dirt_block` (loot); SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/dream_grass_block.json` |
 | Grama dos Sonhos Azul | `dreamsdimensions:blue_dream_grass` | BlockItem | `dreams_dimensions_tab` | Drop com Silk Touch, senão `blue_dream_dirt`; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/blue_dream_grass.json` |
 | Terra dos Sonhos | `dreamsdimensions:dream_dirt_block` | BlockItem | `dreams_dimensions_tab` | Drop próprio; também drop de `dream_grass_block`; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/dream_dirt_block.json`, `dream_grass_block.json` |
@@ -52,32 +52,32 @@ O mod registra **19 entradas jogáveis** (2 itens diretos + 17 blocos com BlockI
 | Pedregulho dos Sonhos Azul | `dreamsdimensions:blue_dream_cobblestone` | BlockItem | `dreams_dimensions_tab` | Drop próprio; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/blue_dream_cobblestone.json` |
 | Bloco Cintilante dos Sonhos | `dreamsdimensions:dream_shimmer_block` | BlockItem | `dreams_dimensions_tab` | Drop próprio; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/dream_shimmer_block.json` |
 | Musgo Luminoso dos Sonhos | `dreamsdimensions:dream_glow_moss` | BlockItem | `dreams_dimensions_tab` | Drop próprio; SEM RECEITA | `ModBlocks.java`, `loot_tables/blocks/dream_glow_moss.json` |
-| Minério dos Sonhos | `dreamsdimensions:dream_ore` | BlockItem (bloco custom) | `dreams_dimensions_tab` | Worldgen Overworld + loot (Silk Touch ou `dream_dust`) | `ModBlocks.java`, `DreamOreBlock.java`, worldgen + loot |
-| Minério dos Sonhos de Ardósia | `dreamsdimensions:deepslate_dream_ore` | BlockItem (bloco custom) | `dreams_dimensions_tab` | Worldgen Overworld + loot (Silk Touch ou `dream_dust`) | `ModBlocks.java`, `DreamOreBlock.java`, worldgen + loot |
-| Pedra Infundida dos Sonhos | `dreamsdimensions:dream_infused_stone` | BlockItem | `dreams_dimensions_tab` | Craft (`dream_infused_stone.json`) + drop próprio | `ModBlocks.java`, `recipe/dream_infused_stone.json`, loot table |
-| Bloco do Núcleo Onírico | `dreamsdimensions:oneiric_core_block` | BlockItem | `dreams_dimensions_tab` | Craft (`oneiric_core_block.json`) + drop próprio | `ModBlocks.java`, `recipe/oneiric_core_block.json`, loot table |
+| Minério dos Sonhos | `dreamsdimensions:ow_dream_ore` | BlockItem (bloco custom) | `dreams_dimensions_tab` | Worldgen Overworld + loot (Silk Touch ou `ow_dream_dust`) | `ModBlocks.java`, `DreamOreBlock.java`, worldgen + loot |
+| Minério dos Sonhos de Ardósia | `dreamsdimensions:ow_deepslate_dream_ore` | BlockItem (bloco custom) | `dreams_dimensions_tab` | Worldgen Overworld + loot (Silk Touch ou `ow_dream_dust`) | `ModBlocks.java`, `DreamOreBlock.java`, worldgen + loot |
+| Pedra Infundida dos Sonhos | `dreamsdimensions:ow_dream_infused_stone` | BlockItem | `dreams_dimensions_tab` | Craft (`ow_dream_infused_stone.json`) + drop próprio | `ModBlocks.java`, `recipe/ow_dream_infused_stone.json`, loot table |
+| Bloco do Núcleo Onírico | `dreamsdimensions:ow_oneiric_core_block` | BlockItem | `dreams_dimensions_tab` | Craft (`ow_oneiric_core_block.json`) + drop próprio | `ModBlocks.java`, `recipe/ow_oneiric_core_block.json`, loot table |
 | NÃO ENCONTRADO em lang | `dreamsdimensions:dream_flower_block` | BlockItem | `dreams_dimensions_tab` | SEM RECEITA / SEM LOOT TABLE / SEM WORLDGEN ENCONTRADO | `ModBlocks.java` |
 | NÃO ENCONTRADO em lang | `dreamsdimensions:dream_log_block` | BlockItem | `dreams_dimensions_tab` | SEM RECEITA / SEM LOOT TABLE / SEM WORLDGEN ENCONTRADO | `ModBlocks.java` |
 | NÃO ENCONTRADO em lang | `dreamsdimensions:dream_leaves_block` | BlockItem | `dreams_dimensions_tab` | SEM RECEITA / SEM LOOT TABLE / SEM WORLDGEN ENCONTRADO | `ModBlocks.java` |
 
 ## 3. Matriz de Receitas (por output)
-- `dreamsdimensions:oneiric_awakener`
-  - `minecraft:crafting_shaped` — `src/main/resources/data/dreamsdimensions/recipe/oneiric_awakener.json`
+- `dreamsdimensions:ow_oneiric_awakener`
+  - `minecraft:crafting_shaped` — `src/main/resources/data/dreamsdimensions/recipe/ow_oneiric_awakener.json`
   - Pattern: `" F "`, `" K "`, `" B "`
-  - Ingredientes: `minecraft:feather`, `dreamsdimensions:oneiric_core_block`, `minecraft:glass_bottle`
-  - Output: 1x `dreamsdimensions:oneiric_awakener`
+  - Ingredientes: `minecraft:feather`, `dreamsdimensions:ow_oneiric_core_block`, `minecraft:glass_bottle`
+  - Output: 1x `dreamsdimensions:ow_oneiric_awakener`
   - Conditions: **NÃO ENCONTRADO**
-- `dreamsdimensions:oneiric_core_block`
-  - `minecraft:crafting_shaped` — `src/main/resources/data/dreamsdimensions/recipe/oneiric_core_block.json`
+- `dreamsdimensions:ow_oneiric_core_block`
+  - `minecraft:crafting_shaped` — `src/main/resources/data/dreamsdimensions/recipe/ow_oneiric_core_block.json`
   - Pattern: `"IDI"`, `"DCD"`, `"IDI"`
-  - Ingredientes: `dreamsdimensions:dream_infused_stone`, `dreamsdimensions:dream_dust`, `minecraft:clock`
-  - Output: 1x `dreamsdimensions:oneiric_core_block`
+  - Ingredientes: `dreamsdimensions:ow_dream_infused_stone`, `dreamsdimensions:ow_dream_dust`, `minecraft:clock`
+  - Output: 1x `dreamsdimensions:ow_oneiric_core_block`
   - Conditions: **NÃO ENCONTRADO**
-- `dreamsdimensions:dream_infused_stone`
-  - `minecraft:crafting_shaped` — `src/main/resources/data/dreamsdimensions/recipe/dream_infused_stone.json`
+- `dreamsdimensions:ow_dream_infused_stone`
+  - `minecraft:crafting_shaped` — `src/main/resources/data/dreamsdimensions/recipe/ow_dream_infused_stone.json`
   - Pattern: `"SD"`, `"DS"`
-  - Ingredientes: `minecraft:stone`, `dreamsdimensions:dream_dust`
-  - Output: 1x `dreamsdimensions:dream_infused_stone`
+  - Ingredientes: `minecraft:stone`, `dreamsdimensions:ow_dream_dust`
+  - Output: 1x `dreamsdimensions:ow_dream_infused_stone`
   - Conditions: **NÃO ENCONTRADO**
 - `dreamsdimensions:blue_dream_stone`
   - `minecraft:smelting` — `src/main/resources/data/dreamsdimensions/recipe/blue_dream_stone_from_smelting.json`
@@ -93,36 +93,36 @@ O mod registra **19 entradas jogáveis** (2 itens diretos + 17 blocos com BlockI
 - Demais IDs do catálogo: **SEM RECEITA (até o momento)**.
 
 ## 4. Matriz de Aquisição / Geração
-- Crafting direto: `oneiric_awakener`, `oneiric_core_block`, `dream_infused_stone`, `blue_dream_stone`.
-- Drop por loot table de bloco: `dream_dirt_block`, `blue_dream_dirt`, `dream_sand_block`, `serene_stone`, `blue_dream_cobblestone`, `dream_shimmer_block`, `dream_glow_moss`, `dream_infused_stone`, `oneiric_core_block`, `blue_dream_stone`.
-- Minérios (`dream_ore`, `deepslate_dream_ore`):
-  - Geram no Overworld por biome modifier `dream_ore_overworld.json` no passo `underground_ores`.
-  - `dream_ore` placed feature: count=2, altura trapezoidal -16..64, `in_square`, filtro por bioma.
-  - `deepslate_dream_ore` placed feature: count=2, altura trapezoidal -64..-16, `in_square`, filtro por bioma.
-  - Loot: Silk Touch devolve bloco; sem Silk Touch dropa `dream_dust` com Fortune (`ore_drops`) + `explosion_decay`.
+- Crafting direto: `ow_oneiric_awakener`, `ow_oneiric_core_block`, `ow_dream_infused_stone`, `blue_dream_stone`.
+- Drop por loot table de bloco: `dream_dirt_block`, `blue_dream_dirt`, `dream_sand_block`, `serene_stone`, `blue_dream_cobblestone`, `dream_shimmer_block`, `dream_glow_moss`, `ow_dream_infused_stone`, `ow_oneiric_core_block`, `blue_dream_stone`.
+- Minérios (`ow_dream_ore`, `ow_deepslate_dream_ore`):
+  - Geram no Overworld por biome modifier `ow_dream_ore_overworld.json` no passo `underground_ores`.
+  - `ow_dream_ore` placed feature: count=2, altura trapezoidal -16..64, `in_square`, filtro por bioma.
+  - `ow_deepslate_dream_ore` placed feature: count=2, altura trapezoidal -64..-16, `in_square`, filtro por bioma.
+  - Loot: Silk Touch devolve bloco; sem Silk Touch dropa `ow_dream_dust` com Fortune (`ore_drops`) + `explosion_decay`.
 - Creative-only / não definido em survival no datapack atual:
   - `dream_flower_block`, `dream_log_block`, `dream_leaves_block` (**SEM RECEITA**, **SEM LOOT TABLE**, **SEM WORLDGEN ENCONTRADO**).
 
 ## 5. Detalhamento por item/bloco
 
-## 5.1 Pó dos Sonhos (`dreamsdimensions:dream_dust`)
+## 5.1 Pó dos Sonhos (`dreamsdimensions:ow_dream_dust`)
 - **Tipo:** Item
 - **Classe/Registro:** `DreamDustItem`; `ModItems.DREAM_DUST`
-- **Descrição / Função:** material base de progressão; usado em `dream_infused_stone` e `oneiric_core_block`.
+- **Descrição / Função:** material base de progressão; usado em `ow_dream_infused_stone` e `ow_oneiric_core_block`.
 - **Stack/raridade/cooldown/uso:** stack padrão (`Item.Properties::new`), raridade padrão, sem cooldown.
 - **Dimensões / Restrição:** sem restrição direta de uso.
-- **Como obter:** drop de `dream_ore`/`deepslate_dream_ore` (sem Silk Touch).
+- **Como obter:** drop de `ow_dream_ore`/`ow_deepslate_dream_ore` (sem Silk Touch).
 - **Receitas (detalhadas):** output **SEM RECEITA (até o momento)**.
 - **Notas técnicas:** mineração de minérios exige picareta adequada (`needs_iron_tool` + `mineable/pickaxe`).
 
-## 5.2 Despertador Onírico (`dreamsdimensions:oneiric_awakener`)
+## 5.2 Despertador Onírico (`dreamsdimensions:ow_oneiric_awakener`)
 - **Tipo:** Item utilitário (custom)
 - **Classe/Registro:** `OneiricAwakenerItem`; `ModItems.ONEIRIC_AWAKENER`
 - **Descrição / Função:** inicia uso carregado (animação arco, 60 ticks) e tenta retorno para Overworld.
 - **Stack/raridade/cooldown/uso:** stack 1, `Rarity.RARE`, cooldown 60 ticks (`useCooldown`), duração de uso 60 ticks.
 - **Dimensões / Restrição:** só inicia uso em dimensões marcadas em config (`dreamscape` e `campo_onirico_azul`, por padrão).
-- **Como obter:** craft em `recipe/oneiric_awakener.json`.
-- **Receitas (detalhadas):** shaped com `feather` + `oneiric_core_block` + `glass_bottle`.
+- **Como obter:** craft em `recipe/ow_oneiric_awakener.json`.
+- **Receitas (detalhadas):** shaped com `feather` + `ow_oneiric_core_block` + `glass_bottle`.
 - **Notas técnicas:** brilho (`isFoil=true`), tooltip custom, mensagem de sucesso/falha translatável.
 
 ## 5.3 Grama dos Sonhos (`dreamsdimensions:dream_grass_block`)
@@ -186,32 +186,32 @@ O mod registra **19 entradas jogáveis** (2 itens diretos + 17 blocos com BlockI
 - **Como obter:** loot próprio.
 - **Receitas (detalhadas):** **SEM RECEITA (até o momento)**.
 
-## 5.13 Minério dos Sonhos (`dreamsdimensions:dream_ore`)
+## 5.13 Minério dos Sonhos (`dreamsdimensions:ow_dream_ore`)
 - **Tipo:** BlockItem (bloco custom `DreamOreBlock`)
 - **Classe/Registro:** `ModBlocks.DREAM_ORE`; XP 1..3 via `DropExperienceBlock`.
 - **Descrição / Função:** minério interativo com state booleano `clicked` alternado por clique sem item.
-- **Como obter:** worldgen Overworld + Silk Touch; sem Silk Touch dropa `dream_dust`.
-- **Worldgen:** configured `worldgen/configured_feature/dream_ore.json`; placed `worldgen/placed_feature/dream_ore.json`.
+- **Como obter:** worldgen Overworld + Silk Touch; sem Silk Touch dropa `ow_dream_dust`.
+- **Worldgen:** configured `worldgen/configured_feature/ow_dream_ore.json`; placed `worldgen/placed_feature/ow_dream_ore.json`.
 - **Receitas (detalhadas):** **SEM RECEITA (até o momento)**.
 
-## 5.14 Minério dos Sonhos de Ardósia (`dreamsdimensions:deepslate_dream_ore`)
+## 5.14 Minério dos Sonhos de Ardósia (`dreamsdimensions:ow_deepslate_dream_ore`)
 - **Tipo:** BlockItem (bloco custom `DreamOreBlock`)
 - **Classe/Registro:** `ModBlocks.DEEPSLATE_DREAM_ORE`; XP 1..3.
-- **Como obter:** worldgen Overworld + Silk Touch; sem Silk Touch dropa `dream_dust`.
-- **Worldgen:** configured `worldgen/configured_feature/deepslate_dream_ore.json`; placed `worldgen/placed_feature/deepslate_dream_ore.json`.
+- **Como obter:** worldgen Overworld + Silk Touch; sem Silk Touch dropa `ow_dream_dust`.
+- **Worldgen:** configured `worldgen/configured_feature/ow_deepslate_dream_ore.json`; placed `worldgen/placed_feature/ow_deepslate_dream_ore.json`.
 - **Receitas (detalhadas):** **SEM RECEITA (até o momento)**.
 
-## 5.15 Pedra Infundida dos Sonhos (`dreamsdimensions:dream_infused_stone`)
+## 5.15 Pedra Infundida dos Sonhos (`dreamsdimensions:ow_dream_infused_stone`)
 - **Tipo:** BlockItem
 - **Classe/Registro:** `ModBlocks.DREAM_INFUSED_STONE`
-- **Como obter:** craft (`stone` + `dream_dust`) e loot próprio.
-- **Receitas (detalhadas):** shaped em `recipe/dream_infused_stone.json`.
+- **Como obter:** craft (`stone` + `ow_dream_dust`) e loot próprio.
+- **Receitas (detalhadas):** shaped em `recipe/ow_dream_infused_stone.json`.
 
-## 5.16 Bloco do Núcleo Onírico (`dreamsdimensions:oneiric_core_block`)
+## 5.16 Bloco do Núcleo Onírico (`dreamsdimensions:ow_oneiric_core_block`)
 - **Tipo:** BlockItem
 - **Classe/Registro:** `ModBlocks.ONEIRIC_CORE_BLOCK`
-- **Como obter:** craft com `dream_infused_stone`, `dream_dust`, `clock`; loot próprio.
-- **Receitas (detalhadas):** shaped em `recipe/oneiric_core_block.json`.
+- **Como obter:** craft com `ow_dream_infused_stone`, `ow_dream_dust`, `clock`; loot próprio.
+- **Receitas (detalhadas):** shaped em `recipe/ow_oneiric_core_block.json`.
 
 ## 5.17 `dreamsdimensions:dream_flower_block`
 - **Tipo:** BlockItem
@@ -245,42 +245,42 @@ O mod registra **19 entradas jogáveis** (2 itens diretos + 17 blocos com BlockI
 ## Apêndice A: lista de receitas (por arquivo)
 - `src/main/resources/data/dreamsdimensions/recipe/blue_dream_stone_from_blasting.json`
 - `src/main/resources/data/dreamsdimensions/recipe/blue_dream_stone_from_smelting.json`
-- `src/main/resources/data/dreamsdimensions/recipe/dream_infused_stone.json`
-- `src/main/resources/data/dreamsdimensions/recipe/oneiric_core_block.json`
-- `src/main/resources/data/dreamsdimensions/recipe/oneiric_awakener.json`
+- `src/main/resources/data/dreamsdimensions/recipe/ow_dream_infused_stone.json`
+- `src/main/resources/data/dreamsdimensions/recipe/ow_oneiric_core_block.json`
+- `src/main/resources/data/dreamsdimensions/recipe/ow_oneiric_awakener.json`
 
 ## Apêndice B: lista de loot tables
 - `src/main/resources/data/dreamsdimensions/loot_tables/blocks/blue_dream_cobblestone.json`
 - `src/main/resources/data/dreamsdimensions/loot_tables/blocks/blue_dream_dirt.json`
 - `src/main/resources/data/dreamsdimensions/loot_tables/blocks/blue_dream_grass.json`
 - `src/main/resources/data/dreamsdimensions/loot_tables/blocks/blue_dream_stone.json`
-- `src/main/resources/data/dreamsdimensions/loot_tables/blocks/deepslate_dream_ore.json`
+- `src/main/resources/data/dreamsdimensions/loot_tables/blocks/ow_deepslate_dream_ore.json`
 - `src/main/resources/data/dreamsdimensions/loot_tables/blocks/dream_dirt_block.json`
 - `src/main/resources/data/dreamsdimensions/loot_tables/blocks/dream_glow_moss.json`
 - `src/main/resources/data/dreamsdimensions/loot_tables/blocks/dream_grass_block.json`
-- `src/main/resources/data/dreamsdimensions/loot_tables/blocks/dream_infused_stone.json`
-- `src/main/resources/data/dreamsdimensions/loot_tables/blocks/dream_ore.json`
+- `src/main/resources/data/dreamsdimensions/loot_tables/blocks/ow_dream_infused_stone.json`
+- `src/main/resources/data/dreamsdimensions/loot_tables/blocks/ow_dream_ore.json`
 - `src/main/resources/data/dreamsdimensions/loot_tables/blocks/dream_sand_block.json`
 - `src/main/resources/data/dreamsdimensions/loot_tables/blocks/dream_shimmer_block.json`
-- `src/main/resources/data/dreamsdimensions/loot_tables/blocks/oneiric_core_block.json`
+- `src/main/resources/data/dreamsdimensions/loot_tables/blocks/ow_oneiric_core_block.json`
 - `src/main/resources/data/dreamsdimensions/loot_tables/blocks/serene_stone.json`
 
 ## Apêndice C: worldgen (por feature)
-- **Biome modifier:** `src/main/resources/data/dreamsdimensions/worldgen/biome_modifier/dream_ore_overworld.json`
+- **Biome modifier:** `src/main/resources/data/dreamsdimensions/worldgen/biome_modifier/ow_dream_ore_overworld.json`
 - **Configured features:**
-  - `src/main/resources/data/dreamsdimensions/worldgen/configured_feature/dream_ore.json`
-  - `src/main/resources/data/dreamsdimensions/worldgen/configured_feature/deepslate_dream_ore.json`
+  - `src/main/resources/data/dreamsdimensions/worldgen/configured_feature/ow_dream_ore.json`
+  - `src/main/resources/data/dreamsdimensions/worldgen/configured_feature/ow_deepslate_dream_ore.json`
 - **Placed features:**
-  - `src/main/resources/data/dreamsdimensions/worldgen/placed_feature/dream_ore.json`
-  - `src/main/resources/data/dreamsdimensions/worldgen/placed_feature/deepslate_dream_ore.json`
+  - `src/main/resources/data/dreamsdimensions/worldgen/placed_feature/ow_dream_ore.json`
+  - `src/main/resources/data/dreamsdimensions/worldgen/placed_feature/ow_deepslate_dream_ore.json`
 
 ## Apêndice D: chaves de tradução relevantes
 - Arquivos:
   - `src/main/resources/assets/dreamsdimensions/lang/en_us.json`
   - `src/main/resources/assets/dreamsdimensions/lang/pt_br.json`
 - Chaves de item/bloco encontradas:
-  - `item.dreamsdimensions.dream_dust`
-  - `item.dreamsdimensions.oneiric_awakener`
+  - `item.dreamsdimensions.ow_dream_dust`
+  - `item.dreamsdimensions.ow_oneiric_awakener`
   - `block.dreamsdimensions.dream_grass_block`
   - `block.dreamsdimensions.blue_dream_grass`
   - `block.dreamsdimensions.serene_stone`
@@ -288,10 +288,10 @@ O mod registra **19 entradas jogáveis** (2 itens diretos + 17 blocos com BlockI
   - `block.dreamsdimensions.blue_dream_cobblestone`
   - `block.dreamsdimensions.dream_shimmer_block`
   - `block.dreamsdimensions.dream_glow_moss`
-  - `block.dreamsdimensions.dream_ore`
-  - `block.dreamsdimensions.deepslate_dream_ore`
-  - `block.dreamsdimensions.dream_infused_stone`
-  - `block.dreamsdimensions.oneiric_core_block`
+  - `block.dreamsdimensions.ow_dream_ore`
+  - `block.dreamsdimensions.ow_deepslate_dream_ore`
+  - `block.dreamsdimensions.ow_dream_infused_stone`
+  - `block.dreamsdimensions.ow_oneiric_core_block`
   - `block.dreamsdimensions.dream_dirt_block`
   - `block.dreamsdimensions.blue_dream_dirt`
   - `block.dreamsdimensions.dream_sand_block`

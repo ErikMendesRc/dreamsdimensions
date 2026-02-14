@@ -5,14 +5,14 @@
       {
         "target": {
           "predicate_type": "minecraft:tag_match",
-          "tag": "minecraft:stone_ore_replaceables"
+          "tag": "minecraft:deepslate_ore_replaceables"
         },
         "state": {
-          "Name": "dreamsdimensions:dream_ore"
+          "Name": "dreamsdimensions:ow_deepslate_dream_ore"
         }
       }
     ],
-    "size": 6,
+    "size": 5,
     "discard_chance_on_air_exposure": 0.0
   }
 }

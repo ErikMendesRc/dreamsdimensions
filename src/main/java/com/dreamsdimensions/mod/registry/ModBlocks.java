@@ -89,7 +89,7 @@ public final class ModBlocks {
     );
 
     public static final DeferredBlock<Block> DREAM_ORE = BLOCKS.registerBlock(
-            "dream_ore",
+            "ow_dream_ore",
             (properties) -> new DreamOreBlock(properties, UniformInt.of(1, 3)),
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE)
                     .strength(3.0F, 3.0F)
@@ -97,7 +97,7 @@ public final class ModBlocks {
     );
 
     public static final DeferredBlock<Block> DEEPSLATE_DREAM_ORE = BLOCKS.registerBlock(
-            "deepslate_dream_ore",
+            "ow_deepslate_dream_ore",
             (properties) -> new DreamOreBlock(properties, UniformInt.of(1, 3)),
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE_IRON_ORE)
                     .strength(4.5F, 3.0F)
@@ -105,13 +105,13 @@ public final class ModBlocks {
     );
 
     public static final DeferredBlock<Block> DREAM_INFUSED_STONE = BLOCKS.registerSimpleBlock(
-            "dream_infused_stone",
+            "ow_dream_infused_stone",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)
                     .requiresCorrectToolForDrops()
     );
 
     public static final DeferredBlock<Block> ONEIRIC_CORE_BLOCK = BLOCKS.registerSimpleBlock(
-            "oneiric_core_block",
+            "ow_oneiric_core_block",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)
                     .requiresCorrectToolForDrops()
     );

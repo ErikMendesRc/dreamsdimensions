@@ -7,10 +7,10 @@
   ],
   "key": {
     "S": "minecraft:stone",
-    "D": "dreamsdimensions:dream_dust"
+    "D": "dreamsdimensions:ow_dream_dust"
   },
   "result": {
-    "id": "dreamsdimensions:dream_infused_stone",
+    "id": "dreamsdimensions:ow_dream_infused_stone",
     "count": 1
   }
 }

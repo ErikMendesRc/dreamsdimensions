@@ -6,22 +6,22 @@
   "block.dreamsdimensions.blue_dream_cobblestone": "Blue Dream Cobblestone",
   "block.dreamsdimensions.dream_shimmer_block": "Dream Shimmer Block",
   "block.dreamsdimensions.dream_glow_moss": "Dream Glow Moss",
-  "block.dreamsdimensions.dream_ore": "Dream Ore",
-  "block.dreamsdimensions.deepslate_dream_ore": "Deepslate Dream Ore",
-  "block.dreamsdimensions.dream_infused_stone": "Dream-Infused Stone",
-  "block.dreamsdimensions.oneiric_core_block": "Oneiric Core Block",
+  "block.dreamsdimensions.ow_dream_ore": "Dream Ore",
+  "block.dreamsdimensions.ow_deepslate_dream_ore": "Deepslate Dream Ore",
+  "block.dreamsdimensions.ow_dream_infused_stone": "Dream-Infused Stone",
+  "block.dreamsdimensions.ow_oneiric_core_block": "Oneiric Core Block",
   "block.dreamsdimensions.dream_dirt_block": "Dream Dirt",
   "block.dreamsdimensions.blue_dream_dirt": "Blue Dream Dirt",
   "block.dreamsdimensions.dream_sand_block": "Dream Sand",
 
-  "item.dreamsdimensions.dream_dust": "Dream Dust",
-  "item.dreamsdimensions.oneiric_awakener": "Oneiric Awakener",
+  "item.dreamsdimensions.ow_dream_dust": "Dream Dust",
+  "item.dreamsdimensions.ow_oneiric_awakener": "Oneiric Awakener",
 
   "itemGroup.dreamsdimensions.dreams_dimensions_tab": "Dreams Dimensions",
 
-  "tooltip.dreamsdimensions.oneiric_awakener.line1": "Used to pierce the veils of dreams.",
-  "tooltip.dreamsdimensions.oneiric_awakener.line2": "Use it to teleport... maybe.",
-  "message.dreamsdimensions.oneiric_awakener.success": "You woke up from the dream.",
-  "message.dreamsdimensions.oneiric_awakener.fail": "The Overworld is unavailable right now."
+  "tooltip.dreamsdimensions.ow_oneiric_awakener.line1": "Used to pierce the veils of dreams.",
+  "tooltip.dreamsdimensions.ow_oneiric_awakener.line2": "Use it to teleport... maybe.",
+  "message.dreamsdimensions.ow_oneiric_awakener.success": "You woke up from the dream.",
+  "message.dreamsdimensions.ow_oneiric_awakener.fail": "The Overworld is unavailable right now."
 
 }

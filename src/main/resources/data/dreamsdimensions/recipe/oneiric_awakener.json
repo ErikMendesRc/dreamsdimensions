@@ -8,11 +8,11 @@
   ],
   "key": {
     "F": "minecraft:feather",
-    "K": "dreamsdimensions:oneiric_core_block",
+    "K": "dreamsdimensions:ow_oneiric_core_block",
     "B": "minecraft:glass_bottle"
   },
   "result": {
-    "id": "dreamsdimensions:oneiric_awakener",
+    "id": "dreamsdimensions:ow_oneiric_awakener",
     "count": 1
   }
 }
