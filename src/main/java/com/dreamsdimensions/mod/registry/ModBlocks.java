@@ -154,6 +154,13 @@ public final class ModBlocks {
                     .strength(2.0f)
     );
 
+    public static final DeferredBlock<RotatedPillarBlock> OW_SOMNIBARK_LOG = BLOCKS.registerBlock(
+            "ow_somnibark_log",
+            RotatedPillarBlock::new,
+            props -> BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LOG)
+                    .strength(2.0f)
+    );
+
     public static final DeferredBlock<Block> DREAM_LEAVES_BLOCK = BLOCKS.registerSimpleBlock(
             "ds_dream_leaves",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)
