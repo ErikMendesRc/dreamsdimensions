@@ -154,9 +154,12 @@ public class OneiricAwakenerItem extends Item {
                 cooldownTicks = cooldown.ticks();
             }
 
-            serverPlayer.getCooldowns().addCooldown(pStack, cooldownTicks);
-
-            LOGGER.info("[Awakener][FINISH] Teleport successful. Cooldown applied: {} ticks", cooldownTicks);
+            if (!serverPlayer.getCooldowns().isOnCooldown(pStack)) {
+                serverPlayer.getCooldowns().addCooldown(pStack, cooldownTicks);
+                LOGGER.info("[Awakener][FINISH] Teleport successful. Cooldown applied: {} ticks", cooldownTicks);
+            } else {
+                LOGGER.info("[Awakener][FINISH] Teleport successful. Cooldown already active, skipping reapply.");
+            }
 
         }, () -> {
             LOGGER.error("[Awakener][FINISH] Failed to build teleport transition.");

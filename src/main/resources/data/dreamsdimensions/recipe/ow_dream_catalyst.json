@@ -3,7 +3,8 @@
   "category": "misc",
   "ingredients": [
     "minecraft:blaze_powder",
-    "dreamsdimensions:ow_refined_oneiric_powder"
+    "dreamsdimensions:ow_refined_oneiric_powder",
+    "dreamsdimensions:ow_dream_binding_thread"
   ],
   "result": {
     "id": "dreamsdimensions:ow_dream_catalyst",

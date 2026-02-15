@@ -107,14 +107,15 @@ public final class EffectEventHandler {
             return;
         }
 
-        player.removeEffect(ModEffects.OW_EARLY_AWAKENING);
-        event.setCanceled(true);
+        DreamReturnHelper.buildReturnTransition(player).ifPresent(transition -> {
+            player.removeEffect(ModEffects.OW_EARLY_AWAKENING);
+            event.setCanceled(true);
 
-        player.setHealth(Math.max(1.0F, player.getMaxHealth() * 0.25F));
-        player.stopUsingItem();
-        player.clearFire();
-
-        DreamReturnHelper.buildReturnTransition(player).ifPresent(transition -> player.teleport(transition));
+            player.setHealth(Math.max(1.0F, player.getMaxHealth() * 0.25F));
+            player.stopUsingItem();
+            player.clearFire();
+            player.teleport(transition);
+        });
     }
 
     private static void applyEtherealCollision(ServerPlayer player) {

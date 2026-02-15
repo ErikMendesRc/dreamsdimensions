@@ -3,7 +3,8 @@
   "category": "misc",
   "ingredients": [
     "minecraft:ghast_tear",
-    "dreamsdimensions:ow_stabilized_dream_fragment"
+    "dreamsdimensions:ow_stabilized_dream_fragment",
+    "dreamsdimensions:ow_condensed_dream_crystal"
   ],
   "result": {
     "id": "dreamsdimensions:ow_stabilizing_essence",
