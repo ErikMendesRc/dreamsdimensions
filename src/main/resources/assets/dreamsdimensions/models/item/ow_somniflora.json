@@ -1,3 +1,6 @@
 {
-  "parent": "dreamsdimensions:block/ow_somniflora"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dreamsdimensions:item/ow_somniflora"
+  }
 }
