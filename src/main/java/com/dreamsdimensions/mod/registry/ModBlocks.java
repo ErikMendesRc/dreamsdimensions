@@ -138,7 +138,6 @@ public final class ModBlocks {
                     .instabreak()
                     .noCollision()
                     .sound(SoundType.GRASS)
-                    .lightLevel(state -> 8)
     );
 
     public static final DeferredBlock<RotatedPillarBlock> DREAM_LOG_BLOCK = BLOCKS.registerBlock(
