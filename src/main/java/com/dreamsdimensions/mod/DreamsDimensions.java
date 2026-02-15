@@ -10,7 +10,6 @@ import com.dreamsdimensions.mod.event.BrewingRecipesHandler;
 import com.dreamsdimensions.mod.event.SleepTeleportHandler;
 import com.dreamsdimensions.mod.item.OneiricAwakenerItem;
 import com.dreamsdimensions.mod.registry.ModAttachments;
-import com.dreamsdimensions.mod.registry.ModBlockEntities;
 import com.dreamsdimensions.mod.registry.ModBlocks;
 import com.dreamsdimensions.mod.registry.ModCreativeTabs;
 import com.dreamsdimensions.mod.registry.ModItems;
@@ -50,7 +49,6 @@ public class DreamsDimensions {
 
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
-        ModBlockEntities.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         ModAttachments.register(modEventBus);
         ModEffects.register(modEventBus);
