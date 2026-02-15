@@ -100,6 +100,10 @@ public final class ModItems {
             ModBlocks.DREAM_LOG_BLOCK
     );
 
+    public static final DeferredItem<BlockItem> OW_SOMNIBARK_LOG_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.OW_SOMNIBARK_LOG
+    );
+
     public static final DeferredItem<BlockItem> DREAM_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(
             ModBlocks.DREAM_LEAVES_BLOCK
     );
