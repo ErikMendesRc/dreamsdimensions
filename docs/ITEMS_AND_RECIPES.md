@@ -389,7 +389,21 @@ Todas as poções abaixo estão marcadas como **Obtido via Brewing (Sprint 3 —
 | Poção | Base | Ingrediente | Resultado |
 |---|---|---|---|
 | Base Onírica | awkward + `ow_refined_oneiric_powder` | — | `ow_oneiric_base` |
-| Anchoring | `ow_oneiric_base` | `phantom_membrane` | `ow_potion_of_anchoring` |
+| Anchoring | `ow_oneiric_base` | `ow_dream_binding_thread` | `ow_potion_of_anchoring` |
 | Clarity | `ow_oneiric_base` | `ow_dream_catalyst` | `ow_potion_of_clarity` |
 | Ethereal | `ow_oneiric_base` | `ow_condensed_dream_crystal` | `ow_potion_of_ethereal_phase` |
-| Early Awakening | `ow_oneiric_base` | `ow_stabilizing_essence` | `ow_potion_of_early_awakening` |
+| Early Awakening | `ow_oneiric_base` | `minecraft:totem_of_undying` | `ow_potion_of_early_awakening` |
+
+
+## Sprint 3 — Task 3.4 (Balanceamento Final)
+
+- Durações finais:
+  - `ow_potion_of_anchoring`: 2400 ticks (2:00)
+  - `ow_potion_of_clarity`: 1800 ticks (1:30)
+  - `ow_potion_of_ethereal_phase`: 1200 ticks (1:00)
+  - `ow_potion_of_early_awakening`: 1200 ticks (1:00)
+- Amplifier padronizado em `0` (nível I) para as 4 poções finais.
+- Hardening aplicado:
+  - guard de cooldown no `ow_oneiric_awakener` para evitar stacking
+  - early awakening só cancela morte com retorno válido
+- Release da Sprint 3: **v0.3.0 — Potion System Stable**.

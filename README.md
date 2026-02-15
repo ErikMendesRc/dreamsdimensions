@@ -524,3 +524,32 @@ Implementação concluída com listeners no `NeoForge.EVENT_BUS`:
 - `ow_early_awakening`
   - Em morte de jogador dentro de dimensão onírica, intercepta `LivingDeathEvent`, consome o efeito, evita a morte/drop e teleporta de volta ao Overworld usando `DreamReturnHelper`.
   - Não afeta mortes no Overworld.
+
+## Sprint 3 — Task 3.4 (Balanceamento Final)
+
+Sprint 3.4 conclui o polimento do sistema de poções com foco em balanceamento e robustez multiplayer/server-side, sem adicionar mecânicas novas.
+
+### Balanceamento aplicado
+
+- Durações revisadas:
+  - `ow_potion_of_anchoring`: **2:00**
+  - `ow_potion_of_clarity`: **1:30**
+  - `ow_potion_of_ethereal_phase`: **1:00**
+  - `ow_potion_of_early_awakening`: **1:00**
+- Amplifier padronizado em **0** (nível I) para todas as poções `ow_`.
+
+### Custo real de brewing/economia OW
+
+- Anchoring agora usa `ow_dream_binding_thread` no brewing.
+- Early Awakening agora exige `minecraft:totem_of_undying` no brewing.
+- `ow_dream_catalyst` e `ow_stabilizing_essence` foram encarecidos para reforçar gate de progressão OW.
+
+### Hardening (edge cases)
+
+- Guard de cooldown no `ow_oneiric_awakener` para evitar stacking em retry/latência.
+- `ow_early_awakening` só cancela morte quando há transição de retorno válida.
+- Fluxos críticos mantidos no servidor (`ServerPlayer`).
+
+## Release
+
+- **v0.3.0 — Potion System Stable**

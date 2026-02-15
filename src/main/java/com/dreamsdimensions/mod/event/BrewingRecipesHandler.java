@@ -16,9 +16,9 @@ public final class BrewingRecipesHandler {
 
         builder.addMix(Potions.AWKWARD, ModItems.OW_REFINED_ONEIRIC_POWDER.get(), ModPotions.OW_ONEIRIC_BASE);
 
-        builder.addMix(ModPotions.OW_ONEIRIC_BASE, Items.PHANTOM_MEMBRANE, ModPotions.OW_POTION_OF_ANCHORING);
+        builder.addMix(ModPotions.OW_ONEIRIC_BASE, ModItems.OW_DREAM_BINDING_THREAD.get(), ModPotions.OW_POTION_OF_ANCHORING);
         builder.addMix(ModPotions.OW_ONEIRIC_BASE, ModItems.OW_DREAM_CATALYST.get(), ModPotions.OW_POTION_OF_CLARITY);
         builder.addMix(ModPotions.OW_ONEIRIC_BASE, ModItems.OW_CONDENSED_DREAM_CRYSTAL.get(), ModPotions.OW_POTION_OF_ETHEREAL_PHASE);
-        builder.addMix(ModPotions.OW_ONEIRIC_BASE, ModItems.OW_STABILIZING_ESSENCE.get(), ModPotions.OW_POTION_OF_EARLY_AWAKENING);
+        builder.addMix(ModPotions.OW_ONEIRIC_BASE, Items.TOTEM_OF_UNDYING, ModPotions.OW_POTION_OF_EARLY_AWAKENING);
     }
 }
