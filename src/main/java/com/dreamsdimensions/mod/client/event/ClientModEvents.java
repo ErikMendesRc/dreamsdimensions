@@ -15,7 +15,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 /**
  * Eventos de lifecycle client-only.
  */
-@EventBusSubscriber(modid = DreamsDimensions.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = DreamsDimensions.MODID, value = Dist.CLIENT)
 public final class ClientModEvents {
     private ClientModEvents() {}
 

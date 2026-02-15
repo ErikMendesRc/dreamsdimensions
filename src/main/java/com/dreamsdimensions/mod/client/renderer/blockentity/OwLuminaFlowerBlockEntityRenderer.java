@@ -6,18 +6,22 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Renderer da camada emissiva da Lumina Flower em FULL_BRIGHT.
  */
 public class OwLuminaFlowerBlockEntityRenderer implements BlockEntityRenderer<OwLuminaFlowerBlockEntity> {
-    private static final ResourceLocation EMISSIVE_TEXTURE =
-            ResourceLocation.fromNamespaceAndPath(DreamsDimensions.MODID, "textures/block/ow_lumina_flower_emissive.png");
+    private static final Identifier EMISSIVE_TEXTURE =
+            Identifier.fromNamespaceAndPath(
+                    DreamsDimensions.MODID,
+                    "textures/block/ow_lumina_flower_emissive.png"
+            );
+
 
     public OwLuminaFlowerBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
     }
