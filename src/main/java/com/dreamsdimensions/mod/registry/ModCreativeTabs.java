@@ -46,6 +46,7 @@ public final class ModCreativeTabs {
                         output.accept(ModBlocks.DEEPSLATE_DREAM_ORE.get());
                         output.accept(ModBlocks.DREAM_INFUSED_STONE.get());
                         output.accept(ModBlocks.ONEIRIC_CORE_BLOCK.get());
+                        output.accept(ModBlocks.OW_ANCHORING_TOTEM.get());
                         output.accept(ModBlocks.DREAM_FLOWER_BLOCK.get());
                         output.accept(ModBlocks.DREAM_LOG_BLOCK.get());
                         output.accept(ModBlocks.DREAM_LEAVES_BLOCK.get());

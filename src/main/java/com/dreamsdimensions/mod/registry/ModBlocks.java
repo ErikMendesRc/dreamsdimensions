@@ -116,6 +116,13 @@ public final class ModBlocks {
                     .requiresCorrectToolForDrops()
     );
 
+    public static final DeferredBlock<Block> OW_ANCHORING_TOTEM = BLOCKS.registerSimpleBlock(
+            "ow_anchoring_totem",
+            props -> BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_BLOCK)
+                    .strength(2.0F, 6.0F)
+                    .requiresCorrectToolForDrops()
+    );
+
     public static final DeferredBlock<Block> DREAM_FLOWER_BLOCK = BLOCKS.registerSimpleBlock(
             "ds_dream_flower",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)
