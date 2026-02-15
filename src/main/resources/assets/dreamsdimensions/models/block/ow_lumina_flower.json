@@ -3,58 +3,51 @@
   "render_type": "cutout",
   "textures": {
     "particle": "dreamsdimensions:block/ow_lumina_flower",
-    "cross": "dreamsdimensions:block/ow_lumina_flower",
-    "emissive": "dreamsdimensions:block/ow_lumina_flower_emissive"
+    "plant": "dreamsdimensions:block/ow_lumina_flower",
+    "plant_emissive": "dreamsdimensions:block/ow_lumina_flower_emissive"
   },
   "elements": [
     {
-      "from": [0.8, 0.0, 8.0],
-      "to": [15.2, 16.0, 8.0],
-      "rotation": {"origin": [8.0, 8.0, 8.0], "axis": "y", "angle": 45, "rescale": true},
+      "from": [ 2.8, 0, 8 ],
+      "to":   [ 13.2, 16, 8 ],
+      "rotation": { "origin": [ 8, 8, 8 ], "axis": "y", "angle": 45, "rescale": true },
       "shade": false,
       "faces": {
-        "north": {"uv": [0.0, 0.0, 16.0, 16.0], "texture": "#cross"},
-        "south": {"uv": [0.0, 0.0, 16.0, 16.0], "texture": "#cross"}
+        "north": { "uv": [ 0, 0, 16, 16 ], "texture": "#plant" },
+        "south": { "uv": [ 0, 0, 16, 16 ], "texture": "#plant" }
       }
     },
     {
-      "from": [8.0, 0.0, 0.8],
-      "to": [8.0, 16.0, 15.2],
-      "rotation": {"origin": [8.0, 8.0, 8.0], "axis": "y", "angle": 45, "rescale": true},
+      "from": [ 8, 0, 2.8 ],
+      "to":   [ 8, 16, 13.2 ],
+      "rotation": { "origin": [ 8, 8, 8 ], "axis": "y", "angle": 45, "rescale": true },
       "shade": false,
       "faces": {
-        "west": {"uv": [0.0, 0.0, 16.0, 16.0], "texture": "#cross"},
-        "east": {"uv": [0.0, 0.0, 16.0, 16.0], "texture": "#cross"}
+        "west": { "uv": [ 0, 0, 16, 16 ], "texture": "#plant" },
+        "east": { "uv": [ 0, 0, 16, 16 ], "texture": "#plant" }
+      }
+    },
+
+    {
+      "from": [ 2.8, 0, 8 ],
+      "to":   [ 13.2, 16, 8 ],
+      "light_emission": 15,
+      "rotation": { "origin": [ 8, 8, 8 ], "axis": "y", "angle": 45, "rescale": true },
+      "shade": false,
+      "faces": {
+        "north": { "uv": [ 0, 0, 16, 16 ], "texture": "#plant_emissive" },
+        "south": { "uv": [ 0, 0, 16, 16 ], "texture": "#plant_emissive" }
       }
     },
     {
-      "from": [0.8, 0.0, 8.01],
-      "to": [15.2, 16.0, 8.01],
-      "rotation": {"origin": [8.0, 8.0, 8.0], "axis": "y", "angle": 45, "rescale": true},
+      "from": [ 8, 0, 2.8 ],
+      "to":   [ 8, 16, 13.2 ],
+      "light_emission": 15,
+      "rotation": { "origin": [ 8, 8, 8 ], "axis": "y", "angle": 45, "rescale": true },
       "shade": false,
-      "neoforge_data": {
-        "block_light": 15,
-        "sky_light": 15,
-        "ambient_occlusion": false
-      },
       "faces": {
-        "north": {"uv": [0.0, 0.0, 16.0, 16.0], "texture": "#emissive"},
-        "south": {"uv": [0.0, 0.0, 16.0, 16.0], "texture": "#emissive"}
-      }
-    },
-    {
-      "from": [8.01, 0.0, 0.8],
-      "to": [8.01, 16.0, 15.2],
-      "rotation": {"origin": [8.0, 8.0, 8.0], "axis": "y", "angle": 45, "rescale": true},
-      "shade": false,
-      "neoforge_data": {
-        "block_light": 15,
-        "sky_light": 15,
-        "ambient_occlusion": false
-      },
-      "faces": {
-        "west": {"uv": [0.0, 0.0, 16.0, 16.0], "texture": "#emissive"},
-        "east": {"uv": [0.0, 0.0, 16.0, 16.0], "texture": "#emissive"}
+        "west": { "uv": [ 0, 0, 16, 16 ], "texture": "#plant_emissive" },
+        "east": { "uv": [ 0, 0, 16, 16 ], "texture": "#plant_emissive" }
       }
     }
   ]
