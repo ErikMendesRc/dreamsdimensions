@@ -1,7 +1,6 @@
 {
   "replace": false,
   "values": [
-    "dreamsdimensions:ds_dream_log",
     "dreamsdimensions:ow_somnibark_log"
   ]
 }
