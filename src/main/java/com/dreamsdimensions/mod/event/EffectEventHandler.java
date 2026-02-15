@@ -44,7 +44,7 @@ public final class EffectEventHandler {
     public static void onMobEffectAdded(MobEffectEvent.Added event) {
         LivingEntity living = event.getEntity();
         MobEffectInstance newEffect = event.getEffectInstance();
-        if (newEffect != null && newEffect.getEffect().is(ModEffects.OW_CLARITY)) {
+        if (newEffect.getEffect().is(ModEffects.OW_CLARITY)) {
             living.removeEffect(MobEffects.POISON);
             living.removeEffect(MobEffects.WITHER);
             living.removeEffect(MobEffects.SLOWNESS);
@@ -56,9 +56,6 @@ public final class EffectEventHandler {
     public static void onMobEffectApplicable(MobEffectEvent.Applicable event) {
         LivingEntity living = event.getEntity();
         MobEffectInstance incoming = event.getEffectInstance();
-        if (incoming == null) {
-            return;
-        }
 
         if (!living.hasEffect(ModEffects.OW_CLARITY)) {
             return;

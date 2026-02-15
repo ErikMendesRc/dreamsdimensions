@@ -13,9 +13,8 @@ public final class ModBlockEntities {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, DreamsDimensions.MODID);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<OwLuminaFlowerBlockEntity>> OW_LUMINA_FLOWER =
-            BLOCK_ENTITIES.register(
-                    "ow_lumina_flower",
-                    () -> BlockEntityType.Builder.of(OwLuminaFlowerBlockEntity::new, ModBlocks.OW_LUMINA_FLOWER.get()).build(null)
+            BLOCK_ENTITIES.register("ow_lumina_flower",
+                    () -> new BlockEntityType<>(OwLuminaFlowerBlockEntity::new, ModBlocks.OW_LUMINA_FLOWER.get())
             );
 
     private ModBlockEntities() {

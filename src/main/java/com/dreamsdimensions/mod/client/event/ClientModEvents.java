@@ -15,7 +15,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 /**
  * Eventos de lifecycle client-only.
  */
-@EventBusSubscriber(modid = DreamsDimensions.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = DreamsDimensions.MODID, value = Dist.CLIENT)
 public final class ClientModEvents {
     private ClientModEvents() {}
 
@@ -23,7 +23,6 @@ public final class ClientModEvents {
     public static void onClientSetup(FMLClientSetupEvent event) {
         DreamsDimensions.LOGGER.info("Executando Client Setup para Dreams Dimensions...");
         event.enqueueWork(() -> {
-            ItemBlockRenderTypes.setRenderLayer(ModBlocks.OW_LUMINA_FLOWER.get(), ChunkSectionLayer.CUTOUT);
             BlockEntityRendererRegistry.register(ModBlockEntities.OW_LUMINA_FLOWER.get(), OwLuminaFlowerBlockEntityRenderer::new);
         });
         DreamsDimensions.LOGGER.info("Client Setup de Dreams Dimensions concluído.");
