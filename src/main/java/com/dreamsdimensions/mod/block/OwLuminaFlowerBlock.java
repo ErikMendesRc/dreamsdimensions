@@ -23,7 +23,7 @@ public class OwLuminaFlowerBlock extends FlowerBlock {
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         super.animateTick(state, level, pos, random);
 
-        if (!level.isClientSide || random.nextFloat() >= PARTICLE_CHANCE) {
+        if (!level.isClientSide() || random.nextFloat() >= PARTICLE_CHANCE) {
             return;
         }
 
