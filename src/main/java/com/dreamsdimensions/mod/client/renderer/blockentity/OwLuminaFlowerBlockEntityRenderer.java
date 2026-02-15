@@ -5,33 +5,47 @@ import com.dreamsdimensions.mod.block.entity.OwLuminaFlowerBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.phys.Vec3;
 
 /**
- * Renderer da camada emissiva da Lumina Flower em FULL_BRIGHT.
+ * Renderer emissivo da Lumina Flower.
  */
-public class OwLuminaFlowerBlockEntityRenderer implements BlockEntityRenderer<OwLuminaFlowerBlockEntity> {
+public class OwLuminaFlowerBlockEntityRenderer implements BlockEntityRenderer<OwLuminaFlowerBlockEntity, OwLuminaFlowerBlockEntityRenderer.State> {
     private static final Identifier EMISSIVE_TEXTURE =
-            Identifier.fromNamespaceAndPath(
-                    DreamsDimensions.MODID,
-                    "textures/block/ow_lumina_flower_emissive.png"
-            );
+            Identifier.fromNamespaceAndPath(DreamsDimensions.MODID, "textures/block/ow_lumina_flower_emissive.png");
 
+    private static final RenderType EMISSIVE_RENDER_TYPE = RenderTypes.entityTranslucentEmissive(EMISSIVE_TEXTURE);
 
     public OwLuminaFlowerBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
     }
 
     @Override
-    public void render(OwLuminaFlowerBlockEntity blockEntity, float partialTick, PoseStack poseStack,
-                       MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityTranslucentEmissive(EMISSIVE_TEXTURE));
-        PoseStack.Pose pose = poseStack.last();
+    public State createRenderState() {
+        return new State();
+    }
 
+    @Override
+    public void extractRenderState(OwLuminaFlowerBlockEntity blockEntity, State renderState, float partialTick, Vec3 cameraPos,
+                                   ModelFeatureRenderer.CrumblingOverlay breakOverlayProgress) {
+        BlockEntityRenderState.extractBase(blockEntity, renderState, breakOverlayProgress);
+    }
+
+    @Override
+    public void submit(State state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
+        submitNodeCollector.submitCustomGeometry(poseStack, EMISSIVE_RENDER_TYPE, OwLuminaFlowerBlockEntityRenderer::renderGeometry);
+    }
+
+    private static void renderGeometry(PoseStack.Pose pose, VertexConsumer consumer) {
         renderCrossPlane(consumer, pose, 0.0F, 0.0F, 1.0F, 1.0F);
         renderCrossPlane(consumer, pose, 1.0F, 0.0F, 0.0F, 1.0F);
     }
@@ -57,5 +71,8 @@ public class OwLuminaFlowerBlockEntityRenderer implements BlockEntityRenderer<Ow
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(LightTexture.FULL_BRIGHT)
                 .setNormal(pose, 0.0F, 1.0F, 0.0F);
+    }
+
+    public static final class State extends BlockEntityRenderState {
     }
 }
