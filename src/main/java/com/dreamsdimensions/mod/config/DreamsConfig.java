@@ -35,7 +35,12 @@ public final class DreamsConfig {
                     DreamsConfig::isValidIdentifier
             );
 
+    private static final ModConfigSpec.IntValue ANCHORING_TOTEM_RADIUS = BUILDER
+            .comment("Raio (em blocos) para procurar ow_anchoring_totem perto da cama/spawn e bloquear teleporte onirico.")
+            .defineInRange("anchoring_totem_radius", 8, 1, 64);
+
     private static Set<ResourceKey<Level>> dreamDimensions = Set.of();
+    private static int anchoringTotemRadius = 8;
     private static boolean baked = false;
 
     public static final ModConfigSpec SPEC = BUILDER.build();
@@ -81,6 +86,14 @@ public final class DreamsConfig {
         }
 
         return result;
+    }
+
+    public static int getAnchoringTotemRadius() {
+        if (!baked) {
+            LOGGER.warn("[DreamsConfig] getAnchoringTotemRadius called before bake. Forcing bake.");
+            bake();
+        }
+        return anchoringTotemRadius;
     }
 
     public static Set<ResourceKey<Level>> getDreamDimensions() {
@@ -138,10 +151,12 @@ public final class DreamsConfig {
         }
 
         dreamDimensions = Set.copyOf(parsed);
+        anchoringTotemRadius = ANCHORING_TOTEM_RADIUS.get();
         baked = true;
 
         LOGGER.info("[DreamsConfig] Dream dimensions baked successfully: {}",
                 dreamDimensions.stream().map(key -> key.identifier().toString()).toList()
         );
+        LOGGER.info("[DreamsConfig] anchoring_totem_radius={}", anchoringTotemRadius);
     }
 }

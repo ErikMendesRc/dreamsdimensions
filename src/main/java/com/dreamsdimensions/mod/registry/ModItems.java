@@ -131,6 +131,10 @@ public final class ModItems {
             ModBlocks.ONEIRIC_CORE_BLOCK
     );
 
+    public static final DeferredItem<BlockItem> OW_ANCHORING_TOTEM_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.OW_ANCHORING_TOTEM
+    );
+
     private ModItems() {
     }
 

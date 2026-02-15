@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "ARA",
+    "IPI",
+    " A "
+  ],
+  "key": {
+    "A": "minecraft:amethyst_shard",
+    "R": "minecraft:redstone",
+    "I": "minecraft:iron_ingot",
+    "P": "dreamsdimensions:ow_refined_oneiric_powder"
+  },
+  "result": {
+    "id": "dreamsdimensions:ow_anchoring_totem",
+    "count": 1
+  }
+}

@@ -3,6 +3,7 @@ package com.dreamsdimensions.mod.event;
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.attachment.DreamReturnData;
 import com.dreamsdimensions.mod.config.DreamsConfig;
+import com.dreamsdimensions.mod.util.AntiDreamHelper;
 import com.dreamsdimensions.mod.registry.ModAttachments;
 import com.dreamsdimensions.mod.registry.ModItems;
 import net.minecraft.core.BlockPos;
@@ -68,6 +69,10 @@ public final class SleepTeleportHandler {
             if (BLOCKED_SLEEP_TELEPORT_THIS_CYCLE.add(player.getUUID())) {
                 LOGGER.info("[SleepTeleport][BLOCKED] player={} reason=using_awakener remainingTicks={}", player.getGameProfile().name(), player.getUseItemRemainingTicks());
             }
+            return;
+        }
+
+        if (AntiDreamHelper.isAnchoringTotemNearBed(player)) {
             return;
         }
 
