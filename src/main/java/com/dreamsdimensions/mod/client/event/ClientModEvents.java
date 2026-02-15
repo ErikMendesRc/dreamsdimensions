@@ -15,14 +15,14 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 /**
  * Eventos de lifecycle client-only.
  */
-@EventBusSubscriber(modid = DreamsDimensions.MODID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = DreamsDimensions.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public final class ClientModEvents {
     private ClientModEvents() {}
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
         DreamsDimensions.LOGGER.info("Executando Client Setup para Dreams Dimensions...");
-        ItemBlockRenderTypes.setRenderLayer(ModBlocks.OW_LUMINA_FLOWER.get(), ChunkSectionLayer.CUTOUT);
+        event.enqueueWork(() -> ItemBlockRenderTypes.setRenderLayer(ModBlocks.OW_LUMINA_FLOWER.get(), ChunkSectionLayer.CUTOUT));
         DreamsDimensions.LOGGER.info("Client Setup de Dreams Dimensions concluído.");
     }
 
