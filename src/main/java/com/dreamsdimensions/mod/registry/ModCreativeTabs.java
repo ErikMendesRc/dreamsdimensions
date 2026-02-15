@@ -48,6 +48,7 @@ public final class ModCreativeTabs {
                         output.accept(ModBlocks.ONEIRIC_CORE_BLOCK.get());
                         output.accept(ModBlocks.OW_ANCHORING_TOTEM.get());
                         output.accept(ModBlocks.DREAM_FLOWER_BLOCK.get());
+                        output.accept(ModBlocks.OW_LUMINA_FLOWER.get());
                         output.accept(ModBlocks.DREAM_LOG_BLOCK.get());
                         output.accept(ModBlocks.DREAM_LEAVES_BLOCK.get());
                     })

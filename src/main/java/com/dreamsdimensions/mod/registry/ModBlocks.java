@@ -2,10 +2,12 @@ package com.dreamsdimensions.mod.registry;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.block.DreamOreBlock;
+import com.dreamsdimensions.mod.block.OwLuminaFlowerBlock;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
@@ -127,6 +129,16 @@ public final class ModBlocks {
             "ds_dream_flower",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)
                     .instabreak()
+    );
+
+    public static final DeferredBlock<OwLuminaFlowerBlock> OW_LUMINA_FLOWER = BLOCKS.registerBlock(
+            "ow_lumina_flower",
+            OwLuminaFlowerBlock::new,
+            props -> BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)
+                    .instabreak()
+                    .noCollision()
+                    .sound(SoundType.GRASS)
+                    .lightLevel(state -> 8)
     );
 
     public static final DeferredBlock<RotatedPillarBlock> DREAM_LOG_BLOCK = BLOCKS.registerBlock(

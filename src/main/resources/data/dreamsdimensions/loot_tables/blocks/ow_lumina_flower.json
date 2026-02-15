@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:block",
+  "pools": [{
+    "rolls": 1.0,
+    "entries": [{"type": "minecraft:item", "name": "dreamsdimensions:ow_lumina_flower"}]
+  }]
+}
