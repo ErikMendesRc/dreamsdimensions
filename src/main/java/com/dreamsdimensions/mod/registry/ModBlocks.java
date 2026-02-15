@@ -6,6 +6,7 @@ import com.dreamsdimensions.mod.block.OwLuminaFlowerBlock;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FireflyBushBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -138,6 +139,12 @@ public final class ModBlocks {
                     .instabreak()
                     .noCollision()
                     .sound(SoundType.GRASS)
+    );
+
+    public static final DeferredBlock<FireflyBushBlock> OW_SOMNIFLORA = BLOCKS.registerBlock(
+            "ow_somniflora",
+            FireflyBushBlock::new,
+            props -> BlockBehaviour.Properties.ofFullCopy(Blocks.FIREFLY_BUSH)
     );
 
     public static final DeferredBlock<RotatedPillarBlock> DREAM_LOG_BLOCK = BLOCKS.registerBlock(

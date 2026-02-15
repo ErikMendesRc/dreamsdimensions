@@ -92,6 +92,10 @@ public final class ModItems {
             ModBlocks.OW_LUMINA_FLOWER
     );
 
+    public static final DeferredItem<BlockItem> OW_SOMNIFLORA_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.OW_SOMNIFLORA
+    );
+
     public static final DeferredItem<BlockItem> DREAM_LOG_ITEM = ITEMS.registerSimpleBlockItem(
             ModBlocks.DREAM_LOG_BLOCK
     );

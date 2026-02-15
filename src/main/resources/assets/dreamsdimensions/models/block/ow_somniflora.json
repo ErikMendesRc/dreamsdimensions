@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cross_emissive",
+  "textures": {
+    "cross": "dreamsdimensions:block/ow_somniflora",
+    "cross_emissive": "dreamsdimensions:block/ow_somniflora_emissive"
+  }
+}
