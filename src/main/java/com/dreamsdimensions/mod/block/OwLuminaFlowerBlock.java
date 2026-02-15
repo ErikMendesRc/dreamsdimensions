@@ -1,22 +1,30 @@
 package com.dreamsdimensions.mod.block;
 
+import com.dreamsdimensions.mod.block.entity.OwLuminaFlowerBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.component.SuspiciousStewEffects;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.FlowerBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
 /**
- * Flor luminosa do Overworld com brilho suave e partículas leves no cliente.
+ * Flor luminosa do Overworld com brilho visual e partículas leves no cliente.
  */
-public class OwLuminaFlowerBlock extends FlowerBlock {
+public class OwLuminaFlowerBlock extends FlowerBlock implements EntityBlock {
     private static final float PARTICLE_CHANCE = 0.15F;
 
     public OwLuminaFlowerBlock(BlockBehaviour.Properties properties) {
         super(SuspiciousStewEffects.EMPTY, properties);
+    }
+
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new OwLuminaFlowerBlockEntity(pos, state);
     }
 
     @Override
