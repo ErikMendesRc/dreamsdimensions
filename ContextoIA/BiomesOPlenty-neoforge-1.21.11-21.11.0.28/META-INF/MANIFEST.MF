@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Specification-Title: BiomesOPlenty
+Specification-Vendor: Adubbz, Forstride
+Specification-Version: 21.11.0.28
+Implementation-Title: NeoForge
+Implementation-Version: 21.11.0.28
+Implementation-Vendor: Adubbz, Forstride
+Implementation-Timestamp: 2026-02-06T01:49:44+0000
+Timestamp: 1770342584216
+Built-On-Java: 21.0.10+8-LTS-217 (Oracle Corporation)
+Build-On-Minecraft: 1.21.11
+
