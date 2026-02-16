@@ -2,12 +2,12 @@
   "type": "neoforge:add_biomes",
   "biomes": "dreamsdimensions:lumina_hollows",
   "climate_parameter": {
-    "temperature": 0.65,
-    "humidity": 0.55,
-    "continentalness": 0.1,
-    "erosion": -0.1,
-    "depth": 0.0,
-    "weirdness": 0.75,
+    "temperature": [0.55, 0.80],
+    "humidity": [0.35, 0.85],
+    "continentalness": [-0.10, 0.35],
+    "erosion": [-0.70, 0.25],
+    "depth": [-0.20, 0.20],
+    "weirdness": [-0.25, 0.90],
     "offset": 0.0
   }
 }

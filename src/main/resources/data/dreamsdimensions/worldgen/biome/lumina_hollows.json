@@ -1,20 +1,31 @@
 {
-  "attributes": {
-    "minecraft:visual/sky_color": "#8899c7",
-    "minecraft:visual/water_fog_color": "#4e6b8f"
+  "has_precipitation": true,
+  "temperature": 0.65,
+  "downfall": 0.6,
+  "effects": {
+    "sky_color": 8954311,
+    "fog_color": 10727113,
+    "water_color": 5135247,
+    "water_fog_color": 5135247,
+    "foliage_color": 8697213,
+    "grass_color": 8294522
   },
+  "spawners": {
+    "monster": [],
+    "creature": [],
+    "ambient": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "underground_water_creature": [],
+    "axolotls": [],
+    "misc": []
+  },
+  "spawn_costs": {},
   "carvers": [
     "minecraft:cave",
     "minecraft:cave_extra_underground",
     "minecraft:canyon"
   ],
-  "downfall": 0.6,
-  "effects": {
-    "fog_color": "#a3aec9",
-    "foliage_color": "#84a57d",
-    "grass_color": "#7ea07a",
-    "water_color": "#4e6b8f"
-  },
   "features": [
     [],
     [
@@ -74,18 +85,5 @@
     [
       "minecraft:freeze_top_layer"
     ]
-  ],
-  "has_precipitation": true,
-  "spawn_costs": {},
-  "spawners": {
-    "ambient": [],
-    "axolotls": [],
-    "creature": [],
-    "misc": [],
-    "monster": [],
-    "underground_water_creature": [],
-    "water_ambient": [],
-    "water_creature": []
-  },
-  "temperature": 0.65
+  ]
 }
