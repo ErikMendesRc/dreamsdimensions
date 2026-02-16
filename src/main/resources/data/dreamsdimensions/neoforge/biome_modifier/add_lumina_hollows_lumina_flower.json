@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "dreamsdimensions:lumina_hollows",
+  "features": "dreamsdimensions:patch_ow_lumina_flower",
+  "decoration": "vegetal_decoration"
+}
