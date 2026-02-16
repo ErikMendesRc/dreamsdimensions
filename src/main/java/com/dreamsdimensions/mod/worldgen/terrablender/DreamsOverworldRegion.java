@@ -8,7 +8,6 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Climate;
 import terrablender.api.Region;
@@ -23,14 +22,14 @@ public final class DreamsOverworldRegion extends Region {
     public static final Identifier REGION_ID = Identifier.fromNamespaceAndPath(DreamsDimensions.MODID, "overworld");
 
     /**
-     * Em 1.21.11 com Parchment, o identificador do {@code ResourceKey<T>} é exposto via {@code location()}.
+     * NeoForge 21.11.37-beta usa {@link Identifier} no lugar de {@code ResourceLocation}.
      *
-     * <p>O erro original ocorreu quando o código tentava resolver o location direto no ponto de uso,
-     * mas sem uma camada única para validação/ajuste de API. Centralizar aqui evita chamadas redundantes
-     * e deixa explícita a API correta para esta versão.</p>
+     * <p>Nesta versão, {@link ResourceKey} expõe o identificador do valor registrado via
+     * {@link ResourceKey#identifier()}, então este helper centraliza a conversão para os pontos
+     * de log e evita chamadas de API legada.</p>
      */
-    private static ResourceLocation resolveBiomeLocation(ResourceKey<Biome> key) {
-        return key.location();
+    private static Identifier resolveBiomeId(ResourceKey<Biome> key) {
+        return key.identifier();
     }
 
     public DreamsOverworldRegion(int weight) {
@@ -55,10 +54,10 @@ public final class DreamsOverworldRegion extends Region {
                 }
             }
 
-            ResourceLocation biomeLocation = resolveBiomeLocation(entry.biomeKey());
+            Identifier id = resolveBiomeId(entry.biomeKey());
 
             DreamsDimensions.LOGGER.debug("[TerraBlender] biome={} points={} weight={}",
-                    biomeLocation,
+                    id,
                     entry.parameterPoints(WorldgenProfiles.ACTIVE),
                     entry.selectionWeight());
         }
