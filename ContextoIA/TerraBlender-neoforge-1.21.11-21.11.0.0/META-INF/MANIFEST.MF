@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Specification-Title: TerraBlender
+Specification-Vendor: Adubbz
+Specification-Version: 21.11.0.0
+Implementation-Title: NeoForge
+Implementation-Version: 21.11.0.0
+Implementation-Vendor: Adubbz
+Implementation-Timestamp: 2025-12-13T03:56:54+0000
+Timestamp: 1765598214909
+Built-On-Java: 21.0.9+7-LTS-338 (Oracle Corporation)
+Build-On-Minecraft: 1.21.11
+
