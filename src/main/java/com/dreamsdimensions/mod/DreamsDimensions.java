@@ -15,6 +15,7 @@ import com.dreamsdimensions.mod.registry.ModCreativeTabs;
 import com.dreamsdimensions.mod.registry.ModItems;
 import com.dreamsdimensions.mod.registry.ModEffects;
 import com.dreamsdimensions.mod.registry.ModPotions;
+import com.dreamsdimensions.mod.worldgen.terrablender.DDTerraBlenderBootstrap;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -78,6 +79,9 @@ public class DreamsDimensions {
      */
     private void commonSetup(final FMLCommonSetupEvent event) {
         LOGGER.info("Executando Common Setup para Dreams Dimensions...");
-        LOGGER.info("Common Setup de Dreams Dimensions concluído.");
+        event.enqueueWork(() -> {
+            DDTerraBlenderBootstrap.register();
+            LOGGER.info("Common Setup async (enqueueWork) de Dreams Dimensions concluído.");
+        });
     }
 }
