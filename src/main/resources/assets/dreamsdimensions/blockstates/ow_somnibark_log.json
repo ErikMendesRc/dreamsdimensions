@@ -1,10 +1,7 @@
 {
   "variants": {
     "axis=y": { "model": "dreamsdimensions:block/ow_somnibark_log" },
-    "axis=z": { "model": "dreamsdimensions:block/ow_somnibark_log_horizontal" },
-    "axis=x": {
-      "model": "dreamsdimensions:block/ow_somnibark_log_horizontal",
-      "y": 90
-    }
+    "axis=z": { "model": "dreamsdimensions:block/ow_somnibark_log", "x": 90 },
+    "axis=x": { "model": "dreamsdimensions:block/ow_somnibark_log", "x": 90, "y": 90 }
   }
 }
