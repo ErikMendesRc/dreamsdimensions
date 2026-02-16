@@ -81,7 +81,6 @@
   - execução de `addBiomes(...)`.
 - `neoforge:add_features` do bioma foi preservado para flora emissiva.
 - `neoforge:add_biomes` removido para evitar duplicidade de pipeline.
-- `DDBiomes` foi mantida apenas como classe de chaves (`ResourceKey`) para evitar duplicidade de definição de biome em código e datapack.
 
 ## TAREFA C — Guia prático de debug
 

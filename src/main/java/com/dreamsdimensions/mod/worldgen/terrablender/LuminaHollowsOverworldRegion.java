@@ -1,7 +1,6 @@
 package com.dreamsdimensions.mod.worldgen.terrablender;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
-import com.dreamsdimensions.mod.worldgen.biome.DDBiomes;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
@@ -25,6 +24,11 @@ import java.util.function.Consumer;
  */
 public class LuminaHollowsOverworldRegion extends Region {
     public static final Identifier LOCATION = Identifier.fromNamespaceAndPath(DreamsDimensions.MODID, "overworld_lumina_hollows");
+
+    private static final ResourceKey<Biome> LUMINA_HOLLOWS = ResourceKey.create(
+            net.minecraft.core.registries.Registries.BIOME,
+            Identifier.fromNamespaceAndPath(DreamsDimensions.MODID, "lumina_hollows")
+    );
 
     /**
      * Perfil ativo: deixe TESTING_EASY_SPAWN para validação inicial e depois troque para PRODUCTION_RARE.
@@ -56,7 +60,7 @@ public class LuminaHollowsOverworldRegion extends Region {
                 ParameterUtils.Weirdness.FULL_RANGE.parameter(),
                 ParameterUtils.Depth.SURFACE.parameter(),
                 0.0F,
-                DDBiomes.LUMINA_HOLLOWS
+                LUMINA_HOLLOWS
         );
     }
 
@@ -71,7 +75,7 @@ public class LuminaHollowsOverworldRegion extends Region {
                 ParameterUtils.Weirdness.MID_SLICE_NORMAL_ASCENDING.parameter(),
                 ParameterUtils.Depth.SURFACE.parameter(),
                 0.0F,
-                DDBiomes.LUMINA_HOLLOWS
+                LUMINA_HOLLOWS
         );
     }
 
