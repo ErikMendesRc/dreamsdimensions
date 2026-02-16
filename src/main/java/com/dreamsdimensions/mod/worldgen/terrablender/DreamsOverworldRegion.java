@@ -8,6 +8,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Climate;
 import terrablender.api.Region;
@@ -20,6 +21,17 @@ import java.util.function.Consumer;
  */
 public final class DreamsOverworldRegion extends Region {
     public static final Identifier REGION_ID = Identifier.fromNamespaceAndPath(DreamsDimensions.MODID, "overworld");
+
+    /**
+     * Em 1.21.11 com Parchment, o identificador do {@code ResourceKey<T>} é exposto via {@code location()}.
+     *
+     * <p>O erro original ocorreu quando o código tentava resolver o location direto no ponto de uso,
+     * mas sem uma camada única para validação/ajuste de API. Centralizar aqui evita chamadas redundantes
+     * e deixa explícita a API correta para esta versão.</p>
+     */
+    private static ResourceLocation resolveBiomeLocation(ResourceKey<Biome> key) {
+        return key.location();
+    }
 
     public DreamsOverworldRegion(int weight) {
         super(REGION_ID, RegionType.OVERWORLD, weight);
@@ -43,9 +55,11 @@ public final class DreamsOverworldRegion extends Region {
                 }
             }
 
+            ResourceLocation biomeLocation = resolveBiomeLocation(entry.biomeKey());
+
             DreamsDimensions.LOGGER.debug("[TerraBlender] biome={} points={} weight={}",
-                    entry.biomeKey().location(),
-                    entry.parameterPoints(WorldgenProfiles.ACTIVE).size(),
+                    biomeLocation,
+                    entry.parameterPoints(WorldgenProfiles.ACTIVE),
                     entry.selectionWeight());
         }
     }
