@@ -84,8 +84,8 @@ public final class ModBlocks {
                     .requiresCorrectToolForDrops()
     );
 
-    public static final DeferredBlock<Block> DREAM_GLOW_MOSS = BLOCKS.registerSimpleBlock(
-            "ds_dream_glow_moss",
+    public static final DeferredBlock<Block> OW_DREAM_GLOW_MOSS = BLOCKS.registerSimpleBlock(
+            "ow_dream_glow_moss",
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_BLOCK)
                     .mapColor(MapColor.COLOR_LIGHT_BLUE)
                     .lightLevel(state -> 8)

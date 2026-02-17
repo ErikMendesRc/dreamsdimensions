@@ -18,7 +18,7 @@ Não há loot tables de:
 
 ## Loot de blocos
 ### 1) Drops simples (1 pool, roll 1, item fixo)
-`az_dream_cobblestone`, `az_dream_dirt`, `az_dream_stone`, `ds_dream_dirt`, `ds_dream_flower`, `ds_dream_glow_moss`, `ds_dream_log`, `ds_dream_sand`, `ds_dream_shimmer_block`, `ds_serene_stone`, `ow_anchoring_totem`, `ow_dream_infused_stone`, `ow_lumina_flower`, `ow_oneiric_core_block`, `ow_somnibark_log`, `ow_somniflora`.
+`az_dream_cobblestone`, `az_dream_dirt`, `az_dream_stone`, `ds_dream_dirt`, `ds_dream_flower`, `ow_dream_glow_moss`, `ds_dream_log`, `ds_dream_sand`, `ds_dream_shimmer_block`, `ds_serene_stone`, `ow_anchoring_totem`, `ow_dream_infused_stone`, `ow_lumina_flower`, `ow_oneiric_core_block`, `ow_somnibark_log`, `ow_somniflora`.
 
 ### 2) Drops com condição Silk Touch
 - `az_dream_grass`: com Silk dropa `az_dream_grass`, sem Silk dropa `az_dream_dirt`.

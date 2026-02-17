@@ -124,8 +124,8 @@ public final class ModItems {
             ModBlocks.DREAM_SHIMMER_BLOCK
     );
 
-    public static final DeferredItem<BlockItem> DREAM_GLOW_MOSS_ITEM = ITEMS.registerSimpleBlockItem(
-            ModBlocks.DREAM_GLOW_MOSS
+    public static final DeferredItem<BlockItem> OW_DREAM_GLOW_MOSS_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.OW_DREAM_GLOW_MOSS
     );
 
     public static final DeferredItem<BlockItem> DREAM_ORE_ITEM = ITEMS.registerSimpleBlockItem(
