@@ -16,7 +16,7 @@
 | Pedra Onírica Azul | `az_dream_stone` | Picareta | Ela mesma | `.../az_dream_stone.json` | requiresCorrectToolForDrops | Base rochosa campo azul |
 | Pedregulho Onírico Azul | `az_dream_cobblestone` | Picareta | Ele mesmo | `.../az_dream_cobblestone.json` | requiresCorrectToolForDrops | Não gera natural (resultado de mineração/crafting) |
 | Bloco Cintilante dos Sonhos | `ds_dream_shimmer_block` | Picareta | Ele mesmo | `.../ds_dream_shimmer_block.json` | força 1.5/6.0 | Decorativo |
-| Musgo Luminoso dos Sonhos | `ds_dream_glow_moss` | Pá | Ele mesmo | `.../ds_dream_glow_moss.json` | emite luz 8 | Decorativo |
+| Musgo Luminoso dos Sonhos | `ow_dream_glow_moss` | Pá | Ele mesmo | `.../ow_dream_glow_moss.json` | emite luz 8 | Decorativo |
 | Minério dos Sonhos | `ow_dream_ore` | Picareta + ferro (`needs_iron_tool`) | Silk: minério; normal: `ow_dream_dust` | `.../ow_dream_ore.json` | XP 1–3, estado `clicked` | Overworld via biome modifier |
 | Minério dos Sonhos de Ardósia | `ow_deepslate_dream_ore` | Picareta + ferro | Silk: minério; normal: `ow_dream_dust` | `.../ow_deepslate_dream_ore.json` | XP 1–3, estado `clicked` | Overworld profundo |
 | Pedra Infundida dos Sonhos | `ow_dream_infused_stone` | Picareta | Ela mesma | `.../ow_dream_infused_stone.json` | requires tool | Crafting |

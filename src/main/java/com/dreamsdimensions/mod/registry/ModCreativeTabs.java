@@ -41,7 +41,7 @@ public final class ModCreativeTabs {
                         output.accept(ModBlocks.BLUE_DREAM_STONE.get());
                         output.accept(ModBlocks.BLUE_DREAM_COBBLESTONE.get());
                         output.accept(ModBlocks.DREAM_SHIMMER_BLOCK.get());
-                        output.accept(ModBlocks.DREAM_GLOW_MOSS.get());
+                        output.accept(ModBlocks.OW_DREAM_GLOW_MOSS.get());
                         output.accept(ModBlocks.DREAM_ORE.get());
                         output.accept(ModBlocks.DEEPSLATE_DREAM_ORE.get());
                         output.accept(ModBlocks.DREAM_INFUSED_STONE.get());
