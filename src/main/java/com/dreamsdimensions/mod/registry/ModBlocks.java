@@ -3,10 +3,10 @@ package com.dreamsdimensions.mod.registry;
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.block.DreamOreBlock;
 import com.dreamsdimensions.mod.block.OwLuminaFlowerBlock;
+import com.dreamsdimensions.mod.block.OwSomnifloraBlock;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FireflyBushBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -141,9 +141,9 @@ public final class ModBlocks {
                     .sound(SoundType.GRASS)
     );
 
-    public static final DeferredBlock<FireflyBushBlock> OW_SOMNIFLORA = BLOCKS.registerBlock(
+    public static final DeferredBlock<OwSomnifloraBlock> OW_SOMNIFLORA = BLOCKS.registerBlock(
             "ow_somniflora",
-            FireflyBushBlock::new,
+            OwSomnifloraBlock::new,
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.FIREFLY_BUSH)
     );
 
