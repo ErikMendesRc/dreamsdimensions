@@ -4,7 +4,7 @@
   "textures": {
     "particle": "dreamsdimensions:block/ow_dream_glow_moss",
     "all": "dreamsdimensions:block/ow_dream_glow_moss",
-    "all_emissive": "dreamsdimensions:block/ow_dream_glow_moss_emissive"
+    "top_emissive": "dreamsdimensions:block/ow_dream_glow_moss_emissive"
   },
   "elements": [
     {
@@ -20,16 +20,19 @@
       }
     },
     {
-      "from": [-0.01, -0.01, -0.01],
+      "from": [-0.01, 15.99, -0.01],
       "to": [16.01, 16.01, 16.01],
       "shade": false,
       "faces": {
-        "down":  { "uv": [0, 0, 16, 16], "texture": "#all_emissive", "cullface": "down",  "neoforge_data": { "block_light": 15, "sky_light": 15 } },
-        "up":    { "uv": [0, 0, 16, 16], "texture": "#all_emissive", "cullface": "up",    "neoforge_data": { "block_light": 15, "sky_light": 15 } },
-        "north": { "uv": [0, 0, 16, 16], "texture": "#all_emissive", "cullface": "north", "neoforge_data": { "block_light": 15, "sky_light": 15 } },
-        "south": { "uv": [0, 0, 16, 16], "texture": "#all_emissive", "cullface": "south", "neoforge_data": { "block_light": 15, "sky_light": 15 } },
-        "west":  { "uv": [0, 0, 16, 16], "texture": "#all_emissive", "cullface": "west",  "neoforge_data": { "block_light": 15, "sky_light": 15 } },
-        "east":  { "uv": [0, 0, 16, 16], "texture": "#all_emissive", "cullface": "east",  "neoforge_data": { "block_light": 15, "sky_light": 15 } }
+        "up": {
+          "uv": [0, 0, 16, 16],
+          "texture": "#top_emissive",
+          "cullface": "up",
+          "neoforge_data": {
+            "block_light": 15,
+            "sky_light": 15
+          }
+        }
       }
     }
   ]
