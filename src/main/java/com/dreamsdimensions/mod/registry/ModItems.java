@@ -108,6 +108,10 @@ public final class ModItems {
             ModBlocks.DREAM_LEAVES_BLOCK
     );
 
+    public static final DeferredItem<BlockItem> OW_SOMNIBARK_LEAVES_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.OW_SOMNIBARK_LEAVES
+    );
+
     public static final DeferredItem<BlockItem> SERENE_STONE_ITEM = ITEMS.registerSimpleBlockItem(
             ModBlocks.SERENE_STONE_BLOCK
     );

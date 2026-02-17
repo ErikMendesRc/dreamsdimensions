@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "dreamsdimensions:ds_dream_leaves"
+    "dreamsdimensions:ds_dream_leaves",
+    "dreamsdimensions:ow_somnibark_leaves"
   ]
 }
