@@ -53,6 +53,7 @@ public final class ModCreativeTabs {
                         output.accept(ModBlocks.DREAM_LOG_BLOCK.get());
                         output.accept(ModBlocks.OW_SOMNIBARK_LOG.get());
                         output.accept(ModBlocks.DREAM_LEAVES_BLOCK.get());
+                        output.accept(ModBlocks.OW_SOMNIBARK_LEAVES.get());
                     })
                     .build()
     );

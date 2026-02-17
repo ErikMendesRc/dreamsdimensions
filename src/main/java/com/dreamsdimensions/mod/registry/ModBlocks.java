@@ -168,6 +168,13 @@ public final class ModBlocks {
                     .strength(0.2f)
     );
 
+    public static final DeferredBlock<Block> OW_SOMNIBARK_LEAVES = BLOCKS.registerSimpleBlock(
+            "ow_somnibark_leaves",
+            props -> BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)
+                    .noOcclusion()
+                    .strength(0.2f)
+    );
+
     private ModBlocks() {
     }
 
