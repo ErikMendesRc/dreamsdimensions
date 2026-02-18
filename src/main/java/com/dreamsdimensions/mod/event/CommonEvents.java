@@ -3,8 +3,10 @@ package com.dreamsdimensions.mod.event;
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.config.DreamsConfig;
 import com.dreamsdimensions.mod.content.emissive.NightEmissiveBlockBase;
+import com.dreamsdimensions.mod.content.emissive.NightTime;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.level.ChunkEvent;
@@ -55,9 +57,11 @@ public final class CommonEvents {
 
         serverLevel.getServer().execute(() -> {
             var chunk = event.getChunk();
+            int emissiveFound = 0;
             int scheduled = 0;
 
-            for (int y = serverLevel.getMinY(); y < serverLevel.getMaxY(); y++) {                for (int z = 0; z < 16; z++) {
+            for (int y = serverLevel.getMinY(); y < serverLevel.getMaxY(); y++) {
+                for (int z = 0; z < 16; z++) {
                     for (int x = 0; x < 16; x++) {
                         BlockPos pos = new BlockPos(chunk.getPos().getMinBlockX() + x, y, chunk.getPos().getMinBlockZ() + z);
                         BlockState state = chunk.getBlockState(pos);
@@ -66,6 +70,8 @@ public final class CommonEvents {
                         if (!(block instanceof NightEmissiveBlockBase emissiveBlock)) {
                             continue;
                         }
+
+                        emissiveFound++;
 
                         if (serverLevel.getBlockTicks().hasScheduledTick(pos, block)) {
                             continue;
@@ -76,7 +82,22 @@ public final class CommonEvents {
                     }
                 }
             }
+
+            if (debugLogs) {
+                long dayTime = serverLevel.getDayTime();
+                long dayTimeModulo = Math.floorMod(dayTime, NightTime.DAY_TICKS);
+                LOGGER.info(
+                        "[NightEmissive] onChunkLoad chunk={} dim={} overworld={} dayTime={} dayTimeModulo={} vanillaNight={} emissiveFound={} ticksScheduled={}",
+                        chunk.getPos(),
+                        serverLevel.dimension().identifier(),
+                        serverLevel.dimension() == Level.OVERWORLD,
+                        dayTime,
+                        dayTimeModulo,
+                        NightTime.computeNight(dayTimeModulo),
+                        emissiveFound,
+                        scheduled
+                );
+            }
         });
     }
 }
-
