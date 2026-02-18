@@ -76,7 +76,7 @@ public class OwLuminaFlowerBlock extends FlowerBlock implements NightEmissiveBlo
                 DreamsDimensions.LOGGER.info(
                         "[NightEmissive] onPlace wiring block=ow_lumina_flower pos={} dim={} oldIsSame={} lit={} schedulingInitial=true",
                         pos,
-                        level.dimension().location(),
+                        level.dimension().identifier(),
                         oldState.is(this),
                         state.getValue(LIT)
                 );
@@ -91,7 +91,7 @@ public class OwLuminaFlowerBlock extends FlowerBlock implements NightEmissiveBlo
             DreamsDimensions.LOGGER.info(
                     "[NightEmissive] randomTick wiring block=ow_lumina_flower pos={} dim={} lit={}",
                     pos,
-                    level.dimension().location(),
+                    level.dimension().identifier(),
                     state.getValue(LIT)
             );
         }
@@ -104,7 +104,7 @@ public class OwLuminaFlowerBlock extends FlowerBlock implements NightEmissiveBlo
             DreamsDimensions.LOGGER.info(
                     "[NightEmissive] tick wiring block=ow_lumina_flower pos={} dim={} lit={}",
                     pos,
-                    level.dimension().location(),
+                    level.dimension().identifier(),
                     state.getValue(LIT)
             );
         }

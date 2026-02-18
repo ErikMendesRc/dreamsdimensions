@@ -12,15 +12,14 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-/**
- * Contrato e helpers compartilhados para blocos com emissivo noturno.
- */
 public interface NightEmissiveBlockBase {
     BooleanProperty LIT = BlockStateProperties.LIT;
+
     int INITIAL_CHECK_DELAY_TICKS = 20;
     int WORLDGEN_RETRY_DELAY_TICKS = 160;
     int BASE_CHECK_DELAY_TICKS = 100;
     int JITTER_CHECK_DELAY_TICKS = 500;
+
     int UPDATE_FLAGS = Block.UPDATE_ALL;
 
     default void appendNightEmissiveProperties(StateDefinition.Builder<Block, BlockState> builder) {
@@ -55,10 +54,6 @@ public interface NightEmissiveBlockBase {
         }
     }
 
-    default void scheduleInitial(ServerLevel level, BlockPos pos, BlockState state, Block block) {
-        scheduleInitialServer(level, pos, state, block);
-    }
-
     default void scheduleInitialServer(ServerLevel level, BlockPos pos, BlockState state, Block block) {
         level.scheduleTick(pos, block, INITIAL_CHECK_DELAY_TICKS);
     }
@@ -71,10 +66,8 @@ public interface NightEmissiveBlockBase {
 
         if (!state.hasProperty(LIT)) {
             DreamsDimensions.LOGGER.error(
-                    "missing LIT property for emissive block at {} in {}: {}",
-                    pos,
-                    dimId(level),
-                    state
+                    "[NightEmissive] missing LIT property at pos={} dim={} state={}",
+                    pos, level.dimension().identifier(), state
             );
             return;
         }
@@ -82,36 +75,33 @@ public interface NightEmissiveBlockBase {
         long dayTime = level.getDayTime();
         long dayTimeModulo = Math.floorMod(dayTime, NightTime.DAY_TICKS);
         boolean vanillaNight = NightTime.computeNight(dayTimeModulo);
+
         boolean extra = extraConditions(level, pos, state);
         boolean shouldLight = shouldBeLit(level, pos, state);
-        boolean stateLitBefore = state.getValue(LIT);
+        boolean litBefore = state.getValue(LIT);
 
-        if (stateLitBefore != shouldLight) {
+        if (litBefore != shouldLight) {
             level.setBlock(pos, state.setValue(LIT, shouldLight), UPDATE_FLAGS);
         }
 
         if (DreamsConfig.isNightEmissiveDebugLogsEnabled()) {
             DreamsDimensions.LOGGER.info(
-                    "[NightEmissive] scheduledTick block={} pos={} dim={} overworld={} dayTime={} dayTimeModulo={} fixedTime={} vanillaNight={} extra={} shouldLight={} litBefore={} litAfter={}",
+                    "[NightEmissive] scheduledTick block={} pos={} dim={} overworld={} dayTime={} dayTimeModulo={} hasFixedTime={} vanillaNight={} extra={} shouldLight={} litBefore={} litAfter={}",
                     block.builtInRegistryHolder().key().identifier(),
                     pos,
-                    dimId(level),
+                    level.dimension().identifier(),
                     level.dimension() == Level.OVERWORLD,
                     dayTime,
                     dayTimeModulo,
-                    level.dimensionType().fixedTime().orElse(null),
+                    level.dimensionType().hasFixedTime(),
                     vanillaNight,
                     extra,
                     shouldLight,
-                    stateLitBefore,
+                    litBefore,
                     shouldLight
             );
         }
 
         level.scheduleTick(pos, block, nextCheckDelayTicks(level, pos));
-    }
-
-    static String dimId(Level level) {
-        return String.valueOf(level.dimension());
     }
 }
