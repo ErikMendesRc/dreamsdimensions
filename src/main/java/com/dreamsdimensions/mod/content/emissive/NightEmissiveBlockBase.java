@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -59,6 +60,13 @@ public interface NightEmissiveBlockBase {
     }
 
     default void scheduleInitialServer(ServerLevel level, BlockPos pos, BlockState state, Block block) {
+        String fixedTimeInfo = level.dimensionType().fixedTime().isPresent()
+                ? String.valueOf(level.dimensionType().fixedTime().getAsLong())
+                : "none";
+        String litInfo = state.hasProperty(LIT)
+                ? String.valueOf(state.getValue(LIT))
+                : "missing";
+
         DreamsDimensions.LOGGER.info(
                 "[NightEmissiveRuntime] scheduleInitial block={} pos={} dim={} dayTimeRaw={} dayTimeMod={} gameTime={} doDaylightCycle={} fixedTime={} litState={}",
                 BuiltInRegistries.BLOCK.getKey(block),
@@ -67,9 +75,9 @@ public interface NightEmissiveBlockBase {
                 level.getDayTime(),
                 Math.floorMod(level.getDayTime(), NightTime.DAY_TICKS),
                 level.getGameTime(),
-                level.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_DAYLIGHT),
-                level.dimensionType().fixedTime().isPresent() ? level.dimensionType().fixedTime().getAsLong() : "none",
-                state.hasProperty(LIT) ? state.getValue(LIT) : "missing"
+                level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT),
+                fixedTimeInfo,
+                litInfo
         );
         level.scheduleTick(pos, block, INITIAL_CHECK_DELAY_TICKS);
     }
@@ -98,6 +106,10 @@ public interface NightEmissiveBlockBase {
 
         boolean shouldLight = shouldBeLit(level, pos, state);
         if (shouldLight) {
+            String fixedTimeInfo = level.dimensionType().fixedTime().isPresent()
+                    ? String.valueOf(level.dimensionType().fixedTime().getAsLong())
+                    : "none";
+
             DreamsDimensions.LOGGER.info(
                     "[NightEmissiveRuntime] tickShouldLight block={} pos={} dim={} dayTimeRaw={} dayTimeMod={} gameTime={} doDaylightCycle={} fixedTime={} litCurrent={}",
                     BuiltInRegistries.BLOCK.getKey(block),
@@ -106,8 +118,8 @@ public interface NightEmissiveBlockBase {
                     level.getDayTime(),
                     Math.floorMod(level.getDayTime(), NightTime.DAY_TICKS),
                     level.getGameTime(),
-                    level.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_DAYLIGHT),
-                    level.dimensionType().fixedTime().isPresent() ? level.dimensionType().fixedTime().getAsLong() : "none",
+                    level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT),
+                    fixedTimeInfo,
                     state.getValue(LIT)
             );
         }
