@@ -2,6 +2,12 @@ package com.dreamsdimensions.mod.event;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.config.DreamsConfig;
+import com.dreamsdimensions.mod.content.emissive.NightEmissiveBlockBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.slf4j.Logger;
 
@@ -25,4 +31,51 @@ public final class CommonEvents {
         LOGGER.info("Servidor iniciando - Olá do Dreams Dimensions!");
         DreamsConfig.logResolvedDreamDimensions(event.getServer());
     }
+
+    /**
+     * Garante agendamento inicial para blocos emissivos noturnos em chunks carregados,
+     * incluindo blocos de worldgen previamente existentes.
+     */
+    public static void onChunkLoad(ChunkEvent.Load event) {
+        if (!(event.getLevel() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        serverLevel.getServer().execute(() -> {
+            var chunk = event.getChunk();
+            int scheduled = 0;
+
+            for (int y = serverLevel.getMinBuildHeight(); y < serverLevel.getMaxBuildHeight(); y++) {
+                for (int z = 0; z < 16; z++) {
+                    for (int x = 0; x < 16; x++) {
+                        BlockPos pos = new BlockPos(chunk.getPos().getMinBlockX() + x, y, chunk.getPos().getMinBlockZ() + z);
+                        BlockState state = chunk.getBlockState(pos);
+                        Block block = state.getBlock();
+
+                        if (!(block instanceof NightEmissiveBlockBase emissiveBlock)) {
+                            continue;
+                        }
+
+                        if (serverLevel.getBlockTicks().hasScheduledTick(pos, block)) {
+                            continue;
+                        }
+
+                        emissiveBlock.scheduleInitial(serverLevel, pos, state, block);
+                        scheduled++;
+                    }
+                }
+            }
+
+            if (scheduled > 0) {
+                LOGGER.info(
+                        "[NightEmissiveRuntime] chunkLoadScheduled chunk={} dim={} scheduled={} newChunk={}",
+                        chunk.getPos(),
+                        serverLevel.dimension().location(),
+                        scheduled,
+                        event.isNewChunk()
+                );
+            }
+        });
+    }
 }
+
