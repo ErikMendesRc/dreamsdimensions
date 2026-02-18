@@ -2,7 +2,10 @@ package com.dreamsdimensions.mod.event;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.config.DreamsConfig;
+import com.dreamsdimensions.mod.content.emissive.NightEmissiveDebug;
+import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import org.slf4j.Logger;
 
 /**
@@ -24,5 +27,13 @@ public final class CommonEvents {
     public static void onServerStarting(ServerStartingEvent event) {
         LOGGER.info("Servidor iniciando - Olá do Dreams Dimensions!");
         DreamsConfig.logResolvedDreamDimensions(event.getServer());
+    }
+
+    public static void onLevelTickPost(LevelTickEvent.Post event) {
+        if (!(event.getLevel() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        NightEmissiveDebug.logHeartbeat(serverLevel, "serverLevelTick");
     }
 }

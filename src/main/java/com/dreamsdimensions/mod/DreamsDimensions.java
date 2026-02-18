@@ -62,6 +62,7 @@ public class DreamsDimensions {
         modEventBus.addListener(CreativeTabEvents::onBuildCreativeTabContents);
 
         NeoForge.EVENT_BUS.addListener(CommonEvents::onServerStarting);
+        NeoForge.EVENT_BUS.addListener(CommonEvents::onLevelTickPost);
         NeoForge.EVENT_BUS.addListener(BrewingRecipesHandler::onRegisterBrewingRecipes);
         NeoForge.EVENT_BUS.addListener(DreamDimensionEffectsHandler::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(DreamReturnAttachmentHandler::onPlayerSetSpawn);
@@ -84,6 +85,7 @@ public class DreamsDimensions {
         LOGGER.info("Executando Common Setup para Dreams Dimensions...");
         event.enqueueWork(() -> {
             DDTerraBlenderBootstrap.register();
+            NightEmissiveDebug.logNightEmissiveBlockRegistration(ModBlocks.nightEmissiveBlocks());
             LOGGER.info("Common Setup async (enqueueWork) de Dreams Dimensions concluído.");
         });
     }

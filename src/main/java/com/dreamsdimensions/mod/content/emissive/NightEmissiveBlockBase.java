@@ -1,6 +1,8 @@
 package com.dreamsdimensions.mod.content.emissive;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
@@ -9,6 +11,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 
 /**
  * Contrato e helpers compartilhados para blocos com emissivo noturno.
@@ -16,6 +20,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 public interface NightEmissiveBlockBase {
     BooleanProperty LIT = BlockStateProperties.LIT;
     int INITIAL_CHECK_DELAY_TICKS = 20;
+    int WORLDGEN_RETRY_DELAY_TICKS = 160;
     int BASE_CHECK_DELAY_TICKS = 100;
     int JITTER_CHECK_DELAY_TICKS = 500;
     int UPDATE_FLAGS = Block.UPDATE_ALL;
@@ -54,6 +59,18 @@ public interface NightEmissiveBlockBase {
 
     default void scheduledTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, Block block) {
         NightEmissiveDebug.ensureAssetValidation();
+
+        ChunkAccess fullChunk = level.getChunkSource().getChunk(pos.getX() >> 4, pos.getZ() >> 4, ChunkStatus.FULL, false);
+        if (fullChunk == null) {
+            ChunkAccess observedChunk = level.getChunkSource().getChunk(pos.getX() >> 4, pos.getZ() >> 4, ChunkStatus.EMPTY, false);
+            Identifier blockId = BuiltInRegistries.BLOCK.getKey(block);
+            String persistedStatus = observedChunk == null ? "<unloaded>" : observedChunk.getPersistedStatus().getName();
+
+            level.scheduleTick(pos, block, WORLDGEN_RETRY_DELAY_TICKS);
+            NightEmissiveDebug.logSkippedWorldgenUpdate(level, pos, blockId, persistedStatus, WORLDGEN_RETRY_DELAY_TICKS);
+            return;
+        }
+
         boolean shouldLight = shouldBeLit(level, pos, state);
         boolean currentlyLit = state.getValue(LIT);
         boolean changed = currentlyLit != shouldLight;

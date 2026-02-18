@@ -25,6 +25,8 @@ public final class NightEmissiveClientDebugEvents {
             return;
         }
 
+        NightEmissiveDebug.logHeartbeat(minecraft.level, "clientTick");
+
         HitResult hit = minecraft.hitResult;
         if (!(hit instanceof BlockHitResult blockHit)) {
             return;
