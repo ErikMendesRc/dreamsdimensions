@@ -41,11 +41,23 @@ public final class CommonEvents {
             return;
         }
 
+        boolean debugLogs = DreamsConfig.isNightEmissiveDebugLogsEnabled();
+        String threadName = Thread.currentThread().getName();
+
+        if (debugLogs) {
+            LOGGER.info(
+                    "[NightEmissive] ChunkEvent.Load recebido chunk={} dim={} thread={}",
+                    event.getChunk().getPos(),
+                    serverLevel.dimension().identifier(),
+                    threadName
+            );
+        }
+
         serverLevel.getServer().execute(() -> {
             var chunk = event.getChunk();
+            int scheduled = 0;
 
-            for (int y = serverLevel.getMinY(); y < serverLevel.getMaxY(); y++) {
-                for (int z = 0; z < 16; z++) {
+            for (int y = serverLevel.getMinY(); y < serverLevel.getMaxY(); y++) {                for (int z = 0; z < 16; z++) {
                     for (int x = 0; x < 16; x++) {
                         BlockPos pos = new BlockPos(chunk.getPos().getMinBlockX() + x, y, chunk.getPos().getMinBlockZ() + z);
                         BlockState state = chunk.getBlockState(pos);
@@ -60,6 +72,7 @@ public final class CommonEvents {
                         }
 
                         emissiveBlock.scheduleInitial(serverLevel, pos, state, block);
+                        scheduled++;
                     }
                 }
             }

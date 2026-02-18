@@ -1,6 +1,7 @@
 package com.dreamsdimensions.mod.content.emissive;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
+import com.dreamsdimensions.mod.config.DreamsConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -31,7 +32,8 @@ public interface NightEmissiveBlockBase {
     }
 
     default boolean isNight(Level level) {
-        return NightTime.isVanillaNight(level);
+        return NightTime.isVanillaNight(level)
+                || DreamsConfig.forceNightEmissiveInDreamDimensions(level.dimension());
     }
 
     default boolean extraConditions(Level level, BlockPos pos, BlockState state) {
@@ -77,10 +79,29 @@ public interface NightEmissiveBlockBase {
             return;
         }
 
+        boolean vanillaNight = NightTime.isVanillaNight(level);
+        boolean extra = extraConditions(level, pos, state);
         boolean shouldLight = shouldBeLit(level, pos, state);
+        boolean stateLitBefore = state.getValue(LIT);
 
-        if (state.getValue(LIT) != shouldLight) {
+        if (stateLitBefore != shouldLight) {
             level.setBlock(pos, state.setValue(LIT, shouldLight), UPDATE_FLAGS);
+        }
+
+        if (DreamsConfig.isNightEmissiveDebugLogsEnabled()) {
+            DreamsDimensions.LOGGER.info(
+                    "[NightEmissive] scheduledTick block={} pos={} dim={} dayTime={} fixedTime={} vanillaNight={} extra={} shouldLight={} litBefore={} litAfter={}",
+                    block.builtInRegistryHolder().key().identifier(),
+                    pos,
+                    dimId(level),
+                    level.getDayTime(),
+                    level.dimensionType().fixedTime().orElse(null),
+                    vanillaNight,
+                    extra,
+                    shouldLight,
+                    stateLitBefore,
+                    shouldLight
+            );
         }
 
         level.scheduleTick(pos, block, nextCheckDelayTicks(level, pos));
