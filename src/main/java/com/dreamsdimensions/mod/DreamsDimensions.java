@@ -1,6 +1,7 @@
 package com.dreamsdimensions.mod;
 
 import com.dreamsdimensions.mod.config.DreamsConfig;
+import com.dreamsdimensions.mod.content.emissive.NightEmissiveDebug;
 import com.dreamsdimensions.mod.event.CommonEvents;
 import com.dreamsdimensions.mod.event.CreativeTabEvents;
 import com.dreamsdimensions.mod.event.DreamDimensionEffectsHandler;
@@ -45,6 +46,8 @@ public class DreamsDimensions {
 
     public DreamsDimensions(IEventBus modEventBus, ModContainer modContainer) {
         LOGGER.info("Dreams Dimensions Mod está carregando!");
+        NightEmissiveDebug.logDebugModeBoot();
+        NightEmissiveDebug.ensureAssetValidation();
 
         modContainer.registerConfig(ModConfig.Type.COMMON, DreamsConfig.SPEC);
 

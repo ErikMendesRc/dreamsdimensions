@@ -18,6 +18,7 @@ public interface NightEmissiveBlockBase {
     int INITIAL_CHECK_DELAY_TICKS = 20;
     int BASE_CHECK_DELAY_TICKS = 100;
     int JITTER_CHECK_DELAY_TICKS = 500;
+    int UPDATE_FLAGS = Block.UPDATE_ALL;
 
     default void appendNightEmissiveProperties(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(LIT);
@@ -28,6 +29,7 @@ public interface NightEmissiveBlockBase {
     }
 
     default boolean isNight(Level level) {
+        NightEmissiveDebug.logClock(level, "isNight");
         return NightTime.isVanillaNight(level);
     }
 
@@ -45,19 +47,25 @@ public interface NightEmissiveBlockBase {
     }
 
     default void scheduleInitial(ServerLevel level, BlockPos pos, BlockState state, Block block) {
+        NightEmissiveDebug.ensureAssetValidation();
         level.scheduleTick(pos, block, INITIAL_CHECK_DELAY_TICKS);
+        NightEmissiveDebug.logInitialSchedule(level, pos, state, block, INITIAL_CHECK_DELAY_TICKS, "onPlace");
     }
 
     default void scheduledTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, Block block) {
+        NightEmissiveDebug.ensureAssetValidation();
         boolean shouldLight = shouldBeLit(level, pos, state);
         boolean currentlyLit = state.getValue(LIT);
+        boolean changed = currentlyLit != shouldLight;
 
-        if (currentlyLit != shouldLight) {
+        if (changed) {
             BlockState updated = state.setValue(LIT, shouldLight);
-            level.setBlock(pos, updated, Block.UPDATE_CLIENTS);
+            level.setBlock(pos, updated, UPDATE_FLAGS);
+            NightEmissiveDebug.logSetBlockResult(level, pos, state, updated, UPDATE_FLAGS);
         }
 
-        level.scheduleTick(pos, block, nextCheckDelayTicks(level, pos));
+        int nextDelay = nextCheckDelayTicks(level, pos);
+        level.scheduleTick(pos, block, nextDelay);
+        NightEmissiveDebug.logScheduledTick(state, level, pos, block, shouldLight, nextDelay, UPDATE_FLAGS, changed);
     }
 }
-
