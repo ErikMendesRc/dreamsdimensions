@@ -39,8 +39,18 @@ public final class DreamsConfig {
             .comment("Raio (em blocos) para procurar ow_anchoring_totem perto da cama/spawn e bloquear teleporte onirico.")
             .defineInRange("anchoring_totem_radius", 8, 1, 64);
 
+    private static final ModConfigSpec.BooleanValue NIGHT_EMISSIVE_DEBUG_LOGS = BUILDER
+            .comment("Habilita logs de depuracao para o pipeline de blocos emissivos noturnos.")
+            .define("night_emissive_debug_logs", false);
+
+    private static final ModConfigSpec.BooleanValue FORCE_NIGHT_EMISSIVE_IN_DREAM_DIMENSIONS = BUILDER
+            .comment("Forca blocos NightEmissive a tratarem dimensoes de sonho como noite, mesmo quando o horario nao avanca para o intervalo vanilla de noite.")
+            .define("force_night_emissive_in_dream_dimensions", false);
+
     private static Set<ResourceKey<Level>> dreamDimensions = Set.of();
     private static int anchoringTotemRadius = 8;
+    private static boolean nightEmissiveDebugLogs = false;
+    private static boolean forceNightEmissiveInDreamDimensions = false;
     private static boolean baked = false;
 
     public static final ModConfigSpec SPEC = BUILDER.build();
@@ -104,6 +114,22 @@ public final class DreamsConfig {
         return dreamDimensions;
     }
 
+    public static boolean isNightEmissiveDebugLogsEnabled() {
+        if (!baked) {
+            LOGGER.warn("[DreamsConfig] isNightEmissiveDebugLogsEnabled called before bake. Forcing bake.");
+            bake();
+        }
+        return nightEmissiveDebugLogs;
+    }
+
+    public static boolean forceNightEmissiveInDreamDimensions(ResourceKey<Level> dimension) {
+        if (!baked) {
+            LOGGER.warn("[DreamsConfig] forceNightEmissiveInDreamDimensions called before bake. Forcing bake.");
+            bake();
+        }
+        return forceNightEmissiveInDreamDimensions && dreamDimensions.contains(dimension);
+    }
+
     public static void logResolvedDreamDimensions(MinecraftServer server) {
         Set<ResourceKey<Level>> configured = getDreamDimensions();
         List<String> existing = configured.stream()
@@ -152,11 +178,15 @@ public final class DreamsConfig {
 
         dreamDimensions = Set.copyOf(parsed);
         anchoringTotemRadius = ANCHORING_TOTEM_RADIUS.get();
+        nightEmissiveDebugLogs = NIGHT_EMISSIVE_DEBUG_LOGS.get();
+        forceNightEmissiveInDreamDimensions = FORCE_NIGHT_EMISSIVE_IN_DREAM_DIMENSIONS.get();
         baked = true;
 
         LOGGER.info("[DreamsConfig] Dream dimensions baked successfully: {}",
                 dreamDimensions.stream().map(key -> key.identifier().toString()).toList()
         );
         LOGGER.info("[DreamsConfig] anchoring_totem_radius={}", anchoringTotemRadius);
+        LOGGER.info("[DreamsConfig] night_emissive_debug_logs={}", nightEmissiveDebugLogs);
+        LOGGER.info("[DreamsConfig] force_night_emissive_in_dream_dimensions={}", forceNightEmissiveInDreamDimensions);
     }
 }
