@@ -1,7 +1,6 @@
 package com.dreamsdimensions.mod;
 
 import com.dreamsdimensions.mod.config.DreamsConfig;
-import com.dreamsdimensions.mod.content.emissive.NightEmissiveDebug;
 import com.dreamsdimensions.mod.event.CommonEvents;
 import com.dreamsdimensions.mod.event.CreativeTabEvents;
 import com.dreamsdimensions.mod.event.DreamDimensionEffectsHandler;
@@ -46,8 +45,6 @@ public class DreamsDimensions {
 
     public DreamsDimensions(IEventBus modEventBus, ModContainer modContainer) {
         LOGGER.info("Dreams Dimensions Mod está carregando!");
-        NightEmissiveDebug.logDebugModeBoot();
-        NightEmissiveDebug.ensureAssetValidation();
 
         modContainer.registerConfig(ModConfig.Type.COMMON, DreamsConfig.SPEC);
 
@@ -62,7 +59,6 @@ public class DreamsDimensions {
         modEventBus.addListener(CreativeTabEvents::onBuildCreativeTabContents);
 
         NeoForge.EVENT_BUS.addListener(CommonEvents::onServerStarting);
-        NeoForge.EVENT_BUS.addListener(CommonEvents::onLevelTickPost);
         NeoForge.EVENT_BUS.addListener(BrewingRecipesHandler::onRegisterBrewingRecipes);
         NeoForge.EVENT_BUS.addListener(DreamDimensionEffectsHandler::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(DreamReturnAttachmentHandler::onPlayerSetSpawn);
@@ -85,7 +81,6 @@ public class DreamsDimensions {
         LOGGER.info("Executando Common Setup para Dreams Dimensions...");
         event.enqueueWork(() -> {
             DDTerraBlenderBootstrap.register();
-            NightEmissiveDebug.logNightEmissiveBlockRegistration(ModBlocks.nightEmissiveBlocks());
             LOGGER.info("Common Setup async (enqueueWork) de Dreams Dimensions concluído.");
         });
     }

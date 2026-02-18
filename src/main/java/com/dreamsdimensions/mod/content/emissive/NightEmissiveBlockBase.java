@@ -1,8 +1,6 @@
 package com.dreamsdimensions.mod.content.emissive;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
@@ -11,9 +9,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.chunk.ChunkPos;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.status.ChunkStatus;
 
 /**
  * Contrato e helpers compartilhados para blocos com emissivo noturno.
@@ -35,7 +30,6 @@ public interface NightEmissiveBlockBase {
     }
 
     default boolean isNight(Level level) {
-        NightEmissiveDebug.logClock(level, "isNight");
         return NightTime.isVanillaNight(level);
     }
 
@@ -53,12 +47,9 @@ public interface NightEmissiveBlockBase {
     }
 
     default void scheduleInitial(Level level, BlockPos pos, BlockState state, Block block) {
-        if (!(level instanceof ServerLevel serverLevel)) {
-            NightEmissiveDebug.logSkippedNonServerSchedule(level, pos, block, "onPlace");
-            return;
+        if (level instanceof ServerLevel serverLevel) {
+            scheduleInitialServer(serverLevel, pos, state, block);
         }
-
-        scheduleInitialServer(serverLevel, pos, state, block);
     }
 
     default void scheduleInitial(ServerLevel level, BlockPos pos, BlockState state, Block block) {
@@ -66,39 +57,20 @@ public interface NightEmissiveBlockBase {
     }
 
     default void scheduleInitialServer(ServerLevel level, BlockPos pos, BlockState state, Block block) {
-        NightEmissiveDebug.ensureAssetValidation();
         level.scheduleTick(pos, block, INITIAL_CHECK_DELAY_TICKS);
-        NightEmissiveDebug.logInitialSchedule(level, pos, state, block, INITIAL_CHECK_DELAY_TICKS, "onPlace");
     }
 
     default void scheduledTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, Block block) {
-        NightEmissiveDebug.ensureAssetValidation();
-
-        ChunkAccess fullChunk = level.getChunkSource().getChunk(pos.getX() >> 4, pos.getZ() >> 4, ChunkStatus.FULL, false);
-        boolean blockTickingRange = level.shouldTickBlocksAt(ChunkPos.asLong(pos));
-        if (fullChunk == null || !blockTickingRange) {
-            ChunkAccess observedChunk = level.getChunkSource().getChunk(pos.getX() >> 4, pos.getZ() >> 4, ChunkStatus.EMPTY, false);
-            Identifier blockId = BuiltInRegistries.BLOCK.getKey(block);
-            String persistedStatus = observedChunk == null ? "<unloaded>" : observedChunk.getPersistedStatus().getName();
-            String reason = fullChunk == null ? "chunk-not-full" : "outside-block-ticking-range";
-
+        if (!level.shouldTickBlocksAt(pos.asLong())) {
             level.scheduleTick(pos, block, WORLDGEN_RETRY_DELAY_TICKS);
-            NightEmissiveDebug.logSkippedWorldgenUpdate(level, pos, blockId, persistedStatus, reason, WORLDGEN_RETRY_DELAY_TICKS);
             return;
         }
 
         boolean shouldLight = shouldBeLit(level, pos, state);
-        boolean currentlyLit = state.getValue(LIT);
-        boolean changed = currentlyLit != shouldLight;
-
-        if (changed) {
-            BlockState updated = state.setValue(LIT, shouldLight);
-            level.setBlock(pos, updated, UPDATE_FLAGS);
-            NightEmissiveDebug.logSetBlockResult(level, pos, state, updated, UPDATE_FLAGS);
+        if (state.getValue(LIT) != shouldLight) {
+            level.setBlock(pos, state.setValue(LIT, shouldLight), UPDATE_FLAGS);
         }
 
-        int nextDelay = nextCheckDelayTicks(level, pos);
-        level.scheduleTick(pos, block, nextDelay);
-        NightEmissiveDebug.logScheduledTick(state, level, pos, block, shouldLight, nextDelay, UPDATE_FLAGS, changed);
+        level.scheduleTick(pos, block, nextCheckDelayTicks(level, pos));
     }
 }
