@@ -155,6 +155,22 @@ public final class NightEmissiveDebug {
         );
     }
 
+
+    public static void logSkippedNonServerSchedule(Level level, BlockPos pos, Block block, String reason) {
+        if (!isEnabled()) {
+            return;
+        }
+
+        DreamsDimensions.LOGGER.info(
+                "[NightEmissive] skipped schedule (non-server level): reason={} block={} pos={} levelClass={} dim={}",
+                reason,
+                BuiltInRegistries.BLOCK.getKey(block),
+                pos,
+                level.getClass().getName(),
+                level.dimension().identifier()
+        );
+    }
+
     public static void logClock(Level level, String source) {
         if (!isEnabled()) {
             return;
@@ -209,13 +225,14 @@ public final class NightEmissiveDebug {
         }
     }
 
-    public static void logSkippedWorldgenUpdate(ServerLevel level, BlockPos pos, Identifier blockId, String chunkStatus, int nextDelay) {
+    public static void logSkippedWorldgenUpdate(ServerLevel level, BlockPos pos, Identifier blockId, String chunkStatus, String reason, int nextDelay) {
         if (!isEnabled()) {
             return;
         }
 
         DreamsDimensions.LOGGER.info(
-                "[NightEmissive] skipped update during worldgen/not-full chunk: block={} pos={} chunkStatus={} nextDelay={}t dim={}",
+                "[NightEmissive] skipped update (worldgen or unsafe chunk): reason={} block={} pos={} chunkStatus={} nextDelay={}t dim={}",
+                reason,
                 blockId,
                 pos,
                 chunkStatus,

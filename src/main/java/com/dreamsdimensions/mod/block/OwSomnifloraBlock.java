@@ -49,8 +49,8 @@ public class OwSomnifloraBlock extends FireflyBushBlock implements NightEmissive
     @Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
         super.onPlace(state, level, pos, oldState, isMoving);
-        if (!oldState.is(this) && !level.isClientSide()) {
-            scheduleInitial((ServerLevel) level, pos, state, this);
+        if (!oldState.is(this)) {
+            scheduleInitial(level, pos, state, this);
         }
     }
 
