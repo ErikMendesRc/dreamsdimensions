@@ -1,0 +1,30 @@
+{
+  "ambientocclusion": false,
+  "render_type": "cutout",
+  "textures": {
+    "particle": "dreamsdimensions:block/ow_lumina_vines",
+    "vine": "dreamsdimensions:block/ow_lumina_vines",
+    "vine_emissive": "dreamsdimensions:block/ow_lumina_vines_emissive"
+  },
+  "elements": [
+    {
+      "from": [ 0, 0, 0.2 ],
+      "to": [ 16, 16, 0.2 ],
+      "shade": false,
+      "faces": {
+        "north": { "uv": [ 0, 0, 16, 16 ], "texture": "#vine" },
+        "south": { "uv": [ 16, 0, 0, 16 ], "texture": "#vine" }
+      }
+    },
+    {
+      "from": [ 0, 0, 0.3 ],
+      "to": [ 16, 16, 0.3 ],
+      "light_emission": 15,
+      "shade": false,
+      "faces": {
+        "north": { "uv": [ 0, 0, 16, 16 ], "texture": "#vine_emissive" },
+        "south": { "uv": [ 16, 0, 0, 16 ], "texture": "#vine_emissive" }
+      }
+    }
+  ]
+}
