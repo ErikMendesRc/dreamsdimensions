@@ -1,0 +1,9 @@
+{
+  "ambientocclusion": false,
+  "render_type": "cutout",
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "particle": "dreamsdimensions:block/ow_somniflora",
+    "cross": "dreamsdimensions:block/ow_somniflora"
+  }
+}

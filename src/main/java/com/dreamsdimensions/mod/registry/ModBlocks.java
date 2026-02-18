@@ -2,8 +2,11 @@ package com.dreamsdimensions.mod.registry;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.block.DreamOreBlock;
+import com.dreamsdimensions.mod.block.OwDreamGlowMossBlock;
 import com.dreamsdimensions.mod.block.OwLuminaFlowerBlock;
+import com.dreamsdimensions.mod.block.OwSomnibarkLogBlock;
 import com.dreamsdimensions.mod.block.OwSomnifloraBlock;
+import com.dreamsdimensions.mod.content.emissive.NightEmissiveBlockBase;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -84,11 +87,12 @@ public final class ModBlocks {
                     .requiresCorrectToolForDrops()
     );
 
-    public static final DeferredBlock<Block> OW_DREAM_GLOW_MOSS = BLOCKS.registerSimpleBlock(
+    public static final DeferredBlock<OwDreamGlowMossBlock> OW_DREAM_GLOW_MOSS = BLOCKS.registerBlock(
             "ow_dream_glow_moss",
+            OwDreamGlowMossBlock::new,
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_BLOCK)
                     .mapColor(MapColor.COLOR_LIGHT_BLUE)
-                    .lightLevel(state -> 8)
+                    .lightLevel(state -> state.getValue(NightEmissiveBlockBase.LIT) ? 8 : 0)
     );
 
     public static final DeferredBlock<Block> DREAM_ORE = BLOCKS.registerBlock(
@@ -154,9 +158,9 @@ public final class ModBlocks {
                     .strength(2.0f)
     );
 
-    public static final DeferredBlock<RotatedPillarBlock> OW_SOMNIBARK_LOG = BLOCKS.registerBlock(
+    public static final DeferredBlock<OwSomnibarkLogBlock> OW_SOMNIBARK_LOG = BLOCKS.registerBlock(
             "ow_somnibark_log",
-            RotatedPillarBlock::new,
+            OwSomnibarkLogBlock::new,
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LOG)
                     .strength(2.0f)
     );

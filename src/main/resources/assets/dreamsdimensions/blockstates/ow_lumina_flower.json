@@ -1,5 +1,6 @@
 {
   "variants": {
-    "": { "model": "dreamsdimensions:block/ow_lumina_flower" }
+    "lit=false": { "model": "dreamsdimensions:block/ow_lumina_flower_off" },
+    "lit=true": { "model": "dreamsdimensions:block/ow_lumina_flower_on" }
   }
 }
