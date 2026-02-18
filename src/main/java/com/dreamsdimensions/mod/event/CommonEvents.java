@@ -45,8 +45,7 @@ public final class CommonEvents {
             var chunk = event.getChunk();
             int scheduled = 0;
 
-            for (int y = serverLevel.getMinBuildHeight(); y < serverLevel.getMaxBuildHeight(); y++) {
-                for (int z = 0; z < 16; z++) {
+            for (int y = serverLevel.getMinY(); y < serverLevel.getMaxY(); y++) {                for (int z = 0; z < 16; z++) {
                     for (int x = 0; x < 16; x++) {
                         BlockPos pos = new BlockPos(chunk.getPos().getMinBlockX() + x, y, chunk.getPos().getMinBlockZ() + z);
                         BlockState state = chunk.getBlockState(pos);
@@ -64,16 +63,6 @@ public final class CommonEvents {
                         scheduled++;
                     }
                 }
-            }
-
-            if (scheduled > 0) {
-                LOGGER.info(
-                        "[NightEmissiveRuntime] chunkLoadScheduled chunk={} dim={} scheduled={} newChunk={}",
-                        chunk.getPos(),
-                        serverLevel.dimension().location(),
-                        scheduled,
-                        event.isNewChunk()
-                );
             }
         });
     }
