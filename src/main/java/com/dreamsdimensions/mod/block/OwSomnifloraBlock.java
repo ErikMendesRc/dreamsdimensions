@@ -2,6 +2,7 @@ package com.dreamsdimensions.mod.block;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.content.emissive.NightEmissiveBlockBase;
+import com.dreamsdimensions.mod.content.emissive.NightEmissiveDebug;
 import com.dreamsdimensions.mod.registry.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -51,6 +52,12 @@ public class OwSomnifloraBlock extends FireflyBushBlock implements NightEmissive
         if (!oldState.is(this) && !level.isClientSide()) {
             scheduleInitial((ServerLevel) level, pos, state, this);
         }
+    }
+
+    @Override
+    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        NightEmissiveDebug.logRandomTick(level, pos, state, this);
+        scheduledTick(state, level, pos, random, this);
     }
 
     @Override
