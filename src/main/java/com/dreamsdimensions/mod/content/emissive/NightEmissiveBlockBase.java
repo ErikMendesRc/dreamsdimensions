@@ -2,7 +2,6 @@ package com.dreamsdimensions.mod.content.emissive;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
@@ -59,90 +58,35 @@ public interface NightEmissiveBlockBase {
     }
 
     default void scheduleInitialServer(ServerLevel level, BlockPos pos, BlockState state, Block block) {
-        String litInfo = state.hasProperty(LIT) ? String.valueOf(state.getValue(LIT)) : "missing";
-
-        DreamsDimensions.LOGGER.info(
-                "[NightEmissiveRuntime] scheduleInitial block={} pos={} dim={} dayTimeRaw={} dayTimeMod={} gameTime={} doDaylightCycle={} fixedTime={} litState={}",
-                BuiltInRegistries.BLOCK.getKey(block),
-                pos,
-                dimId(level),
-                level.getDayTime(),
-                Math.floorMod(level.getDayTime(), NightTime.DAY_TICKS),
-                level.getGameTime(),
-                daylightCycleInfo(level),
-                fixedTimeInfo(level),
-                litInfo
-        );
         level.scheduleTick(pos, block, INITIAL_CHECK_DELAY_TICKS);
     }
 
     default void scheduledTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, Block block) {
         if (!level.shouldTickBlocksAt(pos.asLong())) {
-            DreamsDimensions.LOGGER.info(
-                    "[NightEmissiveRuntime] skipTickNotInRange block={} pos={} dim={}",
-                    BuiltInRegistries.BLOCK.getKey(block),
-                    pos,
-                    dimId(level)
-            );
             level.scheduleTick(pos, block, WORLDGEN_RETRY_DELAY_TICKS);
             return;
         }
 
         if (!state.hasProperty(LIT)) {
             DreamsDimensions.LOGGER.error(
-                    "[NightEmissiveRuntime] missingLITProperty block={} pos={} state={} - skipping",
-                    BuiltInRegistries.BLOCK.getKey(block),
+                    "missing LIT property for emissive block at {} in {}: {}",
                     pos,
+                    dimId(level),
                     state
             );
             return;
         }
 
         boolean shouldLight = shouldBeLit(level, pos, state);
-        if (shouldLight) {
-            DreamsDimensions.LOGGER.info(
-                    "[NightEmissiveRuntime] tickShouldLight block={} pos={} dim={} dayTimeRaw={} dayTimeMod={} gameTime={} doDaylightCycle={} fixedTime={} litCurrent={}",
-                    BuiltInRegistries.BLOCK.getKey(block),
-                    pos,
-                    dimId(level),
-                    level.getDayTime(),
-                    Math.floorMod(level.getDayTime(), NightTime.DAY_TICKS),
-                    level.getGameTime(),
-                    daylightCycleInfo(level),
-                    fixedTimeInfo(level),
-                    state.getValue(LIT)
-            );
-        }
 
         if (state.getValue(LIT) != shouldLight) {
-            DreamsDimensions.LOGGER.info(
-                    "[NightEmissiveRuntime] stateChange block={} pos={} lit:{}->{} flags={}",
-                    BuiltInRegistries.BLOCK.getKey(block),
-                    pos,
-                    state.getValue(LIT),
-                    shouldLight,
-                    UPDATE_FLAGS
-            );
             level.setBlock(pos, state.setValue(LIT, shouldLight), UPDATE_FLAGS);
         }
 
         level.scheduleTick(pos, block, nextCheckDelayTicks(level, pos));
     }
 
-    // API inspection (MC 1.21.11 + NeoForge beta from local workspace sources):
-    // - net.minecraft.world.level.Level#dimension() -> ResourceKey<Level>
-    // - net.minecraft.world.level.Level#getDayTime() / #getGameTime()
-    // - net.minecraft.server.level.ServerLevel#getGameRules() exists, with GameRules#getBoolean(GameRules.RULE_DAYLIGHT)
-    // - net.minecraft.world.level.dimension.DimensionType is a record with fixedTime(), but fixed time logging is intentionally disabled here.
     static String dimId(Level level) {
         return String.valueOf(level.dimension());
-    }
-
-    static String daylightCycleInfo(Level level) {
-        return "unknown";
-    }
-
-    static String fixedTimeInfo(Level level) {
-        return "unknown";
     }
 }
