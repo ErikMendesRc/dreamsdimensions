@@ -60,6 +60,7 @@ public class DreamsDimensions {
 
         NeoForge.EVENT_BUS.addListener(CommonEvents::onServerStarting);
         NeoForge.EVENT_BUS.addListener(CommonEvents::onChunkLoad);
+        NeoForge.EVENT_BUS.addListener(CommonEvents::onLevelTick);
         NeoForge.EVENT_BUS.addListener(BrewingRecipesHandler::onRegisterBrewingRecipes);
         NeoForge.EVENT_BUS.addListener(DreamDimensionEffectsHandler::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(DreamReturnAttachmentHandler::onPlayerSetSpawn);

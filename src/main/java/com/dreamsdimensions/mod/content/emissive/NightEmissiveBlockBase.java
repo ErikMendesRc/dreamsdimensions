@@ -21,6 +21,7 @@ public interface NightEmissiveBlockBase {
     int JITTER_CHECK_DELAY_TICKS = 500;
 
     int UPDATE_FLAGS = Block.UPDATE_ALL;
+    int CHUNK_SYNC_UPDATE_FLAGS = 3;
 
     default void appendNightEmissiveProperties(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(LIT);
@@ -46,6 +47,29 @@ public interface NightEmissiveBlockBase {
 
     default boolean shouldBeLit(Level level, BlockPos pos, BlockState state) {
         return isNight(level) && extraConditions(level, pos, state);
+    }
+
+    default boolean syncNightLighting(ServerLevel level, BlockPos pos, BlockState state, int updateFlags) {
+        if (!state.hasProperty(LIT)) {
+            DreamsDimensions.LOGGER.error(
+                    "[NightEmissive] missing LIT property at pos={} dim={} state={}",
+                    pos,
+                    level.dimension().identifier(),
+                    state
+            );
+            return false;
+        }
+
+        boolean litBefore = state.getValue(LIT);
+        boolean shouldLight = shouldBeLit(level, pos, state);
+
+        if (litBefore == shouldLight) {
+            return false;
+        }
+
+        level.setBlock(pos, state.setValue(LIT, shouldLight), updateFlags);
+        level.getChunkSource().getLightEngine().checkBlock(pos);
+        return true;
     }
 
     default void scheduleInitial(Level level, BlockPos pos, BlockState state, Block block) {
@@ -79,10 +103,7 @@ public interface NightEmissiveBlockBase {
         boolean extra = extraConditions(level, pos, state);
         boolean shouldLight = shouldBeLit(level, pos, state);
         boolean litBefore = state.getValue(LIT);
-
-        if (litBefore != shouldLight) {
-            level.setBlock(pos, state.setValue(LIT, shouldLight), UPDATE_FLAGS);
-        }
+        boolean changed = syncNightLighting(level, pos, state, UPDATE_FLAGS);
 
         if (DreamsConfig.isNightEmissiveDebugLogsEnabled()) {
             DreamsDimensions.LOGGER.info(
@@ -98,7 +119,7 @@ public interface NightEmissiveBlockBase {
                     extra,
                     shouldLight,
                     litBefore,
-                    shouldLight
+                    changed ? shouldLight : litBefore
             );
         }
 
