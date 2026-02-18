@@ -26,6 +26,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class NightEmissiveDebug {
     private static final String DEBUG_KEY = "dreamsdimensions.debug.night_emissive";
     private static final String VERBOSE_KEY = "dreamsdimensions.debug.night_emissive.verbose";
+    private static final boolean DEBUG_ENABLED_AT_BOOT = Boolean.getBoolean(DEBUG_KEY);
+    private static final boolean VERBOSE_ENABLED_AT_BOOT = DEBUG_ENABLED_AT_BOOT && Boolean.getBoolean(VERBOSE_KEY);
     private static final long CLOCK_THROTTLE_MS = 5_000L;
     private static final long POSITION_THROTTLE_MS = 2_500L;
     private static final long CLIENT_THROTTLE_MS = 2_000L;
@@ -51,16 +53,17 @@ public final class NightEmissiveDebug {
 
     private static final Map<String, Long> THROTTLE_MAP = new ConcurrentHashMap<>();
     private static final AtomicBoolean ASSET_VALIDATION_DONE = new AtomicBoolean(false);
+    private static final AtomicBoolean BLOCK_REGISTRATION_LOGGED = new AtomicBoolean(false);
 
     private NightEmissiveDebug() {
     }
 
     public static boolean isEnabled() {
-        return Boolean.getBoolean(DEBUG_KEY);
+        return DEBUG_ENABLED_AT_BOOT;
     }
 
     public static boolean isVerbose() {
-        return isEnabled() && Boolean.getBoolean(VERBOSE_KEY);
+        return VERBOSE_ENABLED_AT_BOOT;
     }
 
     public static void logDebugModeBoot() {
@@ -69,10 +72,32 @@ public final class NightEmissiveDebug {
         }
 
         DreamsDimensions.LOGGER.info(
-                "[NightEmissive/Debug] Debug ENABLED via -D{}=true (verbose={}).",
+                "[NightEmissive] DEBUG ENABLED via -D{}={} (verbose={}, rawDebug='{}', rawVerbose='{}').",
                 DEBUG_KEY,
-                isVerbose()
+                System.getProperty(DEBUG_KEY),
+                isVerbose(),
+                System.getProperty(DEBUG_KEY),
+                System.getProperty(VERBOSE_KEY)
         );
+    }
+
+    public static void logNightEmissiveBlockRegistration(List<Block> blocks) {
+        if (!isEnabled() || !BLOCK_REGISTRATION_LOGGED.compareAndSet(false, true)) {
+            return;
+        }
+
+        DreamsDimensions.LOGGER.info("[NightEmissive] Registered block base={} totalNightBlocks={}", NightEmissiveBlockBase.class.getName(), blocks.size());
+        for (Block block : blocks) {
+            Identifier blockId = BuiltInRegistries.BLOCK.getKey(block);
+            boolean hasLit = block.defaultBlockState().hasProperty(NightEmissiveBlockBase.LIT);
+            DreamsDimensions.LOGGER.info(
+                    "[NightEmissive] block={} class={} hasLitProperty={} defaultState={}",
+                    blockId,
+                    block.getClass().getName(),
+                    hasLit,
+                    block.defaultBlockState()
+            );
+        }
     }
 
     public static void ensureAssetValidation() {
@@ -87,6 +112,30 @@ public final class NightEmissiveDebug {
             validateModel(spec.modelOn(), true);
         }
         DreamsDimensions.LOGGER.info("[NightEmissive/Assets] Validação concluída.");
+    }
+
+    public static void logHeartbeat(Level level, String source) {
+        if (!isEnabled()) {
+            return;
+        }
+
+        String dimKey = level.dimension().identifier().toString();
+        if (!shouldLog("heartbeat:" + source + ":" + dimKey, CLOCK_THROTTLE_MS) && !isVerbose()) {
+            return;
+        }
+
+        long absolute = level.getDayTime();
+        long modulo = Math.floorMod(absolute, NightTime.DAY_TICKS);
+        boolean isNight = NightTime.computeNight(modulo);
+
+        DreamsDimensions.LOGGER.info(
+                "[NightEmissive/Heartbeat] src={} dim={} dayTimeAbs={} dayTimeMod={} isNight={}",
+                source,
+                dimKey,
+                absolute,
+                modulo,
+                isNight
+        );
     }
 
     public static void logInitialSchedule(ServerLevel level, BlockPos pos, BlockState state, Block block, int delay, String reason) {
@@ -158,6 +207,21 @@ public final class NightEmissiveDebug {
         if (shouldBeLit || changed || isVerbose()) {
             logExpectedVariant(BuiltInRegistries.BLOCK.getKey(block), state.setValue(NightEmissiveBlockBase.LIT, shouldBeLit));
         }
+    }
+
+    public static void logSkippedWorldgenUpdate(ServerLevel level, BlockPos pos, Identifier blockId, String chunkStatus, int nextDelay) {
+        if (!isEnabled()) {
+            return;
+        }
+
+        DreamsDimensions.LOGGER.info(
+                "[NightEmissive] skipped update during worldgen/not-full chunk: block={} pos={} chunkStatus={} nextDelay={}t dim={}",
+                blockId,
+                pos,
+                chunkStatus,
+                nextDelay,
+                level.dimension().identifier()
+        );
     }
 
     public static void logSetBlockResult(ServerLevel level, BlockPos pos, BlockState oldState, BlockState newState, int flags) {

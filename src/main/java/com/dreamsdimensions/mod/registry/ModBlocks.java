@@ -18,6 +18,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.List;
+
 /**
  * Registro de blocos usando {@link DeferredRegister}.
  * <p>
@@ -178,6 +180,15 @@ public final class ModBlocks {
                     .noOcclusion()
                     .strength(0.2f)
     );
+
+    public static List<Block> nightEmissiveBlocks() {
+        return List.of(
+                OW_LUMINA_FLOWER.get(),
+                OW_SOMNIFLORA.get(),
+                OW_DREAM_GLOW_MOSS.get(),
+                OW_SOMNIBARK_LOG.get()
+        );
+    }
 
     private ModBlocks() {
     }
