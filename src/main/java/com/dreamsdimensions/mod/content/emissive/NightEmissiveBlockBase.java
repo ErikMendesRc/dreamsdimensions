@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.chunk.ChunkPos;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 
@@ -51,7 +52,20 @@ public interface NightEmissiveBlockBase {
         return isNight(level) && extraConditions(level, pos, state);
     }
 
+    default void scheduleInitial(Level level, BlockPos pos, BlockState state, Block block) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            NightEmissiveDebug.logSkippedNonServerSchedule(level, pos, block, "onPlace");
+            return;
+        }
+
+        scheduleInitialServer(serverLevel, pos, state, block);
+    }
+
     default void scheduleInitial(ServerLevel level, BlockPos pos, BlockState state, Block block) {
+        scheduleInitialServer(level, pos, state, block);
+    }
+
+    default void scheduleInitialServer(ServerLevel level, BlockPos pos, BlockState state, Block block) {
         NightEmissiveDebug.ensureAssetValidation();
         level.scheduleTick(pos, block, INITIAL_CHECK_DELAY_TICKS);
         NightEmissiveDebug.logInitialSchedule(level, pos, state, block, INITIAL_CHECK_DELAY_TICKS, "onPlace");
@@ -61,13 +75,15 @@ public interface NightEmissiveBlockBase {
         NightEmissiveDebug.ensureAssetValidation();
 
         ChunkAccess fullChunk = level.getChunkSource().getChunk(pos.getX() >> 4, pos.getZ() >> 4, ChunkStatus.FULL, false);
-        if (fullChunk == null) {
+        boolean blockTickingRange = level.shouldTickBlocksAt(ChunkPos.asLong(pos));
+        if (fullChunk == null || !blockTickingRange) {
             ChunkAccess observedChunk = level.getChunkSource().getChunk(pos.getX() >> 4, pos.getZ() >> 4, ChunkStatus.EMPTY, false);
             Identifier blockId = BuiltInRegistries.BLOCK.getKey(block);
             String persistedStatus = observedChunk == null ? "<unloaded>" : observedChunk.getPersistedStatus().getName();
+            String reason = fullChunk == null ? "chunk-not-full" : "outside-block-ticking-range";
 
             level.scheduleTick(pos, block, WORLDGEN_RETRY_DELAY_TICKS);
-            NightEmissiveDebug.logSkippedWorldgenUpdate(level, pos, blockId, persistedStatus, WORLDGEN_RETRY_DELAY_TICKS);
+            NightEmissiveDebug.logSkippedWorldgenUpdate(level, pos, blockId, persistedStatus, reason, WORLDGEN_RETRY_DELAY_TICKS);
             return;
         }
 
