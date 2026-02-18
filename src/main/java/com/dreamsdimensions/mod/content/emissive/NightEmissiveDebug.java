@@ -5,8 +5,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -15,8 +13,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -115,7 +111,7 @@ public final class NightEmissiveDebug {
             return;
         }
 
-        String dimKey = level.dimension().location().toString();
+        String dimKey = level.dimension().identifier().toString();
         if (!shouldLog("clock:" + dimKey, CLOCK_THROTTLE_MS) && !isVerbose()) {
             return;
         }
@@ -133,7 +129,7 @@ public final class NightEmissiveDebug {
                 isNight,
                 NightTime.NIGHT_START,
                 NightTime.NIGHT_END,
-                level.dimensionType().fixedTime().map(Object::toString).orElse("none"),
+                level.dimensionType().hasFixedTime(),
                 level.dimensionType().hasSkyLight()
         );
     }
@@ -195,32 +191,18 @@ public final class NightEmissiveDebug {
         );
     }
 
-    public static void logClientProbe(Minecraft minecraft) {
-        if (!isEnabled() || minecraft.level == null) {
+    public static void logClientProbe(Level level, BlockPos pos, BlockState state, Identifier blockId) {
+        if (!isEnabled() || level == null) {
             return;
         }
         if (!shouldLog("client.probe", CLIENT_THROTTLE_MS) && !isVerbose()) {
             return;
         }
-
-        LocalPlayer player = minecraft.player;
-        if (player == null) {
-            return;
-        }
-
-        HitResult hit = minecraft.hitResult;
-        if (!(hit instanceof BlockHitResult blockHit)) {
-            return;
-        }
-
-        BlockPos pos = blockHit.getBlockPos();
-        BlockState state = minecraft.level.getBlockState(pos);
-        Identifier blockId = BuiltInRegistries.BLOCK.getKey(state.getBlock());
         if (!TARGET_BLOCKS.contains(blockId) || !state.hasProperty(NightEmissiveBlockBase.LIT)) {
             return;
         }
 
-        long absolute = minecraft.level.getDayTime();
+        long absolute = level.getDayTime();
         long modulo = Math.floorMod(absolute, NightTime.DAY_TICKS);
         boolean expectedNight = NightTime.computeNight(modulo);
 
@@ -232,7 +214,7 @@ public final class NightEmissiveDebug {
                 expectedNight,
                 absolute,
                 modulo,
-                minecraft.level.dimension().location()
+                level.dimension().identifier()
         );
     }
 
