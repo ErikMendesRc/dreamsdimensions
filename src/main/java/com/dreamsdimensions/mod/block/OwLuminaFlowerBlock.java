@@ -1,30 +1,25 @@
 package com.dreamsdimensions.mod.block;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
-import com.dreamsdimensions.mod.content.emissive.NightEmissiveBlockBase;
-import com.dreamsdimensions.mod.config.DreamsConfig;
 import com.dreamsdimensions.mod.registry.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.component.SuspiciousStewEffects;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
 
 /**
  * Flor luminosa do Overworld com brilho visual e partículas leves no cliente.
  */
-public class OwLuminaFlowerBlock extends FlowerBlock implements NightEmissiveBlockBase {
+public class OwLuminaFlowerBlock extends FlowerBlock {
     private static final float PARTICLE_CHANCE = 0.15F;
     private static final TagKey<net.minecraft.world.level.block.Block> LUMINA_SOIL = TagKey.create(
             Registries.BLOCK,
@@ -33,13 +28,6 @@ public class OwLuminaFlowerBlock extends FlowerBlock implements NightEmissiveBlo
 
     public OwLuminaFlowerBlock(BlockBehaviour.Properties properties) {
         super(SuspiciousStewEffects.EMPTY, properties);
-        this.registerDefaultState(defaultNightState(this.stateDefinition.any()));
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder);
-        appendNightEmissiveProperties(builder);
     }
 
     @Override
@@ -66,48 +54,5 @@ public class OwLuminaFlowerBlock extends FlowerBlock implements NightEmissiveBlo
         double vz = (random.nextDouble() - 0.5D) * 0.01D;
 
         level.addParticle(ParticleTypes.GLOW, x, y, z, vx, vy, vz);
-    }
-
-    @Override
-    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
-        super.onPlace(state, level, pos, oldState, isMoving);
-        if (!oldState.is(this)) {
-            if (DreamsConfig.isNightEmissiveDebugLogsEnabled()) {
-                DreamsDimensions.LOGGER.info(
-                        "[NightEmissive] onPlace wiring block=ow_lumina_flower pos={} dim={} oldIsSame={} lit={} schedulingInitial=true",
-                        pos,
-                        level.dimension().identifier(),
-                        oldState.is(this),
-                        state.getValue(LIT)
-                );
-            }
-            scheduleInitial(level, pos, state, this);
-        }
-    }
-
-    @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (DreamsConfig.isNightEmissiveDebugLogsEnabled()) {
-            DreamsDimensions.LOGGER.info(
-                    "[NightEmissive] randomTick wiring block=ow_lumina_flower pos={} dim={} lit={}",
-                    pos,
-                    level.dimension().identifier(),
-                    state.getValue(LIT)
-            );
-        }
-        scheduledTick(state, level, pos, random, this);
-    }
-
-    @Override
-    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (DreamsConfig.isNightEmissiveDebugLogsEnabled()) {
-            DreamsDimensions.LOGGER.info(
-                    "[NightEmissive] tick wiring block=ow_lumina_flower pos={} dim={} lit={}",
-                    pos,
-                    level.dimension().identifier(),
-                    state.getValue(LIT)
-            );
-        }
-        scheduledTick(state, level, pos, random, this);
     }
 }

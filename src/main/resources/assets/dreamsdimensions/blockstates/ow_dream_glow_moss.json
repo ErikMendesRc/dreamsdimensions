@@ -1,6 +1,5 @@
 {
   "variants": {
-    "lit=false": { "model": "dreamsdimensions:block/ow_dream_glow_moss_off" },
-    "lit=true": { "model": "dreamsdimensions:block/ow_dream_glow_moss_on" }
+    "": { "model": "dreamsdimensions:block/ow_dream_glow_moss" }
   }
 }

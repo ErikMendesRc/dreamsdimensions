@@ -1,10 +1,7 @@
 {
   "variants": {
-    "axis=y,lit=false": { "model": "dreamsdimensions:block/ow_somnibark_log_off" },
-    "axis=z,lit=false": { "model": "dreamsdimensions:block/ow_somnibark_log_off", "x": 90 },
-    "axis=x,lit=false": { "model": "dreamsdimensions:block/ow_somnibark_log_off", "x": 90, "y": 90 },
-    "axis=y,lit=true": { "model": "dreamsdimensions:block/ow_somnibark_log_on" },
-    "axis=z,lit=true": { "model": "dreamsdimensions:block/ow_somnibark_log_on", "x": 90 },
-    "axis=x,lit=true": { "model": "dreamsdimensions:block/ow_somnibark_log_on", "x": 90, "y": 90 }
+    "axis=y": { "model": "dreamsdimensions:block/ow_somnibark_log" },
+    "axis=z": { "model": "dreamsdimensions:block/ow_somnibark_log", "x": 90 },
+    "axis=x": { "model": "dreamsdimensions:block/ow_somnibark_log", "x": 90, "y": 90 }
   }
 }
