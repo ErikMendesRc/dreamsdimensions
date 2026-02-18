@@ -1,9 +1,9 @@
 {
   "type": "minecraft:random_patch",
   "config": {
-    "tries": 48,
-    "xz_spread": 6,
-    "y_spread": 2,
+    "tries": 1,
+    "xz_spread": 0,
+    "y_spread": 0,
     "feature": "dreamsdimensions:ow_somniflora"
   }
 }
