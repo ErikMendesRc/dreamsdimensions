@@ -6,7 +6,6 @@ import com.dreamsdimensions.mod.block.OwDreamGlowMossBlock;
 import com.dreamsdimensions.mod.block.OwLuminaFlowerBlock;
 import com.dreamsdimensions.mod.block.OwSomnibarkLogBlock;
 import com.dreamsdimensions.mod.block.OwSomnifloraBlock;
-import com.dreamsdimensions.mod.content.emissive.NightEmissiveBlockBase;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -93,7 +92,7 @@ public final class ModBlocks {
             OwDreamGlowMossBlock::new,
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_BLOCK)
                     .mapColor(MapColor.COLOR_LIGHT_BLUE)
-                    .lightLevel(state -> state.getValue(NightEmissiveBlockBase.LIT) ? 8 : 0)
+                    .lightLevel(state -> 8)
     );
 
     public static final DeferredBlock<Block> DREAM_ORE = BLOCKS.registerBlock(
@@ -144,7 +143,7 @@ public final class ModBlocks {
                     .instabreak()
                     .noCollision()
                     .sound(SoundType.GRASS)
-                    .lightLevel(state -> state.getValue(NightEmissiveBlockBase.LIT) ? 12 : 0)
+                    .lightLevel(state -> 12)
     );
 
     public static final DeferredBlock<OwSomnifloraBlock> OW_SOMNIFLORA = BLOCKS.registerBlock(

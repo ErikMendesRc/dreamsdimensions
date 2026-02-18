@@ -1,9 +1,0 @@
-{
-  "ambientocclusion": false,
-  "render_type": "minecraft:cutout",
-  "parent": "minecraft:block/cross",
-  "textures": {
-    "particle": "dreamsdimensions:block/ow_lumina_flower",
-    "cross": "dreamsdimensions:block/ow_lumina_flower"
-  }
-}
