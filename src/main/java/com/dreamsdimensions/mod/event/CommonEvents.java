@@ -41,21 +41,40 @@ public final class CommonEvents {
             return;
         }
 
+        boolean debugLogs = DreamsConfig.isNightEmissiveDebugLogsEnabled();
+        String threadName = Thread.currentThread().getName();
+
+        if (debugLogs) {
+            LOGGER.info(
+                    "[NightEmissive] ChunkEvent.Load recebido chunk={} dim={} thread={}",
+                    event.getChunk().getPos(),
+                    serverLevel.dimension().location(),
+                    threadName
+            );
+        }
+
         serverLevel.getServer().execute(() -> {
             var chunk = event.getChunk();
+            int scanned = 0;
+            int found = 0;
+            int alreadyScheduled = 0;
             int scheduled = 0;
 
-            for (int y = serverLevel.getMinY(); y < serverLevel.getMaxY(); y++) {                for (int z = 0; z < 16; z++) {
+            for (int y = serverLevel.getMinY(); y < serverLevel.getMaxY(); y++) {
+                for (int z = 0; z < 16; z++) {
                     for (int x = 0; x < 16; x++) {
                         BlockPos pos = new BlockPos(chunk.getPos().getMinBlockX() + x, y, chunk.getPos().getMinBlockZ() + z);
                         BlockState state = chunk.getBlockState(pos);
                         Block block = state.getBlock();
+                        scanned++;
 
                         if (!(block instanceof NightEmissiveBlockBase emissiveBlock)) {
                             continue;
                         }
+                        found++;
 
                         if (serverLevel.getBlockTicks().hasScheduledTick(pos, block)) {
+                            alreadyScheduled++;
                             continue;
                         }
 
@@ -64,7 +83,20 @@ public final class CommonEvents {
                     }
                 }
             }
+
+            if (debugLogs) {
+                LOGGER.info(
+                        "[NightEmissive] Chunk scan chunk={} dim={} scanned={} found={} alreadyScheduled={} scheduled={} fixedTime={} dayTime={}",
+                        chunk.getPos(),
+                        serverLevel.dimension().location(),
+                        scanned,
+                        found,
+                        alreadyScheduled,
+                        scheduled,
+                        serverLevel.dimensionType().fixedTime().orElse(null),
+                        serverLevel.getDayTime()
+                );
+            }
         });
     }
 }
-
