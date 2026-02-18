@@ -1,7 +1,6 @@
 {
   "variants": {
-    "": {
-      "model": "dreamsdimensions:block/ow_somniflora"
-    }
+    "lit=false": { "model": "dreamsdimensions:block/ow_somniflora_off" },
+    "lit=true": { "model": "dreamsdimensions:block/ow_somniflora_on" }
   }
 }

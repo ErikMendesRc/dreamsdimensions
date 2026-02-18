@@ -1,7 +1,3 @@
 {
-  "parent": "minecraft:block/cube_column",
-  "textures": {
-    "end": "dreamsdimensions:block/ow_somnibark_log_top",
-    "side": "dreamsdimensions:block/ow_somnibark_log"
-  }
+  "parent": "dreamsdimensions:block/ow_somnibark_log_on"
 }
