@@ -4,6 +4,7 @@ import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.block.DreamOreBlock;
 import com.dreamsdimensions.mod.block.OwDreamGlowMossBlock;
 import com.dreamsdimensions.mod.block.OwLuminaFlowerBlock;
+import com.dreamsdimensions.mod.block.OwLuminaVinesBlock;
 import com.dreamsdimensions.mod.block.OwSomnibarkLogBlock;
 import com.dreamsdimensions.mod.block.OwSomnifloraBlock;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -150,6 +151,16 @@ public final class ModBlocks {
             "ow_somniflora",
             OwSomnifloraBlock::new,
             props -> BlockBehaviour.Properties.ofFullCopy(Blocks.FIREFLY_BUSH)
+    );
+
+    public static final DeferredBlock<OwLuminaVinesBlock> OW_LUMINA_VINES = BLOCKS.registerBlock(
+            "ow_lumina_vines",
+            OwLuminaVinesBlock::new,
+            props -> BlockBehaviour.Properties.ofFullCopy(Blocks.GLOW_LICHEN)
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                    .instabreak()
+                    .noOcclusion()
+                    .sound(SoundType.GLOW_LICHEN)
     );
 
     public static final DeferredBlock<RotatedPillarBlock> DREAM_LOG_BLOCK = BLOCKS.registerBlock(
