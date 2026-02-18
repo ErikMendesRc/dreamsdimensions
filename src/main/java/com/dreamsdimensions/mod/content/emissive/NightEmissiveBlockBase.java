@@ -79,7 +79,9 @@ public interface NightEmissiveBlockBase {
             return;
         }
 
-        boolean vanillaNight = NightTime.isVanillaNight(level);
+        long dayTime = level.getDayTime();
+        long dayTimeModulo = Math.floorMod(dayTime, NightTime.DAY_TICKS);
+        boolean vanillaNight = NightTime.computeNight(dayTimeModulo);
         boolean extra = extraConditions(level, pos, state);
         boolean shouldLight = shouldBeLit(level, pos, state);
         boolean stateLitBefore = state.getValue(LIT);
@@ -90,11 +92,13 @@ public interface NightEmissiveBlockBase {
 
         if (DreamsConfig.isNightEmissiveDebugLogsEnabled()) {
             DreamsDimensions.LOGGER.info(
-                    "[NightEmissive] scheduledTick block={} pos={} dim={} dayTime={} fixedTime={} vanillaNight={} extra={} shouldLight={} litBefore={} litAfter={}",
+                    "[NightEmissive] scheduledTick block={} pos={} dim={} overworld={} dayTime={} dayTimeModulo={} fixedTime={} vanillaNight={} extra={} shouldLight={} litBefore={} litAfter={}",
                     block.builtInRegistryHolder().key().identifier(),
                     pos,
                     dimId(level),
-                    level.getDayTime(),
+                    level.dimension() == Level.OVERWORLD,
+                    dayTime,
+                    dayTimeModulo,
                     level.dimensionType().fixedTime().orElse(null),
                     vanillaNight,
                     extra,

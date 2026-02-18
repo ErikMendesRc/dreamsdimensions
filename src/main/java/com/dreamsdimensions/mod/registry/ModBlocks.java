@@ -144,6 +144,7 @@ public final class ModBlocks {
                     .instabreak()
                     .noCollision()
                     .sound(SoundType.GRASS)
+                    .lightLevel(state -> state.getValue(NightEmissiveBlockBase.LIT) ? 12 : 0)
     );
 
     public static final DeferredBlock<OwSomnifloraBlock> OW_SOMNIFLORA = BLOCKS.registerBlock(
