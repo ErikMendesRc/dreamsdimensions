@@ -159,7 +159,6 @@ public final class ModBlocks {
             props -> BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_LIGHT_BLUE)
                     .instabreak()
-                    .noCollission()
                     .noOcclusion()
                     .sound(SoundType.VINE)
                     .lightLevel(state -> 8)
