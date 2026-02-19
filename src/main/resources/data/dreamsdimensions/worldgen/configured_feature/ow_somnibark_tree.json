@@ -3,11 +3,11 @@
   "config": {
     "decorators": [
       {
-        "type": "dreamsdimensions:dreams_hanging_vines",
-        "tree_vine_chance": 0.4,
-        "leaf_chance": 0.16,
-        "min_length": 3,
-        "max_length": 9
+        "type": "dreamsdimensions:dreams_trunk_vine"
+      },
+      {
+        "type": "dreamsdimensions:dreams_leave_vine",
+        "probability": 0.25
       }
     ],
     "dirt_provider": {

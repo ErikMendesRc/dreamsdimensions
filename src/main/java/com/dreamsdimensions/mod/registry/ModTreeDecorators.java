@@ -1,7 +1,6 @@
 package com.dreamsdimensions.mod.registry;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
-import com.dreamsdimensions.mod.worldgen.decorator.DreamsHangingVinesDecorator;
 import com.dreamsdimensions.mod.worldgen.decorator.DreamsLeaveVineDecorator;
 import com.dreamsdimensions.mod.worldgen.decorator.DreamsTrunkVineDecorator;
 import net.minecraft.core.registries.Registries;
@@ -19,9 +18,6 @@ public final class ModTreeDecorators {
 
     public static final DeferredHolder<TreeDecoratorType<?>, TreeDecoratorType<DreamsLeaveVineDecorator>> DREAMS_LEAVE_VINE =
             TREE_DECORATORS.register("dreams_leave_vine", () -> new TreeDecoratorType<>(DreamsLeaveVineDecorator.CODEC));
-
-    public static final DeferredHolder<TreeDecoratorType<?>, TreeDecoratorType<DreamsHangingVinesDecorator>> DREAMS_HANGING_VINES =
-            TREE_DECORATORS.register("dreams_hanging_vines", () -> new TreeDecoratorType<>(DreamsHangingVinesDecorator.CODEC));
 
     private ModTreeDecorators() {
     }
