@@ -13,6 +13,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.MultifaceBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
@@ -68,16 +69,21 @@ public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
         }
 
         RandomSource random = context.random();
-        if (random.nextFloat() > this.treeChance) {
+        float treeRoll = random.nextFloat();
+        DreamsDimensions.LOGGER.debug("[lumina_vines] RUN treeRoll={} treeChance={}", treeRoll, this.treeChance);
+        if (treeRoll > this.treeChance) {
             return;
         }
 
+        DreamsDimensions.LOGGER.debug("[lumina_vines] leafPositions size={}", context.leaves().size());
         List<StartPoint> candidates = collectExternalLeaves(context);
+        DreamsDimensions.LOGGER.debug("[lumina_vines] externalLeaves size={}", candidates.size());
         if (candidates.isEmpty()) {
             return;
         }
 
         int targetColumns = randomRange(random, this.minColumns, this.maxColumns);
+        DreamsDimensions.LOGGER.debug("[lumina_vines] columnsTarget={} range=[{}, {}] poolSize={}", targetColumns, this.minColumns, this.maxColumns, candidates.size());
         Collections.shuffle(candidates, new java.util.Random(random.nextLong()));
 
         int placedColumns = 0;
@@ -86,10 +92,15 @@ public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
                 break;
             }
 
-            if (placeColumn(context, startPoint, randomRange(random, this.minLength, this.maxLength)) > 0) {
+            int desiredLength = randomRange(random, this.minLength, this.maxLength);
+            DreamsDimensions.LOGGER.debug("[lumina_vines] attempt leafPos={} startPos={} face={} desiredLength={}", startPoint.leafPos(), startPoint.startPos(), startPoint.attachmentFace(), desiredLength);
+
+            if (placeColumn(context, startPoint, desiredLength) > 0) {
                 placedColumns++;
             }
         }
+
+        DreamsDimensions.LOGGER.debug("[lumina_vines] placedColumns={} targetColumns={}", placedColumns, targetColumns);
     }
 
     private List<StartPoint> collectExternalLeaves(Context context) {
@@ -101,12 +112,15 @@ public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
 
             BlockPos startPos = leafPos.below();
             if (!context.isAir(startPos)) {
+                DreamsDimensions.LOGGER.debug("[lumina_vines] skip leafPos={} startPos={} reason=not_air", leafPos, startPos);
                 continue;
             }
 
             Direction attachmentFace = pickHorizontalAttachDirection(context, startPos);
             if (attachmentFace != null) {
-                starts.add(new StartPoint(startPos, attachmentFace));
+                starts.add(new StartPoint(leafPos, startPos, attachmentFace));
+            } else {
+                DreamsDimensions.LOGGER.debug("[lumina_vines] skip leafPos={} startPos={} reason=no_horizontal_support", leafPos, startPos);
             }
         }
 
@@ -140,8 +154,10 @@ public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
     }
 
     private boolean isValidHorizontalSupport(Context context, BlockPos targetPos, Direction direction) {
-        return context.checkBlock(targetPos.relative(direction), supportState ->
-                supportState.is(BlockTags.LEAVES) || supportState.is(BlockTags.LOGS)
+        BlockPos supportPos = targetPos.relative(direction);
+        return context.checkBlock(supportPos, supportState ->
+                (supportState.is(BlockTags.LEAVES) || supportState.is(BlockTags.LOGS))
+                        && MultifaceBlock.canAttachTo(context.level(), direction, supportPos, supportState)
         );
     }
 
@@ -153,12 +169,17 @@ public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
 
         BlockState state = vineStateForFace(startPoint.attachmentFace());
 
+        if (!context.checkBlock(startPoint.startPos(), BlockBehaviour.BlockStateBase::canBeReplaced)) {
+            DreamsDimensions.LOGGER.debug("[lumina_vines] skip startPos={} reason=not_replaceable", startPoint.startPos());
+            return 0;
+        }
+
         DreamsDimensions.LOGGER.debug(
-                "[lumina_vines] placing column startPos={} face={} supportPos={} state={}",
+                "[lumina_vines] placing column startPos={} face={} supportPos={} block={} setter=context.setBlock",
                 startPoint.startPos(),
                 startPoint.attachmentFace(),
                 startPoint.startPos().relative(startPoint.attachmentFace()),
-                state
+                net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(state.getBlock())
         );
 
         int placed = 0;
@@ -181,7 +202,7 @@ public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
         return min >= max ? min : min + random.nextInt(max - min + 1);
     }
 
-    private record StartPoint(BlockPos startPos, Direction attachmentFace) {
+    private record StartPoint(BlockPos leafPos, BlockPos startPos, Direction attachmentFace) {
     }
 
     private static final class BuiltInCodecs {
