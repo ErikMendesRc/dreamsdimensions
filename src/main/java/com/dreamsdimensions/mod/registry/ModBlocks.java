@@ -3,6 +3,7 @@ package com.dreamsdimensions.mod.registry;
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.block.DreamOreBlock;
 import com.dreamsdimensions.mod.block.OwDreamGlowMossBlock;
+import com.dreamsdimensions.mod.block.LuminaHangingVinesBlock;
 import com.dreamsdimensions.mod.block.OwLuminaFlowerBlock;
 import com.dreamsdimensions.mod.block.OwLuminaVinesBlock;
 import com.dreamsdimensions.mod.block.OwSomnibarkLogBlock;
@@ -161,6 +162,18 @@ public final class ModBlocks {
                     .instabreak()
                     .noOcclusion()
                     .sound(SoundType.GLOW_LICHEN)
+    );
+
+    public static final DeferredBlock<LuminaHangingVinesBlock> LUMINA_HANGING_VINES = BLOCKS.registerBlock(
+            "lumina_hanging_vines",
+            LuminaHangingVinesBlock::new,
+            props -> BlockBehaviour.Properties.ofFullCopy(Blocks.VINE)
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                    .instabreak()
+                    .noCollission()
+                    .noOcclusion()
+                    .sound(SoundType.VINE)
+                    .lightLevel(state -> 8)
     );
 
     public static final DeferredBlock<RotatedPillarBlock> DREAM_LOG_BLOCK = BLOCKS.registerBlock(

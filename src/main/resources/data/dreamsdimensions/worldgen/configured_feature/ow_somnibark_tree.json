@@ -4,12 +4,12 @@
     "decorators": [
       {
         "type": "dreamsdimensions:dreams_hanging_lumina_vines",
-        "vine_block": "dreamsdimensions:ow_lumina_vines",
-        "tree_chance": 0.45,
+        "vine_block": "dreamsdimensions:lumina_hanging_vines",
+        "tree_chance": 0.35,
         "min_columns": 1,
-        "max_columns": 4,
-        "min_length": 3,
-        "max_length": 8
+        "max_columns": 3,
+        "min_length": 2,
+        "max_length": 6
       }
     ],
     "dirt_provider": {
