@@ -3,16 +3,13 @@
   "config": {
     "decorators": [
       {
-        "type": "dreamsdimensions:dreams_hanging_vines",
-        "tree_vine_chance": 0.45,
-        "min_columns": 2,
-        "max_columns": 5,
+        "type": "dreamsdimensions:dreams_hanging_lumina_vines",
+        "vine_block": "dreamsdimensions:ow_lumina_vines",
+        "tree_chance": 0.45,
+        "min_columns": 1,
+        "max_columns": 4,
         "min_length": 3,
-        "max_length": 8,
-        "long_vines_chance": 0.2,
-        "long_min_length": 10,
-        "long_max_length": 14,
-        "debug": false
+        "max_length": 8
       }
     ],
     "dirt_provider": {

@@ -1,9 +1,7 @@
 package com.dreamsdimensions.mod.registry;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
-import com.dreamsdimensions.mod.worldgen.decorator.DreamsHangingVinesDecorator;
-import com.dreamsdimensions.mod.worldgen.decorator.DreamsLeaveVineDecorator;
-import com.dreamsdimensions.mod.worldgen.decorator.DreamsTrunkVineDecorator;
+import com.dreamsdimensions.mod.worldgen.decorator.DreamsHangingLuminaVinesDecorator;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
 import net.neoforged.bus.api.IEventBus;
@@ -14,14 +12,8 @@ public final class ModTreeDecorators {
     public static final DeferredRegister<TreeDecoratorType<?>> TREE_DECORATORS =
             DeferredRegister.create(Registries.TREE_DECORATOR_TYPE, DreamsDimensions.MODID);
 
-    public static final DeferredHolder<TreeDecoratorType<?>, TreeDecoratorType<DreamsTrunkVineDecorator>> DREAMS_TRUNK_VINE =
-            TREE_DECORATORS.register("dreams_trunk_vine", () -> new TreeDecoratorType<>(DreamsTrunkVineDecorator.CODEC));
-
-    public static final DeferredHolder<TreeDecoratorType<?>, TreeDecoratorType<DreamsLeaveVineDecorator>> DREAMS_LEAVE_VINE =
-            TREE_DECORATORS.register("dreams_leave_vine", () -> new TreeDecoratorType<>(DreamsLeaveVineDecorator.CODEC));
-
-    public static final DeferredHolder<TreeDecoratorType<?>, TreeDecoratorType<DreamsHangingVinesDecorator>> DREAMS_HANGING_VINES =
-            TREE_DECORATORS.register("dreams_hanging_vines", () -> new TreeDecoratorType<>(DreamsHangingVinesDecorator.CODEC));
+    public static final DeferredHolder<TreeDecoratorType<?>, TreeDecoratorType<DreamsHangingLuminaVinesDecorator>> DREAMS_HANGING_LUMINA_VINES =
+            TREE_DECORATORS.register("dreams_hanging_lumina_vines", () -> new TreeDecoratorType<>(DreamsHangingLuminaVinesDecorator.CODEC));
 
     private ModTreeDecorators() {
     }
