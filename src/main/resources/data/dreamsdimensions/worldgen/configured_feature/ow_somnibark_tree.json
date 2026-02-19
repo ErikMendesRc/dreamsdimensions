@@ -1,7 +1,15 @@
 {
   "type": "minecraft:tree",
   "config": {
-    "decorators": [],
+    "decorators": [
+      {
+        "type": "dreamsdimensions:dreams_hanging_vines",
+        "tree_vine_chance": 0.4,
+        "leaf_chance": 0.16,
+        "min_length": 3,
+        "max_length": 9
+      }
+    ],
     "dirt_provider": {
       "type": "minecraft:simple_state_provider",
       "state": {
