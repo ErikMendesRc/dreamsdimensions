@@ -127,9 +127,7 @@ public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
         List<Direction> faces = new ArrayList<>(4);
 
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            BlockPos supportPos = targetPos.relative(direction);
-            BlockState supportState = context.level().getBlockState(supportPos);
-            if (isValidHorizontalSupport(context, targetPos, direction, supportState)) {
+            if (isValidHorizontalSupport(context, targetPos, direction)) {
                 faces.add(direction);
             }
         }
@@ -141,12 +139,10 @@ public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
         return faces.get(context.random().nextInt(faces.size()));
     }
 
-    private boolean isValidHorizontalSupport(Context context, BlockPos targetPos, Direction direction, BlockState supportState) {
-        if (!supportState.is(BlockTags.LEAVES) && !supportState.is(BlockTags.LOGS)) {
-            return false;
-        }
-
-        return MultifaceBlock.canAttachTo(context.level(), direction, targetPos.relative(direction), supportState);
+    private boolean isValidHorizontalSupport(Context context, BlockPos targetPos, Direction direction) {
+        return context.checkBlock(targetPos.relative(direction), supportState ->
+                supportState.is(BlockTags.LEAVES) || supportState.is(BlockTags.LOGS)
+        );
     }
 
     private int placeColumn(Context context, StartPoint startPoint, int desiredLength) {
@@ -156,14 +152,12 @@ public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
         }
 
         BlockState state = vineStateForFace(startPoint.attachmentFace());
-        BlockState supportState = context.level().getBlockState(startPoint.startPos().relative(startPoint.attachmentFace()));
 
         DreamsDimensions.LOGGER.debug(
-                "[lumina_vines] placing column startPos={} face={} supportPos={} supportBlock={} state={}",
+                "[lumina_vines] placing column startPos={} face={} supportPos={} state={}",
                 startPoint.startPos(),
                 startPoint.attachmentFace(),
                 startPoint.startPos().relative(startPoint.attachmentFace()),
-                supportState.getBlock(),
                 state
         );
 
