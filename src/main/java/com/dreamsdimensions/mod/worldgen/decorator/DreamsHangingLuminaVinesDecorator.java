@@ -1,5 +1,6 @@
 package com.dreamsdimensions.mod.worldgen.decorator;
 
+import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.registry.ModBlocks;
 import com.dreamsdimensions.mod.registry.ModTreeDecorators;
 import com.mojang.serialization.Codec;
@@ -13,6 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.MultifaceBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
 
@@ -102,7 +104,7 @@ public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
                 continue;
             }
 
-            Direction attachmentFace = pickAttachmentFace(context, leafPos, startPos);
+            Direction attachmentFace = pickHorizontalAttachDirection(context, startPos);
             if (attachmentFace != null) {
                 starts.add(new StartPoint(startPos, attachmentFace));
             }
@@ -121,17 +123,15 @@ public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
         return airNeighbors;
     }
 
-    private Direction pickAttachmentFace(Context context, BlockPos leafPos, BlockPos startPos) {
-        List<Direction> faces = new ArrayList<>(5);
+    private Direction pickHorizontalAttachDirection(Context context, BlockPos targetPos) {
+        List<Direction> faces = new ArrayList<>(4);
 
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            if (!context.isAir(startPos.relative(direction))) {
+            BlockPos supportPos = targetPos.relative(direction);
+            BlockState supportState = context.level().getBlockState(supportPos);
+            if (isValidHorizontalSupport(context, targetPos, direction, supportState)) {
                 faces.add(direction);
             }
-        }
-
-        if (!context.isAir(leafPos)) {
-            faces.add(Direction.UP);
         }
 
         if (faces.isEmpty()) {
@@ -141,8 +141,31 @@ public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
         return faces.get(context.random().nextInt(faces.size()));
     }
 
+    private boolean isValidHorizontalSupport(Context context, BlockPos targetPos, Direction direction, BlockState supportState) {
+        if (!supportState.is(BlockTags.LEAVES) && !supportState.is(BlockTags.LOGS)) {
+            return false;
+        }
+
+        return MultifaceBlock.canAttachTo(context.level(), direction, targetPos.relative(direction), supportState);
+    }
+
     private int placeColumn(Context context, StartPoint startPoint, int desiredLength) {
+        if (startPoint.attachmentFace().getAxis().isVertical()) {
+            DreamsDimensions.LOGGER.warn("[lumina_vines] Ignorando placement vertical inesperado em {} face={}", startPoint.startPos(), startPoint.attachmentFace());
+            return 0;
+        }
+
         BlockState state = vineStateForFace(startPoint.attachmentFace());
+        BlockState supportState = context.level().getBlockState(startPoint.startPos().relative(startPoint.attachmentFace()));
+
+        DreamsDimensions.LOGGER.debug(
+                "[lumina_vines] placing column startPos={} face={} supportPos={} supportBlock={} state={}",
+                startPoint.startPos(),
+                startPoint.attachmentFace(),
+                startPoint.startPos().relative(startPoint.attachmentFace()),
+                supportState.getBlock(),
+                state
+        );
 
         int placed = 0;
         BlockPos cursor = startPoint.startPos();
