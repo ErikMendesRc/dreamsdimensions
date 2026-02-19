@@ -25,7 +25,7 @@ public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
     private static final int DEFAULT_MIN_COLUMNS = 1;
     private static final int DEFAULT_MAX_COLUMNS = 4;
     private static final int DEFAULT_MIN_LENGTH = 3;
-    private static final int DEFAULT_MAX_LENGTH = 8;
+    private static final int DEFAULT_MAX_LENGTH = 16;
     private static final int DEFAULT_MAX_ATTEMPTS = 8;
 
     public static final MapCodec<DreamsHangingLuminaVinesDecorator> CODEC = RecordCodecBuilder.mapCodec(instance ->
@@ -135,7 +135,7 @@ public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
 
     private int rollColumnLength(RandomSource random) {
         int base = randomRange(random, this.minLength, this.maxLength);
-        return random.nextFloat() < 0.1F ? Math.min(12, base + randomRange(random, 2, 4)) : base;
+        return random.nextFloat() < 0.1F ? Math.min(16, base + randomRange(random, 2, 4)) : base;
     }
 
     private static int randomRange(RandomSource random, int min, int max) {
