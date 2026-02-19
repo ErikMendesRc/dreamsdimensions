@@ -6,9 +6,10 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "dreamsdimensions:ow_lumina_vines"
+          "name": "dreamsdimensions:lumina_vines"
         }
       ]
     }
-  ]
+  ],
+  "random_sequence": "dreamsdimensions:blocks/lumina_vines"
 }

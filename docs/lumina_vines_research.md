@@ -1,32 +1,42 @@
-# Lumina vines research (Vanilla + NeoForge + BOP)
+# Lumina vines research (Vanilla 1.21.11 + NeoForge beta + BOP)
 
-## Vanilla (via NeoForge bundled minecraft classes)
-- `net.minecraft.world.level.levelgen.feature.treedecorators.LeaveVineDecorator#place` rolls `probability` for each leaf side and calls `addHangingVine`.
-- `LeaveVineDecorator#addHangingVine` places one vine at the start and then descends while air for up to 4 extra blocks.
-- `net.minecraft.world.level.levelgen.feature.treedecorators.TrunkVineDecorator#place` rolls trunk-side attempts and places `minecraft:vine` on air-adjacent sides.
-- `TreeDecorator.Context#placeVine` always places `Blocks.VINE.defaultBlockState().setValue(faceProperty, true)`.
+## Vanilla 1.21.11 (ContextoIA) — classes/métodos exatos
 
-Commands used for inspection:
-- `javap -classpath ContextoIA/neoforge-21.11.37-beta -c -p net.minecraft.world.level.levelgen.feature.treedecorators.LeaveVineDecorator`
-- `javap -classpath ContextoIA/neoforge-21.11.37-beta -c -p net.minecraft.world.level.levelgen.feature.treedecorators.TrunkVineDecorator`
-- `javap -classpath ContextoIA/neoforge-21.11.37-beta -c -p net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator$Context`
+### A) Aplicação de vines em árvores
+- `net.minecraft.world.level.levelgen.feature.treedecorators.LeaveVineDecorator#place(TreeDecorator.Context)`:
+  - percorre `context.leaves()`;
+  - faz roll por lado com `probability`;
+  - usa `context.isAir(adjacentPos)`;
+  - chama `addHangingVine(...)`.
+- `LeaveVineDecorator#addHangingVine(BlockPos, BooleanProperty, TreeDecorator.Context)`:
+  - coloca o primeiro vine no `startPos`;
+  - desce em coluna (`cursor = cursor.below()`) sem drift lateral;
+  - pára quando deixa de ser ar ou quando atinge o limite de comprimento.
 
-## NeoForge beta 1.21.11 registries/codecs
-- Vanilla tree configured features still declare decorators in `config.decorators` JSON list.
-- Jungle uses `minecraft:trunk_vine` + `minecraft:leave_vine` (0.25) in configured feature JSON.
-- `TreeDecoratorType` stores a `MapCodec` and registers each decorator type by id.
+### B) Validação / parada
+- Vanilla usa `TreeDecorator.Context#isAir` para validar posição inicial e continuação da coluna.
+- O loop de coluna em `addHangingVine` interrompe por:
+  - bloco não-ar (`!context.isAir(pos)`), ou
+  - limite de comprimento.
+- No `LeaveVineDecorator`, o estado usado vem de `TreeDecorator.Context#placeVine`, que monta `Blocks.VINE.defaultBlockState().setValue(faceProperty, true)`.
 
-Evidence:
-- `ContextoIA/neoforge-21.11.37-beta/data/minecraft/worldgen/configured_feature/jungle_tree.json`
-- `ContextoIA/neoforge-21.11.37-beta/data/minecraft/worldgen/configured_feature/swamp_oak.json`
-- `javap -classpath ContextoIA/neoforge-21.11.37-beta -c -p net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType`
+### C) Acesso ao reader no decorator (evitando erro de API)
+- `TreeDecorator.Context` armazena `LevelSimulatedReader` (campo `level`).
+- **Não** há `getBlockState` em `LevelSimulatedReader`.
+- O vanilla consulta estado por predicado via:
+  - `TreeDecorator.Context#isAir(pos)` -> `LevelSimulatedReader#isStateAtPosition(pos, predicate)`
+  - `TreeDecorator.Context#checkBlock(pos, predicate)` -> `LevelSimulatedReader#isStateAtPosition(pos, predicate)`
+- O vanilla seta blocos pelo writer do contexto:
+  - `TreeDecorator.Context#setBlock(pos, state)` (delegando ao `decorationSetter`).
+
+## NeoForge beta
+- O contrato de `TreeDecorator.Context` em 1.21.11-beta segue o padrão acima: leitura por `isAir/checkBlock` e escrita por `setBlock`.
 
 ## Biomes O' Plenty
-- BOP tree configs commonly use custom tree features with `vine_provider` and `hanging_provider` controls.
-- Example trees (bayou/willow/redwood) use vine state providers with `minecraft:vine`-like properties.
-- BOP also controls density at tree placement level (`placed_feature/trees_bayou.json`) using low weighted counts.
+- Padrão geral de densidade de vines em árvores: chance por árvore + múltiplas tentativas limitadas + comprimento curto/moderado.
+- Isso foi usado como referência de tuning, mantendo a lógica base de coluna vertical do vanilla.
 
-Evidence:
-- `ContextoIA/BiomesOPlenty-neoforge-1.21.11-21.11.0.28/data/biomesoplenty/worldgen/configured_feature/bayou_tree.json`
-- `ContextoIA/BiomesOPlenty-neoforge-1.21.11-21.11.0.28/data/biomesoplenty/worldgen/configured_feature/willow_tree.json`
-- `ContextoIA/BiomesOPlenty-neoforge-1.21.11-21.11.0.28/data/biomesoplenty/worldgen/placed_feature/trees_bayou.json`
+## Comandos usados na pesquisa
+- `javap -classpath ContextoIA/neoforge-21.11.37-beta -c -p net.minecraft.world.level.levelgen.feature.treedecorators.LeaveVineDecorator`
+- `javap -classpath ContextoIA/neoforge-21.11.37-beta -c -p net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator$Context`
+- `javap -classpath ContextoIA/neoforge-21.11.37-beta -p net.minecraft.world.level.LevelSimulatedReader`

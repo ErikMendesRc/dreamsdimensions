@@ -50,7 +50,7 @@ public final class ModCreativeTabs {
                         output.accept(ModBlocks.DREAM_FLOWER_BLOCK.get());
                         output.accept(ModBlocks.OW_LUMINA_FLOWER.get());
                         output.accept(ModBlocks.OW_SOMNIFLORA.get());
-                        output.accept(ModBlocks.OW_LUMINA_VINES.get());
+                        output.accept(ModBlocks.LUMINA_VINES.get());
                         output.accept(ModBlocks.DREAM_LOG_BLOCK.get());
                         output.accept(ModBlocks.OW_SOMNIBARK_LOG.get());
                         output.accept(ModBlocks.DREAM_LEAVES_BLOCK.get());

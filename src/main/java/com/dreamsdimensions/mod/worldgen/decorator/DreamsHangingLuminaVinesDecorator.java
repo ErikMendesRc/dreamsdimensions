@@ -1,6 +1,5 @@
 package com.dreamsdimensions.mod.worldgen.decorator;
 
-import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.registry.ModBlocks;
 import com.dreamsdimensions.mod.registry.ModTreeDecorators;
 import com.mojang.serialization.Codec;
@@ -22,11 +21,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
-    private static final float DEFAULT_TREE_CHANCE = 0.35F;
+    private static final float DEFAULT_TREE_CHANCE = 0.45F;
     private static final int DEFAULT_MIN_COLUMNS = 1;
-    private static final int DEFAULT_MAX_COLUMNS = 3;
-    private static final int DEFAULT_MIN_LENGTH = 2;
-    private static final int DEFAULT_MAX_LENGTH = 6;
+    private static final int DEFAULT_MAX_COLUMNS = 4;
+    private static final int DEFAULT_MIN_LENGTH = 3;
+    private static final int DEFAULT_MAX_LENGTH = 8;
+    private static final int DEFAULT_MAX_ATTEMPTS = 8;
 
     public static final MapCodec<DreamsHangingLuminaVinesDecorator> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
@@ -35,7 +35,8 @@ public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
                     ExtraCodecs.POSITIVE_INT.optionalFieldOf("min_columns", DEFAULT_MIN_COLUMNS).forGetter(decorator -> decorator.minColumns),
                     ExtraCodecs.POSITIVE_INT.optionalFieldOf("max_columns", DEFAULT_MAX_COLUMNS).forGetter(decorator -> decorator.maxColumns),
                     ExtraCodecs.POSITIVE_INT.optionalFieldOf("min_length", DEFAULT_MIN_LENGTH).forGetter(decorator -> decorator.minLength),
-                    ExtraCodecs.POSITIVE_INT.optionalFieldOf("max_length", DEFAULT_MAX_LENGTH).forGetter(decorator -> decorator.maxLength)
+                    ExtraCodecs.POSITIVE_INT.optionalFieldOf("max_length", DEFAULT_MAX_LENGTH).forGetter(decorator -> decorator.maxLength),
+                    ExtraCodecs.POSITIVE_INT.optionalFieldOf("max_attempts", DEFAULT_MAX_ATTEMPTS).forGetter(decorator -> decorator.maxAttempts)
             ).apply(instance, DreamsHangingLuminaVinesDecorator::new)
     );
 
@@ -45,14 +46,16 @@ public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
     private final int maxColumns;
     private final int minLength;
     private final int maxLength;
+    private final int maxAttempts;
 
-    public DreamsHangingLuminaVinesDecorator(Block vineBlock, float treeChance, int minColumns, int maxColumns, int minLength, int maxLength) {
+    public DreamsHangingLuminaVinesDecorator(Block vineBlock, float treeChance, int minColumns, int maxColumns, int minLength, int maxLength, int maxAttempts) {
         this.vineBlock = vineBlock;
         this.treeChance = treeChance;
         this.minColumns = minColumns;
         this.maxColumns = Math.max(minColumns, maxColumns);
         this.minLength = minLength;
         this.maxLength = Math.max(minLength, maxLength);
+        this.maxAttempts = maxAttempts;
     }
 
     @Override
@@ -62,88 +65,77 @@ public class DreamsHangingLuminaVinesDecorator extends TreeDecorator {
 
     @Override
     public void place(Context context) {
-        if (this.vineBlock != ModBlocks.LUMINA_HANGING_VINES.get()) {
+        if (this.vineBlock != ModBlocks.LUMINA_VINES.get() || context.random().nextFloat() > this.treeChance) {
             return;
         }
 
-        RandomSource random = context.random();
-        float treeRoll = random.nextFloat();
-        DreamsDimensions.LOGGER.debug("[lumina_vines] RUN treeRoll={} treeChance={}", treeRoll, this.treeChance);
-        if (treeRoll > this.treeChance) {
-            return;
-        }
-
-        List<BlockPos> candidates = pickLeavesExposed(context);
+        List<BlockPos> candidates = pickExteriorLeaves(context);
         if (candidates.isEmpty()) {
             return;
         }
 
-        int targetColumns = randomRange(random, this.minColumns, this.maxColumns);
-        List<BlockPos> selectedLeaves = pickColumns(candidates, targetColumns, random);
-        DreamsDimensions.LOGGER.debug("[lumina_vines] columnsTarget={} poolSize={} selected={}", targetColumns, candidates.size(), selectedLeaves.size());
+        RandomSource random = context.random();
+        Collections.shuffle(candidates, new java.util.Random(random.nextLong()));
 
+        int targetColumns = randomRange(random, this.minColumns, this.maxColumns);
         int placedColumns = 0;
-        for (BlockPos leafPos : selectedLeaves) {
-            int desiredLength = randomRange(random, this.minLength, this.maxLength);
-            BlockPos startPos = leafPos.below();
-            DreamsDimensions.LOGGER.debug("[lumina_vines] attempt leafPos={} startPos={} desiredLength={}", leafPos, startPos, desiredLength);
-            if (placeColumn(context, leafPos, desiredLength) > 0) {
+        int attempts = 0;
+
+        for (BlockPos leafPos : candidates) {
+            if (attempts >= this.maxAttempts || placedColumns >= targetColumns) {
+                break;
+            }
+
+            attempts++;
+            int desiredLength = rollColumnLength(random);
+            int placed = placeColumn(context, leafPos.below(), desiredLength);
+            if (placed > 0) {
                 placedColumns++;
             }
         }
-
-        DreamsDimensions.LOGGER.debug("[lumina_vines] placedColumns={} targetColumns={}", placedColumns, targetColumns);
     }
 
-    private List<BlockPos> pickLeavesExposed(Context context) {
-        List<BlockPos> starts = new ArrayList<>();
+    private List<BlockPos> pickExteriorLeaves(Context context) {
+        List<BlockPos> candidates = new ArrayList<>();
         for (BlockPos leafPos : context.leaves()) {
+            if (!context.checkBlock(leafPos, state -> state.is(BlockTags.LEAVES))) {
+                continue;
+            }
+
             BlockPos startPos = leafPos.below();
-            if (context.isAir(startPos) && context.checkBlock(leafPos, state -> state.is(BlockTags.LEAVES))) {
-                starts.add(leafPos);
+            if (!context.isAir(startPos)) {
+                continue;
+            }
+
+            if (hasHorizontalAirExposure(context, leafPos)) {
+                candidates.add(leafPos);
             }
         }
-        return starts;
+
+        return candidates;
     }
 
-    private List<BlockPos> pickColumns(List<BlockPos> candidates, int targetColumns, RandomSource random) {
-        List<BlockPos> shuffled = new ArrayList<>(candidates);
-        Collections.shuffle(shuffled, new java.util.Random(random.nextLong()));
-        return shuffled.subList(0, Math.min(targetColumns, shuffled.size()));
+    private static boolean hasHorizontalAirExposure(Context context, BlockPos pos) {
+        return context.isAir(pos.north()) || context.isAir(pos.south()) || context.isAir(pos.east()) || context.isAir(pos.west());
     }
 
-    private int placeColumn(Context context, BlockPos leafPos, int desiredLength) {
+    private int placeColumn(Context context, BlockPos startPos, int desiredLength) {
         BlockState state = this.vineBlock.defaultBlockState();
-        BlockPos cursor = leafPos.below();
+        BlockPos cursor = startPos;
         int placed = 0;
 
         while (placed < desiredLength && context.checkBlock(cursor, BlockBehaviour.BlockStateBase::canBeReplaced)) {
             context.setBlock(cursor, state);
-
-            BlockState stateAfterSet = context.level().getBlockState(cursor);
-            boolean survives = stateAfterSet.canSurvive(context.level(), cursor);
-            BlockState supportAbove = context.level().getBlockState(cursor.above());
-            BlockState supportHorizontalNorth = context.level().getBlockState(cursor.north());
-
-            DreamsDimensions.LOGGER.debug(
-                    "[lumina_vines] post_set pos={} stateAfterSet={} canSurvive={} above={} north={} setter=context.setBlock",
-                    cursor,
-                    BuiltInRegistries.BLOCK.getKey(stateAfterSet.getBlock()),
-                    survives,
-                    BuiltInRegistries.BLOCK.getKey(supportAbove.getBlock()),
-                    BuiltInRegistries.BLOCK.getKey(supportHorizontalNorth.getBlock())
-            );
-
-            if (!survives) {
-                DreamsDimensions.LOGGER.debug("[lumina_vines] post_set_removed pos={} reason=canSurvive_false", cursor);
-                break;
-            }
-
             placed++;
             cursor = cursor.below();
         }
 
         return placed;
+    }
+
+    private int rollColumnLength(RandomSource random) {
+        int base = randomRange(random, this.minLength, this.maxLength);
+        return random.nextFloat() < 0.1F ? Math.min(12, base + randomRange(random, 2, 4)) : base;
     }
 
     private static int randomRange(RandomSource random, int min, int max) {
