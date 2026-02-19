@@ -15,6 +15,7 @@ import com.dreamsdimensions.mod.registry.ModCreativeTabs;
 import com.dreamsdimensions.mod.registry.ModItems;
 import com.dreamsdimensions.mod.registry.ModEffects;
 import com.dreamsdimensions.mod.registry.ModPotions;
+import com.dreamsdimensions.mod.registry.ModTreeDecorators;
 import com.dreamsdimensions.mod.worldgen.terrablender.DDTerraBlenderBootstrap;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
@@ -54,6 +55,7 @@ public class DreamsDimensions {
         ModAttachments.register(modEventBus);
         ModEffects.register(modEventBus);
         ModPotions.register(modEventBus);
+        ModTreeDecorators.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(CreativeTabEvents::onBuildCreativeTabContents);
