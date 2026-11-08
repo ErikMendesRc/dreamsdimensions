@@ -4,12 +4,23 @@ A dimensão preserva IDs e mantém a geometria isolada no `campo_onirico_azul_no
 
 ## Camadas
 - Pradarias: `wave_height`, duas escalas de ruído, declives abertos.
-- Terraços: `terrace_units`, patamares de 14 blocos unidos por rampa cúbica contínua (`terrace_ramp`) sem degraus descontínuos.
+- Terraços: `terrace_units`, patamares largos de 18 blocos separados por escarpas suaves (`terrace_ramp`), com erosão localizada nos taludes (`terrace_scar`), sem degraus abruptos.
 - Cordilheiras: `ridge_crest` produz faixas seguindo curvas de ruído; `ridge_height` aplica largura estreita e erosão secundária.
-- `mist_strength` e `terrace_strength` misturam os três perfis em vez de delimitar regiões fixas. `warp_x`/`warp_z` dobram os contornos horizontalmente.
+- `mist_strength` e `terrace_presence` misturam os três perfis em vez de delimitar regiões fixas. O núcleo dos terraços atenua parcialmente a interferência das cordilheiras, mantendo transições graduais. `warp_x`/`warp_z` dobram os contornos horizontalmente.
 - `solid_density` usa gradiente vertical descendente, deslocamento de altitude, detalhe 3D pequeno, e interpolação a cada 4x8 blocos.
 - `spawn_target` procura um vale com pouco relevo rochoso.
 - `material_rule/campo_onirico_azul_surface`: bedrock natural na base, grama azul no topo caminhável, terra azul superficial e pedra azul nos paredões e subsolo. Todas as regras são data-driven; nenhum codec Java.
+
+## Refinamento cinematográfico — Terraços do Sonho (TASK 1.1, segunda calibração)
+
+- **Presença regional:** `terrace_strength` passa a ativar mais área útil com o ruído regional da própria seed. `terrace_presence` reforça o núcleo, sem criar fronteira abrupta: o peso é `clamp(1.45 * strength, 0, 1)^2`.
+- **Mesas e patamares:** `terrace_broad` (oitavas -9 a -7) domina a topografia com amplitudes largas; `terrace_elevation` acrescenta variação secundária (92:20). Os níveis são quantizados a cada **18 blocos**, no intervalo de aproximadamente 0,65 a 8,8 unidades, mantendo altitude finita sem ultrapassar o teto da dimensão em condições normais.
+- **Escarpas orgânicas:** `terrace_ramp` conserva uma interpolação smoothstep entre as frações **0,31 e 0,69** do nível. Assim aproximadamente 62% de cada faixa de altura fica em patamares mais planos e 38% representa a transição geomorfológica, antes da deformação pelos ruídos.
+- **Erosão de encostas:** `terrace_weathering` adiciona textura de baixa amplitude (0,75 bloco nos patamares). `terrace_scar` concentra até cerca de 3,4 blocos de irregularidade no meio da escarpa, desaparecendo suavemente nas partes planas; gera reentrâncias, promontórios e taludes mais críveis sem arestas no valor da densidade.
+- **Encontro das regiões:** `height_offset` preserva pradarias e cordilheiras fora dos terraços, mas reduz em até 60% a influência de `mist_strength` onde `terrace_presence` é máxima. No perímetro continua havendo blend contínuo, sem costuras por chunk.
+- **Custo:** ruídos 2D com `y_scale: 0`, amostrados via `cache + slice(y=0)`, aproveitam o cache de altura na geração. Não adiciona estruturas, entidades, novas texturas, mudanças ao Dreamscape nem codecs Java.
+
+**Validação:** usar **mundo novo** ou chunks ainda não gerados; chunks antigos não são regenerados pela alteração de datapack. Sobrevoar por vários centenas de blocos em espectador e procurar mesas escalonadas, patamares suficientemente largos para andar, paredões azuis e transições sem paredes artificiais. Inspecionar em múltiplas seeds, inclusive `14011`, `20261108` e `-904732`. O teste automatizado confirma carregamento de datapacks e superfícies/heightmap, não certifica o resultado estético ou a conectividade de todas as escarpas; estas exigem inspeção no cliente.
 
 ## Diagnóstico do spawn — causa confirmada no Minecraft 26.3
 O Minecraft 26.3 introduziu os tags `#minecraft:blocks_motion_in_heightmap` e

@@ -1,27 +1,39 @@
 {
-  "type": "minecraft:mul",
-  "left": 14,
-  "right": {
-    "type": "minecraft:add",
-    "left": {
-      "type": "minecraft:floor",
-      "input": "dreamsdimensions:terrace_units"
-    },
+  "type": "minecraft:add",
+  "left": {
+    "type": "minecraft:mul",
+    "left": 18,
     "right": {
-      "type": "minecraft:mul",
+      "type": "minecraft:add",
       "left": {
-        "type": "minecraft:square",
-        "input": "dreamsdimensions:terrace_ramp"
+        "type": "minecraft:floor",
+        "input": "dreamsdimensions:terrace_units"
       },
       "right": {
-        "type": "minecraft:sub",
-        "left": 3,
+        "type": "minecraft:mul",
+        "left": {
+          "type": "minecraft:square",
+          "input": "dreamsdimensions:terrace_ramp"
+        },
         "right": {
-          "type": "minecraft:mul",
-          "left": 2,
-          "right": "dreamsdimensions:terrace_ramp"
+          "type": "minecraft:sub",
+          "left": 3,
+          "right": {
+            "type": "minecraft:mul",
+            "left": 2,
+            "right": "dreamsdimensions:terrace_ramp"
+          }
         }
       }
+    }
+  },
+  "right": {
+    "type": "minecraft:add",
+    "left": "dreamsdimensions:terrace_scar",
+    "right": {
+      "type": "minecraft:mul",
+      "left": 0.75,
+      "right": "dreamsdimensions:terrace_weathering"
     }
   }
 }

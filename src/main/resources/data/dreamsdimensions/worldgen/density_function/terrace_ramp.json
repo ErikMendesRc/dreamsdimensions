@@ -2,11 +2,11 @@
   "type": "minecraft:clamp",
   "input": {
     "type": "minecraft:mul",
-    "left": 2.2727273,
+    "left": 2.631578947,
     "right": {
       "type": "minecraft:sub",
       "left": "dreamsdimensions:terrace_fraction",
-      "right": 0.28
+      "right": 0.31
     }
   },
   "min": 0,
