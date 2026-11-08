@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        seed: [14011, 20261108, -904732]
+        seed: [14011, 20261108, -904732, 73199013]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,6 +27,8 @@ jobs:
         run: python3 scripts/ci/check_vegetation.py
       - name: Validate 26.3 formations (TASK 1.3)
         run: python3 scripts/ci/check_formations.py
+      - name: Estimate deterministic candidate distribution (MODEL ONLY)
+        run: python3 scripts/ci/check_worldgen_balance.py
       - name: Upload mod JAR
         if: success()
         uses: actions/upload-artifact@v4
@@ -34,6 +36,28 @@ jobs:
           name: dreamsdimensions-26.3-seed-${{ matrix.seed }}
           path: build/libs/*.jar
           if-no-files-found: error
+      - name: Preflight game assets with bounded retry for transient HTTP 304
+        timeout-minutes: 5
+        shell: bash
+        run: |
+          # NeoForm asset endpoint can occasionally return HTTP 304 on
+          # an uncached object. Only that response is retried; any other
+          # failure remains a hard error. Never skip the actual server test.
+          for attempt in 1 2 3; do
+            if ./gradlew --no-daemon downloadAssets > asset-download.log 2>&1; then
+              echo "Minecraft assets verified (attempt $attempt)"
+              exit 0
+            fi
+            if ! grep -q 'HTTP Status Code 304' asset-download.log; then
+              tail -n 90 asset-download.log
+              exit 1
+            fi
+            echo "::warning::Transient HTTP 304 downloading Minecraft assets, attempt $attempt/3"
+            sleep $((attempt * 3))
+          done
+          tail -n 90 asset-download.log
+          echo "::error::Minecraft asset download still failing after 3 attempts"
+          exit 1
       - name: Smoke test - initialize a dedicated server and load datapacks
         timeout-minutes: 6
         shell: bash

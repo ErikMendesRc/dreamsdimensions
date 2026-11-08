@@ -63,22 +63,13 @@ public record DreamVegetationFeature(
             return false;
         }
         // Dedicated unobstructed arrival area. Not a distribution anchor.
-        if ((long) origin.getX() * origin.getX() + (long) origin.getZ() * origin.getZ() < 36L * 36L) {
+        // 48 blocks include the outer reach of umbrella crowns and arched
+        // branches; the safety clearing itself remains 36 blocks.
+        if ((long) origin.getX() * origin.getX() + (long) origin.getZ() * origin.getZ() < 48L * 48L) {
             return false;
         }
 
         boolean tree = form.equals("sentinel") || form.equals("umbrella") || form.equals("arch");
-        int span = tree ? 4 : 3;
-        int relief = 0;
-        for (Direction side : Direction.Plane.HORIZONTAL) {
-            int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                    origin.getX() + side.getStepX() * span, origin.getZ() + side.getStepZ() * span);
-            relief = Math.max(relief, Math.abs(y - origin.getY()));
-        }
-        if (relief > (tree ? 4 : 3)) {
-            return false;
-        }
-
         long seed = level.getSeed();
         double x = origin.getX();
         double z = origin.getZ();
@@ -110,6 +101,18 @@ public record DreamVegetationFeature(
         if (random.nextFloat() >= chance) {
             return false;
         }
+        // Save four neighbor-heightmap reads for unsuccessful cheap gates.
+        // The same relief threshold is enforced for accepted candidates.
+        int span = tree ? 4 : 3;
+        int relief = 0;
+        for (Direction side : Direction.Plane.HORIZONTAL) {
+            int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                    origin.getX() + side.getStepX() * span, origin.getZ() + side.getStepZ() * span);
+            relief = Math.max(relief, Math.abs(y - origin.getY()));
+        }
+        if (relief > (tree ? 4 : 3)) {
+            return false;
+        }
         if (!tree) {
             return patch(level, random, origin, form.equals("moss"));
         }
@@ -121,6 +124,11 @@ public record DreamVegetationFeature(
             case "umbrella" -> umbrella(plan, origin, height, random);
             case "arch" -> arch(plan, origin, height, random);
             default -> { return false; }
+        }
+        // Bound the number of planned writes, including future datapack
+        // tuning. Candidate allocation occurs before this check.
+        if (plan.size() > 2200) {
+            return false;
         }
         connectLeaves(plan);
 

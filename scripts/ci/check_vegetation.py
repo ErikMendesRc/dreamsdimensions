@@ -54,6 +54,10 @@ for name in ("blocks_motion", "blocks_motion_no_leaves",
              "blocks_motion_in_heightmap", "blocks_motion_in_heightmap_no_leaves"):
     values = read(tags / (name + ".json"))["values"]
     assert "dreamsdimensions:dream_glow_moss" in values
+    # Solid decorations and generated log trunks must count as motion in
+    # 26.3. Otherwise MOTION_BLOCKING_NO_LEAVES can ignore their geometry.
+    assert "dreamsdimensions:dream_log_block" in values
+    assert "dreamsdimensions:dream_shimmer_block" in values
     assert ("dreamsdimensions:dream_leaves_block" in values) == (
         name in ("blocks_motion", "blocks_motion_in_heightmap")
     )
@@ -62,4 +66,7 @@ assert "dreamsdimensions:dream_glow_moss" in read(
 )["values"]
 leaf_state = read(ROOT / "src/main/resources/assets/dreamsdimensions/blockstates/dream_leaves_block.json")
 assert leaf_state["multipart"][0]["apply"]["model"] == "dreamsdimensions:block/dream_leaves_block"
+src = (ROOT / "src/main/java/com/dreamsdimensions/mod/worldgen/DreamVegetationFeature.java").read_text(encoding="utf-8")
+assert "48L * 48L" in src, "spawn clearing radius must include canopy reach"
+assert "plan.size() > 2200" in src, "candidate work guard missing"
 print("TASK 1.2: 5 features, placement, stages, tags and leaf model OK (static only)")

@@ -85,13 +85,18 @@ with socket.create_connection((HOST, PORT), timeout=15) as conn:
             raise RuntimeError(f"Falha de worldgen: {command}: {response}")
         return response
 
+    force_start = time.perf_counter()
     for index, (dimension, x, z) in enumerate(locations):
         checked_command(100 + index, f"execute in {dimension} run forceload add {x} {z}",
                         ("unknown", "incorrect", "error", "not found", "failed"))
+    force_add_seconds = time.perf_counter() - force_start
+    # Retain the existing 12-second settling window. Timing is only a
+    # coarse RCON smoke-test proxy, not a benchmark of chunk CPU or TPS.
     time.sleep(12)
     for index, (dimension, x, z) in enumerate(locations):
         checked_command(200 + index, f"execute in {dimension} run forceload query {x} {z}",
                         ("not", "unknown", "failed", "error"))
+    probe_start = time.perf_counter()
     # Flora can legitimately occupy an arbitrary sample column. Inspect a
     # selection of neighboring natural columns rather than demanding that the
     # one exact coordinate be vegetation-free.
@@ -125,5 +130,13 @@ with socket.create_connection((HOST, PORT), timeout=15) as conn:
                 break
         if not found:
             raise RuntimeError(f"Sem piso natural com 2 blocos de ar perto de X={x} Z={z}")
+
+    print(
+        f"WORLDGEN_SMOKE_METRIC seed_port=25575 dimensions={len(locations)} "
+        f"forceload_add_seconds={force_add_seconds:.3f} "
+        f"heightmap_probe_seconds={time.perf_counter() - probe_start:.3f} "
+        f"total_including_settle_seconds={time.perf_counter() - force_start:.3f}",
+        flush=True,
+    )
 
 print("Chunks e heightmaps azuis validados em cinco coordenadas.", flush=True)

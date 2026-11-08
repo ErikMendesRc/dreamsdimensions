@@ -80,10 +80,15 @@ public record DreamFormationFeature(
             return false;
         }
         int size = minSize + random.nextInt(maxSize - minSize + 1);
-        int footprint = size + (form.equals("spines") ? 3 : 2);
-        if (!reasonableRelief(level, origin, footprint)) {
+        // Match Task 1.2's protected arrival clearing. Include the largest
+        // horizontal reach so no formation from outside clips the clearing.
+        // This is a spawn safety buffer, never a worldgen placement anchor.
+        int protectedRadius = 36 + size + 4;
+        long px = origin.getX(), pz = origin.getZ();
+        if (px * px + pz * pz < (long) protectedRadius * protectedRadius) {
             return false;
         }
+        int footprint = size + (form.equals("spines") ? 3 : 2);
 
         // A smooth, seed-dependent domain-warped regional field.
         long seed = level.getSeed();
@@ -108,6 +113,11 @@ public record DreamFormationFeature(
         };
         // Nonzero outskirts allow isolated landmarks; noise still strongly favors regions.
         if (random.nextFloat() >= density * altitude * (0.12 + 0.88 * weight)) {
+            return false;
+        }
+        // Eight neighboring heightmap lookups are meaningful only for
+        // candidates that passed the cheap seed-dependent probability gate.
+        if (!reasonableRelief(level, origin, footprint)) {
             return false;
         }
 

@@ -73,6 +73,7 @@ assert "BuiltInRegistries.FEATURE_TYPE" in registration
 for marker in [
     "implements Feature", "MapCodec<DreamFormationFeature>", "BlockState.CODEC",
     "level.getSeed()", "level.ensureCanWrite(p)",
+    "protectedRadius = 36 + size + 4",
     "level.getWorldBorder().isWithinBounds(p)", "level.getFluidState(p).isEmpty()",
     "plan.changes.size() > 1600", "if (!formed ||", "Target.AIR", "Target.GRASS",
     "level.getBlockState(p).isAir()", "level.getBlockState(p).is(grass.getBlock())",
@@ -144,13 +145,13 @@ def noise(seed, x, z):
 
 probes = [(x, z) for x in range(-8, 9, 2) for z in range(-8, 9, 2)]
 fingerprints = []
-for seed in [14011, 20261108, -904732]:
+for seed in [14011, 20261108, -904732, 73199013]:
     signature = tuple(round(noise(seed ^ 0x5A817, x * 16 / 164, z * 16 / 164), 9)
                       for x, z in probes)
     assert signature == tuple(round(noise(seed ^ 0x5A817, x * 16 / 164, z * 16 / 164), 9)
                               for x, z in probes)
     assert len(set(signature)) > 20
     fingerprints.append(signature)
-assert len(set(fingerprints)) == 3
+assert len(set(fingerprints)) == 4
 print("TASK 1.3: 4 codecs/configs, placement, stage, source guards, "
-      "45 connected arch geometries and 3-seed noise signatures OK (static).")
+      "45 connected arch geometries and 4-seed noise signatures OK (static).")
