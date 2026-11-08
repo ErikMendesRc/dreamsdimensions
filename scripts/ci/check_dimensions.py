@@ -58,6 +58,14 @@ with socket.create_connection((HOST, PORT), timeout=15) as conn:
         print(f"{command}: {response}", flush=True)
         if "positioned over" in command and not response:
             prefix = command.split(" positioned over ")[0] + " positioned over motion_blocking_no_leaves "
+            for y in (48, 64, 80, 96, 112, 128, 160):
+                for block_id in ("minecraft:air", "dreamsdimensions:blue_dream_stone",
+                                 "dreamsdimensions:blue_dream_grass"):
+                    cmd = f"execute in {blue} if block 0 {y} 0 {block_id} run forceload query 0 0"
+                    send(conn, 8000 + y + len(block_id), 2, cmd)
+                    _, _, observed = receive(conn)
+                    if observed:
+                        print(f"ABSOLUTE {cmd}: {observed}", flush=True)
             for y_offset in (-3, -2, -1, 0, 1):
                 for block_id in (
                     "minecraft:air", "minecraft:water", "minecraft:bedrock",
