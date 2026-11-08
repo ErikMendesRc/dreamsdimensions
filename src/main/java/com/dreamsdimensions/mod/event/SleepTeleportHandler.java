@@ -3,14 +3,13 @@ package com.dreamsdimensions.mod.event;
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.config.DreamsConfig;
 import com.dreamsdimensions.mod.registry.ModAttachments;
+import com.dreamsdimensions.mod.util.DreamSpawnHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.vehicle.DismountHelper;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.portal.TeleportTransition;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -39,7 +38,6 @@ import java.util.UUID;
  */
 public final class SleepTeleportHandler {
     public static final int TICKS_BEFORE_TELEPORT = 100;
-    private static final int SEARCH_RADIUS = 12;
     private static final Set<UUID> ATTEMPTED_SLEEP = new HashSet<>();
     private static final Set<UUID> TELEPORTING = new HashSet<>();
     private static final Map<UUID, BedOrigin> COMPLETED_WAKEUPS = new HashMap<>();
@@ -129,15 +127,15 @@ public final class SleepTeleportHandler {
             return false;
         }
 
-        // Se a primeira dimensão não tiver spawn seguro perto de seu spawn,
-        // tentamos a outra sem criar uma plataforma artificial ou arriscar queda.
+        // Preferimos uma superfície natural. Em áreas sem terreno acessível, a
+        // rotina de chegada prepara uma plataforma mínima com blocos da dimensão.
         Collections.shuffle(targets);
         for (ServerLevel target : targets) {
             BlockPos spawnOrigin = target.getLevelData().getRespawnData().pos();
-            Optional<Vec3> spawn = findSafeSpawn(target, spawnOrigin, player);
+            Optional<Vec3> spawn = DreamSpawnHelper.findOrCreateSafeArrival(target, spawnOrigin, player);
             if (spawn.isEmpty()) {
-                DreamsDimensions.LOGGER.warn("Sem ponto seguro em {} próximo de {} (raio {}).",
-                        target.dimension(), spawnOrigin, SEARCH_RADIUS);
+                DreamsDimensions.LOGGER.warn("Não foi possível encontrar ou preparar chegada segura em {} próximo de {}.",
+                        target.dimension(), spawnOrigin);
                 continue;
             }
 
@@ -175,29 +173,4 @@ public final class SleepTeleportHandler {
         return false;
     }
 
-    private static Optional<Vec3> findSafeSpawn(ServerLevel level, BlockPos origin, ServerPlayer player) {
-        for (int radius = 0; radius <= SEARCH_RADIUS; radius++) {
-            for (int dx = -radius; dx <= radius; dx++) {
-                for (int dz = -radius; dz <= radius; dz++) {
-                    if (radius > 0 && Math.abs(dx) != radius && Math.abs(dz) != radius) {
-                        continue;
-                    }
-
-                    int x = origin.getX() + dx;
-                    int z = origin.getZ() + dz;
-                    int groundY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
-                    if (groundY <= level.getMinY() || groundY >= level.getMaxY() - 2) {
-                        continue;
-                    }
-
-                    Vec3 safe = DismountHelper.findSafeDismountLocation(
-                            player.getType(), level, new BlockPos(x, groundY, z), false);
-                    if (safe != null) {
-                        return Optional.of(safe);
-                    }
-                }
-            }
-        }
-        return Optional.empty();
-    }
 }
