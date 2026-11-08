@@ -3,11 +3,14 @@ package com.dreamsdimensions.mod.util;
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.registry.ModBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -147,7 +150,8 @@ public final class DreamSpawnHelper {
 
     private static BlockState getDimensionFloor(ServerLevel level) {
         Identifier blue = Identifier.fromNamespaceAndPath(DreamsDimensions.MODID, "campo_onirico_azul");
-        Block block = level.dimension().location().equals(blue)
+        ResourceKey<Level> blueKey = ResourceKey.create(Registries.DIMENSION, blue);
+        Block block = level.dimension().equals(blueKey)
                 ? ModBlocks.BLUE_DREAM_STONE.get()
                 : ModBlocks.SERENE_STONE_BLOCK.get();
         return block.defaultBlockState();
