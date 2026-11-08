@@ -23,13 +23,13 @@ public final class ModItems {
     public static final DeferredItem<DreamDustItem> DREAM_DUST = ITEMS.registerItem(
             "dream_dust",
             DreamDustItem::new,
-            new Item.Properties()
+            Item.Properties::new
     );
 
     public static final DeferredItem<OneiricAwakenerItem> ONEIRIC_AWAKENER = ITEMS.registerItem(
             "oneiric_awakener",
             OneiricAwakenerItem::new,
-            new Item.Properties()
+            () -> new Item.Properties()
                     .stacksTo(1)
                     .rarity(Rarity.RARE)
                     .useCooldown(OneiricAwakenerItem.COOLDOWN_TICKS)

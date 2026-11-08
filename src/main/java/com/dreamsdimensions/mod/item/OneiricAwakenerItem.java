@@ -19,7 +19,8 @@ import net.minecraft.world.item.component.UseCooldown;
 import net.minecraft.world.level.Level;
 import org.slf4j.Logger;
 
-import java.util.List;
+import java.util.function.Consumer;
+import net.minecraft.world.item.component.TooltipDisplay;
 
 /**
  * Item ritualístico que representa o foco da mente do jogador para “atravessar o véu”.
@@ -87,15 +88,15 @@ public class OneiricAwakenerItem extends Item {
             return pStack;
         }
 
-        if (!DreamReturnHelper.isDreamDimension(serverPlayer.serverLevel())) {
+        if (!DreamReturnHelper.isDreamDimension((net.minecraft.server.level.ServerLevel) serverPlayer.level())) {
             return pStack;
         }
 
-        LOGGER.info("Oneiric Awakener totalmente focado por {} na dimensão {}", player.getName().getString(), pLevel.dimension().location());
+        LOGGER.info("Oneiric Awakener totalmente focado por {} na dimensão {}", player.getName().getString(), pLevel.dimension());
 
         DreamReturnHelper.buildReturnTransition(serverPlayer).ifPresentOrElse(transition -> {
             serverPlayer.teleport(transition);
-            serverPlayer.displayClientMessage(Component.translatable("message.dreamsdimensions.oneiric_awakener.success"), false);
+            serverPlayer.sendSystemMessage(Component.translatable("message.dreamsdimensions.oneiric_awakener.success"));
 
             int cooldownTicks = COOLDOWN_TICKS;
             UseCooldown cooldown = pStack.get(DataComponents.USE_COOLDOWN);
@@ -103,7 +104,7 @@ public class OneiricAwakenerItem extends Item {
                 cooldownTicks = cooldown.ticks();
             }
             serverPlayer.getCooldowns().addCooldown(pStack, cooldownTicks);
-        }, () -> serverPlayer.displayClientMessage(Component.translatable("message.dreamsdimensions.oneiric_awakener.fail"), true));
+        }, () -> serverPlayer.sendSystemMessage(Component.translatable("message.dreamsdimensions.oneiric_awakener.fail")));
 
         // Efeitos visuais/sonoros do lado do cliente podem ser adicionados aqui
 
@@ -117,9 +118,9 @@ public class OneiricAwakenerItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, Item.TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
-        pTooltipComponents.add(Component.translatable("tooltip.dreamsdimensions.oneiric_awakener.line1").withStyle(ChatFormatting.GRAY));
-        pTooltipComponents.add(Component.translatable("tooltip.dreamsdimensions.oneiric_awakener.line2").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
-        super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+    public void appendHoverText(ItemStack pStack, Item.TooltipContext pContext, TooltipDisplay display, Consumer<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
+        pTooltipComponents.accept(Component.translatable("tooltip.dreamsdimensions.oneiric_awakener.line1").withStyle(ChatFormatting.GRAY));
+        pTooltipComponents.accept(Component.translatable("tooltip.dreamsdimensions.oneiric_awakener.line2").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
+        super.appendHoverText(pStack, pContext, display, pTooltipComponents, pTooltipFlag);
     }
 }

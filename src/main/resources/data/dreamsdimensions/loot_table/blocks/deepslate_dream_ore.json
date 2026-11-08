@@ -10,33 +10,19 @@
             {
               "type": "minecraft:item",
               "name": "dreamsdimensions:deepslate_dream_ore",
-              "conditions": [
-                {
-                  "condition": "minecraft:match_tool",
-                  "predicate": {
-                    "enchantments": [
-                      {
-                        "enchantment": "minecraft:silk_touch",
-                        "levels": {
-                          "min": 1
-                        }
-                      }
-                    ]
-                  }
-                }
-              ]
+              "condition": "minecraft:tool/can_silk_touch"
             },
             {
               "type": "minecraft:item",
               "name": "dreamsdimensions:dream_dust",
-              "functions": [
+              "modifier": [
                 {
-                  "function": "minecraft:apply_bonus",
+                  "type": "minecraft:apply_bonus",
                   "enchantment": "minecraft:fortune",
                   "formula": "minecraft:ore_drops"
                 },
                 {
-                  "function": "minecraft:explosion_decay"
+                  "type": "minecraft:explosion_decay"
                 }
               ]
             }
@@ -44,5 +30,6 @@
         }
       ]
     }
-  ]
+  ],
+  "random_sequence": "dreamsdimensions:blocks/deepslate_dream_ore"
 }

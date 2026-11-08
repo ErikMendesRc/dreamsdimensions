@@ -1,6 +1,7 @@
 package com.dreamsdimensions.mod.attachment;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -16,7 +17,7 @@ import java.util.Optional;
  * <p>Armazena a última cama do Overworld onde o jogador dormiu com sucesso.</p>
  */
 public final class DreamReturnData {
-    public static final Codec<DreamReturnData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final MapCodec<DreamReturnData> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ResourceKey.codec(Registries.DIMENSION)
                     .optionalFieldOf("dimension")
                     .forGetter(data -> Optional.ofNullable(data.dimension)),

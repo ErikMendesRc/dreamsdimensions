@@ -3,6 +3,10 @@
   "values": [
     "dreamsdimensions:blue_dream_stone",
     "dreamsdimensions:blue_dream_cobblestone",
-    "dreamsdimensions:dream_shimmer_block"
+    "dreamsdimensions:dream_shimmer_block",
+    "dreamsdimensions:dream_ore",
+    "dreamsdimensions:deepslate_dream_ore",
+    "dreamsdimensions:dream_infused_stone",
+    "dreamsdimensions:oneiric_core_block"
   ]
 }
