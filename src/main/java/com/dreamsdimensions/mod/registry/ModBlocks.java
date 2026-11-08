@@ -2,6 +2,7 @@ package com.dreamsdimensions.mod.registry;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.block.DreamOreBlock;
+import com.dreamsdimensions.mod.block.DreamLeavesBlock;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -130,8 +131,9 @@ public final class ModBlocks {
                     .strength(2.0f)
     );
 
-    public static final DeferredBlock<Block> DREAM_LEAVES_BLOCK = BLOCKS.registerSimpleBlock(
+    public static final DeferredBlock<DreamLeavesBlock> DREAM_LEAVES_BLOCK = BLOCKS.registerBlock(
             "dream_leaves_block",
+            DreamLeavesBlock::new,
             () -> BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)
                     .noOcclusion()
                     .strength(0.2f)

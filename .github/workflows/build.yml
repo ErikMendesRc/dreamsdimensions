@@ -23,6 +23,8 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       - name: Build
         run: ./gradlew --no-daemon clean build
+      - name: Validate 26.3 vegetation datapacks (static)
+        run: python3 scripts/ci/check_vegetation.py
       - name: Upload mod JAR
         if: success()
         uses: actions/upload-artifact@v4

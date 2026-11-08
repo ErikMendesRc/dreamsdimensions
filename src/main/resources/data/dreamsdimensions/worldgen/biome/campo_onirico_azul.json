@@ -110,6 +110,21 @@
   },
   "carvers": [],
   "features": [
-    []
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "dreamsdimensions:sentinel_tree",
+      "dreamsdimensions:umbrella_tree",
+      "dreamsdimensions:arched_tree",
+      "dreamsdimensions:glow_moss_patch",
+      "dreamsdimensions:dream_flower_garden"
+    ]
   ]
 }

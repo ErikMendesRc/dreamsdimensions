@@ -92,29 +92,38 @@ with socket.create_connection((HOST, PORT), timeout=15) as conn:
     for index, (dimension, x, z) in enumerate(locations):
         checked_command(200 + index, f"execute in {dimension} run forceload query {x} {z}",
                         ("not", "unknown", "failed", "error"))
+    # Flora can legitimately occupy an arbitrary sample column. Inspect a
+    # selection of neighboring natural columns rather than demanding that the
+    # one exact coordinate be vegetation-free.
     for index, (x, z) in enumerate(points):
         base = (
             f"execute in {blue} positioned {x} 0 {z} "
             "positioned over motion_blocking_no_leaves "
         )
-        probes = [
-            ("heightmap", ""),
-            ("blue_floor", "if block ~ ~-1 ~ #dreamsdimensions:blue_natural_ground "),
-            ("headroom", "if block ~ ~ ~ minecraft:air if block ~ ~1 ~ minecraft:air "),
-        ]
-        for offset, (name, condition) in enumerate(probes):
-            # Execute conditions have no reliable RCON success text without "run".
-            # Reuse the already-marked forceload query as a non-destructive
-            # success marker; a failed predicate yields an empty reply.
-            command = base + condition + f"run forceload query {x} {z}"
-            response = checked_command(
-                300 + index * 3 + offset,
-                command,
-                ("failed", "unknown", "incorrect", "error"),
+        checked_command(300 + index, base + f"run forceload query {x} {z}",
+                        ("failed", "unknown", "incorrect", "error"))
+        offsets = [(0, 0), (2, 2), (4, 4), (6, 6), (8, 8),
+                   (10, 10), (12, 12), (14, 14), (3, 11), (11, 3)]
+        found = False
+        for sample, (dx, dz) in enumerate(offsets):
+            query = (
+                f"execute in {blue} positioned {x + dx} 0 {z + dz} "
+                "positioned over motion_blocking_no_leaves "
+                "if block ~ ~-1 ~ #dreamsdimensions:blue_natural_ground "
+                "if block ~ ~ ~ minecraft:air "
+                "if block ~ ~1 ~ minecraft:air "
+                f"run forceload query {x} {z}"
             )
-            if "marked for force loading" not in response.lower():
-                raise RuntimeError(
-                    f"Probe {name} sem sucesso em X={x} Z={z}: {response!r}"
-                )
+            request = 400 + index * 20 + sample
+            send(conn, request, 2, query)
+            reply_id, _, response = receive(conn)
+            if reply_id != request:
+                raise RuntimeError(f"Resposta RCON inesperada: {query}: {response}")
+            if "marked for force loading" in response.lower():
+                print(f"Safe arrival nearby {x} {z}: +{dx},+{dz}", flush=True)
+                found = True
+                break
+        if not found:
+            raise RuntimeError(f"Sem piso natural com 2 blocos de ar perto de X={x} Z={z}")
 
 print("Chunks e heightmaps azuis validados em cinco coordenadas.", flush=True)
