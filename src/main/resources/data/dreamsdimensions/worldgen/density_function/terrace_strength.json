@@ -8,7 +8,7 @@
       "type": "minecraft:clamp",
       "input": {
         "type": "minecraft:mul",
-        "left": 3.3,
+        "left": 3.9,
         "right": {
           "type": "minecraft:sub",
           "left": {
@@ -19,7 +19,7 @@
             "shift_x": "dreamsdimensions:warp_x",
             "shift_z": "dreamsdimensions:warp_z"
           },
-          "right": 0.015
+          "right": -0.06
         }
       },
       "min": 0,

@@ -56,6 +56,29 @@ with socket.create_connection((HOST, PORT), timeout=15) as conn:
         send(conn, request_id, 2, command)
         answer_id, _, response = receive(conn)
         print(f"{command}: {response}", flush=True)
+        if "positioned over" in command and not response:
+            prefix = command.split(" positioned over ")[0] + " positioned over motion_blocking_no_leaves "
+            for y in (48, 64, 80, 96, 112, 128, 160):
+                for block_id in ("minecraft:air", "dreamsdimensions:blue_dream_stone",
+                                 "dreamsdimensions:blue_dream_grass"):
+                    cmd = f"execute in {blue} if block 0 {y} 0 {block_id} run forceload query 0 0"
+                    send(conn, 8000 + y + len(block_id), 2, cmd)
+                    _, _, observed = receive(conn)
+                    if observed:
+                        print(f"ABSOLUTE {cmd}: {observed}", flush=True)
+            for y_offset in (-3, -2, -1, 0, 1):
+                for block_id in (
+                    "minecraft:air", "minecraft:water", "minecraft:bedrock",
+                    "dreamsdimensions:blue_dream_grass",
+                    "dreamsdimensions:blue_dream_dirt",
+                    "dreamsdimensions:blue_dream_stone",
+                ):
+                    probe = prefix + f"if block ~ ~{y_offset} ~ {block_id} run forceload query 0 0"
+                    diag_id = 1000 + (y_offset + 3) * 10 + len(block_id)
+                    send(conn, diag_id, 2, probe)
+                    reply_id, _, evidence = receive(conn)
+                    if evidence:
+                        print(f"DIAGNOSTIC {probe}: {evidence}", flush=True)
         if answer_id != request_id or not response or any(
             word in response.lower() for word in forbidden
         ):

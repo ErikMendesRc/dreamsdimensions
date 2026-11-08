@@ -5,28 +5,44 @@
     "axis": "y",
     "coordinate": 0,
     "input": {
-      "type": "minecraft:div",
-      "left": {
-        "type": "minecraft:add",
-        "left": 28,
-        "right": {
-          "type": "minecraft:mul",
-          "left": 110,
+      "type": "minecraft:clamp",
+      "input": {
+        "type": "minecraft:div",
+        "left": {
+          "type": "minecraft:add",
+          "left": 50,
           "right": {
             "type": "minecraft:add",
             "left": {
-              "type": "minecraft:noise",
-              "noise": "dreamsdimensions:terrace_elevation",
-              "xz_scale": 1,
-              "y_scale": 0,
-              "shift_x": "dreamsdimensions:warp_x",
-              "shift_z": "dreamsdimensions:warp_z"
+              "type": "minecraft:mul",
+              "left": 92,
+              "right": {
+                "type": "minecraft:noise",
+                "noise": "dreamsdimensions:terrace_broad",
+                "xz_scale": 1,
+                "y_scale": 0,
+                "shift_x": "dreamsdimensions:warp_x",
+                "shift_z": "dreamsdimensions:warp_z"
+              }
             },
-            "right": 0.2
+            "right": {
+              "type": "minecraft:mul",
+              "left": 20,
+              "right": {
+                "type": "minecraft:noise",
+                "noise": "dreamsdimensions:terrace_elevation",
+                "xz_scale": 1,
+                "y_scale": 0,
+                "shift_x": "dreamsdimensions:warp_x",
+                "shift_z": "dreamsdimensions:warp_z"
+              }
+            }
           }
-        }
+        },
+        "right": 18
       },
-      "right": 14
+      "min": 0.65,
+      "max": 8.8
     }
   }
 }
