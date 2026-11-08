@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:mul",
+  "left": 14,
+  "right": {
+    "type": "minecraft:add",
+    "left": {
+      "type": "minecraft:floor",
+      "input": "dreamsdimensions:terrace_units"
+    },
+    "right": {
+      "type": "minecraft:mul",
+      "left": {
+        "type": "minecraft:square",
+        "input": "dreamsdimensions:terrace_ramp"
+      },
+      "right": {
+        "type": "minecraft:sub",
+        "left": 3,
+        "right": {
+          "type": "minecraft:mul",
+          "left": 2,
+          "right": "dreamsdimensions:terrace_ramp"
+        }
+      }
+    }
+  }
+}

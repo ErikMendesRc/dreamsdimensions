@@ -32,6 +32,7 @@ import java.util.Optional;
  */
 public final class DreamSpawnHelper {
     private static final int NATURAL_SEARCH_RADIUS = 12;
+    private static final int BLUE_NATURAL_SEARCH_RADIUS = 24;
     private static final int PLATFORM_RADIUS = 2; // Plataforma 5x5
     private static final int[] PLATFORM_OFFSETS = {0, 6, -6, 12, -12};
     private static final int MAX_PLATFORM_RISE = 32;
@@ -39,22 +40,24 @@ public final class DreamSpawnHelper {
     private DreamSpawnHelper() {}
 
     public static Optional<Vec3> findOrCreateSafeArrival(ServerLevel level, BlockPos origin, ServerPlayer player) {
-        Optional<Vec3> natural = findNaturalArrival(level, origin, player);
+        int radius = isBlueDream(level) ? BLUE_NATURAL_SEARCH_RADIUS : NATURAL_SEARCH_RADIUS;
+        Optional<Vec3> natural = findNaturalArrival(level, origin, player, radius);
         if (natural.isPresent()) {
+            DreamsDimensions.LOGGER.debug("Superfície natural encontrada em {}: {}", level.dimension(), natural.get());
             return natural;
         }
 
         DreamsDimensions.LOGGER.warn(
                 "Sem superfície natural segura em {} perto de {} (raio {}). Tentando criar área de chegada.",
-                level.dimension(), origin, NATURAL_SEARCH_RADIUS
+                level.dimension(), origin, radius
         );
         return createArrivalPlatform(level, origin, player);
     }
 
-    private static Optional<Vec3> findNaturalArrival(ServerLevel level, BlockPos origin, ServerPlayer player) {
+    private static Optional<Vec3> findNaturalArrival(ServerLevel level, BlockPos origin, ServerPlayer player, int searchRadius) {
         // O heightmap retorna o primeiro bloco livre ACIMA do terreno, mas
         // pode indicar o fundo do mundo quando a região é inteiramente vazia.
-        for (int radius = 0; radius <= NATURAL_SEARCH_RADIUS; radius++) {
+        for (int radius = 0; radius <= searchRadius; radius++) {
             for (int dx = -radius; dx <= radius; dx++) {
                 for (int dz = -radius; dz <= radius; dz++) {
                     if (radius != 0 && Math.abs(dx) != radius && Math.abs(dz) != radius) {
@@ -148,10 +151,14 @@ public final class DreamSpawnHelper {
         return Optional.empty();
     }
 
-    private static BlockState getDimensionFloor(ServerLevel level) {
+    private static boolean isBlueDream(ServerLevel level) {
         Identifier blue = Identifier.fromNamespaceAndPath(DreamsDimensions.MODID, "campo_onirico_azul");
         ResourceKey<Level> blueKey = ResourceKey.create(Registries.DIMENSION, blue);
-        Block block = level.dimension().equals(blueKey)
+        return level.dimension().equals(blueKey);
+    }
+
+    private static BlockState getDimensionFloor(ServerLevel level) {
+        Block block = isBlueDream(level)
                 ? ModBlocks.BLUE_DREAM_STONE.get()
                 : ModBlocks.SERENE_STONE_BLOCK.get();
         return block.defaultBlockState();

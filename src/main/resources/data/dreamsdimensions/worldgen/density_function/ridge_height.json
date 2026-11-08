@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:cache",
+  "input": {
+    "type": "minecraft:slice",
+    "axis": "y",
+    "coordinate": 0,
+    "input": {
+      "type": "minecraft:add",
+      "left": {
+        "type": "minecraft:add",
+        "left": 30,
+        "right": {
+          "type": "minecraft:mul",
+          "left": 124,
+          "right": {
+            "type": "minecraft:square",
+            "input": "dreamsdimensions:ridge_crest"
+          }
+        }
+      },
+      "right": {
+        "type": "minecraft:mul",
+        "left": 18,
+        "right": {
+          "type": "minecraft:noise",
+          "noise": "dreamsdimensions:ridge_weathering",
+          "xz_scale": 1,
+          "y_scale": 0,
+          "shift_x": "dreamsdimensions:warp_x",
+          "shift_z": "dreamsdimensions:warp_z"
+        }
+      }
+    }
+  }
+}

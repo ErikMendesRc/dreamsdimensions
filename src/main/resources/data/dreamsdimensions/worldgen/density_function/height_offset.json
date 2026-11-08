@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:cache",
+  "input": {
+    "type": "minecraft:slice",
+    "axis": "y",
+    "coordinate": 0,
+    "input": {
+      "type": "minecraft:lerp",
+      "alpha": "dreamsdimensions:mist_strength",
+      "first": {
+        "type": "minecraft:lerp",
+        "alpha": "dreamsdimensions:terrace_strength",
+        "first": "dreamsdimensions:wave_height",
+        "second": "dreamsdimensions:terrace_height"
+      },
+      "second": "dreamsdimensions:ridge_height"
+    }
+  }
+}
