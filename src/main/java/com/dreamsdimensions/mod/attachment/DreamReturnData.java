@@ -7,7 +7,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -33,17 +32,14 @@ public final class DreamReturnData {
             yaw.orElse(null)
     )));
 
-    @Nullable
     private ResourceKey<Level> dimension;
-    @Nullable
     private BlockPos pos;
-    @Nullable
     private Float yaw;
 
     public DreamReturnData() {
     }
 
-    private DreamReturnData(@Nullable ResourceKey<Level> dimension, @Nullable BlockPos pos, @Nullable Float yaw) {
+    private DreamReturnData(ResourceKey<Level> dimension, BlockPos pos, Float yaw) {
         this.dimension = dimension;
         this.pos = pos;
         this.yaw = yaw;
@@ -59,12 +55,10 @@ public final class DreamReturnData {
         return dimension != null && pos != null;
     }
 
-    @Nullable
     public ResourceKey<Level> getDimension() {
         return dimension;
     }
 
-    @Nullable
     public BlockPos getPos() {
         return pos;
     }
