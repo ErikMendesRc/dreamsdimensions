@@ -7,6 +7,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        seed: [14011, 20261108, -904732]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,15 +27,15 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: dreamsdimensions-26.3
+          name: dreamsdimensions-26.3-seed-${{ matrix.seed }}
           path: build/libs/*.jar
           if-no-files-found: error
       - name: Smoke test - initialize a dedicated server and load datapacks
-        timeout-minutes: 4
+        timeout-minutes: 6
         shell: bash
         run: |
           mkdir -p run runs/server
-          printf 'enable-rcon=true\nrcon.port=25575\nrcon.password=dd-ci-local-only\nserver-ip=127.0.0.1\nonline-mode=false\n' > server.properties
+          printf 'enable-rcon=true\nrcon.port=25575\nrcon.password=dd-ci-local-only\nserver-ip=127.0.0.1\nonline-mode=false\nseed=${{ matrix.seed }}\n' > server.properties
           cp server.properties run/server.properties
           cp server.properties runs/server/server.properties
           printf 'eula=true\n' > eula.txt
@@ -71,6 +75,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: server-smoke-log
+          name: server-smoke-log-seed-${{ matrix.seed }}
           path: server-smoke.log
           if-no-files-found: ignore

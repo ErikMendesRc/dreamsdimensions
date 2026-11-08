@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:sub",
+  "left": "dreamsdimensions:terrace_units",
+  "right": {
+    "type": "minecraft:floor",
+    "input": "dreamsdimensions:terrace_units"
+  }
+}

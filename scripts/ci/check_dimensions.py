@@ -48,26 +48,50 @@ with socket.create_connection((HOST, PORT), timeout=15) as conn:
     else:
         raise RuntimeError("Não foi recebido o pacote de autenticação RCON")
 
-    for index, dimension in enumerate(DIMENSIONS):
-        command = f"execute in {dimension} run forceload add 0 0"
-        request_id = 100 + index
+    blue = "dreamsdimensions:campo_onirico_azul"
+    points = [(0, 0), (256, 256), (-320, 192), (640, -384), (-640, -576)]
+    locations = [("dreamsdimensions:dreamscape", 0, 0)] + [(blue, x, z) for x, z in points]
+
+    def checked_command(request_id, command, forbidden):
         send(conn, request_id, 2, command)
-        answer_id, answer_type, response = receive(conn)
+        answer_id, _, response = receive(conn)
         print(f"{command}: {response}", flush=True)
         if answer_id != request_id or not response or any(
-            word in response.lower() for word in ("unknown", "incorrect", "error", "not found", "failed")
+            word in response.lower() for word in forbidden
         ):
-            raise RuntimeError(f"Não foi possível carregar chunk em {dimension}: {response}")
+            raise RuntimeError(f"Falha de worldgen: {command}: {response}")
+        return response
 
-    # Os dois chunks devem continuar carregados durante o processamento do servidor.
-    time.sleep(8)
-    for index, dimension in enumerate(DIMENSIONS):
-        command = f"execute in {dimension} run forceload query 0 0"
-        request_id = 200 + index
-        send(conn, request_id, 2, command)
-        answer_id, answer_type, response = receive(conn)
-        print(f"{command}: {response}", flush=True)
-        if answer_id != request_id or not response or "not" in response.lower():
-            raise RuntimeError(f"Chunk não está forceloaded em {dimension}: {response}")
+    for index, (dimension, x, z) in enumerate(locations):
+        checked_command(100 + index, f"execute in {dimension} run forceload add {x} {z}",
+                        ("unknown", "incorrect", "error", "not found", "failed"))
+    time.sleep(12)
+    for index, (dimension, x, z) in enumerate(locations):
+        checked_command(200 + index, f"execute in {dimension} run forceload query {x} {z}",
+                        ("not", "unknown", "failed", "error"))
+    for index, (x, z) in enumerate(points):
+        base = (
+            f"execute in {blue} positioned {x} 0 {z} "
+            "positioned over motion_blocking_no_leaves "
+        )
+        probes = [
+            ("heightmap", ""),
+            ("blue_floor", "if block ~ ~-1 ~ #dreamsdimensions:blue_natural_ground "),
+            ("headroom", "if block ~ ~ ~ minecraft:air if block ~ ~1 ~ minecraft:air "),
+        ]
+        for offset, (name, condition) in enumerate(probes):
+            # Execute conditions have no reliable RCON success text without "run".
+            # Reuse the already-marked forceload query as a non-destructive
+            # success marker; a failed predicate yields an empty reply.
+            command = base + condition + f"run forceload query {x} {z}"
+            response = checked_command(
+                300 + index * 3 + offset,
+                command,
+                ("failed", "unknown", "incorrect", "error"),
+            )
+            if "marked for force loading" not in response.lower():
+                raise RuntimeError(
+                    f"Probe {name} sem sucesso em X={x} Z={z}: {response!r}"
+                )
 
-print("As duas dimensões aceitaram carga de chunk.", flush=True)
+print("Chunks e heightmaps azuis validados em cinco coordenadas.", flush=True)
