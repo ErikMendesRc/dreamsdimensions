@@ -24,9 +24,9 @@ def read(path):
 biome = read(BASE / "biome/campo_onirico_azul.json")
 assert len(biome["features"]) == 10, "26.3 vegetal_decoration is stage 9"
 assert all(not stage for stage in biome["features"][:9])
-assert len(biome["features"][9]) == len(FEATURES)
+assert len(biome["features"][9]) == len(FEATURES) + 4, "Task 1.3 adds four formations"
 assert len(set(biome["features"][9])) == len(FEATURES), "duplicate biome features"
-assert set(biome["features"][9]) == {"dreamsdimensions:" + name for name in FEATURES}
+assert {"dreamsdimensions:" + name for name in FEATURES}.issubset(set(biome["features"][9]))
 for name, (form, count) in FEATURES.items():
     feature = read(BASE / "feature" / (name + ".json"))
     placed = read(BASE / "placed_feature" / (name + ".json"))
