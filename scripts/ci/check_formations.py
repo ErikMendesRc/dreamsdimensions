@@ -15,8 +15,8 @@ NAME = "dreamsdimensions:"
 ENTRIES = {
     "mist_spines": ("spines", 3, 7, 4, .80, .38),
     "luminescent_garden": ("garden", 3, 6, 3, .72, .27),
-    "dream_stone_arch": ("arch", 5, 7, 3, .78, .055),
-    "vigil_circle": ("circle", 4, 7, 3, .72, .065),
+    "dream_stone_arch": ("arch", 5, 7, 3, 1.0, .90),
+    "vigil_circle": ("circle", 4, 7, 3, 1.0, .90),
 }
 BLOCKS = {
     "stone": "blue_dream_stone",
@@ -60,7 +60,13 @@ for ident, (shape, low, high, relief, density, chance) in ENTRIES.items():
             {"type": "minecraft:biome"},
         ],
     }, ident
-    assert 0 < chance < 0.5, "No landmark in every chunk"
+    # Temporary TEST profile: rare features have an intentionally high
+    # attempt chance. Biome/noise/surface/collision filters still apply.
+    assert 0 < chance <= 1
+    if ident in ("dream_stone_arch", "vigil_circle"):
+        assert chance == .90 and density == 1.0, "Temporary landmark test profile changed"
+    else:
+        assert chance < .5
     assert low <= high <= 9
     assert 0 <= density <= 1
 

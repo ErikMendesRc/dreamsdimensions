@@ -10,5 +10,5 @@
   "min_size": 4,
   "max_size": 7,
   "max_relief": 3,
-  "density": 0.72
+  "density": 1
 }

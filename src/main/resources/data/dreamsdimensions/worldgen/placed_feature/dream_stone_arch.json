@@ -3,7 +3,7 @@
   "placement": [
     {
       "type": "minecraft:random_chance",
-      "chance": 0.055
+      "chance": 0.9
     },
     {
       "type": "minecraft:in_square"
