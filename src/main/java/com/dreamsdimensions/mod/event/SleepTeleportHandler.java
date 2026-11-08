@@ -125,7 +125,7 @@ public final class SleepTeleportHandler {
 
         if (targets.isEmpty()) {
             DreamsDimensions.LOGGER.warn("Teleporte onírico bloqueado: nenhuma dimensão configurada está carregada.");
-            player.displayClientMessage(Component.literal("Dreams Dimensions: nenhuma dimensão dos sonhos está disponível."), false);
+            player.sendSystemMessage(Component.literal("Dreams Dimensions: nenhuma dimensão dos sonhos está disponível."));
             return false;
         }
 
@@ -170,8 +170,8 @@ public final class SleepTeleportHandler {
             }
         }
 
-        player.displayClientMessage(Component.literal(
-                "Dreams Dimensions: não encontrei um local seguro nas dimensões dos sonhos. Consulte latest.log."), false);
+        player.sendSystemMessage(Component.literal(
+                "Dreams Dimensions: não encontrei um local seguro nas dimensões dos sonhos. Consulte latest.log."));
         return false;
     }
 
