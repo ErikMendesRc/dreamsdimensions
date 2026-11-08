@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "dreamsdimensions:blue_dream_grass",
+    "dreamsdimensions:blue_dream_dirt",
+    "dreamsdimensions:blue_dream_stone",
+    "dreamsdimensions:blue_dream_cobblestone"
+  ]
+}

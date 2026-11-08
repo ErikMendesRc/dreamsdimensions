@@ -11,7 +11,21 @@ A dimensão preserva IDs e mantém a geometria isolada no `campo_onirico_azul_no
 - `spawn_target` procura um vale com pouco relevo rochoso.
 - `material_rule/campo_onirico_azul_surface`: bedrock natural na base, grama azul no topo caminhável, terra azul superficial e pedra azul nos paredões e subsolo. Todas as regras são data-driven; nenhum codec Java.
 
-## Diagnóstico do spawn
+## Diagnóstico do spawn — causa confirmada no Minecraft 26.3
+O Minecraft 26.3 introduziu os tags `#minecraft:blocks_motion_in_heightmap` e
+`#minecraft:blocks_motion_in_heightmap_no_leaves`. O código antigo não adicionava
+nenhum dos quatro blocos azuis a esses tags. No CI com três seeds o
+`positioned over motion_blocking_no_leaves` apontava para bedrock na base
+enquanto logo acima havia `blue_dream_stone`, confirmando uma discrepância entre
+densidade presente e heightmap. Os quatro blocos foram adicionados (com
+`replace:false`) aos dois tags de heightmap e aos tags
+`#minecraft:blocks_motion` e `#minecraft:blocks_motion_no_leaves`, para preservar
+a lógica de colisão e movimento prevista na 26.3.
+
+Referências oficiais: https://www.minecraft.net/en-us/article/minecraft-26-3-snapshot-1
+e https://feedback.minecraft.net/hc/en-us/articles/46861657001101-Minecraft-Java-Edition-26-3-Snapshot-1
+
+## Investigação anterior do spawn
 A lógica anterior consultava `MOTION_BLOCKING_NO_LEAVES` dentro de raio 12 e descartava colunas com água, piso sem colisão ou falta de espaço. A densidade de `sloped_cheese` e cavernas do Overworld pode explicar áreas sem superfície, mas os logs anteriores não permitem atribuir o problema a um filtro específico. O raio agora é 24 só para Campo Azul; o fallback 5x5 é preservado. Não reutilize chunks legados para a validação geomorfológica.
 
 ## CI e limites
