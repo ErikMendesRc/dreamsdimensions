@@ -52,6 +52,7 @@ public class DreamsDimensions {
         NeoForge.EVENT_BUS.addListener(DreamDimensionEffectsHandler::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(DreamReturnAttachmentHandler::onPlayerSetSpawn);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerWakeUp);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerLoggedOut);
 
         LOGGER.info("Registros e listeners de Dreams Dimensions configurados.");
