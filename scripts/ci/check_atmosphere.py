@@ -32,7 +32,7 @@ assert biome["attributes"]["minecraft:visual/sky_color"] == "#9bdcfd"
 assert biome["attributes"]["minecraft:visual/fog_color"] == "#b6e2ff"
 assert biome["attributes"]["minecraft:visual/water_fog_color"] == "#050533"
 assert len(biome["features"][9]) == 9
-assert not any((RESOURCE / "worldgen/biome/dreamscape.json").read_text(encoding="utf-8").find(x) >= 0
+assert not any((RESOURCE / "worldgen/biome/dreamscape_biome.json").read_text(encoding="utf-8").find(x) >= 0
                for x in ("minecraft:visual/fog_start_distance", "minecraft:visual/fog_end_distance"))
 assert len(list(CLIENT.glob("*.java"))) == 5
 profile = (CLIENT / "AtmosphereProfile.java").read_text(encoding="utf-8")
