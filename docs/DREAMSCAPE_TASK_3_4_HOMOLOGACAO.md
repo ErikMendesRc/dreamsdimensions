@@ -36,8 +36,9 @@ suficiente; a prevalência real depende de amostragem em mundos gerados.
 
 ## 2. Correção cirúrgica: volume geológico de ponte
 
-Criado um único density function:
-`worldgen/density_function/dreamscape_bridge_deck.json`.
+Criadas duas funções de densidade dedicadas às pontes:
+`worldgen/density_function/dreamscape_bridge_deck.json` e
+`worldgen/density_function/dreamscape_bridge_halo.json`.
 O valor é o mínimo de quatro termos:
 
 ```text
@@ -51,6 +52,10 @@ R = min(
 
 A densidade final fica
 `max(max(mainland - fracture_excavation, R), island_volume)`.
+O halo é calculado com a máscara de fratura antiga e a mesma isocurva
+de fault-spine, mas amplia somente a meia-largura do selecionador
+de pontes de `0.15` para `0.23`. A escavação do terreno existente
+**não é alterada**.
 Numa interseção regional positiva, `R` pode ser positivo em
 uma banda vertical cuja espessura vai diminuindo nas bordas;
 é permitido criar pedra atravessando a parte superior de
@@ -58,16 +63,20 @@ uma fenda, enquanto o vão abaixo permanece no campo
 continental original. Nas bordas sem fratura, o continente
 intacto permanece o próprio ponto de apoio.
 
-**O perfil foi afinado após a primeira sondagem real:** a tentativa inicial com gradientes 94–110 e 115–144 era espessa demais; em duas seeds instrumentadas havia de 0 a 5 colunas com vazio profundo por janela, sempre 0 pontes confirmadas. O novo intervalo 108–128 cria uma camada mais fina, aproximadamente Y112–120 onde o campo horizontal é positivo, deixando ar abaixo quando existe uma fratura verdadeira. A existência de travessias continua dependendo da nova sondagem.\n\n**Intencionalmente não é uma estrada gerada por feature.** O
+**O perfil foi afinado após a primeira sondagem real:** a tentativa inicial com gradientes 94–110 e 115–144 era espessa demais; em duas seeds instrumentadas havia de 0 a 5 colunas com vazio profundo por janela, sempre 0 pontes confirmadas. O novo intervalo 108–128 cria uma camada mais fina, aproximadamente Y112–120 onde o campo horizontal é positivo, deixando ar abaixo quando existe uma fratura verdadeira. A existência de travessias continua dependendo da sondagem
+dos blocos reais.
+
+**Intencionalmente não é uma estrada gerada por feature.** O
 campo é suave e baseado em ruído; formações variam com o contorno
 da fratura, a zona do ruído e a interpolação 4×4 existentes.
 A operação `min` evita uma placa positiva generalizada:
-se `bridge_strength≤0.42`, `fracture_activity≤0.03` ou
+se `bridge_strength≤0.28`, `bridge_halo≤0.03` ou
 a máscara vertical for negativa, não existe contribuição
 sólida de ponte nessa coordenada.
 
-**Ajuste mínimo:** somente `dreamscape_solid_density.json`
-foi composto com a nova função. `dreamscape_fracture_excavation`,
+**Ajuste mínimo:** somente `dreamscape_solid_density.json` foi
+composto com a nova função de volume, e foi acrescentado um halo
+de fraturas específico para pontes. `dreamscape_fracture_excavation`,
 todas as fraturas, `bridge_strength`, material rules,
 `noise_settings` e `spawn_target` permaneceram inalterados.
 Não foram criados blocos, mobs, itens, assets, triggers ou
@@ -79,8 +88,7 @@ As três density functions de ilhas e seus três ruídos foram comparados
 **byte por byte** com seus Git blob SHA-1 do baseline; o novo script
 `check_dreamscape_homologation.py` impede alterações acidentais.
 
-Em `Y≥140`, o gradiente superior fixa
-`R≤3−7×(25/29)≈−3.034`, estritamente negativo,
+Em `Y≥140`, o gradiente superior já fixou `R = -4` ou inferior (por `min`), estritamente negativo,
 independentemente da seed ou dos ruídos. Portanto:
 - `max(old_density,R)` não pode converter qualquer voxel
   anterior não sólido (≤0) em sólido (>0) nessa faixa.
@@ -189,9 +197,14 @@ continuamente em produção.
 
 `scripts/ci/check_dreamscape_homologation.py` executa assertivos
 estáticos com dependências do `check_dreamscape_geography.py`
-original; oferece também `--rcon` com três janelas de exploração
-por seed, centradas em `(256,256)`, `(-320,192)` e
-`(544,-384)`, de raio 56.
+original; oferece também `--rcon --expected-seed N` com até **dez**
+janelas fixas por seed, raio 56 e parada antecipada somente após
+duas travessias confirmadas. As três primeiras são
+`(256,256)`, `(-320,192)` e `(544,-384)`, seguidas de
+`(-640,-480)`, `(768,640)`, `(-896,256)`,
+`(1024,-256)`, `(1440,192)`, `(-1152,-768)`,
+`(128,1024)`. A sonda pode falhar em encontrar pontes fora
+das janelas, alturas Y100..138 ou orientações X/Z.
 
 Os scripts anteriores **não foram removidos**:
 `check_vegetation.py`, `check_formations.py`,
@@ -216,29 +229,90 @@ Os resultados de testes automatizados cobrem:
 - Smoke com servidor dedicado, quatro seeds, logs reais de
   geração de ecossistema e sondagem topológica.
 
-### Evidência de execução
+### Evidência de execução — seed real verificada
 
-**Pendente ao redigir:** inspeção do GitHub Actions que contém o
-código compilado e o diagnóstico RCON para as quatro seeds.
-Substituir esta seção pelos resultados **reais** (inclusive zero).
+**A correção do CI é indispensável:** até o início desta task o workflow
+escrevia `seed=${{ matrix.seed }}` em `server.properties`, propriedade
+que NÃO fixa a seed do Minecraft. Desde a revisão da Task 3.4, a CI usa
+**`level-seed=${{ matrix.seed }}`** e cada job lê `/seed` via RCON,
+rejeitando diferenças. Isso invalida os **rótulos de seed** das
+contagens de mundo dos jobs mais antigos (Tasks 3.1–3.3), mas NÃO
+invalida seus resultados de compilação, carregamento de datapacks
+ou teste da API. Somente os resultados com `DREAMSCAPE_SEED_VERIFIED`
+abaixo são apresentados como evidência atrelada a uma seed.
 
-| Seed | JDK 25/build | Datapacks/servidor | Traçados com dois apoios | Coordenadas verificadas |
-|---|---|---|---:|---|
-| 14011 | PENDENTE | PENDENTE | PENDENTE | — |
-| 20261108 | PENDENTE | PENDENTE | PENDENTE | — |
-| -904732 | PENDENTE | PENDENTE | PENDENTE | — |
-| 73199013 | PENDENTE | PENDENTE | PENDENTE | — |
+Versão final com halo `0.23` e força da ponte `5(S−0.28)`:
+[GitHub Actions run 42637169718](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42637169718)
+e [repetição 42637188070](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42637188070),
+commit `2d51bd57e8e234e44a75df7ab6843472130e587e`.
+**Ambas concluíram com `success` nas quatro seeds**, incluindo:
+`./gradlew --no-daemon clean build` com Java 25, JUnit, scripts
+estáticos existentes e novos, preflight de assets, servidor NeoForge
+dedicado, datapacks, sondas anteriores e a nova topologia RCON.
 
-O script conta **ocorrências amostradas**, nunca projeta
-frequência global por chunk a partir de poucas sondas.
+| Seed real (RCON) | Build/servidor | Janelas verificadas | Traçados com 2 apoios + 6-conectividade | Centros X,Y,Z |
+|---|---|---:|---:|---|
+| `14011` | PASS | 10 | **0** | Nenhum na amostra |
+| `20261108` | PASS | 10 | **1** | **(-1118, 120, -800)** |
+| `-904732` | PASS | 3 (parada antecipada) | **2** | **(576, 120, -385)** e **(583, 120, -366)** |
+| `73199013` | PASS | 10 | **1** | **(-298, 120, 223)** |
+
+**Centros e apoios do último código testado:**
+
+| Seed | Centro | Margem A | Margem B | Direção |
+|---|---|---|---|---|
+| 20261108 | (-1118,120,-800) | (-1128,120,-800) | (-1110,120,-800) | X |
+| -904732 | (576,120,-385) | (575,123,-393) | (576,121,-368) | Z |
+| -904732 | (583,120,-366) | (583,121,-389) | (584,122,-358) | Z |
+| 73199013 | (-298,120,223) | (-298,120,212) | (-298,120,235) | Z |
+
+Todos os quatro registros incluem `void_at_center=12,20_below`,
+`headroom=2`, `continuous_walk=yes`,
+`rock6_connected=yes` e pelo menos 3 passos com vazio
+**em cada lado**. As duas execuções independentes produziram
+**os mesmos quatro centros, margens, seeds e contagens**.
+Isto valida trajetos em blocos reais para as regiões amostradas,
+não a aparência artística e nem uma frequência por chunk.
+
+**Meta ainda não atingida integralmente:** na seed `14011`,
+nenhuma travessia passou pelo critério estrito nas dez janelas.
+Uma janela nessa seed apresentou centenas de colunas com vazio
+inferior, porém sem caminho contínuo de apoio a apoio; ela
+**não prova inexistência de pontes** fora da amostra. Não foi
+feito aumento indiscriminado de frequência ou reconfiguração
+das ilhas apenas para produzir uma estatística melhor.
+
+**Progresso registrado e limitações do diagnóstico:** a revisão
+anterior ao halo tinha os valores `14011: 0`,
+`20261108: 1`, `-904732: 2` e `73199013: 0`
+com as mesmas seeds reais. O halo permitiu uma travessia
+verificada em `73199013` sem alterar as três funções das ilhas.
+O scanner aceita trajetos aproximadamente X/Z, com tolerância de
+curvatura lateral pequena; não é verificador universal de
+estrutura geológica ou de conexões para todo o mapa.
+
+**Estado da homologação:**
+- Compilação/Java25, datapacks, servidor e regressões estáticas:
+  **APROVADOS** (4/4 seeds, 2 execuções).
+- Ponte topológica real: **COMPROVADA em 3/4 seeds amostradas**
+  (4 traçados), não certificada globalmente.
+- Ilhas suspensas: os 6 hashes JSON de origem e a decisão
+  sólido/ar no envelope Y≥140 são preservados; aprovação
+  visual anterior do jogador mantida, mas nenhuma comparação
+  visual automatizada foi executada.
+- Gameplay visual, navegação em Survival, efeito de áudio/névoa
+  em cliente, FPS/MSPT comparável e multiplayer: **PENDENTES**.
+
+Não houve apagamento nem conversão de saves existentes. Mudanças
+de worldgen exigem chunks não gerados ou mundo novo para comparação.
 
 ## 5. Custo de geração / benchmark
 
 O novo campo reusa dois campos 2D `cache+slice` anteriores
-e dois gradientes Y. Não adiciona nenhum `NormalNoise`,
-nova interpolação ou `Feature.place`; custa um `max` e
-quatro operadores de mínimo, mais aritmética local nas células
-evaluadas. Trata-se de justificativa de complexidade, **não**
+e dois gradientes Y. Não adiciona nenhum `NormalNoise`, nova interpolação ou
+`Feature.place`; custa dois `max`, poucos `min` e
+aritmética local nas amostras, incluindo um `cache+slice`
+para o halo de fratura. Trata-se de justificativa de complexidade, **não**
 uma medida precisa de geração de chunk.
 
 O diagnóstico topológico roda somente em processo CI opt-in
@@ -284,9 +358,10 @@ benchmark confiável de otimização.
       após atualização do datapack.
 
 **Pendências para iniciar Task 4.1 — Criaturas Oníricas:**
-aceitar as pontes em cliente, comprovar frequência suficiente
-em regiões exploráveis, verificar suporte e percurso em survival
-e medir custo de chunks/performance. Build verde e smoke RCON
+aceitar visualmente as pontes em cliente, avaliar a frequência
+na seed `14011` (0 traçados nas janelas amostradas), verificar
+percurso em survival, FPS/MSPT e custo de geração sob condições
+comparáveis. Build verde e smoke RCON
 **não substituem** essas homologações.
 
 ## Referências
