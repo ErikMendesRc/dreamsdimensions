@@ -2,6 +2,7 @@ package com.dreamsdimensions.mod;
 
 import com.dreamsdimensions.mod.config.DreamsConfig;
 import com.dreamsdimensions.mod.dimension.DreamDimensionCatalog;
+import com.dreamsdimensions.mod.diagnostics.DreamscapeBridgeAuditCommand;
 import com.dreamsdimensions.mod.event.CommonEvents;
 import com.dreamsdimensions.mod.event.DreamDimensionEffectsHandler;
 import com.dreamsdimensions.mod.event.DreamReturnAttachmentHandler;
@@ -37,6 +38,11 @@ public class DreamsDimensions {
         DreamWorldgen.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
+
+        // Read-only test-server diagnostics; absent in normal mod startup.
+        if (Boolean.getBoolean("dreamsdimensions.enableBridgeAudit")) {
+            NeoForge.EVENT_BUS.addListener(DreamscapeBridgeAuditCommand::register);
+        }
 
         NeoForge.EVENT_BUS.addListener(CommonEvents::onServerStarting);
         NeoForge.EVENT_BUS.addListener(DreamDimensionEffectsHandler::onPlayerTick);
