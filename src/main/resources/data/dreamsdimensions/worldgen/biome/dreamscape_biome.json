@@ -2,7 +2,27 @@
   "attributes": {
     "minecraft:visual/sky_color": "#9e0200",
     "minecraft:visual/fog_color": "#db5b8f",
-    "minecraft:visual/water_fog_color": "#050533"
+    "minecraft:visual/water_fog_color": "#050533",
+    "minecraft:gameplay/natural_mob_spawns": {
+      "argument": {
+        "spawns_by_category": {
+          "creature": [
+            {
+              "type": "dreamsdimensions:fragmento_errante",
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 2,
+                "max_inclusive": 3
+              },
+              "weight": 100
+            }
+          ]
+        },
+        "spawn_costs": {}
+      },
+      "modifier": "overlay"
+    },
+    "minecraft:gameplay/creature_world_gen_spawn_probability": 0.34
   },
   "has_precipitation": false,
   "temperature": 0.8,

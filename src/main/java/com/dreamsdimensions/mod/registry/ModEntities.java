@@ -4,6 +4,10 @@ import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.entity.FragmentoErranteEntity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
+import com.dreamsdimensions.mod.entity.FragmentoIslandHabitat;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -11,7 +15,7 @@ import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
-/** Registers the first oniric mob, without enabling natural spawning. */
+/** Registers the Fragmento Errante and its island-only natural spawn rule. */
 @EventBusSubscriber(modid = DreamsDimensions.MODID)
 public final class ModEntities {
     public static final DeferredRegister.Entities ENTITIES =
@@ -29,6 +33,15 @@ public final class ModEntities {
 
     public static void register(IEventBus modBus) {
         ENTITIES.register(modBus);
+    }
+
+    @SubscribeEvent
+    public static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
+        event.register(FRAGMENTO_ERRANTE.get(),
+                SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                FragmentoIslandHabitat::maySpawn,
+                RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 
     @SubscribeEvent
