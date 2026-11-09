@@ -12,7 +12,10 @@
     "minecraft:gameplay/can_start_raid": false,
     "minecraft:gameplay/piglins_zombify": true,
     "minecraft:gameplay/water_evaporates": false,
-    "minecraft:gameplay/nether_portal_spawns_piglin": false
+    "minecraft:gameplay/nether_portal_spawns_piglin": false,
+    "minecraft:visual/fog_start_distance": 42,
+    "minecraft:visual/fog_end_distance": 190,
+    "minecraft:visual/sky_fog_end_distance": 235
   },
   "coordinate_scale": 1,
   "default_clock": "minecraft:overworld",

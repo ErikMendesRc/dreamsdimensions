@@ -21,6 +21,11 @@ final class AtmosphereParticles {
     private static final DustParticleOptions CYAN_DUST = new DustParticleOptions(0xA0F5EF, 0.9F);
     private static final DustParticleOptions LUMINOUS_DUST = new DustParticleOptions(0xC5F8FF, 1.15F);
 
+    // Dreamscape: dusty rose + faded coral, much dimmer and less frequent than Blue.
+    private static final DustParticleOptions ROSE_DUST = new DustParticleOptions(0xDDA9C3, 0.78F);
+    private static final DustParticleOptions PALE_DUST = new DustParticleOptions(0xF1D4CE, 0.66F);
+    private static final DustParticleOptions MEMORY_DUST = new DustParticleOptions(0xF4C5DB, 0.92F);
+
     private AtmosphereParticles() {}
 
     static void tick(Minecraft client, ClientLevel level, LocalPlayer player,
@@ -38,6 +43,10 @@ final class AtmosphereParticles {
 
         RandomSource random = player.getRandom();
         BlockPos playerPos = player.blockPosition();
+        if (profile.theme() == AtmosphereProfile.Theme.DREAMSCAPE) {
+            dreamscapeTick(level, playerPos, profile, setting, random, tick);
+            return;
+        }
         int ambientCount = setting == ParticleStatus.DECREASED ? 2 : 4;
 
         // Colored vanilla dust around the viewer. The sample must be within a
@@ -90,6 +99,59 @@ final class AtmosphereParticles {
                         (random.nextDouble() - 0.5) * 0.008, 0.008,
                         (random.nextDouble() - 0.5) * 0.008);
             }
+        }
+    }
+
+    /**
+     * A separate palette and budget sharing the same tick dispatcher.
+     * ALL: <=3 ambient + <=2 rare accent per 28 ticks, rare every 112 ticks.
+     * DECREASED: <=1 ambient + <=1 rare accent per 56 ticks.
+     * MINIMAL is handled by the common gate before this method is called.
+     */
+    private static void dreamscapeTick(ClientLevel level, BlockPos playerPos,
+            AtmosphereProfile profile, ParticleStatus setting, RandomSource random, long tick) {
+        int ambientCount = setting == ParticleStatus.DECREASED ? 1 : 3;
+        for (int i = 0; i < ambientCount; i++) {
+            BlockPos sample = playerPos.offset(
+                    random.nextInt(15) - 7, random.nextInt(8) - 3, random.nextInt(15) - 7);
+            if (!isClearAir(level, sample)) continue;
+            level.addParticle(random.nextInt(7) == 0 ? ParticleTypes.WHITE_ASH
+                            : (random.nextBoolean() ? ROSE_DUST : PALE_DUST),
+                    sample.getX() + random.nextDouble(),
+                    sample.getY() + random.nextDouble(),
+                    sample.getZ() + random.nextDouble(),
+                    (random.nextDouble() - 0.5) * 0.006,
+                    0.001 + random.nextDouble() * 0.003,
+                    (random.nextDouble() - 0.5) * 0.006);
+        }
+        int cadence = profile.particleEveryTicks()
+                * (setting == ParticleStatus.DECREASED
+                    ? profile.decreasedParticleMultiplier() : 1);
+        if (tick % (cadence * 4L) != 0) return;
+
+        // Signal selection only after cheap time/particle-settings gates.
+        BlockPos residue = AtmosphereSampling.memoryResidueFloor(
+                level, playerPos, random, profile.maxParticleSamples(), profile.sampleRadius());
+        boolean fracture = residue == null && AtmosphereSampling.isDreamscapeFracture(level, playerPos);
+        boolean elevated = residue == null && !fracture
+                && AtmosphereSampling.isDreamscapeElevatedVoid(level, playerPos);
+        if (residue == null && !fracture && !elevated) return;
+
+        int accents = setting == ParticleStatus.DECREASED ? 1 : 2;
+        BlockPos base = residue != null ? residue.above() : playerPos;
+        for (int i = 0; i < accents; i++) {
+            BlockPos sample = base.offset(
+                    random.nextInt(7) - 3, 1 + random.nextInt(4), random.nextInt(7) - 3);
+            if (!isClearAir(level, sample)) continue;
+            level.addParticle(residue != null && random.nextInt(6) == 0
+                            ? ParticleTypes.END_ROD
+                            : (fracture ? PALE_DUST : MEMORY_DUST),
+                    sample.getX() + random.nextDouble(),
+                    sample.getY() + random.nextDouble(),
+                    sample.getZ() + random.nextDouble(),
+                    (random.nextDouble() - 0.5) * 0.007,
+                    elevated ? -0.002 : 0.002,
+                    (random.nextDouble() - 0.5) * 0.007);
         }
     }
 

@@ -38,7 +38,9 @@ public final class AtmosphereClientController {
             reset();
             lastLevel = level;
             lastProfile = profile;
-            DreamsDimensions.LOGGER.info("Campo Onírico Azul: atmosfera cliente ativa (partículas e áudio).");
+            AtmosphereAudio.begin(profile);
+            DreamsDimensions.LOGGER.info("{}: atmosfera cliente ativa (partículas e áudio).",
+                    profile.displayName());
         }
         if (client.isPaused()) return;
 

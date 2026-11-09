@@ -14,14 +14,27 @@ import net.minecraft.world.level.Level;
 public record AtmosphereProfile(ResourceKey<Level> dimension,
         int particleEveryTicks, int decreasedParticleMultiplier,
         int maxParticleSamples, int soundMinimumTicks, int soundJitterTicks,
-        int sampleRadius) {
+        int sampleRadius, Theme theme) {
+    /** A tiny, explicit strategy selector. Keeps the six original Blue budget values. */
+    public enum Theme { BLUE_FIELD, DREAMSCAPE }
+
+    public String displayName() {
+        return theme == Theme.BLUE_FIELD ? "Campo Onírico Azul" : "Dreamscape";
+    }
+
     public static final Identifier BLUE_ID = DreamDimensionCatalog.id("blue_field");
+    public static final Identifier DREAMSCAPE_ID = DreamDimensionCatalog.id("dreamscape_ambience");
     public static final AtmosphereProfile BLUE_FIELD = new AtmosphereProfile(
             DreamDimensionCatalog.BLUE_FIELD,
-            12, 2, 8, 160, 160, 8
+            12, 2, 8, 160, 160, 8, Theme.BLUE_FIELD
+    );
+    public static final AtmosphereProfile DREAMSCAPE = new AtmosphereProfile(
+            DreamDimensionCatalog.DREAMSCAPE,
+            28, 2, 4, 420, 240, 9, Theme.DREAMSCAPE
     );
     private static final Map<Identifier, AtmosphereProfile> PROFILES = Map.of(
-            BLUE_ID, BLUE_FIELD
+            BLUE_ID, BLUE_FIELD,
+            DREAMSCAPE_ID, DREAMSCAPE
     );
 
     public static Optional<AtmosphereProfile> find(Identifier id) {

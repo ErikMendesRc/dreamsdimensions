@@ -35,6 +35,56 @@ final class AtmosphereSampling {
                 && level.getBlockState(canopy).is(ModBlocks.DREAM_LEAVES_BLOCK.get());
     }
 
+    /** A cheap hint only: neighboring loaded heightmap columns differ sharply.
+     * Not a proof that the terrain contains a Task 3.1 fracture.
+     */
+    static boolean isDreamscapeFracture(ClientLevel level, BlockPos center) {
+        BlockPos east = center.offset(11, 0, 0);
+        BlockPos north = center.offset(0, 0, 11);
+        if (!level.hasChunkAt(center) || !level.hasChunkAt(east)
+                || !level.hasChunkAt(north)) return false;
+        int here = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                center.getX(), center.getZ());
+        int e = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                east.getX(), east.getZ());
+        int n = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                north.getX(), north.getZ());
+        return Math.max(Math.abs(here - e), Math.max(Math.abs(here - n), Math.abs(e - n))) >= 19;
+    }
+
+    /** A high, open void-like column. Height alone does not certify an island. */
+    static boolean isDreamscapeElevatedVoid(ClientLevel level, BlockPos playerPos) {
+        BlockPos below = playerPos.below(10);
+        BlockPos above = playerPos.above(6);
+        return playerPos.getY() >= 158
+                && level.hasChunkAt(playerPos) && level.hasChunkAt(below)
+                && level.hasChunkAt(above)
+                && level.getBlockState(below).isAir()
+                && level.getFluidState(below).isEmpty()
+                && level.getBlockState(above).isAir();
+    }
+
+    /** Prefer the nearest existing material, then at most maxSamples random
+     * loaded-chunk surface reads. Never requests chunk loading.
+     */
+    static BlockPos memoryResidueFloor(ClientLevel level, BlockPos center,
+            RandomSource random, int maxSamples, int radius) {
+        BlockPos under = center.below();
+        if (level.hasChunkAt(under) && isMemoryResidue(level, under)) return under;
+        for (int i = 0; i < maxSamples; i++) {
+            BlockPos floor = sampledFloor(level, center, random, radius);
+            if (floor != null && isMemoryResidue(level, floor)) return floor;
+        }
+        return null;
+    }
+
+    private static boolean isMemoryResidue(ClientLevel level, BlockPos floor) {
+        BlockPos above = floor.above();
+        return level.hasChunkAt(floor) && level.hasChunkAt(above)
+                && (isLuminous(level, floor)
+                    || level.getBlockState(above).is(ModBlocks.DREAM_FLOWER_BLOCK.get()));
+    }
+
     static boolean isValley(ClientLevel level, BlockPos position) {
         // Two distant height probes only; a hint for particles, not fog rewriting.
         int y = position.getY();

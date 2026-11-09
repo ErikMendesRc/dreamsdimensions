@@ -22,7 +22,7 @@ public final class DreamDimensionCatalog {
     private static final List<DreamDimensionDefinition> DEFINITIONS = List.of(
             new DreamDimensionDefinition(
                     DREAMSCAPE, true, 1, ModBlocks.SERENE_STONE_BLOCK, 12,
-                    DimensionEffectPolicy.NONE, Optional.empty(),
+                    DimensionEffectPolicy.NONE, Optional.of(id("dreamscape_ambience")),
                     Optional.of(new DreamDimensionDefinition.Transition(
                             Level.OVERWORLD, DreamDimensionDefinition.TransitionVisual.DREAM_MESSAGE))),
             new DreamDimensionDefinition(
