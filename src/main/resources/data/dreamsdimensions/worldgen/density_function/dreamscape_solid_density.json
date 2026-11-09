@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:max",
+  "left": {
+    "type": "minecraft:sub",
+    "left": "dreamsdimensions:dreamscape_mainland",
+    "right": "dreamsdimensions:dreamscape_fracture_excavation"
+  },
+  "right": "dreamsdimensions:dreamscape_island_volume"
+}

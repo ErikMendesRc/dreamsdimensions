@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:add",
+  "left": {
+    "type": "minecraft:add",
+    "left": {
+      "type": "minecraft:gradient",
+      "axis": "y",
+      "tiling": "clamp_to_edge",
+      "from_coordinate": 0,
+      "to_coordinate": 256,
+      "from_value": 9,
+      "to_value": -11
+    },
+    "right": {
+      "type": "minecraft:mul",
+      "left": 0.074,
+      "right": "dreamsdimensions:dreamscape_memory_height"
+    }
+  },
+  "right": {
+    "type": "minecraft:mul",
+    "left": 0.16,
+    "right": {
+      "type": "minecraft:noise",
+      "noise": "dreamsdimensions:dreamscape_rock_weathering",
+      "xz_scale": 1,
+      "y_scale": 0.65
+    }
+  }
+}

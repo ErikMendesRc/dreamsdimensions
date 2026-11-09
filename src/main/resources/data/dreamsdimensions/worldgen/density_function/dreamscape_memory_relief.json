@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:cache",
+  "input": {
+    "type": "minecraft:slice",
+    "axis": "y",
+    "coordinate": 0,
+    "input": {
+      "type": "minecraft:noise",
+      "noise": "dreamsdimensions:dreamscape_memory_relief",
+      "xz_scale": 1,
+      "y_scale": 0,
+      "shift_x": "dreamsdimensions:dreamscape_warp_x",
+      "shift_z": "dreamsdimensions:dreamscape_warp_z"
+    }
+  }
+}

@@ -33,6 +33,8 @@ jobs:
         run: python3 scripts/ci/check_atmosphere.py
       - name: Validate reusable dream engine (TASK 2.2)
         run: python3 scripts/ci/check_dream_engine.py
+      - name: Validate Dreamscape geography and graph (TASK 3.1)
+        run: python3 scripts/ci/check_dreamscape_geography.py
       - name: Upload mod JAR
         if: success()
         uses: actions/upload-artifact@v4
@@ -89,6 +91,7 @@ jobs:
           done
           if [ "$started" -eq 1 ]; then
             python3 scripts/ci/check_dimensions.py
+            python3 scripts/ci/check_dreamscape_geography.py --rcon
           fi
           if [ "$started" -ne 1 ]; then
             echo "::error::O servidor não concluiu a inicialização ou falhou ao carregar datapacks."
