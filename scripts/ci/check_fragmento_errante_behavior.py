@@ -4,7 +4,6 @@
 Static assertions are not substitutes for Java compilation or visual/MP tests.
 """
 import argparse
-import re
 import time
 from pathlib import Path
 import socket
@@ -99,9 +98,9 @@ def rcon():
         samples = []
         for index in range(5):
             observed = command(30 + index, f"execute in {dim} run data get entity @e[type=dreamsdimensions:fragmento_errante,limit=1,sort=nearest] Pos")
-            match = re.search(r"\\[[-+\\d.eE]+d,\\s*([-+\\d.eE]+)d,", observed)
-            assert match, observed
-            samples.append(float(match.group(1)))
+            positions = observed.partition("[")[2].partition("]")[0].split(",")
+            assert len(positions) == 3, observed
+            samples.append(float(positions[1].strip().removesuffix("d")))
             if index != 4:
                 time.sleep(0.35)
         amplitude = max(samples) - min(samples)
