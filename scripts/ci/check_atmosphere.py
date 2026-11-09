@@ -23,8 +23,11 @@ assert attributes["minecraft:visual/fog_end_distance"] == 170
 assert attributes["minecraft:visual/sky_fog_end_distance"] == 210
 assert 0 < attributes["minecraft:visual/fog_start_distance"] < attributes["minecraft:visual/fog_end_distance"]
 assert attributes["minecraft:visual/fog_end_distance"] <= attributes["minecraft:visual/sky_fog_end_distance"]
-assert "minecraft:visual/fog_start_distance" not in dreamscape.get("attributes", {})
-assert "minecraft:visual/fog_end_distance" not in dreamscape.get("attributes", {})
+# The Dreamscape now owns its independent fog trio in 3.3; the Blue numbers
+# and sky remain exactly the previously homologated baseline.
+assert dreamscape["attributes"]["minecraft:visual/fog_start_distance"] == 42
+assert dreamscape["attributes"]["minecraft:visual/fog_end_distance"] == 190
+assert dreamscape["attributes"]["minecraft:visual/sky_fog_end_distance"] == 235
 assert dimension["has_fixed_time"] is True
 assert dimension["timelines"] == "#minecraft:in_overworld"
 assert dimension["ambient_light"] == 1
@@ -64,6 +67,12 @@ assert "DustParticleOptions" in particles and "BLUE_DUST" in particles
 assert "playerPos.offset(" in particles, "Creative-flight ambient particle fallback is required"
 assert "isClearAir(level, sample)" in particles
 assert "random.nextInt(3) == 0" not in audio
-assert "dreamscape" not in profile
-assert "dreamscape" not in controller
-print("TASKS 2.1/2.2: 26.3 attributes, isolated client profiles, caps, sounds and particles OK (static).")
+# A second logical profile is expected after Task 3.3, but the Blue profile
+# and its sampling/emission cadence remain unchanged.
+assert 'BLUE_ID, BLUE_FIELD,' in profile
+assert 'DREAMSCAPE_ID, DREAMSCAPE' in profile
+assert 'DREAMSCAPE_ID = DreamDimensionCatalog.id("dreamscape_ambience")' in profile
+assert 'Theme.BLUE_FIELD' in profile and 'Theme.DREAMSCAPE' in profile
+assert 'profile.displayName()' in controller
+assert 'AtmosphereAudio.begin(profile)' in controller
+print("TASKS 2.1/2.2/3.3: Blue baseline preserved, two client profiles, bounded vanilla ambience OK (static).")
