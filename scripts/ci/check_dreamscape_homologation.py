@@ -29,7 +29,11 @@ ISLAND_BLOBS = {
     "noise/dreamscape_sky_contours.json": "e75cf33b2cec633b7700b6f17f4e5f33bd2d5db2",
     "noise/dreamscape_sky_weathering.json": "046a8f17a5938210dd3a6820af6ccda5ef494c68",
 }
-REGIONS = ((256, 256), (-320, 192), (544, -384))
+# Non-overlapping fixed windows; test-server-only, bounded search with
+# early stop after two verified transects. Never generalize counts per chunk.
+REGIONS = ((256, 256), (-320, 192), (544, -384),
+           (-640, -480), (768, 640), (-896, 256),
+           (1024, -256), (1440, 192), (-1152, -768), (128, 1024))
 DIM = "dreamsdimensions:dreamscape"
 
 
@@ -271,6 +275,10 @@ def server_checks():
             records.append((x, z, count, duration))
             print(f"DREAMSCAPE_AUDIT_REGION center={x},{z} radius={radius} "
                   f"confirmed={count} elapsed_seconds={duration}")
+            # Save CPU and chunk generation when a seed already has two
+            # distinct verified examples; early-stop evidence is explicit.
+            if sum(v for _, _, v, _ in records if v is not None) >= 2:
+                break
         confirmed = [count for _, _, count, _ in records if count is not None]
         print(f"TASK 3.4 RCON PASS: {len(records)} checked regions; "
               f"confirmed_transects={sum(confirmed)} "
