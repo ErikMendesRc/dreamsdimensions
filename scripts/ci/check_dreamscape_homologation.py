@@ -85,7 +85,7 @@ def check_static():
                                "right": .28}},
             "right": {"type": "minecraft:mul", "left": 9,
                       "right": {"type": "minecraft:sub",
-                                "left": PREFIX + "fracture_activity",
+                                "left": PREFIX + "bridge_halo",
                                 "right": .03}}
         },
         "right": {
@@ -98,6 +98,22 @@ def check_static():
                       "to_coordinate": 128, "from_value": 3, "to_value": -4}
         }
     }, "Bridge should remain a locally bounded density volume"
+    actual_halo = read(d / "dreamscape_bridge_halo.json")
+    original_width = read(d / "dreamscape_fracture_width.json")
+    expected_halo_width = json.loads(json.dumps(original_width["input"]["input"]))
+    assert expected_halo_width["input"]["right"]["left"]["left"] == .15
+    expected_halo_width["input"]["right"]["left"]["left"] = .23
+    assert actual_halo == {
+        "type": "minecraft:cache",
+        "input": {
+            "type": "minecraft:slice", "axis": "y", "coordinate": 0,
+            "input": {
+                "type": "minecraft:mul",
+                "left": PREFIX + "fracture_region",
+                "right": expected_halo_width
+            }
+        }
+    }, "Bridge halo must share the original fault spine and widen only the bridge"
     # The bridge term is always strictly negative above Y=140 for all
     # horizontal fields, so it cannot add a single stone voxel on the
     # preserved floating-island floor Y>=145; this is algebraic, not

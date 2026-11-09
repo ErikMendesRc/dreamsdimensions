@@ -43,7 +43,7 @@ O valor é o mínimo de quatro termos:
 ```text
 R = min(
       5 × (bridge_strength − 0.28),
-      9 × (fracture_activity − 0.03),
+      9 × (bridge_halo − 0.03),
       gradient_Y(108, 114, -3.4, 3),
       gradient_Y(115, 128, 3, -4)
     )
@@ -108,6 +108,31 @@ seu custo em NormalNoise. A mudança visa aumentar a
 área de interseção entre fenda e faixa da ponte, mas
 **não constitui garantia** de conexão ou segurança;
 somente o próximo RCON com seed verificada valida o efeito.
+
+### Faixa de suporte nas margens (teste de topologia)
+
+Após executar 10 janelas reais por seed com `level-seed`
+verificado por `/seed`, a versão anterior retornou:
+`14011: 0`, `20261108: 1`, `-904732: 2`,
+`73199013: 0` traçados com face de rocha conectada.
+A grande quantidade de colunas com vazio em
+`14011` (783 em uma janela) e `73199013`
+(867 em outra) sem duas margens atingidas sugere
+insuficiência de conexão lateral. Essa observação
+não prova que todos os vãos analisados eram pontes.
+
+Foi incluído **apenas para a ponte** o
+`dreamscape_bridge_halo`, calculado com o mesmo
+`fault_spine`, `fault_width` e `fracture_region`
+da Task 3.1, mas com largura de isocurva
+`0.23` em vez de `0.15`. Isso alonga a região
+geológica de união para além da escavação e
+permite conectar a fina massa positiva a terreno
+intacto. Como `fracture_region` ainda limita
+o halo e `bridge_strength` é exigido, o efeito
+**não é uma faixa contínua** pelo mapa todo.
+Essa mudança precisa passar pela sonda real antes
+de ser classificada como melhoria comprovada.
 
 ## 3. Instrumentação de topologia real (somente CI)
 

@@ -16,7 +16,7 @@
       "left": 9,
       "right": {
         "type": "minecraft:sub",
-        "left": "dreamsdimensions:dreamscape_fracture_activity",
+        "left": "dreamsdimensions:dreamscape_bridge_halo",
         "right": 0.03
       }
     }
