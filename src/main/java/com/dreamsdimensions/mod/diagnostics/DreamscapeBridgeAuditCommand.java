@@ -1,6 +1,7 @@
 package com.dreamsdimensions.mod.diagnostics;
 
 import com.dreamsdimensions.mod.dimension.DreamDimensionCatalog;
+import com.dreamsdimensions.mod.registry.ModBlocks;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -159,12 +160,9 @@ public final class DreamscapeBridgeAuditCommand {
     }
 
     private static boolean isNatural(BlockState block) {
-        return block.is(net.minecraft.core.registries.BuiltInRegistries.BLOCK
-                .getValue(com.dreamsdimensions.mod.dimension.DreamDimensionCatalog.id("serene_stone")))
-                || block.is(net.minecraft.core.registries.BuiltInRegistries.BLOCK
-                .getValue(com.dreamsdimensions.mod.dimension.DreamDimensionCatalog.id("dream_dirt_block")))
-                || block.is(net.minecraft.core.registries.BuiltInRegistries.BLOCK
-                .getValue(com.dreamsdimensions.mod.dimension.DreamDimensionCatalog.id("dream_grass_block")));
+        return block.is(ModBlocks.SERENE_STONE_BLOCK.get())
+                || block.is(ModBlocks.DREAM_DIRT_BLOCK.get())
+                || block.is(ModBlocks.DREAM_GRASS_BLOCK.get());
     }
 
     /**
