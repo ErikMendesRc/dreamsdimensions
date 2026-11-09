@@ -43,7 +43,9 @@ jobs:
         run: python3 scripts/ci/check_dreamscape_homologation.py
       - name: Validate Fragmento Errante assets (TASK 4.0)
         run: python3 scripts/ci/check_fragmento_errante_assets.py
-      - name: Validate Fragmento Errante behaviors (TASK 4.2)\n        run: python3 scripts/ci/check_fragmento_errante_behavior.py\n      - name: Upload mod JAR
+      - name: Validate Fragmento Errante behaviors (TASK 4.2)
+        run: python3 scripts/ci/check_fragmento_errante_behavior.py
+      - name: Upload mod JAR
         if: success()
         uses: actions/upload-artifact@v4
         with:
@@ -77,12 +79,21 @@ jobs:
         shell: bash
         run: |
           mkdir -p run runs/server
-          printf 'enable-rcon=true\nrcon.port=25575\nrcon.password=dd-ci-local-only\nserver-ip=127.0.0.1\nonline-mode=false\nlevel-seed=${{ matrix.seed }}\n' > server.properties
+          printf 'enable-rcon=true
+rcon.port=25575
+rcon.password=dd-ci-local-only
+server-ip=127.0.0.1
+online-mode=false
+level-seed=${{ matrix.seed }}
+' > server.properties
           cp server.properties run/server.properties
           cp server.properties runs/server/server.properties
-          printf 'eula=true\n' > eula.txt
-          printf 'eula=true\n' > run/eula.txt
-          printf 'eula=true\n' > runs/server/eula.txt
+          printf 'eula=true
+' > eula.txt
+          printf 'eula=true
+' > run/eula.txt
+          printf 'eula=true
+' > runs/server/eula.txt
           JAVA_TOOL_OPTIONS="-Ddreamsdimensions.worldgenMetrics=true -Ddreamsdimensions.enableBridgeAudit=true" ./gradlew --no-daemon runServer > server-smoke.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true; tail -n 180 server-smoke.log || true' EXIT
@@ -98,7 +109,8 @@ jobs:
             sleep 1
           done
           if [ "$started" -eq 1 ]; then
-            python3 scripts/ci/check_dimensions.py\n            python3 scripts/ci/check_fragmento_errante_behavior.py --rcon
+            python3 scripts/ci/check_dimensions.py
+            python3 scripts/ci/check_fragmento_errante_behavior.py --rcon
             python3 scripts/ci/check_dreamscape_geography.py --rcon
             python3 scripts/ci/check_dreamscape_ecosystem.py --rcon
             python3 scripts/ci/check_dreamscape_ecosystem.py --log server-smoke.log
