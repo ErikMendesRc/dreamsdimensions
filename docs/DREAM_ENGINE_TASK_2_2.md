@@ -114,10 +114,25 @@ inclusive inexistência de destino, inclusão de ambos os candidatos, peso 3:1,
 rejeição de pesos inválidos e candidatos indisponíveis/ordem de fallback.
 `./gradlew --no-daemon clean build` executa esses testes; `check` também.
 
+**Evidência verificada (código do commit `9247134`):**
+[GitHub Actions — run 42555092442](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42555092442)
+concluída com **success** em **quatro seeds**, incluindo `clean build` com
+JDK 25, execução de `test` (JUnit 5), os cinco verificadores estáticos,
+preflight de assets e inicialização de servidor dedicado com carregamento
+de datapacks e sondas RCON. Execução documentada em 9 de novembro de 2026.
+
+| Seed | Java 25 / JUnit | Verificadores estáticos | Smoke servidor + RCON |
+| --- | --- | --- | --- |
+| 14011 | PASS | PASS | PASS |
+| 20261108 | PASS | PASS | PASS |
+| -904732 | PASS | PASS | PASS |
+| 73199013 | PASS | PASS | PASS |
+
 **Não confundir:** testes do algoritmo de seleção são unitários; asserts sobre
 arquivos são estáticos; o RCON valida existência e carregamento de mundos e
-chunks, não eventos de um jogador real ou efeitos client-side. Relatório do
-CI da commit final deve ser ligado aqui somente após a conclusão da run.
+chunks, não eventos de um jogador real ou efeitos client-side.
+O commit de documentação posterior apenas registra esta evidência; não
+modifica os fontes Java testados.
 
 | Critério pedido | Evidência automatizada nesta task | Ainda depende de teste manual |
 | --- | --- | --- |
