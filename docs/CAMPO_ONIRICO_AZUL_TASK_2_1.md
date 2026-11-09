@@ -203,3 +203,27 @@ O checklist visual e auditivo abaixo é **pendente** até execução no IntelliJ
 *As páginas gerais da documentação NeoForge em alguns endpoints estão
 na versão 26.1. A API 26.3, os javadocs e o build real são a referência
 para o código. Não há uso de API 1.21.x copiada sem verificação.*
+
+
+## Evidência real do CI desta task (8 de novembro de 2026)
+
+Execução após a correção do nome do bioma Dreamscape:
+https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42540501755
+
+| Seed | Java 25 clean build | Testes 1.2/1.3/1.4 | TASK 2.1 static | Preflight assets | Servidor dedicado/datapacks/chunks |
+| --- | --- | --- | --- | --- | --- |
+| 14011 | PASS | PASS | PASS | PASS | PASS |
+| 20261108 | PASS | PASS | PASS | PASS | PASS |
+| -904732 | PASS | PASS | PASS | PASS | PASS |
+| 73199013 | PASS | PASS | PASS | PASS | PASS |
+
+**Todos os quatro jobs terminaram em success.** O primeiro commit
+`c59c730` compilou, mas a versão inicial do novo teste estático
+apontava para `dreamscape.json` em vez do caminho real
+`dreamscape_biome.json`; o commit `beef09c` corrigiu
+somente essa referência e a execução acima validou a versão corrigida.
+
+A existência de servidor dedicado com datapacks carregados é evidência
+de isolamento suficiente para a inicialização, não comprova que todos
+os sons e partículas funcionem no cliente. Sem teste humano não se
+afirma aprovação de cor, volume, renderização ou experiência de gameplay.
