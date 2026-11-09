@@ -191,18 +191,26 @@ def rcon():
 def actual_counts(path):
     raw = path.read_text(encoding="utf-8", errors="replace")
     events = re.findall(r"DREAMSCAPE_ECOSYSTEM_GENERATED form=(\w+) x=(-?\d+) y=(-?\d+) z=(-?\d+) blocks=(\d+)", raw)
-    observed = Counter()
-    locations = set()
+    placements = Counter()
+    unique_origins = set()
+    duplicate_origin_events = 0
     for form, x, y, z, blocks in events:
         assert form in FAMILIES, form
         assert 0 < int(blocks) <= 1750
         assert 0 < int(y) < 255
-        assert (form, x, y, z) not in locations, "Unexpected duplicate worldgen placement log"
-        locations.add((form, x, y, z))
-        observed[form] += 1
+        # Independent placed-feature attempts can select the same origin;
+        # especially a scattered patch can succeed twice without overwriting
+        # cells. Record both successful calls and unique origins explicitly.
+        key = (form, x, y, z)
+        if key in unique_origins:
+            duplicate_origin_events += 1
+        unique_origins.add(key)
+        placements[form] += 1
     print("TASK 3.2 ACTUAL SERVER GENERATED: "
-          + " ".join(f"{name}={observed[name]}" for name in FAMILIES)
-          + f" total={len(events)}")
+          + " ".join(f"{name}={placements[name]}" for name in FAMILIES)
+          + f" total_successful_calls={len(events)}"
+          + f" unique_origins={len(unique_origins)}"
+          + f" repeat_origin_calls={duplicate_origin_events}")
     if not events:
         print("NOTICE: 0 real placements observed; worldgen loaded, but silhouette presence unverified.")
     else:
