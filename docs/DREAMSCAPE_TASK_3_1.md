@@ -102,10 +102,39 @@ pelo script anterior `check_dimensions.py`.
 O workflow também roda `./gradlew --no-daemon clean build` no JDK25,
 script do motor, flora, formações, distribuição e atmosfera.
 
-**Estado antes de evidência CI:** execução remota de build/server
-e confirmação visual **pendentes**. Consultar a execução do commit
-desta task no GitHub Actions para comprovação efetiva; este documento
-não antecipa resultados nem inventa métricas.
+**Evidência executada:** GitHub Actions
+[run 42621896891](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42621896891),
+commit `5e9e2e52a47bb0eab2e87a61813a68b226b185b8`:
+`./gradlew --no-daemon clean build`, scripts estáticos anteriores,
+`check_dreamscape_geography.py`, início de servidor dedicado 26.3,
+`check_dimensions.py` e `check_dreamscape_geography.py --rcon`:
+**todos concluídos com sucesso nas quatro seeds**.
+
+| Seed | Build e CI | Servidor e datapacks | Piso natural seguro / 56 | Colunas escavadas Y52 | Voxels suspensos | Indícios de ponte Y118/Y76 |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+| 14011 | PASS | PASS | 56 | 0 | 5 | 0 |
+| 20261108 | PASS | PASS | 56 | 0 | 16 | 0 |
+| -904732 | PASS | PASS | 56 | 0 | 8 | 0 |
+| 73199013 | PASS | PASS | 56 | 11 | 0 | 0 |
+
+**Interpretação correta:** são contagens de blocos/colunas **efetivamente
+gerados**, não modelos sintéticos de Perlin e nem contagens de ilhas
+completas. `suspended_voxels` exige `serene_stone` em Y168/184/200
+e ar 16 blocos abaixo. `cracked_lower_columns` exige ar em Y52 e
+rocha em Y16. `bridge_like_voxels` exige pedra em Y118 acima de ar
+em Y76. O valor **zero** significa exclusivamente que **as amostras
+fixas não detectaram essa assinatura**, não que a formação não exista;
+nenhum arco conectado foi demonstrado. Colunas consideradas seguras
+usam o heightmap `motion_blocking_no_leaves` e tag de piso natural
+com dois blocos de ar. A prova de ilhas navegáveis, pontes apoiadas
+nas duas extremidades, transição de chunks antigos/novos, seed
+reproduzida em saves independentes e chegada após sono permanece
+**PENDENTE de homologação manual/instrumentação adicional**.
+
+Tempos de `forceload add` no CI (proxies sujeitos à carga do runner):
+14011 = 1,949 s; 20261108 = 2,083 s; -904732 = 1,817 s;
+73199013 = 3,569 s para os seis chunks do smoke tradicional.
+Esses tempos NÃO são tempo por chunk nem permitem deduzir FPS/MSPT.
 
 ## Checklist de homologação manual
 
