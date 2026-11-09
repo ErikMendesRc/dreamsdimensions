@@ -53,3 +53,19 @@ Quando detecta pela primeira vez um pouso válido de ilha, a entidade guarda sua
 - NeoForge: https://docs.neoforged.net/primer/docs/26.3/
 - Registro de spawn: https://docs.neoforged.net/docs/entities/livingentity/
 - Notas oficiais Minecraft 26.3: https://feedback.minecraft.net/hc/en-us/articles/48913133328013-Minecraft-Java-Edition-26-3
+
+## TASK 4.3.1 — Correção de baixa presença em ilhas exploradas
+
+**Diagnóstico:** `CREATURE` usa um ciclo lento de spawn passivo, com cap restrito. A probabilidade configurada de 34% afeta o povoamento na geração de novos chunks e não garante um encontro em cada ilha; mundos antigos podem não receber novos grupos de maneira perceptível.
+
+**Solução:** preservar o spawn vanilla e adicionar `FragmentoIslandPopulation` como complemento server-side leve para jogadores que **estão explorando a Dreamscape**. A cada **200 ticks por jogador (10 s)**, tenta até **48 colunas** carregadas num anel horizontal de **16–64 blocos**. A verificação em primeiro lugar é no `MOTION_BLOCKING_NO_LEAVES`, depois exige a **mesma comprovação real de ilha** definida em `FragmentoIslandHabitat`.
+
+- Não altera `MobCategory.CREATURE`, o conteúdo do biome ou os assets.
+- O algoritmo só roda com jogador vivo, não espectador, Y145–244, dimensão correta e `/gamerule spawn_mobs true`.
+- **Máximo local de 6 Fragmentos** num raio horizontal de 72 blocos e intervalo vertical das ilhas; cada passagem cria no máximo 1 em um pouso válido (MAX_NEW_MOBS_PER_PASS = 2 é teto defensivo, mas a implementação interrompe após sucesso).
+- Um possível local deve distar pelo menos 14 blocos do jogador e 14 dos Fragmentos já encontrados; a distância vertical máxima ao jogador é 65 blocos.
+- Consulta somente chunks previamente carregados (`hasChunkAt`), nunca chama `forceload`. Um único `EntityType.spawn(..., NATURAL)` faz a criação passando pelas rotinas vanilla/eventos.
+- Para ilhas com espessuras variáveis, o teste vertical usa profundidades 12–108 de 8 em 8, exigindo dois pontos de ar separados por 5 blocos abaixo do piso, com teto de Y e limitação a chunks carregados.
+- Não existe loop por tick para tentar spawn e nem obrigação de um mob em cada chunk; a população também depende de ilhas realmente acessíveis e próximas. Ao explorar ilhas já geradas, o jogador passa a ter novas chances sem gerar terreno.
+
+**Validação:** build + scripts estáticos e quatro seeds da CI; o servidor dedicado sem jogadores só confirma carregamento e a presença da entidade por summon, **não** mede a reposição de população, que exige teste manual com um jogador em ilha de Y160–230 em chunk carregado.

@@ -51,6 +51,18 @@ def static():
     assert "dreamscape_natural_ground" in habitat and "DreamDimensionCatalog.DREAMSCAPE" in habitat
     assert "level.isEmptyBlock(airA) && level.isEmptyBlock(airB)" in habitat
     assert "level.hasChunkAt" in habitat
+    population = (ROOT / "src/main/java/com/dreamsdimensions/mod/entity/FragmentoIslandPopulation.java").read_text(encoding="utf-8")
+    main_class = (ROOT / "src/main/java/com/dreamsdimensions/mod/DreamsDimensions.java").read_text(encoding="utf-8")
+    assert "FragmentoIslandPopulation::onPlayerTick" in main_class
+    for required in ("PERIOD_TICKS = 200", "CANDIDATE_LIMIT = 48", "LOCAL_CAP = 6",
+            "MAX_NEW_MOBS_PER_PASS = 2", "GameRules.SPAWN_MOBS", "ServerPlayer player",
+            "DreamDimensionCatalog.DREAMSCAPE", "level.hasChunkAt(chunkProbe)",
+            "FragmentoIslandHabitat.isIslandSurface(level, surface)",
+            "EntitySpawnReason.NATURAL", "getEntitiesOfClass("):
+        assert required in population, required
+    assert "forceload" not in population.lower()
+    assert "new FragmentoErranteEntity(" not in population
+    assert "GAP_DEPTHS = {12, 20, 28" in habitat
     import json
     dreamscape = json.loads((ROOT / "src/main/resources/data/dreamsdimensions/worldgen/biome/dreamscape_biome.json").read_text(encoding="utf-8"))
     spawns = dreamscape["attributes"]["minecraft:gameplay/natural_mob_spawns"]

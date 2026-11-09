@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.Block;
 public final class FragmentoIslandHabitat {
     public static final int MIN_SPAWN_Y = 158;
     public static final int MAX_SPAWN_Y = 231;
-    private static final int[] GAP_DEPTHS = {24, 40, 56, 68};
+    private static final int[] GAP_DEPTHS = {12, 20, 28, 36, 44, 52, 60, 68, 76, 84, 92, 100, 108};
     private static final TagKey<Block> GROUND = TagKey.create(Registries.BLOCK,
             Identifier.fromNamespaceAndPath(DreamsDimensions.MODID, "dreamscape_natural_ground"));
     private static final ResourceKey<Biome> DREAMSCAPE_BIOME = ResourceKey.create(Registries.BIOME,
@@ -46,8 +46,9 @@ public final class FragmentoIslandHabitat {
                 || !level.isEmptyBlock(feet.above())
                 || !level.getFluidState(feet).isEmpty()) return false;
 
-        // Islands can be tens of blocks thick. Probe several depths for a
-        // substantial air gap rather than testing a single hard-coded Y.
+        // Existing fixed depths missed many thick or eroded islands. Sample
+        // a bounded vertical profile for a 5-block natural air gap between
+        // the floating landform and mainland, without generating chunks.
         for (int depth : GAP_DEPTHS) {
             BlockPos airA = feet.below(depth);
             BlockPos airB = airA.below(5);
