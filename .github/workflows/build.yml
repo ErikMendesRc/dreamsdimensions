@@ -43,7 +43,7 @@ jobs:
         run: python3 scripts/ci/check_dreamscape_homologation.py
       - name: Validate Fragmento Errante assets (TASK 4.0)
         run: python3 scripts/ci/check_fragmento_errante_assets.py
-      - name: Upload mod JAR
+      - name: Validate Fragmento Errante behaviors (TASK 4.2)\n        run: python3 scripts/ci/check_fragmento_errante_behavior.py\n      - name: Upload mod JAR
         if: success()
         uses: actions/upload-artifact@v4
         with:
@@ -98,7 +98,7 @@ jobs:
             sleep 1
           done
           if [ "$started" -eq 1 ]; then
-            python3 scripts/ci/check_dimensions.py
+            python3 scripts/ci/check_dimensions.py\n            python3 scripts/ci/check_fragmento_errante_behavior.py --rcon
             python3 scripts/ci/check_dreamscape_geography.py --rcon
             python3 scripts/ci/check_dreamscape_ecosystem.py --rcon
             python3 scripts/ci/check_dreamscape_ecosystem.py --log server-smoke.log
