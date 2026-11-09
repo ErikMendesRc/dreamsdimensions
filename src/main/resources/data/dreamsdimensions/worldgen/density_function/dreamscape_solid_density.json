@@ -1,9 +1,13 @@
 {
   "type": "minecraft:max",
   "left": {
-    "type": "minecraft:sub",
-    "left": "dreamsdimensions:dreamscape_mainland",
-    "right": "dreamsdimensions:dreamscape_fracture_excavation"
+    "type": "minecraft:max",
+    "left": {
+      "type": "minecraft:sub",
+      "left": "dreamsdimensions:dreamscape_mainland",
+      "right": "dreamsdimensions:dreamscape_fracture_excavation"
+    },
+    "right": "dreamsdimensions:dreamscape_bridge_deck"
   },
   "right": "dreamsdimensions:dreamscape_island_volume"
 }
