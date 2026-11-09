@@ -17,7 +17,8 @@ ANIM = (ROOT / "src/main/resources/assets/dreamsdimensions/geckolib/animations/e
 def static():
     for fragment in (
         "new FlyingPathNavigation(this, level)", "new GentleFlyingMoveControl(this)",
-        "addGoal(0, new FleeGoal())", "addGoal(1, new CuriosityGoal())",
+        "addGoal(0, new FleeGoal())", "addGoal(1, new ResonanceGoal())",
+        "addGoal(2, new CuriosityGoal())",
         "addGoal(3, new WanderGoal())", "triggerAnim(CONTROLLER, ANIM_CURIOUS)",
         "triggerAnim(CONTROLLER, ANIM_STARTLED)", "triggerAnim(CONTROLLER, ANIM_DISAPPEAR)",
         "protected void defineSynchedData(", "EntityDataSerializers.BYTE",
@@ -30,11 +31,37 @@ def static():
         "applyIdleHover();", "this.hoverAnchor = null",
         "Math.sin(phase) * HOVER_Y_AMPLITUDE",
         "sideways.scale(Math.sin(phase) * 0.018)",
+        "RESONANCE_TICKS = 90", "RESONANCE_COOLDOWN = 1800",
+        "SLOW_FALLING_TICKS = 360", "AGRESSION_WINDOW = 600",
+        "new MobEffectInstance(", "MobEffects.SLOW_FALLING",
+        "this.aggressionHits >= 2", "beginDisappearance(true)",
+        "FragmentoIslandBound", "FragmentoResonanceCooldown",
+        "FragmentoIslandHabitat.hasNearbyIslandPerch",
         "level().noCollision(this, getBoundingBox().move(correction.scale(2.0)))",
     ):
         assert fragment in SRC, fragment
     assert SRC.count("new AnimationController") == 1
     assert "NaturalSpawn" not in SRC and "finalizeSpawn" not in SRC
+    assert "SpawnPlacementTypes.ON_GROUND" in REG
+    assert "Heightmap.Types.MOTION_BLOCKING_NO_LEAVES" in REG
+    assert "FragmentoIslandHabitat::maySpawn" in REG
+    assert "RegisterSpawnPlacementsEvent.Operation.REPLACE" in REG
+    habitat = (ROOT / "src/main/java/com/dreamsdimensions/mod/entity/FragmentoIslandHabitat.java").read_text(encoding="utf-8")
+    assert "MIN_SPAWN_Y = 158" in habitat and "MAX_SPAWN_Y = 231" in habitat
+    assert "dreamscape_natural_ground" in habitat and "DreamDimensionCatalog.DREAMSCAPE" in habitat
+    assert "level.isEmptyBlock(airA) && level.isEmptyBlock(airB)" in habitat
+    assert "level.hasChunkAt" in habitat
+    import json
+    dreamscape = json.loads((ROOT / "src/main/resources/data/dreamsdimensions/worldgen/biome/dreamscape_biome.json").read_text(encoding="utf-8"))
+    spawns = dreamscape["attributes"]["minecraft:gameplay/natural_mob_spawns"]
+    assert spawns["modifier"] == "overlay"
+    creature = spawns["argument"]["spawns_by_category"]["creature"]
+    assert len(creature) == 1 and creature[0]["type"] == "dreamsdimensions:fragmento_errante"
+    assert creature[0]["weight"] == 100
+    assert creature[0]["count"] == {
+        "type": "minecraft:uniform", "min_inclusive": 2, "max_inclusive": 3
+    }
+    assert dreamscape["attributes"]["minecraft:gameplay/creature_world_gen_spawn_probability"] == .34
     assert "builder.sized(0.85F, 1.55F)" in REG
     assert 'registerEntityType("fragmento_errante"' in REG
     import json
@@ -50,7 +77,7 @@ def static():
         assert max(y_values) - min(y_values) >= minimum_y, name
         assert "rotation" in clip["bones"]["body"], name
     assert names["animation.fragmento_errante.move"]["animation_length"] == 1.5
-    print("TASK 4.2 STATIC PASS: flight, goal priorities, sync, 6 animations, persistence, no natural spawn")
+    print("TASK 4.3 STATIC PASS: natural island spawning, resonance, defensive disappear; TASK 4.2 preserved")
 
 def rcon():
     def send(sock, rid, kind, cmd):
