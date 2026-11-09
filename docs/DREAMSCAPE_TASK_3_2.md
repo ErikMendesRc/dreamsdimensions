@@ -102,9 +102,39 @@ de retornos bem-sucedidos de `Feature.place` com opt-in por
 **reais**, não estimativas baseadas no ruído. O código não emite
 essas mensagens no jogo normal.
 
-**Evidência do workflow:** pendente de compilação e smoke da nova versão,
-não preencher as contagens com suposições. Consultar GitHub Actions do
-commit desta Task. Nenhuma formação visualmente homologada no cliente.
+**Evidência efetivamente verificada:** workflow
+[GitHub Actions 42625515714](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42625515714),
+commit de código/testes `663a9c668a3c2f5b2b28edfe472286f282bec6a3`:
+**PASS em 4/4 seeds** no `./gradlew --no-daemon clean build`
+(JDK 25), checker da Task 3.2, 45 geometrias analíticas
+de arco conectadas (modelo, não voxels reais), scripts anteriores,
+carregamento dos datapacks 26.3 e smoke de servidor dedicado com RCON.
+
+Contagem de chamadas de `Feature.place` concluídas e registradas com
+a opção de métricas ativa, a partir de chunks gerados durante o smoke:
+
+| Seed | Memória | Testemunha | Raízes | Monólitos | Costelas | Jardins | Total |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 14011 | 193 | 5 | 153 | 46 | 2 | 124 | 523 |
+| 20261108 | 253 | 4 | 53 | 43 | 3 | 206 | 562 |
+| -904732 | 258 | 4 | 33 | 10 | 2 | 204 | 511 |
+| 73199013 | 191 | 6 | 78 | 41 | 4 | 212 | 532 |
+
+Nesse run, todos os eventos tiveram origem (família+X/Y/Z) distinta.
+Uma execução anterior registrou chamadas de sucesso diferentes no
+mesmo ponto — por isso o script **distingue o total de chamadas e o
+total de origens únicas**, sem tratar por padrão origens coincidentes
+como erro de integridade. Contagens de runs diferentes não são
+bit-a-bit comparáveis: os tickets podem antecipar a leitura dos logs
+enquanto populações vizinhas ainda avançam. Portanto, os valores
+**não equivalem a frequência estável por chunk**, e não são prova
+de determinismo integral de placement ou de boa composição estética.
+O log opcional só informa retorno de sucesso e posição de origem,
+não que cada ilha, raiz, galho ou arco foi inspecionado no cliente.
+
+**Homologação em jogo:** ainda **PENDENTE** para visual, efeito de
+sombra/colisão, folhas, spawn após sono e métricas reais FPS/MSPT.
+Os campos Azul e Dreamscape mantiveram os testes anteriores aprovados.
 
 ## Homologação visual pendente
 
