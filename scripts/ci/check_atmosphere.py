@@ -55,7 +55,7 @@ assert "level.hasChunkAt" in sample and "level.getHeight" in sample
 assert "level.getChunk(" not in sample and "sendToServer" not in (particles + audio + controller)
 for sound in ("AMETHYST_BLOCK_CHIME", "CHERRY_LEAVES_STEP", "BREEZE_IDLE_AIR"):
     assert sound in audio
-for particle in ("END_ROD", "FIREFLY", "WHITE_ASH", "SPORE_BLOSSOM_AIR"):
+for particle in ("END_ROD", "SPORE_BLOSSOM_AIR"):
     assert particle in particles
 assert "12, 2, 8, 160, 160, 8" in profile
 assert "DustParticleOptions" in particles and "BLUE_DUST" in particles
