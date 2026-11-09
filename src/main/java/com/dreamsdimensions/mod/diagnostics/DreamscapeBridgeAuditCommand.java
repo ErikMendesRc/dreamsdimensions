@@ -92,8 +92,10 @@ public final class DreamscapeBridgeAuditCommand {
                 }
                 if (near) continue;
                 for (int axis = 0; axis < 2; axis++) {
-                    Arm left = walk(columns, ix, iz, -1, axis);
-                    Arm right = walk(columns, ix, iz, 1, axis);
+                    Arm left = walk(level, columns, ix, iz, -1, axis,
+                            x - radius, z - radius);
+                    Arm right = walk(level, columns, ix, iz, 1, axis,
+                            x - radius, z - radius);
                     if (left != null && right != null
                             && left.gaps >= MIN_GAP_STEPS
                             && right.gaps >= MIN_GAP_STEPS
@@ -123,7 +125,7 @@ public final class DreamscapeBridgeAuditCommand {
                     + " bankA=" + hit.negative.x + "," + hit.negative.y + "," + hit.negative.z
                     + " bankB=" + hit.positive.x + "," + hit.positive.y + "," + hit.positive.z
                     + " void_at_center=12,20_below headroom=2"
-                    + " continuous_walk=yes gap_steps=" + hit.negative.gaps + "," + hit.positive.gaps;
+                    + " continuous_walk=yes rock6_connected=yes gap_steps=" + hit.negative.gaps + "," + hit.positive.gaps;
             source.sendSuccess(() -> Component.literal(evidence), false);
         }
         return hits.size();
@@ -170,7 +172,8 @@ public final class DreamscapeBridgeAuditCommand {
      * transverse displacement allowed and <=1 vertical block each step.
      * This proves walkability of the sampled line, not overall bridge width.
      */
-    private static Arm walk(Column[][] a, int x0, int z0, int sign, int axis) {
+    private static Arm walk(ServerLevel level, Column[][] a, int x0, int z0,
+            int sign, int axis, int minWorldX, int minWorldZ) {
         int size = a.length, px = x0, pz = z0, y = a[x0][z0].y, gaps = 0;
         for (int step = 1; step <= MAX_STEPS; step++) {
             int x = axis == 0 ? x0 + sign * step : px;
@@ -184,6 +187,8 @@ public final class DreamscapeBridgeAuditCommand {
                 if (axis == 1 && Math.abs(nx - x0) > 2) continue;
                 Column c = a[nx][nz];
                 if (c == null || Math.abs(c.y - y) > 1) continue;
+                if (!rockFaceConnected(level, minWorldX + px, minWorldZ + pz, y,
+                        minWorldX + nx, minWorldZ + nz, c.y)) continue;
                 int score = Math.abs(c.y - y) * 3 + Math.abs(drift);
                 if (score < bestScore) {
                     bestX = nx; bestZ = nz; bestScore = score;
@@ -202,4 +207,24 @@ public final class DreamscapeBridgeAuditCommand {
         }
         return null;
     }
+    /**
+     * Real 6-neighbor rock contact at the lower surface Y. A 1-block
+     * elevation change is accepted only if the higher column has natural
+     * solid rock at the lower Y. A transverse shift checks a real
+     * natural-rock corner, not diagonal-only voxel contact.
+     */
+    private static boolean rockFaceConnected(ServerLevel level,
+            int ax, int az, int ay, int bx, int bz, int by) {
+        int y = Math.min(ay, by);
+        if (!isNatural(level.getBlockState(new BlockPos(ax, y, az)))
+                || !isNatural(level.getBlockState(new BlockPos(bx, y, bz)))) {
+            return false;
+        }
+        if (ax != bx && az != bz) {
+            return isNatural(level.getBlockState(new BlockPos(ax, y, bz)))
+                    || isNatural(level.getBlockState(new BlockPos(bx, y, az)));
+        }
+        return true;
+    }
+
 }
