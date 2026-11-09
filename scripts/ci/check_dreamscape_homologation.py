@@ -258,6 +258,7 @@ def server_checks():
             answer = conn.command(f"dreamscape_bridge_audit {x} {z} {radius}")
             assert "DREAMSCAPE_BRIDGE_AUDIT" in answer, (x, z, answer)
             assert "status=SKIPPED" not in answer, (x, z, answer)
+            print("DREAMSCAPE_AUDIT_DETAIL:", answer.strip()[:1200])
             match = re.search(r"confirmed_transects=(\d+)", answer)
             if match is None:
                 # Some RCON builds only return the last command message.
