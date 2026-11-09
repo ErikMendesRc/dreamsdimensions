@@ -10,6 +10,7 @@ import com.dreamsdimensions.mod.event.SleepTeleportHandler;
 import com.dreamsdimensions.mod.registry.ModAttachments;
 import com.dreamsdimensions.mod.registry.ModBlocks;
 import com.dreamsdimensions.mod.registry.ModCreativeTabs;
+import com.dreamsdimensions.mod.registry.ModEntities;
 import com.dreamsdimensions.mod.registry.ModItems;
 import com.dreamsdimensions.mod.worldgen.DreamWorldgen;
 import com.mojang.logging.LogUtils;
@@ -35,6 +36,7 @@ public class DreamsDimensions {
         ModBlocks.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         ModAttachments.register(modEventBus);
+        ModEntities.register(modEventBus);
         DreamWorldgen.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
