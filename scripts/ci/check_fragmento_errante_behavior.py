@@ -13,10 +13,15 @@ ROOT = Path(__file__).resolve().parents[2]
 SRC = (ROOT / "src/main/java/com/dreamsdimensions/mod/entity/FragmentoErranteEntity.java").read_text(encoding="utf-8")
 REG = (ROOT / "src/main/java/com/dreamsdimensions/mod/registry/ModEntities.java").read_text(encoding="utf-8")
 ANIM = (ROOT / "src/main/resources/assets/dreamsdimensions/geckolib/animations/entity/fragmento_errante.animation.json").read_text(encoding="utf-8")
+FLIGHT = (ROOT / "src/main/java/com/dreamsdimensions/mod/entity/movement/DreamFlyingMoveControl.java").read_text(encoding="utf-8")
+PROFILE = (ROOT / "src/main/java/com/dreamsdimensions/mod/entity/movement/FlightProfile.java").read_text(encoding="utf-8")
+HABITAT = (ROOT / "src/main/java/com/dreamsdimensions/mod/entity/habitat/FloatingIslandHabitat.java").read_text(encoding="utf-8")
+SERVICE = (ROOT / "src/main/java/com/dreamsdimensions/mod/entity/spawn/DreamMobPopulationService.java").read_text(encoding="utf-8")
 
 def static():
+    combined = SRC + FLIGHT + PROFILE
     for fragment in (
-        "new FlyingPathNavigation(this, level)", "new GentleFlyingMoveControl(this)",
+        "new FlyingPathNavigation(this, level)", "new DreamFlyingMoveControl(this, FLIGHT_PROFILE)",
         "addGoal(0, new FleeGoal())", "addGoal(1, new ResonanceGoal())",
         "addGoal(2, new CuriosityGoal())",
         "addGoal(3, new WanderGoal())", "triggerAnim(CONTROLLER, ANIM_CURIOUS)",
@@ -28,18 +33,18 @@ def static():
         "public boolean beginDisappearance(boolean removeAfterAnimation)",
         "difference.normalize().scale(maxSpeed)", "setDeltaMovement(result)",
         "HOVER_Y_AMPLITUDE = 0.14", "HOVER_PERIOD_TICKS = 64.0",
-        "applyIdleHover();", "this.hoverAnchor = null",
-        "Math.sin(phase) * HOVER_Y_AMPLITUDE",
-        "sideways.scale(Math.sin(phase) * 0.018)",
+        "applyIdleHover();", "resetHover()",
+        "Math.sin(phase) * profile.hoverYAmplitude()",
+        "sideways.scale(Math.sin(phase) * profile.horizontalWave())",
         "RESONANCE_TICKS = 90", "RESONANCE_COOLDOWN = 1800",
         "SLOW_FALLING_TICKS = 360", "AGRESSION_WINDOW = 600",
         "new MobEffectInstance(", "MobEffects.SLOW_FALLING",
         "this.aggressionHits >= 2", "beginDisappearance(true)",
         "FragmentoIslandBound", "FragmentoResonanceCooldown",
         "FragmentoIslandHabitat.hasNearbyIslandPerch",
-        "level().noCollision(this, getBoundingBox().move(correction.scale(2.0)))",
+        "flyer.level().noCollision(flyer, flyer.getBoundingBox().move(correction.scale(2.0)))",
     ):
-        assert fragment in SRC, fragment
+        assert fragment in combined, fragment
     assert SRC.count("new AnimationController") == 1
     assert "NaturalSpawn" not in SRC and "finalizeSpawn" not in SRC
     assert "SpawnPlacementTypes.ON_GROUND" in REG
@@ -49,19 +54,20 @@ def static():
     habitat = (ROOT / "src/main/java/com/dreamsdimensions/mod/entity/FragmentoIslandHabitat.java").read_text(encoding="utf-8")
     assert "MIN_SPAWN_Y = 158" in habitat and "MAX_SPAWN_Y = 231" in habitat
     assert "dreamscape_natural_ground" in habitat and "DreamDimensionCatalog.DREAMSCAPE" in habitat
-    assert "level.isEmptyBlock(airA) && level.isEmptyBlock(airB)" in habitat
-    assert "level.hasChunkAt" in habitat
+    assert "level.isEmptyBlock(airA) && level.isEmptyBlock(airB)" in HABITAT
+    assert "level.hasChunkAt" in HABITAT
     population = (ROOT / "src/main/java/com/dreamsdimensions/mod/entity/FragmentoIslandPopulation.java").read_text(encoding="utf-8")
     main_class = (ROOT / "src/main/java/com/dreamsdimensions/mod/DreamsDimensions.java").read_text(encoding="utf-8")
-    assert "FragmentoIslandPopulation::onPlayerTick" in main_class
+    assert "DreamMobPopulationService::onPlayerTick" in main_class
+    assert "DreamMobPopulationService.register(FragmentoIslandPopulation.profile())" in main_class
     for required in ("PERIOD_TICKS = 200", "CANDIDATE_LIMIT = 48", "LOCAL_CAP = 6",
             "MAX_NEW_MOBS_PER_PASS = 2", "GameRules.SPAWN_MOBS", "ServerPlayer player",
             "DreamDimensionCatalog.DREAMSCAPE", "level.hasChunkAt(chunkProbe)",
-            "FragmentoIslandHabitat.isIslandSurface(level, surface)",
+            "profile.habitat().isValid(level, surface)",
             "EntitySpawnReason.NATURAL", "getEntitiesOfClass("):
-        assert required in population, required
-    assert "forceload" not in population.lower()
-    assert "new FragmentoErranteEntity(" not in population
+        assert required in (population + SERVICE), required
+    assert "forceload" not in SERVICE.lower()
+    assert "new FragmentoErranteEntity(" not in SERVICE
     assert "GAP_DEPTHS = {12, 20, 28" in habitat
     import json
     dreamscape = json.loads((ROOT / "src/main/resources/data/dreamsdimensions/worldgen/biome/dreamscape_biome.json").read_text(encoding="utf-8"))
