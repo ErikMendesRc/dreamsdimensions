@@ -139,6 +139,34 @@ def static_checks():
         assert all(-1.01 <= value <= 1.01 for value in samples)
         signatures.append(tuple(samples))
     assert len(set(signatures)) == len(SEEDS)
+
+    # Independently reproduce the short stone-rib centerline and verify
+    # connected 6-neighbor voxels at both grounded endpoints.
+    # This is geometry mathematics only, NOT a rendered placement test.
+    from collections import deque
+    for radius in range(3, 6):
+        for rise in range(4, 7):
+            for delta in range(-2, 3):
+                cells = set()
+                previous = 1
+                for i in range(radius * 2 + 1):
+                    t = i / (radius * 2.0)
+                    base = round(1 * (1 - t) + (1 + delta) * t)
+                    y = base + round(rise * (1 - (2 * t - 1) ** 2))
+                    cells.update((i, py) for py in range(min(previous, y), max(previous, y) + 1))
+                    previous = y
+                start = (0, 1)
+                end = (radius * 2, 1 + delta)
+                assert start in cells and end in cells
+                pending, seen = deque([start]), {start}
+                while pending:
+                    x, y = pending.popleft()
+                    for p in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+                        if p in cells and p not in seen:
+                            seen.add(p)
+                            pending.append(p)
+                assert seen == cells, (radius, rise, delta)
+    print("TASK 3.2 GEOMETRY MODEL PASS: 45 short grounded arch centerlines are 6-connected")
     print(f"TASK 3.2 STATIC PASS: {len(FAMILIES)} configured+placed families, "
           "registration, 26.3 stage, materials, write preflight, tree state, "
           "blue isolation, four-seed regional signatures")
