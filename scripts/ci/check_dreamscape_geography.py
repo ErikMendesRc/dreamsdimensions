@@ -136,7 +136,7 @@ def static_checks():
 
 
 def rcon_query(conn, request_id, command):
-    payload = struct.pack("<ii", request_id, 2) + command.encode("utf-8") + b"\\x00\\x00"
+    payload = struct.pack("<ii", request_id, 2) + command.encode("utf-8") + b"\x00\x00"
     conn.sendall(struct.pack("<i", len(payload)) + payload)
     def exact(n):
         data = b""
@@ -158,7 +158,7 @@ def server_checks():
     address = ("127.0.0.1", 25575)
     password = "dd-ci-local-only"
     def auth(sock):
-        payload = struct.pack("<ii", 11, 3) + password.encode() + b"\\x00\\x00"
+        payload = struct.pack("<ii", 11, 3) + password.encode() + b"\x00\x00"
         sock.sendall(struct.pack("<i", len(payload)) + payload)
         def read(n):
             buf = b""
