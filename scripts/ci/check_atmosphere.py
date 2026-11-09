@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""TASK 2.1 static client/server isolation and 26.3 attribute guardrails.
+"""TASK 2.1 + 2.2 static atmosphere isolation and 26.3 attribute guardrails.
 
-This cannot replace playing/listening in an actual Minecraft client.
+Static assertions do not replace hearing/seeing ambience in a real client.
 """
 import json
 from pathlib import Path
@@ -45,8 +45,10 @@ assert "net.minecraft.client" not in common
 assert "client.atmosphere" not in common
 assert "@EventBusSubscriber(modid = DreamsDimensions.MODID, value = Dist.CLIENT)" in controller
 assert "ClientTickEvent.Post" in controller
-assert "lastLevel != level" in controller and "reset()" in controller
-assert "PROFILE.dimension().equals(level.dimension())" in controller
+assert "lastLevel != level || lastProfile != profile" in controller and "reset()" in controller
+assert "candidate.dimension().equals(level.dimension())" in controller
+assert "DreamDimensionCatalog.find(level.dimension())" in controller
+assert "flatMap(DreamDimensionDefinition::atmosphereId)" in controller
 assert "ParticleStatus.MINIMAL" in particles and "ParticleStatus.DECREASED" in particles
 assert "level.addParticle(" in particles and "addAlwaysVisibleParticle" not in particles
 assert "level.playLocalSound(" in audio and "SoundSource.AMBIENT" in audio
@@ -64,4 +66,4 @@ assert "isClearAir(level, sample)" in particles
 assert "random.nextInt(3) == 0" not in audio
 assert "dreamscape" not in profile
 assert "dreamscape" not in controller
-print("TASK 2.1: 26.3 attributes, isolated client subscriber, caps, sound and particles OK (static).")
+print("TASKS 2.1/2.2: 26.3 attributes, isolated client profiles, caps, sounds and particles OK (static).")

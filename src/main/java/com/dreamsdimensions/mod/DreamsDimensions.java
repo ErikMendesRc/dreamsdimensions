@@ -1,6 +1,7 @@
 package com.dreamsdimensions.mod;
 
 import com.dreamsdimensions.mod.config.DreamsConfig;
+import com.dreamsdimensions.mod.dimension.DreamDimensionCatalog;
 import com.dreamsdimensions.mod.event.CommonEvents;
 import com.dreamsdimensions.mod.event.DreamDimensionEffectsHandler;
 import com.dreamsdimensions.mod.event.DreamReturnAttachmentHandler;
@@ -19,19 +20,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
-/**
- * Bootstrap principal do mod Dreams Dimensions.
- * <p>
- * Este construtor registra registries no {@link IEventBus} do MOD (lifecycle) e listeners
- * de runtime no {@link NeoForge#EVENT_BUS}, conforme o padrão descrito nos javadocs de
- * {@link IEventBus#addListener} e do próprio {@link NeoForge#EVENT_BUS}.
- * </p>
- * <p>
- * A configuração é registrada via {@link ModContainer#registerConfig} (ver javadoc de
- * {@link ModConfig}) para garantir que o {@link com.dreamsdimensions.mod.config.DreamsConfig}
- * seja carregado no momento correto do lifecycle.
- * </p>
- */
+/** Registers content on the mod bus and runtime handlers on the game bus. */
 @Mod(DreamsDimensions.MODID)
 public class DreamsDimensions {
     public static final String MODID = "dreamsdimensions";
@@ -39,7 +28,6 @@ public class DreamsDimensions {
 
     public DreamsDimensions(IEventBus modEventBus, ModContainer modContainer) {
         LOGGER.info("Dreams Dimensions Mod está carregando!");
-
         modContainer.registerConfig(ModConfig.Type.LOCAL, DreamsConfig.SPEC);
 
         ModItems.register(modEventBus);
@@ -52,19 +40,16 @@ public class DreamsDimensions {
 
         NeoForge.EVENT_BUS.addListener(CommonEvents::onServerStarting);
         NeoForge.EVENT_BUS.addListener(DreamDimensionEffectsHandler::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(DreamDimensionEffectsHandler::onPlayerLoggedOut);
         NeoForge.EVENT_BUS.addListener(DreamReturnAttachmentHandler::onPlayerSetSpawn);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerWakeUp);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerLoggedOut);
-
         LOGGER.info("Registros e listeners de Dreams Dimensions configurados.");
     }
 
-    /**
-     * Setup comum do mod (lifecycle MOD bus) para ajustes que dependem de registries já carregados.
-     */
     private void commonSetup(final FMLCommonSetupEvent event) {
-        LOGGER.info("Executando Common Setup para Dreams Dimensions...");
-        LOGGER.info("Common Setup de Dreams Dimensions concluído.");
+        LOGGER.info("Motor onírico pronto: {} perfis dimensionais lógicos.",
+                DreamDimensionCatalog.all().size());
     }
 }
