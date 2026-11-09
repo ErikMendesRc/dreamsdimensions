@@ -42,10 +42,11 @@ Quando detecta pela primeira vez um pouso válido de ilha, a entidade guarda sua
 - `./gradlew --no-daemon clean build` (Java 25)
 - `python3 scripts/ci/check_fragmento_errante_behavior.py`: dados 26.3, categoria, pesos, intervalos, restrição de habitat, reação ao dano, sintonização e invariantes da Task 4.2.
 - Pipeline existente: dedicated server RCON, summon e oscilação Y, scripts do worldgen e quatro seeds `14011`, `20261108`, `-904732`, `73199013`.
-- **Pendência in-game:** confirmação visual de distribuição real (recomenda-se contar criaturas em cinco ilhas por seed, com pelo menos dois jogadores e `doMobSpawning=true`), pois não há jogador real no servidor de CI para executar o ciclo natural. Evitar contar mobs invocados por comando.
+- **Pendência in-game:** confirmação visual de distribuição real (recomenda-se contar criaturas em cinco ilhas por seed, com pelo menos dois jogadores e `/gamerule spawn_mobs true` (nome atual no Minecraft 26.3)), pois não há jogador real no servidor de CI para executar o ciclo natural. Evitar contar mobs invocados por comando.
 - Testar efeito: aproximar sem correr por 5 segundos, conferir **Queda Lenta** por 18s, cooldown de 90s; repetir com dois jogadores.
 - Testar fuga: um dano, depois segundo dano em 30s, observar animação completa `disappear` antes da remoção. Confirmar persistência após salvar.
 - Verificar que grupos não aparecem no continente e não atravessam o vazio durante o wander em mapas reais.
+- Evidência inicial de servidor: na seed `-904732`, durante o smoke de worldgen, foi observada uma instância do Fragmento em `(-4, 194, 18)` distinta da entidade invocada por comando. A ocorrência é compatível com spawn natural durante a geração e demonstra presença no envelope das ilhas, **não** prova abundância ou localização em todas as ilhas. O teste RCON foi corrigido para marcar a entidade invocada com tag exclusiva, sem confundi-la com mobs naturais.
 
 ### Documentações utilizadas
 
