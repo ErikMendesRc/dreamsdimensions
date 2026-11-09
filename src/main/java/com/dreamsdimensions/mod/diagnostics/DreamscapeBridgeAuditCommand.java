@@ -42,7 +42,7 @@ public final class DreamscapeBridgeAuditCommand {
                         .executes(ctx -> scan(ctx.getSource(),
                                 IntegerArgumentType.getInteger(ctx, "x"),
                                 IntegerArgumentType.getInteger(ctx, "z"),
-                                IntegerArgumentType.getInteger(ctx, "radius"))))));
+                                IntegerArgumentType.getInteger(ctx, "radius")))))));
     }
 
     private record Column(int y, boolean gap, boolean bank) {}
