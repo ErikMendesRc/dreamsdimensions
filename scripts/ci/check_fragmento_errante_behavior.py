@@ -4,6 +4,8 @@
 Static assertions are not substitutes for Java compilation or visual/MP tests.
 """
 import argparse
+import re
+import time
 from pathlib import Path
 import socket
 import struct
@@ -25,6 +27,11 @@ def static():
         "level().noCollision(", "FLEE_TICKS = 38", "DISAPPEAR_TICKS = 27",
         "public boolean beginDisappearance(boolean removeAfterAnimation)",
         "difference.normalize().scale(maxSpeed)", "setDeltaMovement(result)",
+        "HOVER_Y_AMPLITUDE = 0.14", "HOVER_PERIOD_TICKS = 64.0",
+        "applyIdleHover();", "this.hoverAnchor = null",
+        "Math.sin(phase) * HOVER_Y_AMPLITUDE",
+        "sideways.scale(Math.sin(phase) * 0.018)",
+        "level().noCollision(this, getBoundingBox().move(correction.scale(2.0)))",
     ):
         assert fragment in SRC, fragment
     assert SRC.count("new AnimationController") == 1
@@ -36,6 +43,14 @@ def static():
     assert set(names) == {"animation.fragmento_errante." + name for name in (
         "idle", "move", "float", "curious", "startled", "disappear"
     )}
+    # Verify visible root displacement and overlapping body/head oscillation.
+    for name, minimum_y in (("idle", 2.0), ("move", 1.4), ("float", 2.0)):
+        clip = names["animation.fragmento_errante." + name]
+        root = clip["bones"]["root"]["position"]
+        y_values = [key["vector"][1] for key in root.values()]
+        assert max(y_values) - min(y_values) >= minimum_y, name
+        assert "rotation" in clip["bones"]["body"], name
+    assert names["animation.fragmento_errante.move"]["animation_length"] == 1.5
     print("TASK 4.2 STATIC PASS: flight, goal priorities, sync, 6 animations, persistence, no natural spawn")
 
 def rcon():
@@ -80,6 +95,18 @@ def rcon():
         assert summon and not any(s in summon.lower() for s in ("unknown", "error", "failed", "unable")), summon
         pos = command(21, f"execute in {dim} run data get entity @e[type=dreamsdimensions:fragmento_errante,limit=1,sort=nearest] Pos")
         assert pos and "228" in pos, pos
+        # Observe server-authoritative Y bob while initial idle pause is active.
+        samples = []
+        for index in range(5):
+            observed = command(30 + index, f"execute in {dim} run data get entity @e[type=dreamsdimensions:fragmento_errante,limit=1,sort=nearest] Pos")
+            match = re.search(r"\\[[-+\\d.eE]+d,\\s*([-+\\d.eE]+)d,", observed)
+            assert match, observed
+            samples.append(float(match.group(1)))
+            if index != 4:
+                time.sleep(0.35)
+        amplitude = max(samples) - min(samples)
+        assert amplitude >= 0.012, f"Mob is visually static in world position: Y samples={samples}"
+        print(f"TASK 4.2 HOVER RCON PASS: vertical delta={amplitude:.4f} blocks samples={samples}", flush=True)
         cleanup = command(22, f"execute in {dim} run kill @e[type=dreamsdimensions:fragmento_errante,limit=1,sort=nearest]")
         assert cleanup and "no entity" not in cleanup.lower(), cleanup
     print("TASK 4.2 RCON PASS: dedicated server summon, entity lookup and cleanup (NOT visual validation)")

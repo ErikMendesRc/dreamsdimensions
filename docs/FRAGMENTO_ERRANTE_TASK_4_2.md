@@ -49,3 +49,19 @@ O cliente recebe somente `MOTION` (byte: 0 parado, 1 horizontal, 2 vertical) e `
 - GeckoLib 5 Entities: https://github.com/bernie-g/geckolib/wiki/Geckolib-Entities-(Geckolib5)
 - GeckoLib 5 Triggerable: https://github.com/bernie-g/geckolib/wiki/Triggerable-Animations-(Geckolib5)
 - GeckoLib `AnimationController` e `GeoEntity` na branch principal: https://github.com/bernie-g/geckolib
+
+## Ajuste visual pós-feedback — flutuação natural (TASK 4.2.1)
+
+**Motivo:** a animação anterior deslocava o bone `root` apenas ±0,4 pixel em `idle` e ±0,16 pixel em `move` (diferenças quase imperceptíveis); com `noGravity` não existia variação física de altura quando o mob ficava parado.
+
+**Correção:**
+
+- `idle`: adicionada flutuação **física server-side**, periódica (64 ticks), relativa a uma âncora local transitória (Y ±0,14 bloco; X/Z ±0,035 bloco); correção por velocidade limitada a Y ±0,028 e X/Z ±0,014 bloco/tick; verificação de chunk carregado e `noCollision` antes de alterar a velocidade. Sem teleporte, sem alteração na hitbox e sem novas requisições de carregamento de chunks. Quando navegação começa, âncora é descartada. Quando para, uma âncora nova é alinhada à fase atual para não provocar salto.
+- `idle` visual: `root` agora vai de -1,1 a +1,1 pixels em 3 segundos, com inclinação suave de `body` e balanço de `head`, reforçando o movimento de vida. O deslocamento visual **não** altera a hitbox.
+- `move` visual: ciclo estendido de 1,0 para 1,5 s; amplitudes de Y do `root` aumentadas para aproximadamente ±0,8 pixel; inclinações/rolagem de `body`, contramovimento de `head` e `energy_tail`. As curvas já existentes da energia foram retimadas para 1,5 s e **preservadas na essência**.
+- Deslocamento real: ondas leves durante navegação (`sideways` ±0,018 e vertical ±0,015 bloco/tick) com o servo de aceleração, limite de velocidade e colisão anteriores; a variação fica muito abaixo do deslocamento principal e não substitui o planejamento de rota.
+- `float`: ampliada a ondulação visual do `root` e do `body` nas rotas predominantemente verticais.
+- `curious`, `startled` e `disappear` mantidos; um único controller GeckoLib continua responsável pelas seis animações.
+- Testes adicionados: amplitudes dos clips em JSON e aferição real, via RCON, de deslocamento Y de pelo menos 0,012 bloco durante aproximadamente 1,4 s no servidor dedicado; executados na matriz das quatro seeds.
+
+**Validação manual ainda necessária:** verificar sincronização entre o balanço físico e o visual em 20 FPS/60 FPS, passagens sob teto baixo, colisão em corredores estreitos, comportamento no limite entre chunks e renderização com dois clientes. As amplitudes são parâmetros iniciais de direção de arte e podem ser refinadas depois de observação real no jogo.

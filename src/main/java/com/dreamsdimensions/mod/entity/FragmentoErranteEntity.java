@@ -49,6 +49,12 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
     private static final int STARTLE_COOLDOWN_TICKS = 120;
     private static final int MAX_SAVE_COOLDOWN = 400;
 
+    // Physical (server-side) hover in world blocks; visual Geo bones add a
+    // second, cosmetic layer without changing the entity's collision bounds.
+    private static final double HOVER_Y_AMPLITUDE = 0.14;
+    private static final double HOVER_XZ_AMPLITUDE = 0.035;
+    private static final double HOVER_PERIOD_TICKS = 64.0;
+
     private static final EntityDataAccessor<Byte> MOTION =
             SynchedEntityData.defineId(FragmentoErranteEntity.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Boolean> DISAPPEARING =
@@ -78,6 +84,8 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
     private boolean replayDisappearanceAfterLoad;
     private boolean reactedToCurrentDamage;
     private Vec3 threatPosition;
+    // Transient: reanchored whenever movement finishes or after a reload.
+    private Vec3 hoverAnchor;
 
     public FragmentoErranteEntity(EntityType<? extends PathfinderMob> type, Level level) {
         super(type, level);
@@ -133,6 +141,7 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
             }
             this.getNavigation().stop();
             brake();
+            this.hoverAnchor = null;
             if (--this.disappearTicks == 0) {
                 this.entityData.set(DISAPPEARING, false);
                 if (this.removeAfterDisappearance) {
@@ -170,16 +179,63 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
             brake();
         }
 
+        // No gravity means no natural levitation: gently orbit a fixed local
+        // anchor during pauses. Never fight active path navigation or escape.
+        boolean hovering = getNavigation().isDone() && this.fleeTicks == 0;
+        if (hovering) {
+            applyIdleHover();
+        } else {
+            this.hoverAnchor = null;
+        }
+
         Vec3 velocity = getDeltaMovement();
         double horizontal = Math.hypot(velocity.x, velocity.z);
-        byte desired = velocity.lengthSqr() < 0.0010 ? REST
+        // The tiny physics bob is still IDLE, not a vertical-navigation loop.
+        byte desired = hovering ? REST : velocity.lengthSqr() < 0.0010 ? REST
                 : Math.abs(velocity.y) > 0.035 && Math.abs(velocity.y) > horizontal * 0.70
                 ? ASCEND : TRAVEL;
         if (this.entityData.get(MOTION) != desired) this.entityData.set(MOTION, desired);
     }
 
+    /**
+     * Spring-like anchored hovering in all three axes, with a slow vertical
+     * orbit and smaller horizontal drift. Coordinates are absolute, not a
+     * velocity increment, so the mob cannot wander infinitely while idle.
+     *
+     * Physics and collision are server-side; the GeckoLib root transform is
+     * visual only and never changes the bounding box dimensions.
+     */
+    private void applyIdleHover() {
+        double phase = (this.tickCount + getId() * 13.0) * (Math.PI * 2.0 / HOVER_PERIOD_TICKS);
+        Vec3 offset = new Vec3(
+                Math.sin(phase * 0.72) * HOVER_XZ_AMPLITUDE,
+                Math.sin(phase) * HOVER_Y_AMPLITUDE,
+                Math.cos(phase * 0.83) * HOVER_XZ_AMPLITUDE);
+        if (this.hoverAnchor == null) {
+            // Match the initial oscillation phase; no sudden jump at rest.
+            this.hoverAnchor = position().subtract(offset);
+        }
+        Vec3 target = this.hoverAnchor.add(offset);
+        Vec3 correction = new Vec3(
+                Mth.clamp((target.x - getX()) * 0.16, -0.014, 0.014),
+                Mth.clamp((target.y - getY()) * 0.24, -0.028, 0.028),
+                Mth.clamp((target.z - getZ()) * 0.16, -0.014, 0.014));
+        Vec3 projected = position().add(correction.scale(2.0));
+        if (level().hasChunkAt(BlockPos.containing(projected))
+                && level().noCollision(this, getBoundingBox().move(correction.scale(2.0)))) {
+            // WAIT damping already runs in MoveControl; replace the final
+            // velocity with this smooth small correction, not a teleport.
+            setDeltaMovement(correction);
+        } else {
+            // No oscillating into blocks, ceilings or unloaded chunks.
+            this.hoverAnchor = null;
+            setDeltaMovement(Vec3.ZERO);
+        }
+    }
+
     private void brake() {
         ((GentleFlyingMoveControl) this.moveControl).brake();
+        this.hoverAnchor = null;
     }
 
     /**
@@ -264,6 +320,7 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
         this.entityData.set(DISAPPEARING, this.disappearTicks > 0);
         this.fleeTicks = 0;
         this.threatPosition = null;
+        this.hoverAnchor = null;
         setNoGravity(true);
     }
 
@@ -477,7 +534,15 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
 
             // 0.15 blocks/tick cruising, up to ~0.19 during a short escape.
             double maxSpeed = Mth.clamp(this.speedModifier * 0.17, 0.08, 0.19);
-            Vec3 desired = difference.normalize().scale(maxSpeed);
+            // Wavelike side-to-side drift and vertical buoyancy while moving;
+            // navigation still picks the destination and controls direction.
+            // Modulation remains tiny relative to the actual path speed.
+            Vec3 heading = difference.normalize();
+            double phase = (flyer.tickCount + flyer.getId() * 13.0) * 0.18;
+            Vec3 sideways = new Vec3(-heading.z, 0, heading.x);
+            Vec3 desired = difference.normalize().scale(maxSpeed)
+                    .add(sideways.scale(Math.sin(phase) * 0.018))
+                    .add(0, Math.cos(phase * 0.87) * 0.015, 0);
             Vec3 correction = desired.subtract(velocity);
             if (correction.lengthSqr() > 0.028 * 0.028) {
                 correction = correction.normalize().scale(0.028);
