@@ -117,14 +117,14 @@ def rcon():
             return answer
         # 0,0 dreamscape already loaded by check_dimensions.py; test at
         # Y=228 to minimize the probability of solid terrain on the spawn.
-        summon = command(20, f"execute in {dim} run summon dreamsdimensions:fragmento_errante 0 228 0")
+        summon = command(20, f'execute in {dim} run summon dreamsdimensions:fragmento_errante 0 228 0 {{Tags:["dd_ci_fragmento"]}}')
         assert summon and not any(s in summon.lower() for s in ("unknown", "error", "failed", "unable")), summon
-        pos = command(21, f"execute in {dim} run data get entity @e[type=dreamsdimensions:fragmento_errante,limit=1,sort=nearest] Pos")
+        pos = command(21, f"execute in {dim} run data get entity @e[type=dreamsdimensions:fragmento_errante,tag=dd_ci_fragmento,limit=1] Pos")
         assert pos and "228" in pos, pos
         # Observe server-authoritative Y bob while initial idle pause is active.
         samples = []
         for index in range(5):
-            observed = command(30 + index, f"execute in {dim} run data get entity @e[type=dreamsdimensions:fragmento_errante,limit=1,sort=nearest] Pos")
+            observed = command(30 + index, f"execute in {dim} run data get entity @e[type=dreamsdimensions:fragmento_errante,tag=dd_ci_fragmento,limit=1] Pos")
             positions = observed.partition("[")[2].partition("]")[0].split(",")
             assert len(positions) == 3, observed
             samples.append(float(positions[1].strip().removesuffix("d")))
@@ -133,7 +133,7 @@ def rcon():
         amplitude = max(samples) - min(samples)
         assert amplitude >= 0.012, f"Mob is visually static in world position: Y samples={samples}"
         print(f"TASK 4.2 HOVER RCON PASS: vertical delta={amplitude:.4f} blocks samples={samples}", flush=True)
-        cleanup = command(22, f"execute in {dim} run kill @e[type=dreamsdimensions:fragmento_errante,limit=1,sort=nearest]")
+        cleanup = command(22, f"execute in {dim} run kill @e[type=dreamsdimensions:fragmento_errante,tag=dd_ci_fragmento,limit=1]")
         assert cleanup and "no entity" not in cleanup.lower(), cleanup
     print("TASK 4.2 RCON PASS: dedicated server summon, entity lookup and cleanup (NOT visual validation)")
 
