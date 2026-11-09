@@ -151,10 +151,27 @@ e smoke de servidor dedicado nas seeds `14011`, `20261108`,
 `-904732` e `73199013`. Novo teste estático é inserido
 sem remover scripts antigos.
 
-**Evidência CI / commit:** pendente de observar os jobs disparados
-após o push dos testes e do código. Não marcar como testado antes
-de confirmar execução completa. O pipeline não executa cliente
-gráfico nem reproduz sons para inspeção humana.
+**Evidência CI verificada (9 de novembro de 2026):**
+[GitHub Actions run 42627908835](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42627908835),
+commit `222530e0503f221dee128787eb1d74d431a63129`.
+Os quatro jobs `build (SEED)` concluíram com `success`:
+
+| Seed | Java 25 clean build / JUnit | Todos os scripts estáticos, incluindo 3.3 | Assets | Servidor dedicado + datapacks + RCON |
+|---|---|---|---|---|
+| 14011 | PASS | PASS | PASS | PASS |
+| 20261108 | PASS | PASS | PASS | PASS |
+| -904732 | PASS | PASS | PASS | PASS |
+| 73199013 | PASS | PASS | PASS | PASS |
+
+A execução inclui os scripts originais de vegetação, formações,
+balanceamento, atmosfera Azul, motor onírico, geografia e ecossistema
+Dreamscape, além do novo verificador `check_dreamscape_atmosphere.py`.
+A inicialização dedicada prova que os novos perfis não fazem o
+servidor carregar classes exclusivas do cliente. Isso **não prova**
+visibilidade de partículas, cor percebida da névoa, audibilidade dos
+sons, pausa/reconexão efetiva nem FPS: todas essas verificações
+continuam **pendentes de cliente real**. O commit que adiciona
+esta evidência é apenas documental; não muda código compilado.
 
 ## Checklist de homologação manual
 
