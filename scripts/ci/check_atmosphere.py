@@ -18,9 +18,9 @@ dimension = read(RESOURCE / "dimension_type/campo_onirico_azul_type.json")
 dreamscape = read(RESOURCE / "dimension_type/dreamscape_type.json")
 biome = read(RESOURCE / "worldgen/biome/campo_onirico_azul.json")
 attributes = dimension["attributes"]
-assert attributes["minecraft:visual/fog_start_distance"] == 64
-assert attributes["minecraft:visual/fog_end_distance"] == 224
-assert attributes["minecraft:visual/sky_fog_end_distance"] == 256
+assert attributes["minecraft:visual/fog_start_distance"] == 48
+assert attributes["minecraft:visual/fog_end_distance"] == 170
+assert attributes["minecraft:visual/sky_fog_end_distance"] == 210
 assert 0 < attributes["minecraft:visual/fog_start_distance"] < attributes["minecraft:visual/fog_end_distance"]
 assert attributes["minecraft:visual/fog_end_distance"] <= attributes["minecraft:visual/sky_fog_end_distance"]
 assert "minecraft:visual/fog_start_distance" not in dreamscape.get("attributes", {})
@@ -57,7 +57,11 @@ for sound in ("AMETHYST_BLOCK_CHIME", "CHERRY_LEAVES_STEP", "BREEZE_IDLE_AIR"):
     assert sound in audio
 for particle in ("END_ROD", "FIREFLY", "WHITE_ASH", "SPORE_BLOSSOM_AIR"):
     assert particle in particles
-assert "30, 3, 3, 340, 300, 7" in profile
+assert "12, 2, 8, 160, 160, 8" in profile
+assert "DustParticleOptions" in particles and "BLUE_DUST" in particles
+assert "playerPos.offset(" in particles, "Creative-flight ambient particle fallback is required"
+assert "isClearAir(level, sample)" in particles
+assert "random.nextInt(3) == 0" not in audio
 assert "dreamscape" not in profile
 assert "dreamscape" not in controller
 print("TASK 2.1: 26.3 attributes, isolated client subscriber, caps, sound and particles OK (static).")

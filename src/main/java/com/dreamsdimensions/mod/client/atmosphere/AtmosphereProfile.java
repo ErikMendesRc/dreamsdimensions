@@ -14,6 +14,6 @@ public record AtmosphereProfile(ResourceKey<Level> dimension,
     public static final AtmosphereProfile BLUE_FIELD = new AtmosphereProfile(
             ResourceKey.create(Registries.DIMENSION,
                     Identifier.fromNamespaceAndPath(DreamsDimensions.MODID, "campo_onirico_azul")),
-            30, 3, 3, 340, 300, 7
+            12, 2, 8, 160, 160, 8
     );
 }

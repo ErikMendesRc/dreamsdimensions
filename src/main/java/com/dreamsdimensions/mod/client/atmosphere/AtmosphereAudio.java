@@ -13,14 +13,13 @@ final class AtmosphereAudio {
     private static long nextCueTick;
     private AtmosphereAudio() {}
 
-    static void reset() { nextCueTick = 340; }
+    static void reset() { nextCueTick = 160; }
 
     static void tick(ClientLevel level, LocalPlayer player, AtmosphereProfile profile, long tick) {
         if (tick < nextCueTick || player.isInWater()) return;
         RandomSource random = player.getRandom();
         nextCueTick = tick + profile.soundMinimumTicks()
                 + random.nextInt(profile.soundJitterTicks() + 1);
-        if (random.nextInt(3) == 0) return;
 
         BlockPos playerPos = player.blockPosition();
         BlockPos luminous = null;
@@ -39,7 +38,7 @@ final class AtmosphereAudio {
         double x, y, z;
         if (luminous != null) {
             sound = SoundEvents.AMETHYST_BLOCK_CHIME;
-            volume = .17F;
+            volume = .26F;
             pitch = .85F + random.nextFloat() * .25F;
             x = luminous.getX() + .5;
             y = luminous.getY() + 1;
@@ -48,14 +47,14 @@ final class AtmosphereAudio {
             boolean grove = AtmosphereSampling.belowLeaves(level, playerPos);
             if (grove) {
                 sound = SoundEvents.CHERRY_LEAVES_STEP;
-                volume = .10F;
+                volume = .18F;
                 pitch = .65F + random.nextFloat() * .15F;
             } else {
                 sound = SoundEvents.BREEZE_IDLE_AIR;
-                volume = .075F;
+                volume = .15F;
                 pitch = .70F + random.nextFloat() * .15F;
             }
-            x = player.getX() + (random.nextBoolean() ? 7 : -7);
+            x = player.getX() + (random.nextBoolean() ? 5 : -5);
             y = player.getY() + (grove ? 2 : 4);
             z = player.getZ() + (random.nextBoolean() ? 7 : -7);
         }

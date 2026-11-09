@@ -29,6 +29,7 @@ public final class AtmosphereClientController {
         if (lastLevel != level) {
             reset();
             lastLevel = level;
+            DreamsDimensions.LOGGER.info("Campo Onírico Azul: atmosfera cliente ativa (partículas e áudio).");
         }
         if (client.isPaused()) return;
         activeTicks++;

@@ -4,54 +4,99 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ParticleStatus;
 import net.minecraft.util.RandomSource;
 
-/** Purely local vanilla particles, never forced visible or networked. */
+/**
+ * Visible but bounded blue dream atmosphere. Vanilla dust textures with
+ * custom cyan/blue RGB colors; no new textures, particle types or packets.
+ *
+ * Uses air near the player as a fallback, so particles are still observable
+ * when exploring in Creative flight, where surface-height probes fail.
+ */
 final class AtmosphereParticles {
+    private static final DustParticleOptions BLUE_DUST = new DustParticleOptions(0x80CFFF, 0.95F);
+    private static final DustParticleOptions CYAN_DUST = new DustParticleOptions(0xA0F5EF, 0.9F);
+    private static final DustParticleOptions LUMINOUS_DUST = new DustParticleOptions(0xC5F8FF, 1.15F);
+
     private AtmosphereParticles() {}
 
     static void tick(Minecraft client, ClientLevel level, LocalPlayer player,
                      AtmosphereProfile profile, long tick) {
         ParticleStatus setting = client.options.particles().get();
-        if (setting == ParticleStatus.MINIMAL || player.isInWater()) return;
+        if (setting == ParticleStatus.MINIMAL || player.isInWater()) {
+            return;
+        }
+
         int interval = profile.particleEveryTicks()
                 * (setting == ParticleStatus.DECREASED ? profile.decreasedParticleMultiplier() : 1);
-        if (tick % interval != 0) return;
+        if (tick % interval != 0) {
+            return;
+        }
+
         RandomSource random = player.getRandom();
-        if (random.nextBoolean()) return;
-
         BlockPos playerPos = player.blockPosition();
-        BlockPos floor = null;
-        for (int attempt = 0; attempt < profile.maxParticleSamples(); attempt++) {
-            BlockPos sample = AtmosphereSampling.sampledFloor(level, playerPos,
-                    random, profile.sampleRadius());
-            if (sample == null) continue;
-            if (AtmosphereSampling.isLuminous(level, sample)) {
-                floor = sample;
-                break;
-            }
-            if (floor == null) floor = sample;
-        }
-        if (floor == null) return;
-        boolean luminous = AtmosphereSampling.isLuminous(level, floor);
-        if (!luminous && AtmosphereSampling.belowLeaves(level, playerPos)
-                && random.nextInt(4) != 0) return;
+        int ambientCount = setting == ParticleStatus.DECREASED ? 2 : 4;
 
-        double x = floor.getX() + .25 + random.nextDouble() * .5;
-        double y = floor.getY() + 1.1 + random.nextDouble() * 1.7;
-        double z = floor.getZ() + .25 + random.nextDouble() * .5;
-        if (luminous) {
-            level.addParticle(random.nextInt(4) == 0 ? ParticleTypes.END_ROD : ParticleTypes.FIREFLY,
-                    x, y, z, (random.nextDouble() - .5) * .007, .006,
-                    (random.nextDouble() - .5) * .007);
-        } else if (AtmosphereSampling.isValley(level, playerPos) && random.nextInt(3) == 0) {
-            level.addParticle(ParticleTypes.WHITE_ASH, x, y, z, .007, .001, -.004);
-        } else if (random.nextInt(3) == 0) {
-            level.addParticle(ParticleTypes.SPORE_BLOSSOM_AIR, x, y, z,
-                    (random.nextDouble() - .5) * .009, .0015,
-                    (random.nextDouble() - .5) * .009);
+        // Colored vanilla dust around the viewer. The sample must be within a
+        // loaded chunk and completely in air; no generation or forced loads.
+        for (int i = 0; i < ambientCount; i++) {
+            BlockPos sample = playerPos.offset(
+                    random.nextInt(13) - 6, random.nextInt(7) - 2, random.nextInt(13) - 6
+            );
+            if (!isClearAir(level, sample)) {
+                continue;
+            }
+            double x = sample.getX() + random.nextDouble();
+            double y = sample.getY() + random.nextDouble();
+            double z = sample.getZ() + random.nextDouble();
+            double dx = (random.nextDouble() - 0.5) * 0.008;
+            double dz = (random.nextDouble() - 0.5) * 0.008;
+            level.addParticle(random.nextInt(5) == 0 ? ParticleTypes.SPORE_BLOSSOM_AIR
+                            : (random.nextBoolean() ? BLUE_DUST : CYAN_DUST),
+                    x, y, z, dx, 0.004, dz);
         }
+
+        // Ground-sensitive accent: prioritize the moss directly under the
+        // player's feet, then make a small bounded search for nearby gardens.
+        BlockPos luminous = playerPos.below();
+        if (!level.hasChunkAt(luminous) || !AtmosphereSampling.isLuminous(level, luminous)) {
+            luminous = null;
+            for (int attempt = 0; attempt < profile.maxParticleSamples(); attempt++) {
+                BlockPos floor = AtmosphereSampling.sampledFloor(
+                        level, playerPos, random, profile.sampleRadius());
+                if (floor != null && AtmosphereSampling.isLuminous(level, floor)) {
+                    luminous = floor;
+                    break;
+                }
+            }
+        }
+
+        if (luminous != null) {
+            int sparkleCount = setting == ParticleStatus.DECREASED ? 2 : 4;
+            for (int i = 0; i < sparkleCount; i++) {
+                BlockPos sample = luminous.offset(
+                        random.nextInt(5) - 2, 1 + random.nextInt(3), random.nextInt(5) - 2
+                );
+                if (!isClearAir(level, sample)) {
+                    continue;
+                }
+                level.addParticle(random.nextInt(5) == 0 ? ParticleTypes.END_ROD : LUMINOUS_DUST,
+                        sample.getX() + random.nextDouble(),
+                        sample.getY() + random.nextDouble(),
+                        sample.getZ() + random.nextDouble(),
+                        (random.nextDouble() - 0.5) * 0.008, 0.008,
+                        (random.nextDouble() - 0.5) * 0.008);
+            }
+        }
+    }
+
+    private static boolean isClearAir(ClientLevel level, BlockPos position) {
+        return level.hasChunkAt(position)
+                && level.isInsideBuildHeight(position)
+                && level.getBlockState(position).isAir()
+                && level.getFluidState(position).isEmpty();
     }
 }
