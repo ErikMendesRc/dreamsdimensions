@@ -1,6 +1,9 @@
 package com.dreamsdimensions.mod.entity;
 
 import com.geckolib.animatable.GeoEntity;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
 import com.geckolib.animatable.manager.AnimatableManager;
 import com.geckolib.animation.AnimationController;
@@ -48,6 +51,10 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
     private static final int FLEE_TICKS = 38;
     private static final int STARTLE_COOLDOWN_TICKS = 120;
     private static final int MAX_SAVE_COOLDOWN = 400;
+    private static final int RESONANCE_TICKS = 90;
+    private static final int RESONANCE_COOLDOWN = 1800;
+    private static final int SLOW_FALLING_TICKS = 360;
+    private static final int AGRESSION_WINDOW = 600;
 
     // Physical (server-side) hover in world blocks; visual Geo bones add a
     // second, cosmetic layer without changing the entity's collision bounds.
@@ -78,6 +85,10 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
     private int idlePauseTicks = 30;
     private int curiosityCooldown = 40;
     private int startleCooldown;
+    private int resonanceCooldown;
+    private int aggressionWindowTicks;
+    private int aggressionHits;
+    private boolean vanishAfterFlee;
     private int fleeTicks;
     private int disappearTicks;
     private boolean removeAfterDisappearance;
@@ -86,6 +97,8 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
     private Vec3 threatPosition;
     // Transient: reanchored whenever movement finishes or after a reload.
     private Vec3 hoverAnchor;
+    private BlockPos islandHome;
+    private boolean islandHabitatChecked;
 
     public FragmentoErranteEntity(EntityType<? extends PathfinderMob> type, Level level) {
         super(type, level);
@@ -118,7 +131,8 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
     @Override
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FleeGoal());
-        this.goalSelector.addGoal(1, new CuriosityGoal());
+        this.goalSelector.addGoal(1, new ResonanceGoal());
+        this.goalSelector.addGoal(2, new CuriosityGoal());
         this.goalSelector.addGoal(3, new WanderGoal());
     }
 
@@ -126,13 +140,28 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
     public void aiStep() {
         super.aiStep();
         if (!isNoGravity()) setNoGravity(true);
-        if (!(level() instanceof ServerLevel)) return;
+        if (!(level() instanceof ServerLevel server)) return;
 
+        // Only entities first detected on a floating island acquire a home
+        // tether. Summoned mainland test mobs still behave as before.
+        if (!this.islandHabitatChecked) {
+            this.islandHabitatChecked = true;
+            if (FragmentoIslandHabitat.hasNearbyIslandPerch(server, blockPosition())) {
+                this.islandHome = blockPosition();
+            }
+        }
+        if (this.resonanceCooldown > 0) this.resonanceCooldown--;
+        if (this.aggressionWindowTicks > 0) this.aggressionWindowTicks--;
+        else this.aggressionHits = 0;
         if (this.idlePauseTicks > 0) this.idlePauseTicks--;
         if (this.curiosityCooldown > 0) this.curiosityCooldown--;
         if (this.startleCooldown > 0) this.startleCooldown--;
         if (this.fleeTicks > 0 && --this.fleeTicks == 0) this.threatPosition = null;
 
+        if (this.vanishAfterFlee && this.fleeTicks == 0 && this.disappearTicks == 0) {
+            this.vanishAfterFlee = false;
+            beginDisappearance(true);
+        }
         if (this.disappearTicks > 0) {
             if (this.replayDisappearanceAfterLoad) {
                 this.replayDisappearanceAfterLoad = false;
@@ -157,6 +186,10 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
         if (this.hurtTime > 0 && !this.reactedToCurrentDamage) {
             this.reactedToCurrentDamage = true;
             LivingEntity attacker = this.getLastHurtByMob();
+            if (this.aggressionWindowTicks == 0) this.aggressionHits = 0;
+            this.aggressionWindowTicks = AGRESSION_WINDOW;
+            this.aggressionHits++;
+            if (this.aggressionHits >= 2) this.vanishAfterFlee = true;
             startleAt(attacker != null ? attacker.position() : position().subtract(getLookAngle()));
         } else if (this.hurtTime == 0) {
             this.reactedToCurrentDamage = false;
@@ -248,6 +281,7 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
         this.removeAfterDisappearance = removeAfterAnimation;
         this.fleeTicks = 0;
         this.threatPosition = null;
+        this.vanishAfterFlee = false;
         this.getNavigation().stop();
         brake();
         this.entityData.set(DISAPPEARING, true);
@@ -275,6 +309,13 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
         if (dest.y < level().getMinY() + 3 || dest.y > level().getMaxY() - 4) return false;
         Vec3 offset = dest.subtract(position());
         if (offset.lengthSqr() > 100) return false;
+        if (this.islandHome != null) {
+            if (dest.distanceToSqr(Vec3.atCenterOf(this.islandHome)) > 14.0 * 14.0
+                    || !(level() instanceof ServerLevel server)
+                    || !FragmentoIslandHabitat.hasNearbyIslandPerch(server, BlockPos.containing(dest))) {
+                return false;
+            }
+        }
         for (int step = 1; step <= 5; step++) {
             Vec3 point = position().add(offset.scale(step / 5.0));
             BlockPos block = BlockPos.containing(point);
@@ -304,6 +345,16 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
         output.putInt("FragmentoIdlePause", this.idlePauseTicks);
         output.putInt("FragmentoCuriosityCooldown", this.curiosityCooldown);
         output.putInt("FragmentoStartleCooldown", this.startleCooldown);
+        output.putInt("FragmentoResonanceCooldown", this.resonanceCooldown);
+        output.putInt("FragmentoAggressionWindow", this.aggressionWindowTicks);
+        output.putInt("FragmentoAggressionHits", this.aggressionHits);
+        output.putBoolean("FragmentoVanishAfterFlee", this.vanishAfterFlee);
+        output.putBoolean("FragmentoIslandBound", this.islandHome != null);
+        if (this.islandHome != null) {
+            output.putInt("FragmentoIslandX", this.islandHome.getX());
+            output.putInt("FragmentoIslandY", this.islandHome.getY());
+            output.putInt("FragmentoIslandZ", this.islandHome.getZ());
+        }
         output.putInt("FragmentoDisappearTicks", this.disappearTicks);
         output.putBoolean("FragmentoRemoveAfterDisappear", this.removeAfterDisappearance);
     }
@@ -314,6 +365,19 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
         this.idlePauseTicks = Mth.clamp(input.getIntOr("FragmentoIdlePause", 30), 0, MAX_SAVE_COOLDOWN);
         this.curiosityCooldown = Mth.clamp(input.getIntOr("FragmentoCuriosityCooldown", 40), 0, MAX_SAVE_COOLDOWN);
         this.startleCooldown = Mth.clamp(input.getIntOr("FragmentoStartleCooldown", 0), 0, MAX_SAVE_COOLDOWN);
+        this.resonanceCooldown = Mth.clamp(input.getIntOr("FragmentoResonanceCooldown", 0), 0, RESONANCE_COOLDOWN);
+        this.aggressionWindowTicks = Mth.clamp(input.getIntOr("FragmentoAggressionWindow", 0), 0, AGRESSION_WINDOW);
+        this.aggressionHits = Mth.clamp(input.getIntOr("FragmentoAggressionHits", 0), 0, 2);
+        this.vanishAfterFlee = input.getBooleanOr("FragmentoVanishAfterFlee", false);
+        if (input.getBooleanOr("FragmentoIslandBound", false)) {
+            this.islandHome = new BlockPos(
+                    input.getIntOr("FragmentoIslandX", 0),
+                    input.getIntOr("FragmentoIslandY", 0),
+                    input.getIntOr("FragmentoIslandZ", 0));
+        } else {
+            this.islandHome = null;
+        }
+        this.islandHabitatChecked = this.islandHome != null;
         this.disappearTicks = Mth.clamp(input.getIntOr("FragmentoDisappearTicks", 0), 0, DISAPPEAR_TICKS);
         this.removeAfterDisappearance = input.getBooleanOr("FragmentoRemoveAfterDisappear", false);
         this.replayDisappearanceAfterLoad = this.disappearTicks > 0;
@@ -382,6 +446,77 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
             brake();
             idlePauseTicks = 35 + getRandom().nextInt(75);
             target = null;
+        }
+    }
+
+    /**
+     * A calm encounter: remain close without sprinting for 4.5 seconds.
+     * Grants Slow Falling for 18s; a 90s per-creature cooldown prevents
+     * constant reapplication. One listener at a time is server-authoritative.
+     */
+    private final class ResonanceGoal extends Goal {
+        private Player listener;
+        private int calmTicks;
+
+        private ResonanceGoal() {
+            setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        }
+
+        private boolean isCalm(Player player) {
+            return player != null && player.isAlive() && !player.isSpectator()
+                    && !player.isSprinting()
+                    && player.distanceToSqr(FragmentoErranteEntity.this) <= 3.5 * 3.5;
+        }
+
+        @Override
+        public boolean canUse() {
+            if (resonanceCooldown > 0 || fleeTicks > 0 || disappearTicks > 0
+                    || vanishAfterFlee || startleCooldown > 0) return false;
+            Player candidate = level().getNearestPlayer(FragmentoErranteEntity.this, 3.5);
+            if (!isCalm(candidate)) return false;
+            listener = candidate;
+            return true;
+        }
+
+        @Override
+        public void start() {
+            calmTicks = 0;
+            getNavigation().stop();
+            brake();
+            triggerAnim(CONTROLLER, ANIM_CURIOUS);
+        }
+
+        @Override
+        public boolean canContinueToUse() {
+            return resonanceCooldown == 0 && fleeTicks == 0 && disappearTicks == 0
+                    && !vanishAfterFlee && isCalm(listener);
+        }
+
+        @Override
+        public void tick() {
+            getNavigation().stop();
+            getLookControl().setLookAt(listener, 24, 24);
+            // A player who keeps walking receives no free instant reward.
+            if (listener.getDeltaMovement().horizontalDistanceSqr() > 0.018) {
+                calmTicks = Math.max(0, calmTicks - 2);
+                return;
+            }
+            if (++calmTicks < RESONANCE_TICKS) return;
+            if (level() instanceof ServerLevel server) {
+                listener.addEffect(new MobEffectInstance(
+                        MobEffects.SLOW_FALLING, SLOW_FALLING_TICKS, 0, true, true));
+                server.sendParticles(ParticleTypes.END_ROD,
+                        getX(), getY() + 0.9, getZ(), 12, 0.4, 0.5, 0.4, 0.02);
+            }
+            resonanceCooldown = RESONANCE_COOLDOWN;
+            curiosityCooldown = Math.max(curiosityCooldown, 60);
+        }
+
+        @Override
+        public void stop() {
+            idlePauseTicks = Math.max(idlePauseTicks, 35);
+            listener = null;
+            calmTicks = 0;
         }
     }
 
