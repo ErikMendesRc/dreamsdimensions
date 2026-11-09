@@ -39,6 +39,8 @@ jobs:
         run: python3 scripts/ci/check_dreamscape_ecosystem.py
       - name: Validate Dreamscape client atmosphere (TASK 3.3)
         run: python3 scripts/ci/check_dreamscape_atmosphere.py
+      - name: Validate Dreamscape bridge homologation (TASK 3.4)
+        run: python3 scripts/ci/check_dreamscape_homologation.py
       - name: Upload mod JAR
         if: success()
         uses: actions/upload-artifact@v4
@@ -79,7 +81,7 @@ jobs:
           printf 'eula=true\n' > eula.txt
           printf 'eula=true\n' > run/eula.txt
           printf 'eula=true\n' > runs/server/eula.txt
-          JAVA_TOOL_OPTIONS="-Ddreamsdimensions.worldgenMetrics=true" ./gradlew --no-daemon runServer > server-smoke.log 2>&1 &
+          JAVA_TOOL_OPTIONS="-Ddreamsdimensions.worldgenMetrics=true -Ddreamsdimensions.enableBridgeAudit=true" ./gradlew --no-daemon runServer > server-smoke.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true; tail -n 180 server-smoke.log || true' EXIT
           started=0
@@ -98,6 +100,7 @@ jobs:
             python3 scripts/ci/check_dreamscape_geography.py --rcon
             python3 scripts/ci/check_dreamscape_ecosystem.py --rcon
             python3 scripts/ci/check_dreamscape_ecosystem.py --log server-smoke.log
+            python3 scripts/ci/check_dreamscape_homologation.py --rcon
           fi
           if [ "$started" -ne 1 ]; then
             echo "::error::O servidor não concluiu a inicialização ou falhou ao carregar datapacks."
