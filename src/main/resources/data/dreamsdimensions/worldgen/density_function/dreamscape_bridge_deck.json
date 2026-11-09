@@ -4,11 +4,11 @@
     "type": "minecraft:min",
     "left": {
       "type": "minecraft:mul",
-      "left": 7,
+      "left": 5,
       "right": {
         "type": "minecraft:sub",
         "left": "dreamsdimensions:dreamscape_bridge_strength",
-        "right": 0.42
+        "right": 0.28
       }
     },
     "right": {

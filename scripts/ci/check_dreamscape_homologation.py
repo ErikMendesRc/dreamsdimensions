@@ -79,10 +79,10 @@ def check_static():
         "type": "minecraft:min",
         "left": {
             "type": "minecraft:min",
-            "left": {"type": "minecraft:mul", "left": 7,
+            "left": {"type": "minecraft:mul", "left": 5,
                      "right": {"type": "minecraft:sub",
                                "left": PREFIX + "bridge_strength",
-                               "right": .42}},
+                               "right": .28}},
             "right": {"type": "minecraft:mul", "left": 9,
                       "right": {"type": "minecraft:sub",
                                 "left": PREFIX + "fracture_activity",

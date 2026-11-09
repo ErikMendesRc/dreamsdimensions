@@ -42,7 +42,7 @@ O valor é o mínimo de quatro termos:
 
 ```text
 R = min(
-      7 × (bridge_strength − 0.42),
+      5 × (bridge_strength − 0.28),
       9 × (fracture_activity − 0.03),
       gradient_Y(108, 114, -3.4, 3),
       gradient_Y(115, 128, 3, -4)
@@ -92,6 +92,22 @@ independentemente da seed ou dos ruídos. Portanto:
 - Para plena certeza de iluminação, material rule, biome,
   chunk seams e bordas de mundos antigos é preciso
   comparação de saves no cliente; essas inspeções permanecem pendentes.
+
+### Refinamento após seeds realmente fixadas
+
+A primeira medição com `level-seed` e comando `/seed` confirmou
+duas pontes na seed `-904732`, mas **zero** nas dez janelas
+amostradas para as outras três seeds; nelas foram observados
+centenas de vãos sem duas margens conectadas.
+Isso justifica **um ajuste medido de seleção regional**:
+`bridge_strength` passa a exigir `>0.28` (antes 0.42),
+enquanto a amplitude máxima horizontal foi reduzida
+de fator 7 para 5. Não altera qualquer ruído, ilhas,
+sistema de fratura, altitude, material, atmosfera nem
+seu custo em NormalNoise. A mudança visa aumentar a
+área de interseção entre fenda e faixa da ponte, mas
+**não constitui garantia** de conexão ou segurança;
+somente o próximo RCON com seed verificada valida o efeito.
 
 ## 3. Instrumentação de topologia real (somente CI)
 
