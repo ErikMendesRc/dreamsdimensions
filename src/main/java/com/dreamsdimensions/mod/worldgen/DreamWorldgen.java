@@ -15,6 +15,7 @@ public final class DreamWorldgen {
     static {
         FEATURES.register("dream_vegetation", () -> DreamVegetationFeature.CODEC);
         FEATURES.register("dream_formation", () -> DreamFormationFeature.CODEC);
+        FEATURES.register("dreamscape_ecosystem", () -> DreamscapeEcosystemFeature.CODEC);
     }
 
     private DreamWorldgen() {}
