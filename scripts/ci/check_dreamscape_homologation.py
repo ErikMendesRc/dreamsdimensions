@@ -87,11 +87,11 @@ def check_static():
         "right": {
             "type": "minecraft:min",
             "left": {"type": "minecraft:gradient", "axis": "y",
-                     "tiling": "clamp_to_edge", "from_coordinate": 94,
-                     "to_coordinate": 110, "from_value": -2.8, "to_value": 3},
+                     "tiling": "clamp_to_edge", "from_coordinate": 108,
+                     "to_coordinate": 114, "from_value": -3.4, "to_value": 3},
             "right": {"type": "minecraft:gradient", "axis": "y",
                       "tiling": "clamp_to_edge", "from_coordinate": 115,
-                      "to_coordinate": 144, "from_value": 3, "to_value": -4}
+                      "to_coordinate": 128, "from_value": 3, "to_value": -4}
         }
     }, "Bridge should remain a locally bounded density volume"
     # The bridge term is always strictly negative above Y=140 for all
@@ -99,8 +99,8 @@ def check_static():
     # preserved floating-island floor Y>=145; this is algebraic, not
     # a synthetic approximation of Minecraft noise.
     for y in range(140, 256):
-        cap = min(gradient(94, 110, -2.8, 3, y),
-                  gradient(115, 144, 3, -4, y))
+        cap = min(gradient(108, 114, -3.4, 3, y),
+                  gradient(115, 128, 3, -4, y))
         assert cap < -2.8, (y, cap)
         for land in (-12, -3.1, -.3, 0.01, 1.6, 6.7):
             for island in (-8, -.3, 0.01, 3):

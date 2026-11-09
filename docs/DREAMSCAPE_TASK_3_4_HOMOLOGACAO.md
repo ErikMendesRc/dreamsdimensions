@@ -44,8 +44,8 @@ O valor é o mínimo de quatro termos:
 R = min(
       7 × (bridge_strength − 0.42),
       9 × (fracture_activity − 0.03),
-      gradient_Y(94, 110, -2.8, 3),
-      gradient_Y(115, 144, 3, -4)
+      gradient_Y(108, 114, -3.4, 3),
+      gradient_Y(115, 128, 3, -4)
     )
 ```
 
@@ -58,7 +58,7 @@ uma fenda, enquanto o vão abaixo permanece no campo
 continental original. Nas bordas sem fratura, o continente
 intacto permanece o próprio ponto de apoio.
 
-**Intencionalmente não é uma estrada gerada por feature.** O
+**O perfil foi afinado após a primeira sondagem real:** a tentativa inicial com gradientes 94–110 e 115–144 era espessa demais; em duas seeds instrumentadas havia de 0 a 5 colunas com vazio profundo por janela, sempre 0 pontes confirmadas. O novo intervalo 108–128 cria uma camada mais fina, aproximadamente Y112–120 onde o campo horizontal é positivo, deixando ar abaixo quando existe uma fratura verdadeira. A existência de travessias continua dependendo da nova sondagem.\n\n**Intencionalmente não é uma estrada gerada por feature.** O
 campo é suave e baseado em ruído; formações variam com o contorno
 da fratura, a zona do ruído e a interpolação 4×4 existentes.
 A operação `min` evita uma placa positiva generalizada:
