@@ -254,7 +254,7 @@ def server_checks():
             response = conn.command(
                 f"execute in {DIM} run forceload add {x-64} {z-64} {x+64} {z+64}"
             )
-            assert "marked for force loading" in response.lower(), (x, z, response)
+            assert "marked" in response.lower() and "force load" in response.lower(), (x, z, response)
             answer = conn.command(f"dreamscape_bridge_audit {x} {z} {radius}")
             assert "DREAMSCAPE_BRIDGE_AUDIT" in answer, (x, z, answer)
             assert "status=SKIPPED" not in answer, (x, z, answer)
