@@ -256,7 +256,7 @@ def server_checks():
     try:
         conn.auth()
         actual_seed_text = conn.command("seed")
-        seed_values = [int(value) for value in re.findall(r"-?\\d+", actual_seed_text)]
+        seed_values = [int(value) for value in re.findall("-?[0-9]+", actual_seed_text)]
         if EXPECTED_SEED not in seed_values:
             raise AssertionError(
                 f"INCORRECT_WORLD_SEED expected={EXPECTED_SEED} "
