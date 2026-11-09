@@ -75,7 +75,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p run runs/server
-          printf 'enable-rcon=true\nrcon.port=25575\nrcon.password=dd-ci-local-only\nserver-ip=127.0.0.1\nonline-mode=false\nseed=${{ matrix.seed }}\n' > server.properties
+          printf 'enable-rcon=true\nrcon.port=25575\nrcon.password=dd-ci-local-only\nserver-ip=127.0.0.1\nonline-mode=false\nlevel-seed=${{ matrix.seed }}\n' > server.properties
           cp server.properties run/server.properties
           cp server.properties runs/server/server.properties
           printf 'eula=true\n' > eula.txt
@@ -100,7 +100,7 @@ jobs:
             python3 scripts/ci/check_dreamscape_geography.py --rcon
             python3 scripts/ci/check_dreamscape_ecosystem.py --rcon
             python3 scripts/ci/check_dreamscape_ecosystem.py --log server-smoke.log
-            python3 scripts/ci/check_dreamscape_homologation.py --rcon
+            python3 scripts/ci/check_dreamscape_homologation.py --rcon --expected-seed '${{ matrix.seed }}'
           fi
           if [ "$started" -ne 1 ]; then
             echo "::error::O servidor não concluiu a inicialização ou falhou ao carregar datapacks."

@@ -247,10 +247,21 @@ class Rcon:
         return answer
 
 
+EXPECTED_SEED = None
+
+
 def server_checks():
+    assert EXPECTED_SEED is not None, "CI must pass --expected-seed"
     conn = Rcon()
     try:
         conn.auth()
+        actual_seed_text = conn.command("seed")
+        seed_values = [int(value) for value in re.findall(r"-?\\d+", actual_seed_text)]
+        if EXPECTED_SEED not in seed_values:
+            raise AssertionError(
+                f"INCORRECT_WORLD_SEED expected={EXPECTED_SEED} "
+                f"server_response={actual_seed_text!r}")
+        print(f"DREAMSCAPE_SEED_VERIFIED actual={EXPECTED_SEED} rcon={actual_seed_text.strip()!r}")
         records = []
         for x, z in REGIONS:
             radius = 56
@@ -292,7 +303,9 @@ def server_checks():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--rcon", action="store_true")
+    parser.add_argument("--expected-seed", type=int)
     args = parser.parse_args()
     check_static()
     if args.rcon:
+        EXPECTED_SEED = args.expected_seed
         server_checks()
