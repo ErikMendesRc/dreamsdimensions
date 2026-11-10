@@ -19,6 +19,8 @@ assert "PactCooldown" not in fragment  # Fragmento effects and AI remain indepen
 assert "VigiaPactCooldown" in vigia and "VigiaStateTicks" in vigia
 assert "resetRitual()" in vigia and "DreamAnchorService.grant(" in vigia
 assert "CalmPlayerInteraction.isAttentive(" in vigia
+assert "attentiveParticipant(ServerLevel server)" in vigia
+assert "candidate.getUUID().equals(ritualPlayer)" in vigia
 assert "SafeGroundNavigation.hasSupportedCorridor(" in vigia
 assert "SafeGroundNavigation.canStand(" in vigia
 assert "player.hasLineOfSight(mob)" in calm
@@ -31,6 +33,8 @@ assert "level.getFluidState(" in safe
 assert "level.getBlockState(floor).isFaceSturdy(" in safe
 assert "player.teleportTo(" in anchor
 assert "player.resetFallDistance()" in anchor
+assert anchor.count("player.sendOverlayMessage(") == 3
+assert "displayClientMessage" not in anchor
 assert "SafeGroundNavigation.canStand(" in anchor
 assert "ACTIVE.remove(player.getUUID());" in anchor
 assert "player.getAbilities().instabuild" in anchor

@@ -44,8 +44,8 @@ public final class DreamAnchorService {
                 || !SafeGroundNavigation.canStand(level, feet, player)) return false;
         ACTIVE.put(player.getUUID(), new Bond(level.dimension(), feet.immutable(),
                 level.getGameTime() + POLICY.durationTicks()));
-        player.displayClientMessage(Component.literal(
-                "Pacto de Vigília: a ilha se lembrará de você por 2 minutos (um resgate)."), true);
+        player.sendOverlayMessage(Component.literal(
+                "Pacto de Vigília: a ilha se lembrará de você por 2 minutos (um resgate)."));
         level.sendParticles(ParticleTypes.ENCHANT, feet.getX() + 0.5, feet.getY() + 0.5,
                 feet.getZ() + 0.5, 25, 0.8, 0.5, 0.8, 0.03);
         return true;
@@ -75,16 +75,16 @@ public final class DreamAnchorService {
         // Consume the charge before movement, preventing duplicate callbacks.
         ACTIVE.remove(player.getUUID());
         if (!SafeGroundNavigation.canStand(level, bond.feet(), player)) {
-            player.displayClientMessage(Component.literal(
-                    "A âncora se desfez: o lugar de retorno não está mais seguro."), true);
+            player.sendOverlayMessage(Component.literal(
+                    "A âncora se desfez: o lugar de retorno não está mais seguro."));
             return;
         }
         Vec3 destination = Vec3.atBottomCenterOf(bond.feet());
         player.teleportTo(destination.x, destination.y, destination.z);
         player.setDeltaMovement(Vec3.ZERO);
         player.resetFallDistance();
-        player.displayClientMessage(Component.literal(
-                "O Vigia lembrou seu caminho. Seu Pacto de Vigília foi consumido."), true);
+        player.sendOverlayMessage(Component.literal(
+                "O Vigia lembrou seu caminho. Seu Pacto de Vigília foi consumido."));
         level.sendParticles(ParticleTypes.END_ROD, destination.x, destination.y + 1,
                 destination.z, 36, 0.8, 1.1, 0.8, 0.05);
     }

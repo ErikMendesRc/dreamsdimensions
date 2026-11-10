@@ -248,11 +248,8 @@ public final class VigiaAdormecidoEntity extends PathfinderMob implements GeoEnt
             resetRitual();
             return;
         }
-        Player player = nearestValidPlayer(PACT_RADIUS);
-        if (!(player instanceof ServerPlayer serverPlayer)
-                || DreamAnchorService.hasBond(serverPlayer)
-                || !CalmPlayerInteraction.isAttentive(serverPlayer, this,
-                        PACT_RADIUS, 0.003, 0.88)) {
+        ServerPlayer serverPlayer = attentiveParticipant(server);
+        if (serverPlayer == null) {
             resetRitual();
             return;
         }
@@ -274,6 +271,27 @@ public final class VigiaAdormecidoEntity extends PathfinderMob implements GeoEnt
             ritualCooldown = PACT_COOLDOWN_TICKS;
         }
         resetRitual();
+    }
+
+    /**
+     * Prefer the current participant, but ignore moving/sprinting spectators
+     * when another valid player is performing the ritual. No Player refs kept.
+     */
+    private ServerPlayer attentiveParticipant(ServerLevel server) {
+        ServerPlayer nearest = null;
+        double best = PACT_RADIUS * PACT_RADIUS;
+        for (ServerPlayer candidate : server.players()) {
+            if (DreamAnchorService.hasBond(candidate)
+                    || !CalmPlayerInteraction.isAttentive(candidate, this,
+                            PACT_RADIUS, 0.003, 0.88)) continue;
+            if (candidate.getUUID().equals(ritualPlayer)) return candidate;
+            double distance = candidate.distanceToSqr(this);
+            if (distance < best) {
+                nearest = candidate;
+                best = distance;
+            }
+        }
+        return nearest;
     }
 
     private BlockPos findSafeAnchor(ServerLevel level, ServerPlayer player) {
