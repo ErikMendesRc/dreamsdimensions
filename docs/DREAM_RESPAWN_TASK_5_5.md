@@ -90,7 +90,7 @@ Ordem de `DreamRespawnService.resolve` (com buscas locais limitadas):
 
 | Camada | Evidência / Status |
 | --- | --- |
-| UNIT TEST | `DreamRespawnPolicyTest` exercita elegibilidade e preferência de fallback; `DreamExpeditionAnchorDataTest` verifica defaults de save antigo, pertença por dimensão e round-trip do MapCodec. **PENDENTE de execução da CI no commit** |
+| UNIT TEST | `DreamRespawnPolicyTest` exercita elegibilidade, Hardcore, fronteiras de dimensão e preferência de fallback. Um teste JUnit do codec foi retirado porque o source set de testes Java não inclui as bibliotecas Minecraft/DFU. O round-trip real do MapCodec depende de GameTest/runtime Minecraft e permanece **PENDENTE** |
 | DATA VALIDATION | `scripts/ci/check_dream_respawn.py` parseia `dimension_type`, protege contrato de cama, integração do attachment/respawn e não interferência no Despertador. **PENDENTE de CI** |
 | BUILD | Workflow 4 seeds com JDK 25/Gradle `clean build`. **PENDENTE de CI** |
 | SERVER SMOKE | Workflow existente inicia `runServer`, carrega datapacks/dimensões e usa RCON, 4 seeds. **PENDENTE de CI** |
@@ -205,7 +205,7 @@ Confirmar renascimento local, inventário preservado. Testar **ambas** dimensõe
 - Alterado: `OneiricAwakenerItem.java` — limpa âncora após o retorno confirmado, sem mudar consumo/cooldown.
 - Alterado: `DreamsDimensions.java` — listeners únicos em NeoForge bus.
 - Alterados: dois `dimension_type` — bloqueio de cama e explosão.
-- Novo: `DreamRespawnPolicyTest.java`, `DreamExpeditionAnchorDataTest.java`, `check_dream_respawn.py`.
+- Novo: `DreamRespawnPolicyTest.java`, `check_dream_respawn.py` (validação estática da estrutura opcional de codec).
 - Atualizados: CI `.github/workflows/build.yml`, `GAMEPLAY_ROADMAP.md` e `TRAVEL_RETURN_TEST_MATRIX_TASK_5_2.md`.
 
 **Não alterados:** ID/codec do `dream_return`, inventário/Curios, receitas, frequência/algoritmo de spawn de mobs, mundo/biomas, geometria, Despertador 60 ticks, cooldown 60 ticks, Colar e chance, economia, densidade, spawn do Vigia.
@@ -214,4 +214,4 @@ Confirmar renascimento local, inventário preservado. Testar **ambas** dimensõe
 
 Tarefa de código estará tecnicamente aprovada **após** JUnit + Gradle build + checks + dedicated server smoke em quatro seeds. **Homologação real de Survival/multiplayer depende de testes dentro do cliente**, e o ciclo completo só pode ser habilitado em produção após a Task **5.7** (estruturas raras com Despertadores recuperáveis). Task 5.6 de economia de Dream Dust também continua pendente de balanceamento, sem impedir testes internos.
 
-**Commit e workflow:** registrar aqui quando o push e os jobs forem concluídos, sem confundir CI com a reprodução real do respawn de um jogador.
+**Diagnóstico da primeira CI:** o commit inicial `334efcd17beb288acb8080dec34fd38b1e67adcf` compilou o código principal do Minecraft/NeoForge, mas `compileTestJava` falhou porque `DreamExpeditionAnchorDataTest` importava `net.minecraft.*` e `com.mojang.serialization.*`, ausentes do classpath dos testes Java convencionais do projeto. A correção mantém os testes de políticas **puros** e usa validação estática do formato `MapCodec` + smoke do servidor; testes reais de serialização/respawn ficam pendentes de fixture de runtime Minecraft. **Commit corretivo e CI:** registrar resultado após executar novamente.
