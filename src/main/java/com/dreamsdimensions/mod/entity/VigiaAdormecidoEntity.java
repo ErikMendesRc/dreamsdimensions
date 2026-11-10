@@ -1,12 +1,18 @@
 package com.dreamsdimensions.mod.entity;
 
+import com.dreamsdimensions.mod.entity.behavior.CalmPlayerInteraction;
+import com.dreamsdimensions.mod.entity.behavior.DreamAnchorService;
+import com.dreamsdimensions.mod.entity.navigation.SafeGroundNavigation;
 import com.geckolib.animatable.GeoEntity;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
 import com.geckolib.animatable.manager.AnimatableManager;
 import com.geckolib.animation.AnimationController;
 import com.geckolib.animation.RawAnimation;
 import com.geckolib.util.GeckoLibUtil;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -45,6 +51,9 @@ public final class VigiaAdormecidoEntity extends PathfinderMob implements GeoEnt
     private static final int RETURN_TICKS = 80;
     private static final int SLEEP_AFTER_TICKS = 320;
     private static final int DAMAGE_REACTION_COOLDOWN = 55;
+    private static final int PACT_TICKS = 100; // 5 seconds of attentive stillness
+    private static final int PACT_COOLDOWN_TICKS = 20 * 180; // species-specific cooldown
+    private static final double PACT_RADIUS = 5.5;
 
     private static final EntityDataAccessor<Byte> STATE =
             SynchedEntityData.defineId(VigiaAdormecidoEntity.class, EntityDataSerializers.BYTE);
@@ -77,6 +86,9 @@ public final class VigiaAdormecidoEntity extends PathfinderMob implements GeoEnt
     private int inspectCooldown = 260;
     private int reactionCooldown;
     private boolean reactedToCurrentDamage;
+    private UUID ritualPlayer; // transient single participant, never a stored Player ref
+    private int ritualTicks;
+    private int ritualCooldown;
     private BlockPos islandHome;
     private boolean homeChecked;
 
@@ -117,9 +129,11 @@ public final class VigiaAdormecidoEntity extends PathfinderMob implements GeoEnt
         if (wanderCooldown > 0) wanderCooldown--;
         if (inspectCooldown > 0) inspectCooldown--;
         if (reactionCooldown > 0) reactionCooldown--;
+        if (ritualCooldown > 0) ritualCooldown--;
 
         if (this.hurtTime > 0 && !reactedToCurrentDamage) {
             reactedToCurrentDamage = true;
+            resetRitual();
             if (reactionCooldown == 0) {
                 enterState(DEFENSIVE);
                 reactionCooldown = DAMAGE_REACTION_COOLDOWN;
@@ -181,6 +195,8 @@ public final class VigiaAdormecidoEntity extends PathfinderMob implements GeoEnt
             enterState(WATCHING);
         }
         if (entityData.get(STATE) == WATCHING && getNavigation().isDone()) {
+            // A single nearby player can form a one-use island recall pact.
+            if (tickCount % 5 == 0) updateVigilRitual(server);
             if (inspectCooldown == 0 && entityData.get(OBSERVING) && getRandom().nextInt(200) == 0) {
                 triggerAnim(CONTROLLER, "inspect_ground");
                 inspectCooldown = 500;
@@ -193,8 +209,19 @@ public final class VigiaAdormecidoEntity extends PathfinderMob implements GeoEnt
     }
 
     private Player nearestValidPlayer(double radius) {
-        Player player = level().getNearestPlayer(this, radius);
-        return player != null && player.isAlive() && !player.isSpectator() ? player : null;
+        // Vanilla's unfiltered nearest-player query could select a spectator
+        // and hide a valid nearby participant. Scan the level's player list.
+        Player closest = null;
+        double bestDistance = radius * radius;
+        for (Player candidate : level().players()) {
+            if (!candidate.isAlive() || candidate.isSpectator()) continue;
+            double distance = candidate.distanceToSqr(this);
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                closest = candidate;
+            }
+        }
+        return closest;
     }
 
     private void enterState(byte newState) {
@@ -205,10 +232,65 @@ public final class VigiaAdormecidoEntity extends PathfinderMob implements GeoEnt
                 || newState == RETURNING || newState == DEFENSIVE) {
             getNavigation().stop();
         }
+        if (newState != WATCHING) resetRitual();
         if (newState == DORMANT) {
             idleWithoutPlayer = 0;
             entityData.set(OBSERVING, false);
         }
+    }
+
+    /**
+     * Player mimics the guardian's silence and attention for five seconds.
+     * The shared bond service owns the rescue; Vigia only owns the ritual.
+     */
+    private void updateVigilRitual(ServerLevel server) {
+        if (ritualCooldown > 0 || islandHome == null) {
+            resetRitual();
+            return;
+        }
+        Player player = nearestValidPlayer(PACT_RADIUS);
+        if (!(player instanceof ServerPlayer serverPlayer)
+                || DreamAnchorService.hasBond(serverPlayer)
+                || !CalmPlayerInteraction.isAttentive(serverPlayer, this,
+                        PACT_RADIUS, 0.003, 0.88)) {
+            resetRitual();
+            return;
+        }
+
+        if (!serverPlayer.getUUID().equals(ritualPlayer)) {
+            ritualPlayer = serverPlayer.getUUID();
+            ritualTicks = 0;
+        }
+        ritualTicks += 5;
+        if (ritualTicks % 20 == 0) {
+            server.sendParticles(ParticleTypes.END_ROD,
+                    getX(), getY() + 1.65, getZ(), 2, 0.55, 0.35, 0.55, 0.002);
+        }
+        if (ritualTicks < PACT_TICKS) return;
+
+        BlockPos anchor = findSafeAnchor(server, serverPlayer);
+        if (anchor != null && DreamAnchorService.grant(serverPlayer, anchor)) {
+            triggerAnim(CONTROLLER, "inspect_ground");
+            ritualCooldown = PACT_COOLDOWN_TICKS;
+        }
+        resetRitual();
+    }
+
+    private BlockPos findSafeAnchor(ServerLevel level, ServerPlayer player) {
+        BlockPos origin = player.blockPosition();
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                BlockPos feet = origin.offset(dx, 0, dz);
+                if (VigiaIslandHabitat.habitat().isValid(level, feet)
+                        && SafeGroundNavigation.canStand(level, feet, player)) return feet;
+            }
+        }
+        return null;
+    }
+
+    private void resetRitual() {
+        ritualPlayer = null;
+        ritualTicks = 0;
     }
 
     /** Bounded search of already-loaded terrain close to the original island. */
@@ -222,7 +304,10 @@ public final class VigiaAdormecidoEntity extends PathfinderMob implements GeoEnt
             int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
             BlockPos target = new BlockPos(x, y, z);
             if (Math.abs(y - islandHome.getY()) > 3
-                    || !VigiaIslandHabitat.habitat().isValid(level, target)) continue;
+                    || !VigiaIslandHabitat.habitat().isValid(level, target)
+                    || !SafeGroundNavigation.canStand(level, target, this)
+                    || !SafeGroundNavigation.hasSupportedCorridor(level, this, target, 18, 1))
+                continue;
             if (getNavigation().moveTo(x + 0.5, y, z + 0.5, 0.42)) return;
         }
     }
@@ -236,6 +321,7 @@ public final class VigiaAdormecidoEntity extends PathfinderMob implements GeoEnt
         output.putInt("VigiaWanderCooldown", wanderCooldown);
         output.putInt("VigiaInspectCooldown", inspectCooldown);
         output.putInt("VigiaReactionCooldown", reactionCooldown);
+        output.putInt("VigiaPactCooldown", ritualCooldown);
         output.putBoolean("VigiaHasHome", islandHome != null);
         if (islandHome != null) {
             output.putInt("VigiaHomeX", islandHome.getX());
@@ -253,6 +339,8 @@ public final class VigiaAdormecidoEntity extends PathfinderMob implements GeoEnt
         wanderCooldown = Mth.clamp(input.getIntOr("VigiaWanderCooldown", 140), 0, 400);
         inspectCooldown = Mth.clamp(input.getIntOr("VigiaInspectCooldown", 260), 0, 600);
         reactionCooldown = Mth.clamp(input.getIntOr("VigiaReactionCooldown", 0), 0, DAMAGE_REACTION_COOLDOWN);
+        ritualCooldown = Mth.clamp(input.getIntOr("VigiaPactCooldown", 0), 0, PACT_COOLDOWN_TICKS);
+        resetRitual();
         if (input.getBooleanOr("VigiaHasHome", false)) {
             islandHome = new BlockPos(input.getIntOr("VigiaHomeX", 0),
                     input.getIntOr("VigiaHomeY", 0), input.getIntOr("VigiaHomeZ", 0));
@@ -260,6 +348,10 @@ public final class VigiaAdormecidoEntity extends PathfinderMob implements GeoEnt
             islandHome = null;
         }
         homeChecked = islandHome != null;
+        // Vanilla navigation paths are not persisted. Restart one-shots at
+        // frame zero and never restore MOVING without a navigation target.
+        if (state == MOVING) state = WATCHING;
+        if (state == AWAKENING || state == DEFENSIVE || state == RETURNING) stateTicks = 0;
         entityData.set(STATE, state);
         entityData.set(OBSERVING, false);
     }
