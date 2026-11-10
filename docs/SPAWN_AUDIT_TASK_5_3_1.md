@@ -47,9 +47,9 @@ Desligar após amostragem. Para avaliar sobrepopulação: registrar contagem tot
 
 | Camada | Situação |
 | --- | --- |
-| Contrato JSON e fonte de código (CI 5.3.1) | **Preparado para GitHub Actions**; conferir o resultado após push |
-| Regressões 4.2, 4.4, 4.5, 4.6 | Mantidas sem reescrever asserts históricos, pois o spawn híbrido foi preservado |
-| `./gradlew --no-daemon clean test build` (Java 25) | **Pendente de execução CI no commit** |
+| Contrato JSON e fonte de código (CI 5.3.1) | **PASS** — [GitHub Actions 42893544012](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42893544012), nas quatro seeds |
+| Regressões 4.2, 4.4, 4.5, 4.6 | Mantidas e **PASS** nas quatro seeds, sem reescrever asserts históricos: contrato de spawn híbrido preservado |
+| `./gradlew --no-daemon clean test build` (Java 25) | **PASS** no commit de código \`d07dd6d89a12981bdbd8a0ce103f6192b779ece8\`, nas quatro seeds |
 | Dedicated server 26.3: startup, datapack, summon/RCON, chunks/seed | **Pendente de execução CI no commit** |
 | Survival manual: drop/XP, geração de poeira, Crafting | **Pendente** |
 | Multiplayer natural: contagens, taxa de spawn em ilhas, caps e TPS | **Pendente**; CI sem jogador não reproduz isso |
@@ -112,3 +112,17 @@ Ao terminar o laboratório, limpe a scoreboard se desejado:
 **Task 5.3.1** encerra revisão arquitetural e simplificações sem afetar o comportamento de Survival aprovado. **5.4** permanece prioridade: Despertador consumido após retorno confirmado; 5.5 respawn seguro; 5.7 recuperação em estruturas raras.
 
 **Risco residual:** vanilla ainda pode adicionar criaturas apesar do coordenador já estar no cap local; só um levantamento real poderá dizer se isso gera sobrepopulação. Se as medições demonstrarem problema, avaliar balanceamento de pesos/periodicidade/caps com seeds controladas, sem substituir prematuramente o sistema.
+
+
+## 7. Evidências verificadas após o push (10/11/2026)
+
+O commit **`d07dd6d89a12981bdbd8a0ce103f6192b779ece8`** passou no [GitHub Actions run 42893544012](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42893544012):
+
+| Seed | JDK 25 / Gradle clean build + JUnit | Scripts CI, inclusive 5.3.1 | Dedicated server RCON/Datapacks | Job |
+| --- | --- | --- | --- | --- |
+| `14011` | PASS | PASS | PASS | SUCCESS |
+| `20261108` | PASS | PASS | PASS | SUCCESS |
+| `-904732` | PASS | PASS | PASS | SUCCESS |
+| `73199013` | PASS | PASS | PASS | SUCCESS |
+
+**PENDENTES de homologação:** comparação de população nas ilhas antes/depois por jogadores reais, teste de dois jogadores, avaliação de TPS em sessão prolongada, clique em minério já existente no save, mineração/XP observada e crafting manual. Nenhuma dessas verificações foi apresentada como executada.
