@@ -100,3 +100,17 @@ A e B têm UUID e gate independentes. A com colar é candidato; B sem colar nunc
 **5.4:** Despertador consumível idempotente após teleporte confirmado. **5.5:** sono nas dimensões e respawn local seguro em Survival/Hardcore. **5.6:** obtenção/custo do Dream Dust no Overworld. **5.7:** ruínas raras com Despertadores reais nas duas dimensões. Só então remover bloqueio de lançamento do ciclo de viagem.
 
 Base de decisões: [Task 5.2](TRAVEL_RETURN_CONTRACT_TASK_5_2.md), [matriz 5.2](TRAVEL_RETURN_TEST_MATRIX_TASK_5_2.md).
+
+
+## 12. Evidência de execução CI — 10/11/2026
+
+**Código testado:** commit `6106debcda6aa10b7e5a622b9d60798b1e4d0af3` (`ModConfig.Type.SYNCED` para NeoForge 26.3), [GitHub Actions run 42881013010](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42881013010).
+
+| Seed | Gradle clean build (inclui JUnit) | Validações estáticas existentes | Dedicated server smoke/datapacks | Resultado do job |
+| --- | --- | --- | --- | --- |
+| 14011 | PASS | PASS | PASS | SUCCESS |
+| 20261108 | PASS | PASS | PASS | SUCCESS |
+| -904732 | PASS | PASS | PASS | SUCCESS |
+| 73199013 | PASS | PASS | PASS | SUCCESS |
+
+**Resultado:** as quatro matrizes de GitHub Actions finalizaram com `success`; Curios 17.0.1+26.3 foi resolvido na compilação, e o servidor de teste inicializou sem falha detectada pelo smoke. **Limite:** CI não prova, por si só, o comportamento visual do slot Curios no cliente, crafting manual, chance empírica, login/logout concorrente e multiplayer. **NOT RUN:** GameTest específico de sono, Survival manual, e dois clientes multiplayer. `dream_entry_enabled=false` continua sendo o bloqueio de release. O código do `OneiricAwakenerItem` não foi alterado na 5.3.

@@ -124,3 +124,6 @@ Esta seção cobre **17 blocos, 17 BlockItems associados e 2 itens próprios**. 
 | `dreamsdimensions:dream_necklace` / 3 Dream Dust + 3 copper ingots + 1 amethyst shard do Overworld | Equipar em Curios `necklace` funcional, completar sono 100 ticks no Overworld; chance server-side `dream_entry_chance` (0.30 inicial) se `dream_entry_enabled=true` | Permite **chance** de entrar Dreamscape/Campo Azul sem mudar pesos, sem buffs, sem consumo | Curios 17.0.1+26.3, mod obrigatório; `DreamSleepCycle`, `DreamEntryPolicy`, `DreamTeleportService` | **CÓDIGO/ASSETS PROPOSTOS NA 5.3; BUILD/SURVIVAL/MULTIPLAYER PENDENTES**; bloqueado por padrão até 5.4/5.5/5.7 |
 
 O Pó Onírico ainda é extraído no **Overworld**; Pó de Cristal futuro é outro recurso. Despertador atual não foi alterado: consumo somente na Task 5.4. Ver [Relatório 5.3](DREAM_NECKLACE_TASK_5_3.md).
+
+
+**Evidência CI Task 5.3:** [workflow 42881013010](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42881013010) concluiu quatro seeds com build, tests e server smoke `success` após adoção do `ModConfig.Type.SYNCED` da 26.3. Ainda **PENDENTES**: equipar o item no cliente, crafting/viagem em Survival, testes de chance e multiplayer. Não converter status de código em gameplay homologado.
