@@ -66,7 +66,8 @@ public final class DreamTeleportService {
                         target, spawn.get(), Vec3.ZERO, player.getYRot(), player.getXRot(),
                         Set.of(), TeleportTransition.PLACE_PORTAL_TICKET
                 ));
-                if (teleported == null || teleported.level().dimension() != target.dimension()) {
+                if (teleported == null || !player.getUUID().equals(teleported.getUUID())
+                        || teleported.level().dimension() != target.dimension()) {
                     DreamsDimensions.LOGGER.warn("Teleporte recusado para jogador {} em {}.",
                             player.getUUID(), definition.dimension().identifier());
                     return false; // Do not blindly retry after a partial transition.
@@ -75,6 +76,9 @@ public final class DreamTeleportService {
                 // Commit return coordinates ONLY after a confirmed transition.
                 // Keep dream_return's codec and persisted field names unchanged.
                 teleported.getData(ModAttachments.DREAM_RETURN).setOverworldBed(bedPos, bedYaw);
+                // Task 5.5: a new expedition starts only AFTER a confirmed
+                // sleep journey, never during a failed roll or admin /tp.
+                DreamRespawnService.recordExpedition(teleported, spawn.get());
                 DreamsDimensions.LOGGER.info("Jogador {} entrou em {} após sono completo.",
                         player.getUUID(), definition.dimension().identifier());
                 return true;

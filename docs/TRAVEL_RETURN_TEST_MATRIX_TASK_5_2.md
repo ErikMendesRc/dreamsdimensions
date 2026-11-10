@@ -109,3 +109,18 @@ A execução de CI após push, caso ocorra, deve ser consultada separadamente; e
 Este addendum não altera os resultados de testes históricos da 5.2. A implementação da 5.4 adiciona `OneiricReturnPolicyTest` e `OneiricReturnGuardTest` com decisões puras e checagens de prevenção de replay. O fluxo de 60 ticks permanece vanilla, usando `getUsedItemHand()`, `getUseItem()` e a referência exata do stack para vincular mão/item à tentativa. Retorno via `DreamReturnHelper.buildReturnTransition` passa a ser confirmado por `ServerPlayer.teleport` não nulo, vivo, mesmo UUID e Overworld. `ItemStack.shrink(1)` somente após confirmação, quando não há `instabuild`. `USE_COOLDOWN` é 3.0 segundos = 60 ticks padrão, aplicado só após sucesso.
 
 **Status de prova:** código e testes unitários preparados; verificar build, JUnit e server smoke da CI do commit 5.4; **NÃO EXECUTADOS ainda** teste real com dois clientes, use item durante 60 ticks, interrupção 59 ticks, mudança de mão e falha de teleporte. Ver [Relatório de implementação 5.4](ONEIRIC_AWAKENER_TASK_5_4.md). Nenhuma modificação em `dream_return`, `dream_entry_enabled` e `dream_entry_chance`; worldgen/loot/recipes intactos.
+
+
+## 7. Addendum Task 5.5 — morte não é retorno gratuito (10/11/2026)
+
+| Caso | Regra de código | Status de teste |
+| --- | --- | --- |
+| Morte no Dreamscape/Campo Azul | `PlayerRespawnPositionEvent` substitui destino antes de `PlayerList.respawn`, mantendo dimensão original, fora de Hardcore/End | Código + testes unitários preparados; jogo real pendente |
+| Morte Overworld/Nether/End/terceiros | Não interceptar, vanilla mantém cama/respawn | Inspeção de política; manual pendente |
+| Âncora por viagem de sono | Attachment `dream_expedition_anchor` com `dimension/pos/yaw`, `copyOnDeath` e gravação somente após chegada segura | Codec/JUnit; restart/manual pendentes |
+| Ponto inseguro / mundo antigo sem attachment | Validação geométrica compartilhada → busca local limitada → spawn global → plataforma 5×5 somente em emergência; erro crítico se impossível | Teste de políticas; colisões in-game pendentes |
+| Despertador e retorno | Ao retornar ao Overworld após teleporte+consumo confirmado, limpar apenas âncora de expedição; `dream_return` preservado | Inspeção de código; manual pendente |
+| Cama nas duas dimensões | `can_sleep=never`, `can_set_spawn=never`, `destroy_on_use=false`, `destroy_on_leave=false`; não interfere no RespawnConfig do Overworld | Static CI + datapack smoke a verificar; interação real pendente |
+| `keepInventory`, Hardcore, multiplayer | Sem manipulação de inventário/XP; Hardcore vanilla, anchors por jogador | Testes de políticas; dois clientes pendentes |
+
+Documentação detalhada: [Task 5.5](DREAM_RESPAWN_TASK_5_5.md). Ainda **não** declarar homologação Survival completa até 5.7.

@@ -21,6 +21,7 @@ import com.dreamsdimensions.mod.entity.spawn.DreamMobPopulationService;
 import com.dreamsdimensions.mod.registry.ModItems;
 import com.dreamsdimensions.mod.item.OneiricAwakenerItem;
 import com.dreamsdimensions.mod.worldgen.DreamWorldgen;
+import com.dreamsdimensions.mod.service.DreamRespawnService;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -73,6 +74,11 @@ public class DreamsDimensions {
         NeoForge.EVENT_BUS.addListener(DreamDimensionEffectsHandler::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(DreamDimensionEffectsHandler::onPlayerLoggedOut);
         NeoForge.EVENT_BUS.addListener(DreamReturnAttachmentHandler::onPlayerSetSpawn);
+        // Pre-clone respawn destination, post-clone diagnostics, and
+        // deferred cleanup of stale anchors from admin dimension changes.
+        NeoForge.EVENT_BUS.addListener(DreamRespawnService::onRespawnPosition);
+        NeoForge.EVENT_BUS.addListener(DreamRespawnService::onRespawnComplete);
+        NeoForge.EVENT_BUS.addListener(DreamRespawnService::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerWakeUp);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerLoggedOut);

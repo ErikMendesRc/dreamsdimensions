@@ -37,6 +37,8 @@ jobs:
         run: python3 scripts/ci/check_atmosphere.py
       - name: Validate reusable dream engine (TASK 2.2)
         run: python3 scripts/ci/check_dream_engine.py
+      - name: Validate dream respawn and survival rules (TASK 5.5)
+        run: python3 scripts/ci/check_dream_respawn.py
       - name: Validate Dreamscape geography and graph (TASK 3.1)
         run: python3 scripts/ci/check_dreamscape_geography.py
       - name: Validate Dreamscape ecosystem (TASK 3.2)

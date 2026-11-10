@@ -3,6 +3,7 @@ package com.dreamsdimensions.mod.item;
 import com.dreamsdimensions.mod.config.DreamsConfig;
 import com.dreamsdimensions.mod.service.OneiricReturnGuard;
 import com.dreamsdimensions.mod.service.OneiricReturnPolicy;
+import com.dreamsdimensions.mod.service.DreamRespawnService;
 import com.dreamsdimensions.mod.service.OneiricReturnPolicy.Result;
 import com.dreamsdimensions.mod.util.DreamReturnHelper;
 import com.mojang.logging.LogUtils;
@@ -170,6 +171,10 @@ public class OneiricAwakenerItem extends Item {
             if (cooldownTicks > 0 && OneiricReturnPolicy.shouldApplyCooldown(Result.SUCCESS)) {
                 returned.getCooldowns().addCooldown(cooldownSource, cooldownTicks);
             }
+            // Close the expedition only after the same verified teleported
+            // player has paid (or retained item in Creative). Not from the
+            // ChangedDimensionEvent, which fires mid-teleport.
+            DreamRespawnService.completeExpedition(returned);
             returned.sendSystemMessage(Component.translatable(
                     "message.dreamsdimensions.oneiric_awakener.success"));
             LOGGER.info("ONEIRIC_RETURN player_uuid={} source={} target={} result=success "

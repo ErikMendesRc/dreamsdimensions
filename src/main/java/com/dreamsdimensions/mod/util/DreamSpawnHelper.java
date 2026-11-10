@@ -41,7 +41,8 @@ public final class DreamSpawnHelper {
         return createArrivalPlatform(level, definition, origin, player);
     }
 
-    private static Optional<Vec3> findNaturalArrival(
+    /** Bounded search for an existing safe standing surface; NEVER writes blocks. */
+    public static Optional<Vec3> findNaturalArrival(
             ServerLevel level, BlockPos origin, ServerPlayer player, int searchRadius) {
         for (int radius = 0; radius <= searchRadius; radius++) {
             for (int dx = -radius; dx <= radius; dx++) {
@@ -49,6 +50,9 @@ public final class DreamSpawnHelper {
                     if (radius != 0 && Math.abs(dx) != radius && Math.abs(dz) != radius) continue;
                     int x = origin.getX() + dx;
                     int z = origin.getZ() + dz;
+                    // The heightmap query may load/generate a chunk: never
+                    // probe outside the world border, even in a fallback.
+                    if (!level.getWorldBorder().isWithinBounds(new BlockPos(x, origin.getY(), z))) continue;
                     int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
                     BlockPos feet = new BlockPos(x, y, z);
                     if (isSafeStandingSpace(level, feet, player)) {
@@ -60,7 +64,8 @@ public final class DreamSpawnHelper {
         return Optional.empty();
     }
 
-    private static boolean isSafeStandingSpace(ServerLevel level, BlockPos feet, ServerPlayer player) {
+    /** Shared physical validator for first arrival and death respawn. */
+    public static boolean isSafeStandingSpace(ServerLevel level, BlockPos feet, ServerPlayer player) {
         if (feet.getY() <= level.getMinY() || feet.getY() >= level.getMaxY() - 2
                 || !level.getWorldBorder().isWithinBounds(feet)) return false;
 
@@ -71,7 +76,10 @@ public final class DreamSpawnHelper {
                 || floorState.is(Blocks.MAGMA_BLOCK)
                 || floorState.is(Blocks.CACTUS)
                 || floorState.is(Blocks.CAMPFIRE)
-                || floorState.is(Blocks.SOUL_CAMPFIRE)) return false;
+                || floorState.is(Blocks.SOUL_CAMPFIRE)
+                || floorState.is(Blocks.POINTED_DRIPSTONE)
+                || floorState.is(Blocks.SWEET_BERRY_BUSH)
+                || floorState.is(Blocks.WITHER_ROSE)) return false;
 
         if (!level.getBlockState(feet).isAir()
                 || !level.getBlockState(feet.above()).isAir()
@@ -93,6 +101,7 @@ public final class DreamSpawnHelper {
             for (int dz : PLATFORM_OFFSETS) {
                 int x = origin.getX() + dx;
                 int z = origin.getZ() + dz;
+                if (!level.getWorldBorder().isWithinBounds(new BlockPos(x, origin.getY(), z))) continue;
                 int highest = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
                 int startingY = Math.max(minFloor, Math.min(maxFloor, Math.max(highest, origin.getY() - 1)));
                 for (int y = startingY; y <= Math.min(maxFloor, startingY + MAX_PLATFORM_RISE); y += 4) {
