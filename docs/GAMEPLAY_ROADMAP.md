@@ -289,3 +289,8 @@ O Eco do Musgo **não é missão, não desbloqueia dimensão, não concede itens
 
 
 **Evidência CI para o addendum 5.3:** [workflow 42881013010](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42881013010) passou em quatro seeds (Gradle build + tests, checks estáticos e dedicated server smoke). Isso **não** homologa o fluxo visual/Survival/multiplayer; o default de entrada segue `false` e 5.4/5.5/5.7 são gates de release.
+
+
+## 13. Task 5.3.1 — Auditoria de spawn e simplificação (10/11/2026)
+
+A revisão integral das Tasks 4.3–4.5 comprovou que o spawn **híbrido foi intencional**: `minecraft:gameplay/natural_mob_spawns` no bioma Dreamscape preenche o mundo (incluindo worldgen), enquanto `DreamMobPopulationService` complementa em ilhas exploradas e conta entidades existentes antes de repor. **Ambos foram mantidos** para não alterar frequência sem medições. A Task 5.3.1 remove a classe Java vazia `DreamDustItem` (mantendo `dreamsdimensions:dream_dust`), elimina o clique sem efeito dos minérios **preservando** a propriedade legacy `clicked` dos saves e adiciona diagnósticos opt-in do coordenador e limpeza de cache no desligamento do servidor. Nova guarda CI: `scripts/ci/check_spawn_population_contract.py`. **Spawn em multiplayer ainda exige homologação manual**. Relatório: [SPAWN_AUDIT_TASK_5_3_1.md](SPAWN_AUDIT_TASK_5_3_1.md). A próxima tarefa funcional continua sendo **5.4**.

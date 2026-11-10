@@ -64,6 +64,7 @@ public class DreamsDimensions {
         DreamMobPopulationService.register(FragmentoIslandPopulation.profile());
         DreamMobPopulationService.register(VigiaIslandPopulation.profile());
         NeoForge.EVENT_BUS.addListener(DreamMobPopulationService::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(DreamMobPopulationService::onServerStopped);
         NeoForge.EVENT_BUS.addListener(DreamAnchorService::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(DreamAnchorService::onPlayerLoggedOut);
         NeoForge.EVENT_BUS.addListener(DreamAnchorService::onPlayerClone);

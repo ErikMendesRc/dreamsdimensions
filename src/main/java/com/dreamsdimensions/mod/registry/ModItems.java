@@ -1,7 +1,6 @@
 package com.dreamsdimensions.mod.registry;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
-import com.dreamsdimensions.mod.item.DreamDustItem;
 import com.dreamsdimensions.mod.item.OneiricAwakenerItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -25,9 +24,9 @@ public final class ModItems {
     /**
      * Poeira dos sonhos usada na receita do Oneiric Awakener e dropada do minério dream_ore.
      */
-    public static final DeferredItem<DreamDustItem> DREAM_DUST = ITEMS.registerItem(
+    public static final DeferredItem<Item> DREAM_DUST = ITEMS.registerItem(
             "dream_dust",
-            DreamDustItem::new,
+            Item::new,
             Item.Properties::new
     );
 

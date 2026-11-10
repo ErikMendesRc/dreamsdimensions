@@ -1,5 +1,7 @@
 package com.dreamsdimensions.mod.entity.spawn;
 
+import com.dreamsdimensions.mod.DreamsDimensions;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,6 +17,7 @@ import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 
 /**
  * One shared, server-only population coordinator. Profiles specify species
@@ -24,6 +27,8 @@ public final class DreamMobPopulationService {
     private static final List<MobPopulationProfile<? extends Mob>> PROFILES = new ArrayList<>();
     private static final int REGION_SHIFT = 7; // 128-block cells
     private static final int MAX_REGION_KEYS = 256;
+    // Opt-in diagnostics only. No persistent tags or second spawn system.
+    private static final boolean AUDIT_SPAWNS = Boolean.getBoolean("dreamsdimensions.auditMobSpawn");
     private static final Map<ServerLevel, LinkedHashMap<RegionKey, Long>> RECENT = new WeakHashMap<>();
 
     private DreamMobPopulationService() {}
@@ -121,12 +126,26 @@ public final class DreamMobPopulationService {
             if (closeToExisting) continue;
 
             // Vanilla entity initialization and NeoForge spawn events are kept.
-            if (profile.entityType().get().spawn(
-                    level, surface, EntitySpawnReason.NATURAL) == null) continue;
+            T mob = profile.entityType().get().spawn(
+                    level, surface, EntitySpawnReason.NATURAL);
+            if (mob == null) continue;
+            // Distinguishes coordinator contribution from vanilla population
+            // during in-game sampling, without changing mob NBT or behavior.
+            if (AUDIT_SPAWNS) {
+                DreamsDimensions.LOGGER.info(
+                        "DREAM_MOB_SPAWN origin=coordinator type={} dimension={} pos={} nearby_before={} local_cap={}",
+                        profile.id(), level.dimension().identifier(), mob.blockPosition(),
+                        existing.size() + spawned, profile.localCap());
+            }
             spawned++;
             newPositions.add(target);
             if (profile.stopAfterFirstSuccess()) break; // Preserve the Fragmento's one-success rule.
         }
+    }
+
+    /** Drop per-server transient throttle state after integrated/dedicated shutdown. */
+    public static void onServerStopped(ServerStoppedEvent event) {
+        RECENT.clear();
     }
 
     /** Historical heightmap annulus selection, now callable from other species profiles. */

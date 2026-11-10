@@ -127,3 +127,14 @@ O Pó Onírico ainda é extraído no **Overworld**; Pó de Cristal futuro é out
 
 
 **Evidência CI Task 5.3:** [workflow 42881013010](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42881013010) concluiu quatro seeds com build, tests e server smoke `success` após adoção do `ModConfig.Type.SYNCED` da 26.3. Ainda **PENDENTES**: equipar o item no cliente, crafting/viagem em Survival, testes de chance e multiplayer. Não converter status de código em gameplay homologado.
+
+
+## 7. Task 5.3.1 — Contrato híbrido preservado e remoção de código sem função
+
+| Sistema/elemento | Fonte oficial do comportamento | Decisão e compatibilidade | Evidência |
+| --- | --- | --- | --- |
+| Fragmento Errante e Vigia Adormecido | Spawn vanilla definido em `dreamscape_biome.json` **mais** coordenador compartilhado com caps/habitat por espécie | **MANTER AMBOS:** nativo para povoamento inicial e coordenador para reposição em ilhas exploradas; diagnóstico opt-in `-Ddreamsdimensions.auditMobSpawn=true` | Registros/code auditados; abundância real e multiplayer pendentes |
+| Dream Dust | Item vanilla `Item` via `DeferredRegister.Items` | Classe Java `DreamDustItem` removida; ID `dreamsdimensions:dream_dust` e receita/loot intactos | Compilação/CI no commit 5.3.1 |
+| Dream Ore e Deepslate Dream Ore | `DropExperienceBlock` vanilla | Removido clique de alternância sem efeito; propriedade `clicked` e blockstates preservados por compatibilidade de saves | CI e teste manual de estados antigos |
+
+Relatório completo: [SPAWN_AUDIT_TASK_5_3_1.md](SPAWN_AUDIT_TASK_5_3_1.md). Não reinterpretar a coexistência dos dois mecanismos como duplicação indevida sem medir entidades em jogo. 
