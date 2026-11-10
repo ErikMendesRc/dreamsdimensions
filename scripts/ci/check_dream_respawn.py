@@ -69,7 +69,9 @@ for must in (
 assert "PlayerRespawnEvent" in service and "onRespawnPosition" in service
 assert "player.getInventory().clearContent" not in service
 assert "player.teleport(" not in service
-assert "setCopyOriginalSpawnPosition(true)" not in service
+# Reject an executable forced overwrite of vanilla's saved respawn.
+# Comments may legitimately mention the API as a documented anti-pattern.
+assert "event.setCopyOriginalSpawnPosition(true);" not in service
 assert "GameRules.KEEP_INVENTORY" not in service
 
 assert "boolean interceptDeath(" in policy
