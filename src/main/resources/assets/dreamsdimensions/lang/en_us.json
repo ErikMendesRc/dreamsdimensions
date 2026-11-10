@@ -21,5 +21,6 @@
   "message.dreamsdimensions.oneiric_awakener.success": "You woke up from the dream.",
   "message.dreamsdimensions.oneiric_awakener.fail": "The Overworld is unavailable right now.",
   "entity.dreamsdimensions.fragmento_errante": "Wandering Fragment",
-  "entity.dreamsdimensions.vigia_adormecido": "Dormant Watcher"
+  "entity.dreamsdimensions.vigia_adormecido": "Dormant Watcher",
+  "effect.dreamsdimensions.pacto_de_vigilia": "Vigil Pact"
 }

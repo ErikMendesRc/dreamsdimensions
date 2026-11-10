@@ -51,6 +51,8 @@ jobs:
         run: python3 scripts/ci/check_vigia_adormecido.py
       - name: Validate Vigia mechanics and reusable protections (TASK 4.6)
         run: python3 scripts/ci/check_vigia_mechanics.py
+      - name: Validate Pacto de Vigília native effect icon (TASK 4.7)
+        run: python3 scripts/ci/check_pacto_vigilia_effect.py
       - name: Upload mod JAR
         if: success()
         uses: actions/upload-artifact@v4

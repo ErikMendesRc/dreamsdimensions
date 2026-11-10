@@ -2,6 +2,7 @@ package com.dreamsdimensions.mod.entity.behavior;
 
 import com.dreamsdimensions.mod.dimension.DreamDimensionCatalog;
 import com.dreamsdimensions.mod.entity.navigation.SafeGroundNavigation;
+import com.dreamsdimensions.mod.registry.ModEffects;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -12,6 +13,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -33,7 +35,8 @@ public final class DreamAnchorService {
     public static boolean hasBond(ServerPlayer player) {
         Bond bond = ACTIVE.get(player.getUUID());
         return bond != null && player.level().dimension() == bond.dimension()
-                && POLICY.isActive(player.level().getGameTime(), bond.expiresAt());
+                && POLICY.isActive(player.level().getGameTime(), bond.expiresAt())
+                && player.hasEffect(ModEffects.PACTO_DE_VIGILIA);
     }
 
     public static boolean grant(ServerPlayer player, BlockPos feet) {
@@ -42,6 +45,16 @@ public final class DreamAnchorService {
                 || !player.isAlive() || player.isSpectator()
                 || player.getAbilities().instabuild || hasBond(player)
                 || !SafeGroundNavigation.canStand(level, feet, player)) return false;
+        // The effect is only the vanilla HUD/inventory presentation layer.
+        // Never issue a real rescue charge if the marker was rejected.
+        // Remove stale marker instances (e.g. restored by NBT after restart).
+        if (player.hasEffect(ModEffects.PACTO_DE_VIGILIA)) {
+            player.removeEffect(ModEffects.PACTO_DE_VIGILIA);
+        }
+        if (!player.addEffect(new MobEffectInstance(
+                ModEffects.PACTO_DE_VIGILIA, POLICY.durationTicks(),
+                0, false, false, true))) return false;
+
         ACTIVE.put(player.getUUID(), new Bond(level.dimension(), feet.immutable(),
                 level.getGameTime() + POLICY.durationTicks()));
         player.sendOverlayMessage(Component.literal(
@@ -54,26 +67,36 @@ public final class DreamAnchorService {
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         Bond bond = ACTIVE.get(player.getUUID());
-        if (bond == null) return;
+        if (bond == null) {
+            // Vanilla saves status effects; our transient bond does not survive
+            // a restart. Remove orphan icons promptly on the first server tick.
+            removeMarker(player);
+            return;
+        }
+        if (!player.hasEffect(ModEffects.PACTO_DE_VIGILIA)) {
+            // Milk, /effect clear, and other dispels also end the real pact.
+            ACTIVE.remove(player.getUUID());
+            return;
+        }
         if (!(player.level() instanceof ServerLevel level)
                 || level.dimension() != bond.dimension() || !player.isAlive()
                 || player.isSpectator() || player.getAbilities().instabuild
                 || !POLICY.isActive(level.getGameTime(), bond.expiresAt())) {
-            ACTIVE.remove(player.getUUID());
+            clearBond(player);
             return;
         }
         double dx = player.getX() - bond.feet().getX() - 0.5;
         double dz = player.getZ() - bond.feet().getZ() - 0.5;
         // Once the player leaves the island neighborhood, the pact ends.
         if (!POLICY.insideHorizontalArea(dx, dz)) {
-            ACTIVE.remove(player.getUUID());
+            clearBond(player);
             return;
         }
         if (!POLICY.shouldRecall(player.getY(), player.getDeltaMovement().y,
                 bond.feet().getY())) return;
 
-        // Consume the charge before movement, preventing duplicate callbacks.
-        ACTIVE.remove(player.getUUID());
+        // Consume the charge and HUD icon before movement to avoid replay.
+        clearBond(player);
         if (!SafeGroundNavigation.canStand(level, bond.feet(), player)) {
             player.sendOverlayMessage(Component.literal(
                     "A âncora se desfez: o lugar de retorno não está mais seguro."));
@@ -91,13 +114,27 @@ public final class DreamAnchorService {
 
     public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         ACTIVE.remove(event.getEntity().getUUID());
+        if (event.getEntity() instanceof ServerPlayer player) removeMarker(player);
     }
 
     public static void onPlayerClone(PlayerEvent.Clone event) {
         ACTIVE.remove(event.getEntity().getUUID());
+        if (event.getEntity() instanceof ServerPlayer player) removeMarker(player);
     }
 
     public static void onChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
         ACTIVE.remove(event.getEntity().getUUID());
+        if (event.getEntity() instanceof ServerPlayer player) removeMarker(player);
+    }
+
+    private static void clearBond(ServerPlayer player) {
+        ACTIVE.remove(player.getUUID());
+        removeMarker(player);
+    }
+
+    private static void removeMarker(ServerPlayer player) {
+        if (player.hasEffect(ModEffects.PACTO_DE_VIGILIA)) {
+            player.removeEffect(ModEffects.PACTO_DE_VIGILIA);
+        }
     }
 }

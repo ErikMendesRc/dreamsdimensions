@@ -11,6 +11,7 @@ import com.dreamsdimensions.mod.registry.ModAttachments;
 import com.dreamsdimensions.mod.registry.ModBlocks;
 import com.dreamsdimensions.mod.registry.ModCreativeTabs;
 import com.dreamsdimensions.mod.registry.ModEntities;
+import com.dreamsdimensions.mod.registry.ModEffects;
 import com.dreamsdimensions.mod.entity.FragmentoIslandPopulation;
 import com.dreamsdimensions.mod.entity.VigiaIslandPopulation;
 import com.dreamsdimensions.mod.entity.behavior.DreamAnchorService;
@@ -41,6 +42,7 @@ public class DreamsDimensions {
         ModCreativeTabs.register(modEventBus);
         ModAttachments.register(modEventBus);
         ModEntities.register(modEventBus);
+        ModEffects.register(modEventBus);
         DreamWorldgen.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
