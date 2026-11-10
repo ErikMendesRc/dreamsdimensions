@@ -38,7 +38,7 @@ public class DreamsDimensions {
     public DreamsDimensions(IEventBus modEventBus, ModContainer modContainer) {
         LOGGER.info("Dreams Dimensions Mod está carregando!");
         modContainer.registerConfig(ModConfig.Type.LOCAL, DreamsConfig.SPEC);
-        modContainer.registerConfig(ModConfig.Type.SERVER, DreamEntryConfig.SPEC);
+        modContainer.registerConfig(ModConfig.Type.SYNCED, DreamEntryConfig.SPEC);
 
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);

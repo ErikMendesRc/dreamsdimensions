@@ -42,7 +42,7 @@ O Overworld continua origem. O item `dreamsdimensions:dream_necklace` é um aces
 3. **Dormir** no Overworld. Sem colar funcional, sono vanilla. Com colar, configuração habilitada e dimensões carregadas, sorteio por ciclo completo; sucesso encaminhado ao serviço existente de teleporte e busca segura.
 
 ## 5. Configurações de servidor e teste em mundo descartável
-`DreamEntryConfig` é um `ModConfig.Type.SERVER`, distinto do antigo `DreamsConfig` LOCAL. O arquivo esperado está em `<mundo>/serverconfig/dreamsdimensions-server.toml` (confirmar path efetivo em runtime/servidor); defina após parar o servidor e reinicie:
+`DreamEntryConfig` é um `ModConfig.Type.SYNCED`, distinto do antigo `DreamsConfig` LOCAL. O tipo correto em NeoForge 26.3.0.101 é `SYNCED` (o antigo `SERVER` não existe mais). No servidor, edite `config/dreamsdimensions-synced.toml`, ou use a substituição por mundo em `<mundo>/syncedconfig/dreamsdimensions-synced.toml`. Reinicie o servidor para carregar os valores e confirme o caminho real nos logs:
 
 ```toml
 dream_entry_enabled = true
