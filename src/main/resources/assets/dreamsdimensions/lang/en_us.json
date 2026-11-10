@@ -22,5 +22,8 @@
   "message.dreamsdimensions.oneiric_awakener.fail": "The Overworld is unavailable right now.",
   "entity.dreamsdimensions.fragmento_errante": "Wandering Fragment",
   "entity.dreamsdimensions.vigia_adormecido": "Dormant Watcher",
-  "effect.dreamsdimensions.pacto_de_vigilia": "Vigil Pact"
+  "effect.dreamsdimensions.pacto_de_vigilia": "Vigil Pact",
+  "message.dreamsdimensions.echo_moss.found": "The moss resonates. A nearby shimmer answers. Follow the trail.",
+  "message.dreamsdimensions.echo_moss.absent": "No nearby echo.",
+  "message.dreamsdimensions.echo_moss.unavailable": "The echo fades beyond the loaded area. Explore a little farther."
 }

@@ -22,5 +22,8 @@
   "message.dreamsdimensions.oneiric_awakener.fail": "O Overworld não está disponível no momento.",
   "entity.dreamsdimensions.fragmento_errante": "Fragmento Errante",
   "entity.dreamsdimensions.vigia_adormecido": "Vigia Adormecido",
-  "effect.dreamsdimensions.pacto_de_vigilia": "Pacto de Vigília"
+  "effect.dreamsdimensions.pacto_de_vigilia": "Pacto de Vigília",
+  "message.dreamsdimensions.echo_moss.found": "O musgo ressoa. Um brilho próximo responde ao sinal. Siga o rastro.",
+  "message.dreamsdimensions.echo_moss.absent": "Nenhum eco próximo.",
+  "message.dreamsdimensions.echo_moss.unavailable": "O eco se perde além da área carregada. Explore um pouco mais."
 }

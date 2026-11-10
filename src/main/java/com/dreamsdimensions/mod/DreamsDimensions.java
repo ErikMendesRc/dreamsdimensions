@@ -4,6 +4,7 @@ import com.dreamsdimensions.mod.config.DreamsConfig;
 import com.dreamsdimensions.mod.dimension.DreamDimensionCatalog;
 import com.dreamsdimensions.mod.diagnostics.DreamscapeBridgeAuditCommand;
 import com.dreamsdimensions.mod.event.CommonEvents;
+import com.dreamsdimensions.mod.event.EchoMossInteractionHandler;
 import com.dreamsdimensions.mod.event.DreamDimensionEffectsHandler;
 import com.dreamsdimensions.mod.event.DreamReturnAttachmentHandler;
 import com.dreamsdimensions.mod.event.SleepTeleportHandler;
@@ -53,6 +54,11 @@ public class DreamsDimensions {
         }
 
         NeoForge.EVENT_BUS.addListener(CommonEvents::onServerStarting);
+        NeoForge.EVENT_BUS.addListener(EchoMossInteractionHandler::onRightClickBlock);
+        NeoForge.EVENT_BUS.addListener(EchoMossInteractionHandler::onPlayerLoggedOut);
+        NeoForge.EVENT_BUS.addListener(EchoMossInteractionHandler::onPlayerClone);
+        NeoForge.EVENT_BUS.addListener(EchoMossInteractionHandler::onChangedDimension);
+        NeoForge.EVENT_BUS.addListener(EchoMossInteractionHandler::onServerStopped);
         DreamMobPopulationService.register(FragmentoIslandPopulation.profile());
         DreamMobPopulationService.register(VigiaIslandPopulation.profile());
         NeoForge.EVENT_BUS.addListener(DreamMobPopulationService::onPlayerTick);
