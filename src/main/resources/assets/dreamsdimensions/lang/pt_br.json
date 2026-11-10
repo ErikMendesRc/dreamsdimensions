@@ -16,10 +16,10 @@
   "item.dreamsdimensions.dream_dust": "Pó dos Sonhos",
   "item.dreamsdimensions.oneiric_awakener": "Despertador Onírico",
   "itemGroup.dreamsdimensions.dreams_dimensions_tab": "Dimensões dos Sonhos",
-  "tooltip.dreamsdimensions.oneiric_awakener.line1": "Usado para atravessar os véus dos sonhos.",
-  "tooltip.dreamsdimensions.oneiric_awakener.line2": "Use para teleportar... talvez.",
+  "tooltip.dreamsdimensions.oneiric_awakener.line1": "Segure para despertar e retornar ao Overworld (3 segundos).",
+  "tooltip.dreamsdimensions.oneiric_awakener.line2": "Consumido após retorno confirmado.",
   "message.dreamsdimensions.oneiric_awakener.success": "Você acordou do sonho.",
-  "message.dreamsdimensions.oneiric_awakener.fail": "O Overworld não está disponível no momento.",
+  "message.dreamsdimensions.oneiric_awakener.fail": "Não foi possível retornar com segurança. O Despertador foi preservado.",
   "entity.dreamsdimensions.fragmento_errante": "Fragmento Errante",
   "entity.dreamsdimensions.vigia_adormecido": "Vigia Adormecido",
   "effect.dreamsdimensions.pacto_de_vigilia": "Pacto de Vigília",
@@ -29,5 +29,6 @@
   "item.dreamsdimensions.dream_necklace": "Colar dos Sonhos",
   "tooltip.dreamsdimensions.dream_necklace.line1": "Permite que o sono abra caminhos para outras dimensões.",
   "tooltip.dreamsdimensions.dream_necklace.line2": "Deve estar equipado para funcionar.",
-  "tooltip.dreamsdimensions.dream_necklace.line3": "Entrar sem um Despertador pode significar uma longa jornada de volta."
+  "tooltip.dreamsdimensions.dream_necklace.line3": "Entrar sem um Despertador pode significar uma longa jornada de volta.",
+  "message.dreamsdimensions.oneiric_awakener.item_mismatch": "Você retornou, mas o inventário mudou durante a transição. O Despertador não foi consumido; consulte o log."
 }

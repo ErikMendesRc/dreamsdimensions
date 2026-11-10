@@ -16,10 +16,10 @@
   "item.dreamsdimensions.dream_dust": "Dream Dust",
   "item.dreamsdimensions.oneiric_awakener": "Oneiric Awakener",
   "itemGroup.dreamsdimensions.dreams_dimensions_tab": "Dreams Dimensions",
-  "tooltip.dreamsdimensions.oneiric_awakener.line1": "Used to pierce the veils of dreams.",
-  "tooltip.dreamsdimensions.oneiric_awakener.line2": "Use it to teleport... maybe.",
+  "tooltip.dreamsdimensions.oneiric_awakener.line1": "Hold to awaken and return to the Overworld (3 seconds).",
+  "tooltip.dreamsdimensions.oneiric_awakener.line2": "Consumed after a confirmed return.",
   "message.dreamsdimensions.oneiric_awakener.success": "You woke up from the dream.",
-  "message.dreamsdimensions.oneiric_awakener.fail": "The Overworld is unavailable right now.",
+  "message.dreamsdimensions.oneiric_awakener.fail": "A safe return was not possible. Your Awakener was preserved.",
   "entity.dreamsdimensions.fragmento_errante": "Wandering Fragment",
   "entity.dreamsdimensions.vigia_adormecido": "Dormant Watcher",
   "effect.dreamsdimensions.pacto_de_vigilia": "Vigil Pact",
@@ -29,5 +29,6 @@
   "item.dreamsdimensions.dream_necklace": "Dream Necklace",
   "tooltip.dreamsdimensions.dream_necklace.line1": "Allows sleep to open paths to other dimensions.",
   "tooltip.dreamsdimensions.dream_necklace.line2": "Must be equipped to work.",
-  "tooltip.dreamsdimensions.dream_necklace.line3": "Entering without an Awakener may mean a long journey back."
+  "tooltip.dreamsdimensions.dream_necklace.line3": "Entering without an Awakener may mean a long journey back.",
+  "message.dreamsdimensions.oneiric_awakener.item_mismatch": "You returned, but your inventory changed during the transition. The Awakener was not consumed; check the log."
 }

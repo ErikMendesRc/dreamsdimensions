@@ -19,6 +19,7 @@ import com.dreamsdimensions.mod.entity.VigiaIslandPopulation;
 import com.dreamsdimensions.mod.entity.behavior.DreamAnchorService;
 import com.dreamsdimensions.mod.entity.spawn.DreamMobPopulationService;
 import com.dreamsdimensions.mod.registry.ModItems;
+import com.dreamsdimensions.mod.item.OneiricAwakenerItem;
 import com.dreamsdimensions.mod.worldgen.DreamWorldgen;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
@@ -77,6 +78,11 @@ public class DreamsDimensions {
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerLoggedOut);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerClone);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerChangedDimension);
+        NeoForge.EVENT_BUS.addListener(OneiricAwakenerItem::onStoppedUsing);
+        NeoForge.EVENT_BUS.addListener(OneiricAwakenerItem::onPlayerLoggedOut);
+        NeoForge.EVENT_BUS.addListener(OneiricAwakenerItem::onPlayerClone);
+        NeoForge.EVENT_BUS.addListener(OneiricAwakenerItem::onChangedDimension);
+        NeoForge.EVENT_BUS.addListener(OneiricAwakenerItem::onServerStopped);
         LOGGER.info("Registros e listeners de Dreams Dimensions configurados.");
     }
 

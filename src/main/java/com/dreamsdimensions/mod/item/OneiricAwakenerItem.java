@@ -1,11 +1,17 @@
 package com.dreamsdimensions.mod.item;
 
 import com.dreamsdimensions.mod.config.DreamsConfig;
+import com.dreamsdimensions.mod.service.OneiricReturnGuard;
+import com.dreamsdimensions.mod.service.OneiricReturnPolicy;
+import com.dreamsdimensions.mod.service.OneiricReturnPolicy.Result;
 import com.dreamsdimensions.mod.util.DreamReturnHelper;
 import com.mojang.logging.LogUtils;
+import java.util.UUID;
+import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -15,112 +21,224 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.component.UseCooldown;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.portal.TeleportTransition;
 import org.slf4j.Logger;
 
-import java.util.function.Consumer;
-import net.minecraft.world.item.component.TooltipDisplay;
-
 /**
- * Item ritualístico que representa o foco da mente do jogador para “atravessar o véu”.
- *
- * <p>Comportamento atual: inicia um uso com duração fixa e, ao concluir, teleporta o jogador
- * de volta ao Overworld quando usado em uma dimensão marcada como sonho.</p>
- *
- * <p>Regras de lado (side rules): alterações de estado (consumo do item e cooldown) e logs
- * são feitas apenas no servidor com {@link Level#isClientSide()} para evitar duplicações.</p>
- *
- * <p>Cooldown é verificado com {@link ItemStack} porque o SDK de {@link net.minecraft.world.item.ItemCooldowns}
- * aceita stack (não {@link Item}) nas assinaturas atuais, preservando componentes e comportamento vanilla.</p>
- *
- * <p>Cooldown e consumo são aplicados apenas no servidor para evitar duplicar efeitos e manter a autoridade
- * do estado do jogo (o cliente apenas apresenta efeitos visuais).</p>
- *
- *
- * <p>APIs do SDK referenciadas: {@link Item#use(Level, Player, InteractionHand)},
- * {@link Item#finishUsingItem(ItemStack, Level, LivingEntity)}, {@link Player#getCooldowns()},
- * {@link UseCooldown} via {@link DataComponents#USE_COOLDOWN} e {@link InteractionResult}.</p>
+ * 60-tick, server-authoritative return to the Overworld. Only a confirmed
+ * transition can consume the exact stack that started the vanilla use cycle.
+ * No new return engine, inventory-wide search, or persistent state.
  */
 public class OneiricAwakenerItem extends Item {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final int USE_DURATION_TICKS = 60;
+    public static final int USE_DURATION_TICKS = 60;
     public static final int COOLDOWN_TICKS = 60;
+    private static final OneiricReturnGuard GUARD = new OneiricReturnGuard();
 
-    public OneiricAwakenerItem(Properties pProperties) {
-        super(pProperties);
+    public OneiricAwakenerItem(Properties properties) {
+        super(properties);
     }
 
-    // --- Duração e Animação (Permanecem iguais) ---
-
     @Override
-    public int getUseDuration(ItemStack pStack, LivingEntity pEntity) {
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
         return USE_DURATION_TICKS;
     }
 
     @Override
-    public ItemUseAnimation getUseAnimation(ItemStack pStack) {
+    public ItemUseAnimation getUseAnimation(ItemStack stack) {
         return ItemUseAnimation.BOW;
     }
 
     @Override
-    public InteractionResult use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
-        ItemStack stack = pPlayer.getItemInHand(pUsedHand);
-        if (!DreamsConfig.isDreamDimension(pLevel.dimension())) {
-            return InteractionResult.PASS;
-        }
-        if (pPlayer.getCooldowns().isOnCooldown(stack)) {
-            return InteractionResult.FAIL;
-        }
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        // In the Overworld, PASS must not begin use or block other interactions.
+        if (!DreamsConfig.isDreamDimension(level.dimension())) return InteractionResult.PASS;
+        Result eligibility = OneiricReturnPolicy.validate(
+                player instanceof ServerPlayer || level.isClientSide(), player.isAlive(),
+                player.isSpectator(), true, stack.is(this), !stack.isEmpty(),
+                player.getCooldowns().isOnCooldown(stack));
+        if (eligibility != Result.SUCCESS) return InteractionResult.FAIL;
 
-        pPlayer.startUsingItem(pUsedHand);
-
-        return InteractionResult.CONSUME;
-    }
-
-    @Override
-    public ItemStack finishUsingItem(ItemStack pStack, Level pLevel, LivingEntity pLivingEntity) {
-        if (!(pLivingEntity instanceof Player player)) {
-            return pStack;
-        }
-
-        if (!(player instanceof ServerPlayer serverPlayer)) {
-            return pStack;
-        }
-
-        if (!DreamReturnHelper.isDreamDimension((net.minecraft.server.level.ServerLevel) serverPlayer.level())) {
-            return pStack;
-        }
-
-        LOGGER.info("Oneiric Awakener totalmente focado por {} na dimensão {}", player.getName().getString(), pLevel.dimension());
-
-        DreamReturnHelper.buildReturnTransition(serverPlayer).ifPresentOrElse(transition -> {
-            serverPlayer.teleport(transition);
-            serverPlayer.sendSystemMessage(Component.translatable("message.dreamsdimensions.oneiric_awakener.success"));
-
-            int cooldownTicks = COOLDOWN_TICKS;
-            UseCooldown cooldown = pStack.get(DataComponents.USE_COOLDOWN);
-            if (cooldown != null) {
-                cooldownTicks = cooldown.ticks();
+        if (player instanceof ServerPlayer serverPlayer) {
+            if (!GUARD.begin(serverPlayer.getUUID(), guardHand(hand), stack)) {
+                LOGGER.debug("ONEIRIC_RETURN player_uuid={} result=duplicate_start hand={}",
+                        serverPlayer.getUUID(), hand);
+                return InteractionResult.FAIL;
             }
-            serverPlayer.getCooldowns().addCooldown(pStack, cooldownTicks);
-        }, () -> serverPlayer.sendSystemMessage(Component.translatable("message.dreamsdimensions.oneiric_awakener.fail")));
+        }
 
-        // Efeitos visuais/sonoros do lado do cliente podem ser adicionados aqui
-
-        return pStack;
+        player.startUsingItem(hand);
+        return InteractionResult.CONSUME; // Interaction result, NOT an item decrement.
     }
 
+    @Override
+    public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
+        if (!(entity instanceof ServerPlayer player) || !(level instanceof ServerLevel)
+                || !player.isAlive()) return stack;
+
+        UUID uuid = player.getUUID();
+        InteractionHand hand = player.getUsedItemHand();
+        // Vanilla normally checks the held item before calling finishUsingItem.
+        // Revalidate strictly: no copied stack, swapped hand or different slot.
+        if (OneiricReturnPolicy.validate(true, player.isAlive(), player.isSpectator(),
+                DreamsConfig.isDreamDimension(player.level().dimension()),
+                stack.is(this), !stack.isEmpty(), player.getCooldowns().isOnCooldown(stack))
+                != Result.SUCCESS
+                || player.getUseItem() != stack || player.getItemInHand(hand) != stack) {
+            GUARD.cancel(uuid);
+            LOGGER.warn("ONEIRIC_RETURN player_uuid={} result=invalid_item_state hand={} source={}",
+                    uuid, hand, player.level().dimension().identifier());
+            return stack;
+        }
+
+        if (!GUARD.claim(uuid, guardHand(hand), stack)) {
+            LOGGER.debug("ONEIRIC_RETURN player_uuid={} result=duplicate_or_invalid_activation hand={}",
+                    uuid, hand);
+            return stack;
+        }
+
+        var source = player.level().dimension();
+        int before = stack.getCount();
+        try {
+            // Build the existing bed -> personal respawn -> safe world spawn fallback.
+            var target = DreamReturnHelper.buildReturnTransition(player);
+            if (target.isEmpty()) {
+                failed(player, uuid, hand, source.identifier().toString(), Result.INVALID_TARGET);
+                return stack;
+            }
+
+            TeleportTransition transition = target.get();
+            if (transition.newLevel().dimension() != Level.OVERWORLD) {
+                failed(player, uuid, hand, source.identifier().toString(), Result.INVALID_TARGET);
+                return stack;
+            }
+
+            ServerPlayer returned;
+            try {
+                returned = player.teleport(transition);
+            } catch (RuntimeException exception) {
+                LOGGER.error("ONEIRIC_RETURN player_uuid={} source={} target=minecraft:overworld "
+                        + "result=teleport_exception consumed=0 hand={}", uuid,
+                        source.identifier(), hand, exception);
+                // A throw after a partial transition is possible: do not blindly retry.
+                if (player.level().dimension() != Level.OVERWORLD) {
+                    player.sendSystemMessage(Component.translatable(
+                            "message.dreamsdimensions.oneiric_awakener.fail"));
+                }
+                return stack;
+            }
+
+            Result confirmation = OneiricReturnPolicy.confirm(true, returned != null,
+                    returned != null && returned.isAlive(),
+                    returned != null && uuid.equals(returned.getUUID()),
+                    returned != null && returned.level().dimension() == Level.OVERWORLD);
+            if (confirmation != Result.SUCCESS) {
+                // If an unusual event already moved the player, never try another TP.
+                failed(returned != null ? returned : player, uuid, hand,
+                        source.identifier().toString(), confirmation);
+                return stack;
+            }
+
+            // On NeoForge 26.3 successful ServerPlayer.teleport returns 'this'.
+            // If another mod replaced the player/hand stack, fail closed: do
+            // not consume another item by type, by inventory search or by slot.
+            if (returned.getItemInHand(hand) != stack || !stack.is(this)
+                    || stack.getCount() != before) {
+                LOGGER.error("ONEIRIC_RETURN player_uuid={} source={} target=minecraft:overworld "
+                        + "result=invalid_item_state_after_teleport consumed=0 hand={}",
+                        uuid, source.identifier(), hand);
+                returned.sendSystemMessage(Component.translatable(
+                        "message.dreamsdimensions.oneiric_awakener.item_mismatch"));
+                return stack;
+            }
+
+            // Inspect cooldown before shrinking; empty stacks lose their components.
+            UseCooldown cooldown = stack.get(DataComponents.USE_COOLDOWN);
+            int cooldownTicks = cooldown != null ? cooldown.ticks() : COOLDOWN_TICKS;
+            ItemStack cooldownSource = stack.copy();
+            if (!returned.getAbilities().instabuild) {
+                stack.shrink(1);
+                // Update the exact initiating hand on the returned player.
+                returned.setItemInHand(hand, stack.isEmpty() ? ItemStack.EMPTY : stack);
+            }
+            // Adding a cooldown by the pre-consumption item group works when
+            // the last stack has become empty. Oneiric Awakener is stacksTo(1).
+            if (cooldownTicks > 0 && OneiricReturnPolicy.shouldApplyCooldown(Result.SUCCESS)) {
+                returned.getCooldowns().addCooldown(cooldownSource, cooldownTicks);
+            }
+            returned.sendSystemMessage(Component.translatable(
+                    "message.dreamsdimensions.oneiric_awakener.success"));
+            LOGGER.info("ONEIRIC_RETURN player_uuid={} source={} target={} result=success "
+                            + "consumed={} hand={} before={} after={}",
+                    uuid, source.identifier(), returned.level().dimension().identifier(),
+                    OneiricReturnPolicy.consumption(Result.SUCCESS, returned.getAbilities().instabuild),
+                    hand, before, stack.getCount());
+            return stack;
+        } finally {
+            // ChangedDimensionEvent fires *inside* teleport: it must not clear
+            // the in-flight claim; finish is the only commit/cleanup boundary.
+            GUARD.finish(uuid);
+        }
+    }
+
+    private static void failed(ServerPlayer player, UUID uuid, InteractionHand hand,
+            String source, Result reason) {
+        LOGGER.warn("ONEIRIC_RETURN player_uuid={} source={} target={} result={} consumed=0 hand={}",
+                uuid, source, player.level().dimension().identifier(), reason, hand);
+        if (player.level().dimension() != Level.OVERWORLD) {
+            player.sendSystemMessage(Component.translatable(
+                    "message.dreamsdimensions.oneiric_awakener.fail"));
+        }
+    }
+
+    public static void onStoppedUsing(
+            net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent.Stop event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            GUARD.cancel(player.getUUID());
+        }
+    }
+
+    public static void onPlayerLoggedOut(
+            net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent event) {
+        GUARD.cancel(event.getEntity().getUUID());
+    }
+
+    public static void onPlayerClone(
+            net.neoforged.neoforge.event.entity.player.PlayerEvent.Clone event) {
+        GUARD.cancel(event.getEntity().getUUID());
+    }
+
+    public static void onChangedDimension(
+            net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent event) {
+        GUARD.cancel(event.getEntity().getUUID());
+    }
+
+    public static void onServerStopped(
+            net.neoforged.neoforge.event.server.ServerStoppedEvent event) {
+        GUARD.clear();
+    }
+
+    private static OneiricReturnGuard.Hand guardHand(InteractionHand hand) {
+        return hand == InteractionHand.MAIN_HAND
+                ? OneiricReturnGuard.Hand.MAIN_HAND : OneiricReturnGuard.Hand.OFF_HAND;
+    }
 
     @Override
-    public boolean isFoil(ItemStack pStack) {
+    public boolean isFoil(ItemStack stack) {
         return true;
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, Item.TooltipContext pContext, TooltipDisplay display, Consumer<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
-        pTooltipComponents.accept(Component.translatable("tooltip.dreamsdimensions.oneiric_awakener.line1").withStyle(ChatFormatting.GRAY));
-        pTooltipComponents.accept(Component.translatable("tooltip.dreamsdimensions.oneiric_awakener.line2").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
-        super.appendHoverText(pStack, pContext, display, pTooltipComponents, pTooltipFlag);
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context,
+            TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
+        tooltip.accept(Component.translatable("tooltip.dreamsdimensions.oneiric_awakener.line1")
+                .withStyle(ChatFormatting.GRAY));
+        tooltip.accept(Component.translatable("tooltip.dreamsdimensions.oneiric_awakener.line2")
+                .withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
+        super.appendHoverText(stack, context, display, tooltip, flag);
     }
 }

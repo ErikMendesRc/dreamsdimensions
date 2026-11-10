@@ -102,3 +102,10 @@ Registro obrigatório por execução: `seed | dimensão | X Y Z | Minecraft/NeoF
 | MULTIPLAYER | **NOT RUN** |
 
 A execução de CI após push, caso ocorra, deve ser consultada separadamente; esta matriz não antecipa resultados.
+
+
+## 6. Addendum Task 5.4 — contrato de consumo e verificação (10/11/2026)
+
+Este addendum não altera os resultados de testes históricos da 5.2. A implementação da 5.4 adiciona `OneiricReturnPolicyTest` e `OneiricReturnGuardTest` com decisões puras e checagens de prevenção de replay. O fluxo de 60 ticks permanece vanilla, usando `getUsedItemHand()`, `getUseItem()` e a referência exata do stack para vincular mão/item à tentativa. Retorno via `DreamReturnHelper.buildReturnTransition` passa a ser confirmado por `ServerPlayer.teleport` não nulo, vivo, mesmo UUID e Overworld. `ItemStack.shrink(1)` somente após confirmação, quando não há `instabuild`. `USE_COOLDOWN` é 3.0 segundos = 60 ticks padrão, aplicado só após sucesso.
+
+**Status de prova:** código e testes unitários preparados; verificar build, JUnit e server smoke da CI do commit 5.4; **NÃO EXECUTADOS ainda** teste real com dois clientes, use item durante 60 ticks, interrupção 59 ticks, mudança de mão e falha de teleporte. Ver [Relatório de implementação 5.4](ONEIRIC_AWAKENER_TASK_5_4.md). Nenhuma modificação em `dream_return`, `dream_entry_enabled` e `dream_entry_chance`; worldgen/loot/recipes intactos.

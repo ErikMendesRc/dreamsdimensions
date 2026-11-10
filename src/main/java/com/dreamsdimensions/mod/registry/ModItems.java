@@ -52,7 +52,7 @@ public final class ModItems {
             () -> new Item.Properties()
                     .stacksTo(1)
                     .rarity(Rarity.RARE)
-                    .useCooldown(OneiricAwakenerItem.COOLDOWN_TICKS)
+                    .useCooldown(OneiricAwakenerItem.COOLDOWN_TICKS / 20.0F)
     );
 
     public static final DeferredItem<BlockItem> DREAM_GRASS_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(
