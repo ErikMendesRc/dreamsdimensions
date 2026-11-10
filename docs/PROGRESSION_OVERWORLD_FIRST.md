@@ -1,5 +1,8 @@
 # Progressão Survival — Overworld como base (análise e decisões pendentes)
 
+> **ATUALIZAÇÃO TASK 5.2 — 10/11/2026:** A recomendação antiga de Despertador **reutilizável** e de reduzir seu custo era hipótese anterior e foi **superada pela regra de produto confirmada**: o Despertador é **consumível** e relativamente difícil de fabricar, consumido somente após retorno confirmado (Task 5.4). Dream Dust nasce no Overworld, e Pó de Cristal futuro terá outra função. Entrada depende de **Colar equipado** (Task 5.3), com chance por sono completo. Morrer não deve ser rota gratuita de volta (5.5), e Despertadores serão recuperáveis em ruínas raras de ambas as dimensões (5.7). **Não liberar o Colar em Survival antes de implementar e validar 5.5 + 5.7.** Ver [contrato 5.2](TRAVEL_RETURN_CONTRACT_TASK_5_2.md) e [matriz](TRAVEL_RETURN_TEST_MATRIX_TASK_5_2.md).
+
+
 **Branch:** migration/minecraft-26.3  
 **Base auditada:** 1af737760a47972282eccf33689a0fa593d9584c  
 **Status:** contrato de produto proposto e auditoria de recursos; não altera recipes, retorno, mobs ou worldgen geográfico. A correção do biome modifier está no mesmo commit.
@@ -84,3 +87,8 @@ Uma Câmara Cristalina não é um desafio de sequência: dificuldade por localiz
 - https://docs.neoforged.net/docs/worldgen/biomemodifier/
 - https://docs.neoforged.net/primer/docs/26.3/
 - https://github.com/neoforged/NeoForge/blob/26.3.x/src/main/java/net/neoforged/neoforge/common/Tags.java
+
+
+## 9. Addendum de precedência — Task 5.2 (10/11/2026)
+
+O trecho histórico de preparação acima antecede a decisão do produto de exigir Colar equipado e Despertador **consumível**. Sua sugestão de reaproveitar Despertador e alterar receita para 4–6 pós **não deve orientar a Task 5.4/5.6**. O custo atual continua sem mudança nesta Task 5.2. O ciclo alvo é Overworld (minerar Dream Dust) → equipar Colar → completar sono com uma chance de viagem → explorar sonho → usar Despertador e consumir **uma unidade** após retorno confirmado → Overworld. Sem item, explorar ruínas raras por Despertador, sem dormir ou suicidar como saída gratuita. Respawn onírico local precisa existir e ser seguro; Hardcore vanilla é mantido. Ver [Contrato](TRAVEL_RETURN_CONTRACT_TASK_5_2.md) e [Matriz](TRAVEL_RETURN_TEST_MATRIX_TASK_5_2.md).

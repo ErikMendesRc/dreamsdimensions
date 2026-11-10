@@ -1,5 +1,8 @@
 # TASK 5.0 — Matriz rastreável de conteúdo
 
+> **ATUALIZAÇÃO TASK 5.2 — 10/11/2026:** Este inventário documenta o estado anterior de gameplay da Task 5.0. **O Despertador deixa de ser proposto como reutilizável:** contrato futuro confirmado como **consumível unitário após retorno confirmado** (Task 5.4). **O Colar dos Sonhos** (Task 5.3) será exigido **equipado** para sorteio por ciclo de sono; estar na mochila/offhand não vale. **Pó Onírico/Dream Dust** continua proveniente do Overworld; aquisição natural segue pendente de playtest. Ver [contrato 5.2](TRAVEL_RETURN_CONTRACT_TASK_5_2.md). As linhas abaixo mantêm seu significado histórico, não são especificação nova.
+
+
 **Baseline:** migration/minecraft-26.3 @ dd614f4aef2ea3d7ed7ed24fb3250cfa5b62823c.  
 **Fonte das regras:** [Contrato de gameplay](GAMEPLAY_EXPLORATION_TASK_5_0.md). **Sequência de execução:** [Roadmap](GAMEPLAY_ROADMAP.md).  
 **Natureza:** INVENTÁRIO de recursos presentes na branch + PROPOSTAS, sem alteração de gameplay.
@@ -99,3 +102,16 @@ Esta seção cobre **17 blocos, 17 BlockItems associados e 2 itens próprios**. 
 7. **P3:** manter itens exclusivamente decorativos sem efeitos extras se a coleta/construção já fornecer experiência satisfatória.
 
 **Regra de aceite para nova linha:** deve haver ID, origem real, ação simples, recompensa, utilidade verificável, política de repetição, dono da autoridade, falha explicável, risco e teste Survival. Caso contrário permanece PENDENTE, mesmo que uma textura esteja pronta.
+
+
+## 5. Addendum 5.2 — Recursos e mecanismos de entrada/saída
+
+| Registro / conceito | Fonte e ação | Uso e regra | Classificação | Task |
+| --- | --- | --- | --- | --- |
+| `dreamsdimensions:dream_necklace` (ID técnico provisório) | Craft futuro com insumos majoritariamente Overworld; equipar em slot real validado server-side | Permite **chance por sono completo**, não viagem garantida; não conta no inventário/offhand | **PROPOSTO / NÃO IMPLEMENTADO** | 5.3 |
+| `dreamsdimensions:oneiric_awakener` | Craft existente via núcleo caro; futuro loot de baús raros das duas dimensões | **Consumo unitário** só após retorno comprovado; 60 ticks de uso, sem cama | **EXISTENTE COM DEFEITO DE CONSUMO / FUTURO** | 5.4/5.7 |
+| `dreamsdimensions:dream_dust` | Dream Ore e Deepslate Dream Ore no Overworld; geração natural precisa ser reproduzida em mundo novo | Preparação da expedição, não migração da fonte natural aos sonhos | **CÓDIGO EXISTENTE / SURVIVAL PENDENTE** | 5.6 |
+| `dream_expedition_anchor` (nome provisório) | Gravado após chegada validada à dimensão de sonho | Respawn local após morte sem devolver ao Overworld; distinto de `dream_return` | **PROPOSTO / NÃO IMPLEMENTADO** | 5.5 |
+| Ruínas com Despertador | Estruturas raras com loot table JSON e chances medidas, em Dreamscape e Campo Azul | Recuperação emergencial sem item e sem exploit de reabrir baú | **PROPOSTO / NÃO IMPLEMENTADO** | 5.7 |
+
+**Regra de prova:** código/documentação ≠ teste Survival; parâmetros 30% (viagem) e taxa de loot são **hipóteses**, nunca valores homologados. Fonte: [Task 5.2](TRAVEL_RETURN_CONTRACT_TASK_5_2.md).

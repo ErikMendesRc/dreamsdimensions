@@ -1,5 +1,8 @@
 # TASK 5.0 — Roadmap executável de gameplay e exploração
 
+> **ATUALIZAÇÃO TASK 5.2 — 10/11/2026:** A numeração 5.2–5.7 nesta seção reflete o plano **histórico** da Task 5.0. O contrato posterior de viagem/retorno usa **5.2 Contrato**, **5.3 Colar**, **5.4 Despertador Consumível**, **5.5 Respawn**, **5.6 Economia Overworld**, **5.7 Ruínas de Recuperação**. Para trabalhos futuros nesses fluxos, prevalecem [TRAVEL_RETURN_CONTRACT_TASK_5_2.md](TRAVEL_RETURN_CONTRACT_TASK_5_2.md) e [matriz de 30 cenários](TRAVEL_RETURN_TEST_MATRIX_TASK_5_2.md). Não renumerar retroativamente relatórios anteriores.
+
+
 **Escopo de planejamento:** Minecraft 26.3 / NeoForge 26.3.0.101 / Java 25 / ModDevGradle 2.0.148 / GeckoLib 5.5.7.  
 **Branch de execução:** migration/minecraft-26.3; **NUNCA merge automático na main**.  
 **Base auditada:** dd614f4aef2ea3d7ed7ed24fb3250cfa5b62823c.  
@@ -264,3 +267,17 @@ O Eco do Musgo **não é missão, não desbloqueia dimensão, não concede itens
 - [Minecraft Wiki](https://minecraft.wiki/)
 
 **Nenhuma das Tasks 5.1–5.9 está implementada por este roadmap.**
+
+
+## 11. Addendum 5.2 — Ordem atual de viagem/retorno (supera apenas as tarefas homônimas para fluxos oníricos)
+
+| Ordem atual | Entrega | Dependência/aceite | Status em 10/11/2026 |
+| --- | --- | --- | --- |
+| 5.2 | Contrato e auditoria | 30 cenários, preservação de baseline; nenhuma alteração runtime | Documentação na branch |
+| 5.3 | Colar e elegibilidade de sono | Validar Curios 26.3; slot real; chance uma vez em sono completo; *não lançar isoladamente* | Pendente |
+| 5.4 | Retorno consumível | Corrigir `finishUsingItem`: 1 unidade após confirmação; falhas sem gasto | Pendente |
+| 5.5 | Respawn/sono onírico | `can_sleep=never`, âncora separada, morte sem saída gratuita; Hardcore vanilla | Pendente |
+| 5.6 | Economia Overworld | Minério e Dust natural, crafting difícil, medir rendimento | Pendente |
+| 5.7 | Ruínas/recuperação | Loot raro acessível nas duas dimensões; medir P90/P99 de recuperação sem gear | Pendente |
+
+**Dependência de release:** 5.3 + 5.4 + 5.5 + 5.6 + 5.7 testadas em Survival/Multiplayer antes de oferecer a nova regra aos jogadores. A ordenação histórica das outras tarefas de exploração acima não foi removida nem reescrita.
