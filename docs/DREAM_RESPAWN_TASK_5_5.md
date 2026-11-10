@@ -90,10 +90,10 @@ Ordem de `DreamRespawnService.resolve` (com buscas locais limitadas):
 
 | Camada | Evidência / Status |
 | --- | --- |
-| UNIT TEST | `DreamRespawnPolicyTest` exercita elegibilidade, Hardcore, fronteiras de dimensão e preferência de fallback. Um teste JUnit do codec foi retirado porque o source set de testes Java não inclui as bibliotecas Minecraft/DFU. O round-trip real do MapCodec depende de GameTest/runtime Minecraft e permanece **PENDENTE** |
-| DATA VALIDATION | `scripts/ci/check_dream_respawn.py` parseia `dimension_type`, protege contrato de cama, integração do attachment/respawn e não interferência no Despertador. **PENDENTE de CI** |
-| BUILD | Workflow 4 seeds com JDK 25/Gradle `clean build`. **PENDENTE de CI** |
-| SERVER SMOKE | Workflow existente inicia `runServer`, carrega datapacks/dimensões e usa RCON, 4 seeds. **PENDENTE de CI** |
+| UNIT TEST | `DreamRespawnPolicyTest` exercita elegibilidade, Hardcore, fronteiras de dimensão e preferência de fallback. Um teste JUnit do codec foi retirado porque o source set de testes Java não inclui as bibliotecas Minecraft/DFU. O round-trip real do MapCodec depende de GameTest/runtime Minecraft e permanece **PENDENTE**. **JUnit da política: PASS nas quatro seeds.** |
+| DATA VALIDATION | `scripts/ci/check_dream_respawn.py` parseia `dimension_type`, protege contrato de cama, integração do attachment/respawn e não interferência no Despertador. **PASS** — quatro seeds, check_dream_respawn.py |
+| BUILD | Workflow 4 seeds com JDK 25/Gradle `clean build`. **PASS** — quatro seeds, Gradle clean build Java 25 |
+| SERVER SMOKE | Workflow existente inicia `runServer`, carrega datapacks/dimensões e usa RCON, 4 seeds. **PASS** — quatro seeds, dedicated server datapacks/RCON |
 | GAMETEST | **NÃO EXECUTADO**: sem fixture 26.3 de morte/recriação de jogador de rede nessa task |
 | MANUAL SURVIVAL | **NÃO EXECUTADO**: morte real em ilha, void, velho save, cama e Despertador consumível |
 | MULTIPLAYER | **NÃO EXECUTADO**: dois clientes dedicados e respawns simultâneos |
@@ -212,6 +212,11 @@ Confirmar renascimento local, inventário preservado. Testar **ambas** dimensõe
 
 ## 10. Conclusão condicionada
 
-Tarefa de código estará tecnicamente aprovada **após** JUnit + Gradle build + checks + dedicated server smoke em quatro seeds. **Homologação real de Survival/multiplayer depende de testes dentro do cliente**, e o ciclo completo só pode ser habilitado em produção após a Task **5.7** (estruturas raras com Despertadores recuperáveis). Task 5.6 de economia de Dream Dust também continua pendente de balanceamento, sem impedir testes internos.
+Tarefa de código **aprovada na CI**: JUnit + Gradle build + checks + dedicated server smoke nas quatro seeds do workflow 42905228119. **Homologação real de Survival/multiplayer depende de testes dentro do cliente**, e o ciclo completo só pode ser habilitado em produção após a Task **5.7** (estruturas raras com Despertadores recuperáveis). Task 5.6 de economia de Dream Dust também continua pendente de balanceamento, sem impedir testes internos.
 
-**Diagnóstico da primeira CI:** o commit inicial `334efcd17beb288acb8080dec34fd38b1e67adcf` compilou o código principal do Minecraft/NeoForge, mas `compileTestJava` falhou porque `DreamExpeditionAnchorDataTest` importava `net.minecraft.*` e `com.mojang.serialization.*`, ausentes do classpath dos testes Java convencionais do projeto. A correção mantém os testes de políticas **puros** e usa validação estática do formato `MapCodec` + smoke do servidor; testes reais de serialização/respawn ficam pendentes de fixture de runtime Minecraft. **Commit corretivo e CI:** registrar resultado após executar novamente.
+**Diagnóstico da primeira CI:** o commit inicial `334efcd17beb288acb8080dec34fd38b1e67adcf` compilou o código principal do Minecraft/NeoForge, mas `compileTestJava` falhou porque `DreamExpeditionAnchorDataTest` importava `net.minecraft.*` e `com.mojang.serialization.*`, ausentes do classpath dos testes Java convencionais do projeto. A correção mantém os testes de políticas **puros** e usa validação estática do formato `MapCodec` + smoke do servidor; testes reais de serialização/respawn ficam pendentes de fixture de runtime Minecraft. **Correções e evidências finais:**
+- Implementação: [`334efcd17beb288acb8080dec34fd38b1e67adcf`](https://github.com/ErikMendesRc/dreamsdimensions/commit/334efcd17beb288acb8080dec34fd38b1e67adcf).
+- Correção de source set de testes Java: [`ef7dea6129b1744d3c74d274e88cb943db1108b5`](https://github.com/ErikMendesRc/dreamsdimensions/commit/ef7dea6129b1744d3c74d274e88cb943db1108b5). O teste que importava bibliotecas Minecraft/DFU foi retirado; os JUnit das políticas puras foram preservados.
+- Correção de falso positivo da verificação `setCopyOriginalSpawnPosition(true)` em comentário: [`4c374dfd04fac204493d213dd0818003499a27a4`](https://github.com/ErikMendesRc/dreamsdimensions/commit/4c374dfd04fac204493d213dd0818003499a27a4).
+- **[Workflow de CI 42905228119](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42905228119) — 4/4 `success`:** seeds 14011, 20261108, -904732, 73199013. Em cada job: Java 25, Gradle `clean build` com JUnit, scripts CI incluindo `check_dream_respawn.py`, assets preflight e dedicated server smoke com datapacks/RCON.
+- **Não executados:** GameTest de morte real e MapCodec em runtime, dois clientes multiplayer, Survival, Hardcore prático, validação de cama no cliente e persistência após restart. Não converter o resultado do workflow em aprovação desses casos.

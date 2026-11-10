@@ -115,7 +115,7 @@ Este addendum não altera os resultados de testes históricos da 5.2. A implemen
 
 | Caso | Regra de código | Status de teste |
 | --- | --- | --- |
-| Morte no Dreamscape/Campo Azul | `PlayerRespawnPositionEvent` substitui destino antes de `PlayerList.respawn`, mantendo dimensão original, fora de Hardcore/End | Código + testes unitários preparados; jogo real pendente |
+| Morte no Dreamscape/Campo Azul | `PlayerRespawnPositionEvent` substitui destino antes de `PlayerList.respawn`, mantendo dimensão original, fora de Hardcore/End | Build + JUnit de política + server smoke PASS nas 4 seeds; morte em jogo real pendente |
 | Morte Overworld/Nether/End/terceiros | Não interceptar, vanilla mantém cama/respawn | Inspeção de política; manual pendente |
 | Âncora por viagem de sono | Attachment `dream_expedition_anchor` com `dimension/pos/yaw`, `copyOnDeath` e gravação somente após chegada segura | Estrutura do codec verificada estaticamente; round-trip GameTest, restart/manual pendentes |
 | Ponto inseguro / mundo antigo sem attachment | Validação geométrica compartilhada → busca local limitada → spawn global → plataforma 5×5 somente em emergência; erro crítico se impossível | Teste de políticas; colisões in-game pendentes |
