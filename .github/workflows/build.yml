@@ -23,6 +23,8 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       - name: Build
         run: ./gradlew --no-daemon clean build
+      - name: Validate Overworld-first resources and crafting links
+        run: python3 scripts/ci/check_overworld_resource_chain.py
       - name: Validate echo moss gameplay invariants (TASK 5.1)
         run: python3 scripts/ci/check_echo_moss.py
       - name: Validate 26.3 vegetation datapacks (static)
