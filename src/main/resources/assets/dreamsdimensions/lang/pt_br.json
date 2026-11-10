@@ -20,5 +20,6 @@
   "tooltip.dreamsdimensions.oneiric_awakener.line2": "Use para teleportar... talvez.",
   "message.dreamsdimensions.oneiric_awakener.success": "Você acordou do sonho.",
   "message.dreamsdimensions.oneiric_awakener.fail": "O Overworld não está disponível no momento.",
-  "entity.dreamsdimensions.fragmento_errante": "Fragmento Errante"
+  "entity.dreamsdimensions.fragmento_errante": "Fragmento Errante",
+  "entity.dreamsdimensions.vigia_adormecido": "Vigia Adormecido"
 }

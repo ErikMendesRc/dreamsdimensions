@@ -74,7 +74,8 @@ def static():
     spawns = dreamscape["attributes"]["minecraft:gameplay/natural_mob_spawns"]
     assert spawns["modifier"] == "overlay"
     creature = spawns["argument"]["spawns_by_category"]["creature"]
-    assert len(creature) == 1 and creature[0]["type"] == "dreamsdimensions:fragmento_errante"
+    assert len(creature) == 2 and creature[0]["type"] == "dreamsdimensions:fragmento_errante"
+    assert creature[1]["type"] == "dreamsdimensions:vigia_adormecido"
     assert creature[0]["weight"] == 100
     assert creature[0]["count"] == {
         "type": "minecraft:uniform", "min_inclusive": 2, "max_inclusive": 3

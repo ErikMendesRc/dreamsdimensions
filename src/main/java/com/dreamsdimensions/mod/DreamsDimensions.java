@@ -12,6 +12,7 @@ import com.dreamsdimensions.mod.registry.ModBlocks;
 import com.dreamsdimensions.mod.registry.ModCreativeTabs;
 import com.dreamsdimensions.mod.registry.ModEntities;
 import com.dreamsdimensions.mod.entity.FragmentoIslandPopulation;
+import com.dreamsdimensions.mod.entity.VigiaIslandPopulation;
 import com.dreamsdimensions.mod.entity.spawn.DreamMobPopulationService;
 import com.dreamsdimensions.mod.registry.ModItems;
 import com.dreamsdimensions.mod.worldgen.DreamWorldgen;
@@ -50,6 +51,7 @@ public class DreamsDimensions {
 
         NeoForge.EVENT_BUS.addListener(CommonEvents::onServerStarting);
         DreamMobPopulationService.register(FragmentoIslandPopulation.profile());
+        DreamMobPopulationService.register(VigiaIslandPopulation.profile());
         NeoForge.EVENT_BUS.addListener(DreamMobPopulationService::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(DreamDimensionEffectsHandler::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(DreamDimensionEffectsHandler::onPlayerLoggedOut);

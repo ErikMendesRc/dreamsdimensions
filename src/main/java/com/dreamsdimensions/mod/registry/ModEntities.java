@@ -2,6 +2,8 @@ package com.dreamsdimensions.mod.registry;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.entity.FragmentoErranteEntity;
+import com.dreamsdimensions.mod.entity.VigiaAdormecidoEntity;
+import com.dreamsdimensions.mod.entity.VigiaIslandHabitat;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacementTypes;
@@ -29,6 +31,14 @@ public final class ModEntities {
                             .clientTrackingRange(8)
                             .updateInterval(3));
 
+    public static final Supplier<EntityType<VigiaAdormecidoEntity>> VIGIA_ADORMECIDO =
+            ENTITIES.registerEntityType("vigia_adormecido", VigiaAdormecidoEntity::new,
+                    MobCategory.CREATURE,
+                    builder -> builder.sized(1.15F, 2.88F)
+                            .eyeHeight(2.55F)
+                            .clientTrackingRange(8)
+                            .updateInterval(3));
+
     private ModEntities() {}
 
     public static void register(IEventBus modBus) {
@@ -42,10 +52,16 @@ public final class ModEntities {
                 Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 FragmentoIslandHabitat::maySpawn,
                 RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(VIGIA_ADORMECIDO.get(),
+                SpawnPlacementTypes.ON_GROUND,
+                Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                VigiaIslandHabitat::maySpawn,
+                RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 
     @SubscribeEvent
     public static void createAttributes(EntityAttributeCreationEvent event) {
         event.put(FRAGMENTO_ERRANTE.get(), FragmentoErranteEntity.createAttributes().build());
+        event.put(VIGIA_ADORMECIDO.get(), VigiaAdormecidoEntity.createAttributes().build());
     }
 }
