@@ -91,9 +91,9 @@ Item#use: validar dimensão, vivo, não-spectator, item/cooldown
 | --- | --- |
 | `OneiricReturnPolicyTest` JUnit | Código implementado: validação/negações, destinos ausentes, `null`/UUID, dimension mismatch, survival/adventure/creative, cooldown |
 | `OneiricReturnGuardTest` JUnit | Código implementado: duas mãos, item trocado, replay, duas identidades, interrupção, login/morte/admin cancel, evento cross-dimension |
-| Gradle `clean build` + JUnit com JDK25 | **PENDENTE do resultado do GitHub Actions para o commit** |
-| CI scripts existentes | **PENDENTE do resultado do GitHub Actions para o commit** |
-| Dedicated server `runServer` + loading/datapacks | **PENDENTE do resultado do GitHub Actions para o commit** |
+| Gradle `clean build` + JUnit com JDK25 | **PASS** — [GitHub Actions 42895974012](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42895974012), 4 seeds |
+| CI scripts existentes | **PASS** — verificações existentes no mesmo workflow, 4 seeds |
+| Dedicated server `runServer` + loading/datapacks | **PASS** — dedicado RCON, datapacks e mundo, 4 seeds |
 | GameTest real de item+retorno | **NOT RUN**; sem fixture de jogador de rede para concluir 60 ticks |
 | Cliente Survival / Adventure / Creative / Spectator | **NOT RUN** após commit |
 | Multiplayer dedicado com dois clientes | **NOT RUN** |
@@ -157,4 +157,4 @@ Testes:
 
 Arquivos previstos: `item/OneiricAwakenerItem.java`, `service/OneiricReturnPolicy.java`, `service/OneiricReturnGuard.java`, `registry/ModItems.java`, `DreamsDimensions.java`, traduções, 2 JUnit, este relatório, matriz e roadmap.
 
-**Commit e CI:** preencher nesta seção com evidência após o push. Não substituir teste manual por `build`.
+**Commit de implementação:** [ed166e9f3a88c55666d8ce24754d22926d199a6a](https://github.com/ErikMendesRc/dreamsdimensions/commit/ed166e9f3a88c55666d8ce24754d22926d199a6a) — `fix(gameplay): consume oneiric awakener after confirmed return`. **CI:** [run 42895974012](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42895974012); os quatro jobs `build (14011)`, `build (20261108)`, `build (-904732)` e `build (73199013)` concluíram com **success**. Isso cobre JDK 25 + Gradle `clean build` (JUnit incluído), checks estáticos e dedicated server smoke. **Não é prova** de ativação de 60 ticks por jogador real nem de sincronização de inventário em multiplayer; tais testes continuam explicitamente PENDENTES.
