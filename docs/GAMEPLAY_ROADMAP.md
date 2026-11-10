@@ -281,3 +281,8 @@ O Eco do Musgo **não é missão, não desbloqueia dimensão, não concede itens
 | 5.7 | Ruínas/recuperação | Loot raro acessível nas duas dimensões; medir P90/P99 de recuperação sem gear | Pendente |
 
 **Dependência de release:** 5.3 + 5.4 + 5.5 + 5.6 + 5.7 testadas em Survival/Multiplayer antes de oferecer a nova regra aos jogadores. A ordenação histórica das outras tarefas de exploração acima não foi removida nem reescrita.
+
+
+## 12. Addendum Task 5.3 — Colar dos Sonhos (10/11/2026)
+
+**Implementado na branch migration/minecraft-26.3 para testes, com entrada BLOQUEADA por default.** O novo item `dreamsdimensions:dream_necklace` é obtido por crafting Overworld (3 Dream Dust, 3 cobre, 1 ametista), possui slot Curios funcional `necklace`, modelos/ícone/traduções e chance de entrada por sono completo. Chance default laboratório 0.30; `dream_entry_enabled=false` é obrigatório para release atual. O motor seguro existente, a escolha por pesos das duas dimensões e o Despertador não foram modificados. Veja [Relatório 5.3](DREAM_NECKLACE_TASK_5_3.md), [Contrato 5.2](TRAVEL_RETURN_CONTRACT_TASK_5_2.md) e [Matriz 5.2](TRAVEL_RETURN_TEST_MATRIX_TASK_5_2.md). **Ainda pendem homologação CI/cliente/Survival/multiplayer e tasks 5.4, 5.5, 5.7.** Não alterar status dos relatórios históricos da Task 5.0.

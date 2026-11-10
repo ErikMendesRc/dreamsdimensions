@@ -1,6 +1,7 @@
 package com.dreamsdimensions.mod;
 
 import com.dreamsdimensions.mod.config.DreamsConfig;
+import com.dreamsdimensions.mod.config.DreamEntryConfig;
 import com.dreamsdimensions.mod.dimension.DreamDimensionCatalog;
 import com.dreamsdimensions.mod.diagnostics.DreamscapeBridgeAuditCommand;
 import com.dreamsdimensions.mod.event.CommonEvents;
@@ -37,6 +38,7 @@ public class DreamsDimensions {
     public DreamsDimensions(IEventBus modEventBus, ModContainer modContainer) {
         LOGGER.info("Dreams Dimensions Mod está carregando!");
         modContainer.registerConfig(ModConfig.Type.LOCAL, DreamsConfig.SPEC);
+        modContainer.registerConfig(ModConfig.Type.SERVER, DreamEntryConfig.SPEC);
 
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
@@ -72,6 +74,8 @@ public class DreamsDimensions {
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerWakeUp);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerLoggedOut);
+        NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerClone);
+        NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerChangedDimension);
         LOGGER.info("Registros e listeners de Dreams Dimensions configurados.");
     }
 

@@ -3,6 +3,11 @@ package com.dreamsdimensions.mod.registry;
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.item.DreamDustItem;
 import com.dreamsdimensions.mod.item.OneiricAwakenerItem;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.component.ItemLore;
+import java.util.List;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -24,6 +29,22 @@ public final class ModItems {
             "dream_dust",
             DreamDustItem::new,
             Item.Properties::new
+    );
+
+    public static final DeferredItem<Item> DREAM_NECKLACE = ITEMS.registerItem(
+            "dream_necklace",
+            Item::new,
+            () -> new Item.Properties()
+                    .stacksTo(1)
+                    .rarity(Rarity.UNCOMMON)
+                    .component(DataComponents.LORE, new ItemLore(List.of(
+                            Component.translatable("tooltip.dreamsdimensions.dream_necklace.line1")
+                                    .withStyle(ChatFormatting.GRAY),
+                            Component.translatable("tooltip.dreamsdimensions.dream_necklace.line2")
+                                    .withStyle(ChatFormatting.GRAY),
+                            Component.translatable("tooltip.dreamsdimensions.dream_necklace.line3")
+                                    .withStyle(ChatFormatting.DARK_PURPLE)
+                    )))
     );
 
     public static final DeferredItem<OneiricAwakenerItem> ONEIRIC_AWAKENER = ITEMS.registerItem(

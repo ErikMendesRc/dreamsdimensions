@@ -1,6 +1,11 @@
 package com.dreamsdimensions.mod.event;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
+import com.dreamsdimensions.mod.config.DreamEntryConfig;
+import com.dreamsdimensions.mod.config.DreamsConfig;
+import com.dreamsdimensions.mod.service.DreamEntryPolicy;
+import com.dreamsdimensions.mod.service.DreamNecklaceEquipmentPolicy;
+import com.dreamsdimensions.mod.service.DreamSleepCycle;
 import com.dreamsdimensions.mod.service.DreamTeleportService;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,7 +13,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -16,12 +23,12 @@ import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * Thin server-side sleep event adapter; preserves native 100 ticks and
- * wake-before-post timing. Transient state is per UUID, never ServerPlayer.
+ * Server-side sleep adapter: tick/wake callbacks share one cycle and one roll.
+ * Existing safe arrival and weighted dimension selection remain unchanged.
  */
 public final class SleepTeleportHandler {
     public static final int TICKS_BEFORE_TELEPORT = 100;
-    private static final Set<UUID> ATTEMPTED_SLEEP = new HashSet<>();
+    private static final DreamSleepCycle CYCLES = new DreamSleepCycle();
     private static final Set<UUID> TELEPORTING = new HashSet<>();
     private static final Map<UUID, BedOrigin> COMPLETED_WAKEUPS = new HashMap<>();
 
@@ -35,25 +42,26 @@ public final class SleepTeleportHandler {
 
         BedOrigin completedWakeup = COMPLETED_WAKEUPS.remove(uuid);
         if (completedWakeup != null) {
-            ATTEMPTED_SLEEP.remove(uuid);
+            CYCLES.onAwake(uuid);
             if (player.isAlive() && player.level().dimension() == Level.OVERWORLD && !player.isSleeping()) {
-                teleportOnce(player, completedWakeup);
+                attemptEntry(player, completedWakeup);
             }
             return;
         }
 
         if (!player.isAlive() || player.level().dimension() != Level.OVERWORLD || !player.isSleeping()) {
-            ATTEMPTED_SLEEP.remove(uuid);
+            CYCLES.onAwake(uuid);
             return;
         }
-        if (player.getSleepTimer() < TICKS_BEFORE_TELEPORT || !ATTEMPTED_SLEEP.add(uuid)) return;
+
+        if (!CYCLES.onSleeping(uuid, player.getSleepTimer(), TICKS_BEFORE_TELEPORT)) return;
 
         Optional<BlockPos> bed = player.getSleepingPos();
         if (bed.isEmpty()) {
-            DreamsDimensions.LOGGER.warn("Sono completo, mas a cama de {} não está disponível.", uuid);
+            DreamsDimensions.LOGGER.warn("Sono completo sem cama válida para {}", uuid);
             return;
         }
-        teleportOnce(player, new BedOrigin(bed.get(), player.getYRot()));
+        attemptEntry(player, new BedOrigin(bed.get(), player.getYRot()));
     }
 
     public static void onPlayerWakeUp(PlayerWakeUpEvent event) {
@@ -61,23 +69,49 @@ public final class SleepTeleportHandler {
                 || !player.isAlive() || player.level().dimension() != Level.OVERWORLD) return;
 
         UUID uuid = player.getUUID();
-        if (TELEPORTING.contains(uuid) || ATTEMPTED_SLEEP.contains(uuid)
-                || player.getSleepTimer() < TICKS_BEFORE_TELEPORT) return;
+        if (TELEPORTING.contains(uuid)) return;
+        if (!CYCLES.onWake(uuid, player.getSleepTimer(), TICKS_BEFORE_TELEPORT)) return;
+
+        // Consumes this cycle BEFORE queueing: duplicate wake callbacks cannot reroll.
         player.getSleepingPos().ifPresent(pos ->
                 COMPLETED_WAKEUPS.put(uuid, new BedOrigin(pos, player.getYRot())));
     }
 
     public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-        UUID uuid = event.getEntity().getUUID();
-        ATTEMPTED_SLEEP.remove(uuid);
+        forget(event.getEntity().getUUID());
+    }
+
+    public static void onPlayerClone(PlayerEvent.Clone event) {
+        forget(event.getEntity().getUUID());
+    }
+
+    public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        forget(event.getEntity().getUUID());
+    }
+
+    private static void forget(UUID uuid) {
+        CYCLES.forget(uuid);
         TELEPORTING.remove(uuid);
         COMPLETED_WAKEUPS.remove(uuid);
     }
 
-    private static void teleportOnce(ServerPlayer player, BedOrigin origin) {
+    private static void attemptEntry(ServerPlayer player, BedOrigin origin) {
         UUID uuid = player.getUUID();
         if (!TELEPORTING.add(uuid)) return;
         try {
+            // Disabled by default: no Curios / RNG / destination work in normal Survival.
+            if (!DreamEntryConfig.enabled()) return;
+            boolean overworld = player.level().dimension() == Level.OVERWORLD;
+            boolean available = overworld && DreamsConfig.getEnabledDefinitions().stream()
+                    .anyMatch(definition ->
+                            ((ServerLevel) player.level()).getServer().getLevel(definition.dimension()) != null);
+            boolean equipped = overworld && player.isAlive() && !player.isSpectator() && available
+                    && DreamNecklaceEquipmentPolicy.isEquipped(player);
+            DreamEntryPolicy.Input input = new DreamEntryPolicy.Input(
+                    true, player.isAlive(), overworld, player.isSpectator(),
+                    true, equipped, available);
+            if (!DreamEntryPolicy.canRoll(input)) return;
+            if (!DreamEntryPolicy.roll(DreamEntryConfig.chance(), ThreadLocalRandom.current()::nextDouble)) return;
             DreamTeleportService.enterDream(player, origin.pos(), origin.yaw());
         } finally {
             TELEPORTING.remove(uuid);

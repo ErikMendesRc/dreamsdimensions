@@ -115,3 +115,12 @@ Esta seção cobre **17 blocos, 17 BlockItems associados e 2 itens próprios**. 
 | Ruínas com Despertador | Estruturas raras com loot table JSON e chances medidas, em Dreamscape e Campo Azul | Recuperação emergencial sem item e sem exploit de reabrir baú | **PROPOSTO / NÃO IMPLEMENTADO** | 5.7 |
 
 **Regra de prova:** código/documentação ≠ teste Survival; parâmetros 30% (viagem) e taxa de loot são **hipóteses**, nunca valores homologados. Fonte: [Task 5.2](TRAVEL_RETURN_CONTRACT_TASK_5_2.md).
+
+
+## 6. Addendum Task 5.3 — Equipamento de entrada
+
+| Item e origem | Ação/mecânica | Utilidade | Dependências | Status de evidência |
+| --- | --- | --- | --- | --- |
+| `dreamsdimensions:dream_necklace` / 3 Dream Dust + 3 copper ingots + 1 amethyst shard do Overworld | Equipar em Curios `necklace` funcional, completar sono 100 ticks no Overworld; chance server-side `dream_entry_chance` (0.30 inicial) se `dream_entry_enabled=true` | Permite **chance** de entrar Dreamscape/Campo Azul sem mudar pesos, sem buffs, sem consumo | Curios 17.0.1+26.3, mod obrigatório; `DreamSleepCycle`, `DreamEntryPolicy`, `DreamTeleportService` | **CÓDIGO/ASSETS PROPOSTOS NA 5.3; BUILD/SURVIVAL/MULTIPLAYER PENDENTES**; bloqueado por padrão até 5.4/5.5/5.7 |
+
+O Pó Onírico ainda é extraído no **Overworld**; Pó de Cristal futuro é outro recurso. Despertador atual não foi alterado: consumo somente na Task 5.4. Ver [Relatório 5.3](DREAM_NECKLACE_TASK_5_3.md).

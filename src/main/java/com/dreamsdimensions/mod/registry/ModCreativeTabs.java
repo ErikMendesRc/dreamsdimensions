@@ -25,6 +25,7 @@ public final class ModCreativeTabs {
                     .displayItems((params, output) -> {
                         output.accept(ModItems.DREAM_DUST.get());
                         output.accept(ModItems.ONEIRIC_AWAKENER.get());
+                        output.accept(ModItems.DREAM_NECKLACE.get());
 
                         output.accept(ModBlocks.DREAM_GRASS_BLOCK.get());
                         output.accept(ModBlocks.BLUE_DREAM_GRASS.get());

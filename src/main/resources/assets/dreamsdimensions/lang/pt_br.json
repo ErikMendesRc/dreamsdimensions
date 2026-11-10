@@ -25,5 +25,9 @@
   "effect.dreamsdimensions.pacto_de_vigilia": "Pacto de Vigília",
   "message.dreamsdimensions.echo_moss.found": "O musgo ressoa. Um brilho próximo responde ao sinal. Siga o rastro.",
   "message.dreamsdimensions.echo_moss.absent": "Nenhum eco próximo.",
-  "message.dreamsdimensions.echo_moss.unavailable": "O eco se perde além da área carregada. Explore um pouco mais."
+  "message.dreamsdimensions.echo_moss.unavailable": "O eco se perde além da área carregada. Explore um pouco mais.",
+  "item.dreamsdimensions.dream_necklace": "Colar dos Sonhos",
+  "tooltip.dreamsdimensions.dream_necklace.line1": "Permite que o sono abra caminhos para outras dimensões.",
+  "tooltip.dreamsdimensions.dream_necklace.line2": "Deve estar equipado para funcionar.",
+  "tooltip.dreamsdimensions.dream_necklace.line3": "Entrar sem um Despertador pode significar uma longa jornada de volta."
 }
