@@ -1,0 +1,19 @@
+{
+  "criteria": {
+    "has_oneiric_core": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "dreamsdimensions:oneiric_core_block"
+          }
+        ]
+      }
+    }
+  },
+  "rewards": {
+    "recipes": [
+      "dreamsdimensions:oneiric_awakener"
+    ]
+  }
+}

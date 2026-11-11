@@ -1,0 +1,19 @@
+{
+  "criteria": {
+    "has_infused_stone": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "dreamsdimensions:dream_infused_stone"
+          }
+        ]
+      }
+    }
+  },
+  "rewards": {
+    "recipes": [
+      "dreamsdimensions:oneiric_core_block"
+    ]
+  }
+}

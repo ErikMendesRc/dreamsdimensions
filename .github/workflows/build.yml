@@ -23,7 +23,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       - name: Build
         run: ./gradlew --no-daemon clean build
-      - name: Validate Overworld-first resources and crafting links
+      - name: Validate Task 5.6 Overworld resource economy and Recipe Book
         run: python3 scripts/ci/check_overworld_resource_chain.py
       - name: Validate echo moss gameplay invariants (TASK 5.1)
         run: python3 scripts/ci/check_echo_moss.py
@@ -91,7 +91,7 @@ jobs:
           echo "::error::Minecraft asset download still failing after 3 attempts"
           exit 1
       - name: Smoke test - initialize a dedicated server and load datapacks
-        timeout-minutes: 6
+        timeout-minutes: 15
         shell: bash
         run: |
           mkdir -p run runs/server
@@ -101,7 +101,7 @@ jobs:
           printf 'eula=true\n' > eula.txt
           printf 'eula=true\n' > run/eula.txt
           printf 'eula=true\n' > runs/server/eula.txt
-          JAVA_TOOL_OPTIONS="-Ddreamsdimensions.worldgenMetrics=true -Ddreamsdimensions.enableBridgeAudit=true" ./gradlew --no-daemon runServer > server-smoke.log 2>&1 &
+          JAVA_TOOL_OPTIONS="-Ddreamsdimensions.worldgenMetrics=true -Ddreamsdimensions.enableBridgeAudit=true -Ddreamsdimensions.enableOreAudit=true" ./gradlew --no-daemon runServer > server-smoke.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true; tail -n 180 server-smoke.log || true' EXIT
           started=0
@@ -122,6 +122,12 @@ jobs:
             python3 scripts/ci/check_dreamscape_ecosystem.py --rcon
             python3 scripts/ci/check_dreamscape_ecosystem.py --log server-smoke.log
             python3 scripts/ci/check_dreamscape_homologation.py --rcon --expected-seed '${{ matrix.seed }}'
+            # Four disjoint 8x8 regions = 256 ACTUAL fresh Overworld chunks/seed.
+            # This is an opt-in, bounded dedicated-server CI diagnostic, not
+            # a gameplay background scan. Live observed results -> artifact.
+            python3 scripts/ci/audit_overworld_ore_runtime.py \
+              --expected-seed '${{ matrix.seed }}' \
+              --output ore-audit-seed-${{ matrix.seed }}.json
           fi
           if [ "$started" -ne 1 ]; then
             echo "::error::O servidor não concluiu a inicialização ou falhou ao carregar datapacks."
@@ -142,4 +148,11 @@ jobs:
         with:
           name: server-smoke-log-seed-${{ matrix.seed }}
           path: server-smoke.log
+          if-no-files-found: ignore
+      - name: Upload real Overworld ore voxel survey
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: overworld-ore-survey-seed-${{ matrix.seed }}
+          path: ore-audit-seed-${{ matrix.seed }}.json
           if-no-files-found: ignore
