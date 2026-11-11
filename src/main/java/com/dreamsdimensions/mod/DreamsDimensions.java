@@ -5,6 +5,7 @@ import com.dreamsdimensions.mod.config.DreamEntryConfig;
 import com.dreamsdimensions.mod.dimension.DreamDimensionCatalog;
 import com.dreamsdimensions.mod.diagnostics.DreamscapeBridgeAuditCommand;
 import com.dreamsdimensions.mod.diagnostics.OverworldOreAuditCommand;
+import com.dreamsdimensions.mod.diagnostics.DreamRuinsAuditCommand;
 import com.dreamsdimensions.mod.event.CommonEvents;
 import com.dreamsdimensions.mod.event.EchoMossInteractionHandler;
 import com.dreamsdimensions.mod.event.DreamDimensionEffectsHandler;
@@ -60,6 +61,10 @@ public class DreamsDimensions {
         // CI/development-only; read-only scan of preloaded Overworld chunks.
         if (Boolean.getBoolean("dreamsdimensions.enableOreAudit")) {
             NeoForge.EVENT_BUS.addListener(OverworldOreAuditCommand::register);
+        }
+        // Task 5.7: read-only, bounded, operator-only; NEVER active by default.
+        if (Boolean.getBoolean("dreamsdimensions.enableRuinsAudit")) {
+            NeoForge.EVENT_BUS.addListener(DreamRuinsAuditCommand::register);
         }
 
         NeoForge.EVENT_BUS.addListener(CommonEvents::onServerStarting);

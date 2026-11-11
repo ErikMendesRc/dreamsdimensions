@@ -25,6 +25,8 @@ jobs:
         run: ./gradlew --no-daemon clean build
       - name: Validate Task 5.6 Overworld resource economy and Recipe Book
         run: python3 scripts/ci/check_overworld_resource_chain.py
+      - name: Validate Task 5.7 native structures, binary NBT and recovery loot
+        run: python3 scripts/ci/check_dream_ruins.py
       - name: Validate echo moss gameplay invariants (TASK 5.1)
         run: python3 scripts/ci/check_echo_moss.py
       - name: Validate 26.3 vegetation datapacks (static)
@@ -91,7 +93,7 @@ jobs:
           echo "::error::Minecraft asset download still failing after 3 attempts"
           exit 1
       - name: Smoke test - initialize a dedicated server and load datapacks
-        timeout-minutes: 15
+        timeout-minutes: 20
         shell: bash
         run: |
           mkdir -p run runs/server
@@ -101,7 +103,7 @@ jobs:
           printf 'eula=true\n' > eula.txt
           printf 'eula=true\n' > run/eula.txt
           printf 'eula=true\n' > runs/server/eula.txt
-          JAVA_TOOL_OPTIONS="-Ddreamsdimensions.worldgenMetrics=true -Ddreamsdimensions.enableBridgeAudit=true -Ddreamsdimensions.enableOreAudit=true" ./gradlew --no-daemon runServer > server-smoke.log 2>&1 &
+          JAVA_TOOL_OPTIONS="-Ddreamsdimensions.worldgenMetrics=true -Ddreamsdimensions.enableBridgeAudit=true -Ddreamsdimensions.enableOreAudit=true -Ddreamsdimensions.enableRuinsAudit=true" ./gradlew --no-daemon runServer > server-smoke.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true; tail -n 180 server-smoke.log || true' EXIT
           started=0
@@ -128,6 +130,11 @@ jobs:
             python3 scripts/ci/audit_overworld_ore_runtime.py \
               --expected-seed '${{ matrix.seed }}' \
               --output ore-audit-seed-${{ matrix.seed }}.json
+            # Only a real native structure start and its untouched chest
+            # entity count as success, not a JSON or /place structure success.
+            python3 scripts/ci/audit_dream_ruins_runtime.py \
+              --expected-seed '${{ matrix.seed }}' \
+              --output dream-ruins-seed-${{ matrix.seed }}.json
           fi
           if [ "$started" -ne 1 ]; then
             echo "::error::O servidor não concluiu a inicialização ou falhou ao carregar datapacks."
@@ -155,4 +162,11 @@ jobs:
         with:
           name: overworld-ore-survey-seed-${{ matrix.seed }}
           path: ore-audit-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
+      - name: Upload Dream Ruins 5.7 natural placement survey
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dream-ruins-survey-seed-${{ matrix.seed }}
+          path: dream-ruins-seed-${{ matrix.seed }}.json
           if-no-files-found: ignore

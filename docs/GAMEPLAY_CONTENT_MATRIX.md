@@ -158,3 +158,14 @@ Custo: `3 + 12*N` Pós para um Colar + N Despertadores. Nenhum item/receita/biom
 ### Resultados posteriores à matriz — medição real Task 5.6
 
 O [workflow 42937528410](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42937528410) mediu **1.024 chunks novos** do Overworld (256 × quatro seeds) e encontrou **5.903 blocos `dream_ore` e 5.333 `deepslate_dream_ore`**, com 324 adjacentes a ar (2,88%). A geração natural dos dois minérios agora está **COMPROVADA** nas regiões/seed examinadas. Isso supera o status histórico da tabela original de Task 5.0. A distribuição detalhada e os XYZ observados estão em [OVERWORLD_ORE_DISTRIBUTION_TASK_5_6.md](OVERWORLD_ORE_DISTRIBUTION_TASK_5_6.md). A coleta real, Fortune, Silk Touch, tempo de progressão, receitas desbloqueadas para um jogador novo e multiplayer seguem pendentes de teste manual. **Nenhum ajuste de abundância foi feito** sem essa evidência econômica final.
+
+
+## 9. Addendum Task 5.7 — Ruínas de recuperação (estado implementado, validação pendente)
+
+| Conteúdo | Dimensão/obtenção | Função | Raridade e persistência | Evidência/limitação |
+| --- | --- | --- | --- | --- |
+| `dreamsdimensions:blue_dream_ruins` | Campo Azul; estrutura vanilla via structure set | Marco explorável com pátio irregular azul e um baú | spacing38, separation12, loot 25% um Despertador/baú; conteúdo único vanilla | NBT binário 26.3 + datapacks; geração natural e suporte precisam CI e Survival |
+| `dreamsdimensions:fragmented_dream_ruins` | Dreamscape; jigsaw sobre relevo fragmentado | Caminho de recuperação sem retorno gratuito | spacing32, separation12, loot 25% um Despertador/baú; sem Dream Dust | Distinta do Azul; risco de borda/vazio exige medição de apoio e rotas reais |
+| `dreamsdimensions:chests/blue_dream_ruins`, `dreamsdimensions:chests/fragmented_dream_ruins` | Baú vanilla único dentro de cada template | Suprimentos comuns e chance de Despertador existente | 1 roll raro 1:3 contra empty; 2-3 rolls comuns; loot gerado uma vez | Teste de abertura/reload/MP pendente; RNG Python é apenas MODEL ONLY |
+
+**Sem mudanças** em Colar, consumo do Despertador, `dream_return`, respawn, economia de minério ou chance de entrada. Progresso não fica liberado por default. Comandos e provas devem ser registrados em [DREAM_RUINS_TASK_5_7.md](DREAM_RUINS_TASK_5_7.md); a tabela histórica de 5.0 continua referência de baseline, não status final.
