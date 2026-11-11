@@ -187,17 +187,32 @@ Craftar Colar → Pedra Infundida ×4 → Núcleo → Despertador (sem `/give` d
 
 | Camada | Estado inicial |
 |---|---|
-| **STATIC DATA VALIDATION** | Script ampliado; **CI PENDENTE** |
-| **BUILD/UNIT** | Alterações Java do comando opt-in; **CI PENDENTE** |
-| **SERVER SMOKE** | Carregamento de recursos, loot e recipe advancements; **CI PENDENTE** |
-| **WORLDGEN RUNTIME VERIFICATION** | Script RCON e comando opt-in criados; **PENDENTE** de 4 amostras/seed |
+| **STATIC DATA VALIDATION** | **PASS** em 4 seeds — validação JSON, custo recursivo, exclusividade Overworld e Recipe Book |
+| **BUILD/UNIT** | **PASS** em 4 seeds — Java 25 / Gradle clean build e JUnit existentes |
+| **SERVER SMOKE** | **PASS** em 4 seeds — dedicated server e datapacks carregados |
+| **WORLDGEN RUNTIME VERIFICATION** | **PASS** em 4 seeds — **256 chunks por seed**, 1.024 chunks e 11.236 voxels dos dois minérios efetivamente observados no Overworld. Ver [distribuição medida](OVERWORLD_ORE_DISTRIBUTION_TASK_5_6.md) |
 | **MANUAL SURVIVAL** | **NOT RUN**: picaretas, Fortune, Silk, receita no Recipe Book e mineração legítima |
 | **MULTIPLAYER** | **NOT RUN**: economia em servidor/Curios com dois usuários |
 
-**Não declarar completa a tarefa sem resultado real de geração**. Se o ambiente CI falhar, preservar logs e reportar claramente o bloqueio. Resultados verificados por seed serão publicados em [OVERWORLD_ORE_DISTRIBUTION_TASK_5_6.md](OVERWORLD_ORE_DISTRIBUTION_TASK_5_6.md) somente se houver medições reais.
+**Geração natural no Overworld COMPROVADA nas quatro seeds amostradas.** [Relatório da distribuição medida](OVERWORLD_ORE_DISTRIBUTION_TASK_5_6.md) apresenta método, 1.024 chunks, quantidades, comparação geológica, Y, exposições e coordenadas de minério reais. Não converter isso em homologação de coleta, Fortune, crafting no cliente ou tempo até 15 Pós; essas tarefas continuam **NOT RUN**. [Workflow 42937528410](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42937528410).
 
 ## 10. Alterações e dependências seguintes
 
 **Alterações de escopo 5.6:** três advancements invisíveis de unlock, script de CI econômica e worldgen/loot, script RCON de 256 chunks/seed, comando de diagnóstico opt-in sem efeito gameplay, registro opcional no bootstrap, workflow de 4 seeds e docs de matriz/roadmap. **Não modificou** os arquivos de minério, suas propriedades, biome modifier, tags, loot nem recipes porque não foi comprovado defeito nesses dados.
 
 **Próxima tarefa:** Task **5.7**, baús raros com o **Despertador completo** recuperável dentro de cada dimensão (sem produzir Dream Dust local), com distribuição real, proteção contra exploits e loot persistente. O Survival público fica desabilitado por padrão até que 5.7 e testes manuais 5.5/5.6/5.7 sejam concluídos.
+
+
+## 11. Evidência final após push — geração real no Overworld
+
+O commit [`2e3d8bb898ced73b8f1a539bc3ee02b14890e2b2`](https://github.com/ErikMendesRc/dreamsdimensions/commit/2e3d8bb898ced73b8f1a539bc3ee02b14890e2b2) passou no [workflow GitHub Actions 42937528410](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42937528410): **4/4 seeds `success`**, build+JUnit+scripts+dedicated server+RCON. A sondagem observou minério comum e profundo naturalmente gerados em **256 chunks de cada uma das quatro seeds**.
+
+| Seed | Dream Ore | Deepslate Dream Ore | Chunks com minério / 256 | Voxels expostos a ar |
+| --- | ---: | ---: | ---: | ---: |
+| `14011` | 1.455 | 1.355 | 256 | 84 |
+| `20261108` | 1.467 | 1.404 | 256 | 76 |
+| `-904732` | 1.445 | 1.187 | 253 | 80 |
+| `73199013` | 1.536 | 1.387 | 255 | 84 |
+| **Total** | **5.903** | **5.333** | **1.020 / 1.024** | **324** |
+
+**Decisão de balanceamento após medição:** manter parâmetros atuais e preço do Despertador. Minérios existem em abundância subterrânea, mas somente **324/11.236 = 2,88%** da amostra estavam adjacentes a ar; não há dado real sobre tempo gasto para achar/obter 15 Pós. A porcentagem de ar adjacente não representa acessibilidade ou drop. **Próximos passos são playtest Survival sem cheats e Task 5.7**, não aumentar geração por achismo. Ver [relatório da distribuição real](OVERWORLD_ORE_DISTRIBUTION_TASK_5_6.md) para 16 regiões, biomas, Y e coordenadas observadas.

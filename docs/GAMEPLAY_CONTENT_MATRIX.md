@@ -144,8 +144,8 @@ Relatório completo: [SPAWN_AUDIT_TASK_5_3_1.md](SPAWN_AUDIT_TASK_5_3_1.md). Nã
 
 | Elemento | Origem/progressão atual | Decisão Task 5.6 | Evidência / pendência |
 | --- | --- | --- | --- |
-| `dream_ore` | ConfiguredFeature `minecraft:ore`, stone replacement, size6; placed count2, trapezoid Y=-16..64, `#c:is_overworld` | Mantida distribuição, sem novo modifier; diagnóstico somente dev `dream_ore_audit` | JSON/CI; blocos reais dependem de RCON em chunks novos |
-| `deepslate_dream_ore` | Deepslate replacement, size5, count2, Y=-64..-16, mesmo modifier exclusivo | Mantido sem aumentar yield/drop | JSON/CI e RCON em seed nova |
+| `dream_ore` | ConfiguredFeature `minecraft:ore`, stone replacement, size6; placed count2, trapezoid Y=-16..64, `#c:is_overworld` | Mantida distribuição, sem novo modifier; diagnóstico somente dev `dream_ore_audit` | PASS geração real em 4 seeds/1.024 chunks (relatório 5.6); tempo de mineração em Survival pendente |
+| `deepslate_dream_ore` | Deepslate replacement, size5, count2, Y=-64..-16, mesmo modifier exclusivo | Mantido sem aumentar yield/drop | PASS geração real em 4 seeds/1.024 chunks (relatório 5.6); Fortune e Silk Touch em Survival pendentes |
 | `dream_dust` | Drop 1 base com Fortune; Silk Touch retorna bloco; picareta de ferro | Nenhuma fonte natural adicional nas dimensões; preservar escassez | JSON/CI; ferramentas/XP/loot em Survival pendentes |
 | `dream_necklace` | 3 Dust + 3 Copper + 1 Amethyst; não consumível | Advancement invisível concede acesso à receita no Recipe Book quando encontra Dust | CI datapacks; Recipe Book em cliente pendente |
 | `dream_infused_stone` | 2 Dust + 2 Stone → 1; bloco recuperável | Recipe Book após primeiro Dust; sem função nova | JSON/CI e jogo pendente |
@@ -153,3 +153,8 @@ Relatório completo: [SPAWN_AUDIT_TASK_5_3_1.md](SPAWN_AUDIT_TASK_5_3_1.md). Nã
 | `oneiric_awakener` | Feather + Core + Glass Bottle → 1; 12 Dust indiretos; consumido por retorno | Recipe Book após primeiro Core; **não** reduzir preço/consumo | JSON/CI; mineração e crafting real pendentes |
 
 Custo: `3 + 12*N` Pós para um Colar + N Despertadores. Nenhum item/receita/bioma novo para gerar Pó, nenhuma alteração em `DreamTeleportService`, `DreamRespawnService` ou drops de mobs. Relatório: [OVERWORLD_ECONOMY_TASK_5_6.md](OVERWORLD_ECONOMY_TASK_5_6.md). A matriz histórica acima mantém o estado da baseline original (5.0), inclusive descrições antigas de Despertador reutilizável, explicitamente superadas pelas Tasks 5.2 e 5.4.
+
+
+### Resultados posteriores à matriz — medição real Task 5.6
+
+O [workflow 42937528410](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42937528410) mediu **1.024 chunks novos** do Overworld (256 × quatro seeds) e encontrou **5.903 blocos `dream_ore` e 5.333 `deepslate_dream_ore`**, com 324 adjacentes a ar (2,88%). A geração natural dos dois minérios agora está **COMPROVADA** nas regiões/seed examinadas. Isso supera o status histórico da tabela original de Task 5.0. A distribuição detalhada e os XYZ observados estão em [OVERWORLD_ORE_DISTRIBUTION_TASK_5_6.md](OVERWORLD_ORE_DISTRIBUTION_TASK_5_6.md). A coleta real, Fortune, Silk Touch, tempo de progressão, receitas desbloqueadas para um jogador novo e multiplayer seguem pendentes de teste manual. **Nenhum ajuste de abundância foi feito** sem essa evidência econômica final.
