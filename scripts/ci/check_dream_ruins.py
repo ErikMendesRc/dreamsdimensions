@@ -166,6 +166,8 @@ def validate_structure(name, spec):
     assert data["spawn_overrides"] == {}
     assert data["start_pool"] == f"dreamsdimensions:{spec['pool']}"
     assert data["size"] == 1
+    # Required field in the actual Minecraft 26.3 JigsawStructure.CODEC.
+    assert data["use_expansion_hack"] is False
     assert data["start_height"] == {"absolute": 0}
     assert data["project_start_to_heightmap"] == "WORLD_SURFACE_WG"
     assert 24 <= data["max_distance_from_center"] <= 64
