@@ -50,7 +50,7 @@ Cada tabela contém:
 
 `scripts/ci/audit_dream_ruins_runtime.py` inicia com seed validada por `/seed`, usa `/execute in <dimension> run locate structure <id>` para encontrar candidato nativo (sem chamar `/place`), faz forceload transitório da região **somente no mundo descartável do workflow**, executa o diagnóstico e remove tickets. Produz `dream-ruins-seed-<seed>.json`; o log `DREAM_RUINS_CHEST` registra **X Y Z reais se encontrados**, bioma, status loot e suporte. Se alguma região não puder ser avaliada, marcar `NOT RUN`, `LOCATE_FAILED` ou `AUDIT_FAILED`, nunca inventar coordenadas.
 
-**Seeds:** 14011, 20261108, -904732, 73199013. **Validação inicial da CI:** PENDENTE de resultado no commit de implementação. Dedicated server + /locate **não comprova** travessia real, persistência após reboot, o sorteio real ou a raridade populacional. É necessário expandir a amostra de vários setores por seed para estimar distâncias e rejeições.
+**Seeds:** 14011, 20261108, -904732, 73199013. **Validação real concluída em 10/11/2026:** [workflow 42942964404](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42942964404) **4/4 success** após correção obrigatória do campo 26.3 `use_expansion_hack=false`. Localizadas as oito estruturas (uma de cada dimensão/seed), com oito baús físicos e loot table correta, ainda não abertos. Suporte local conservador: **7/8 aprovados, 1/8 com suporte insuficiente**. Detalhes em seção 9. Dedicated server + /locate **não comprova** travessia real, persistência após reboot, o sorteio real ou a raridade populacional. É necessário expandir a amostra de vários setores por seed para estimar distâncias e rejeições.
 
 ## 6. Comandos copiáveis de teste
 
@@ -124,10 +124,10 @@ Depois da **primeira abertura**, `LootTable` deixa de estar pendente; consultar 
 
 | Categoria | Status inicial | Interpretação |
 | --- | --- | --- |
-| NBT real + estrutura JSON + 25% single-roll | **PENDENTE de CI** | Prova formato e regra configurada |
-| Build/JUnit + datapack dedicated server | **PENDENTE de CI** | Confirma classes, registries e parsing |
-| /locate real por seed/dimensão | **PENDENTE de CI** | Confirma estrutura nativa localizável |
-| Baú físico + referência de loot + suporte local | **PENDENTE de CI** | Observação real não-destrutiva |
+| NBT real + estrutura JSON + 25% single-roll | **PASS CI** | Prova formato e regra configurada |
+| Build/JUnit + datapack dedicated server | **PASS 4/4 seeds** | Confirma classes, registries e parsing |
+| /locate real por seed/dimensão | **PASS 8/8 ocorrências** | Confirma estrutura nativa localizável |
+| Baú físico + referência de loot + suporte local | **Baú + loot PASS 8/8; suporte >=5/9 PASS 7/8** | Observação real não-destrutiva |
 | 1.000 loot rolls executados pelo Minecraft | **NOT RUN** | Modelo Python não substitui essa medição |
 | Acesso aos baús em Survival | **NOT RUN** | Travel routes/queda/mobs em jogo |
 | Persistência após reload/restart/duas contas | **NOT RUN** | Não inferir somente de lógica vanilla |
@@ -144,4 +144,66 @@ Novos: 2 `worldgen/structure`, 2 `worldgen/structure_set`, 2 `worldgen/template_
 
 **Próximas decisões:** após reproduzir as quatro seeds, verificar se o dimensionamento em ilhas exige preflight mínimo; medir acessibilidade/tempo de recuperação em Survival, loot real por 1.000 rolls e persistência em dois clientes. Não mover a entrada do mod para enabled até evidência real.
 
-**Commits/CI:** preencher após execução real. Não declarar homologação automática do Survival.
+**Commits/CI:** implementação [`62334e2d01234175ad0b64ee62d433526c2039a4`](https://github.com/ErikMendesRc/dreamsdimensions/commit/62334e2d01234175ad0b64ee62d433526c2039a4); primeiro workflow [42942664031](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42942664031) falhou durante o carregamento de registry em `JigsawStructure.CODEC`, pois os dois JSONs omitiam o obrigatório `use_expansion_hack`. Corrigido em [`2a9dbbb1083c8269a2bc611c0b14c9caffea9aeb`](https://github.com/ErikMendesRc/dreamsdimensions/commit/2a9dbbb1083c8269a2bc611c0b14c9caffea9aeb), com `use_expansion_hack=false` e check de regressão. Workflow corrigido [42942964404](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42942964404) passou 4/4 jobs.
+
+**Não declarar homologação automática do Survival:** loot real em 1000 aberturas, persistência restart, multiplayer e segurança das bordas do Dreamscape ainda exigem medição.
+
+
+## 9. Evidências reais — quatro seeds, oito estruturas naturais
+
+**Ambiente:** Minecraft 26.3 dedicado, seed verificada por `/seed`, branch `migration/minecraft-26.3`, commit `2a9dbbb1083c8269a2bc611c0b14c9caffea9aeb`. Em cada mundo de CI, `/execute in <dim> positioned 0 128 0 run locate structure <id>` encontrou uma ruína natural. Depois de carregar temporariamente chunks próximos, `dream_ruins_audit` encontrou **exatamente um baú com loot table pendente correta** em cada local. Nenhuma estrutura foi criada via `/place` durante a sondagem. Os tickets foram removidos ao fim.
+
+| Seed | Dimensão | X Y Z do baú observado | Bioma | Apoios abaixo do baú | Acesso lateral local | Resultado |
+| --- | --- | --- | --- | ---: | --- | --- |
+| `14011` | Campo Azul | `59 102 187` | `dreamsdimensions:campo_onirico_azul` | 9/9 | Sim | PASS |
+| `14011` | Dreamscape | `164 195 172` | `dreamsdimensions:dreamscape_biome` | 9/9 | Sim | PASS |
+| `20261108` | Campo Azul | `133 141 59` | Campo Azul | 5/9 | Sim | PASS mínimo |
+| `20261108` | Dreamscape | `300 137 -4` | Dreamscape | **4/9** | Sim | **ALERTA — suporte local parcial** |
+| `-904732` | Campo Azul | `181 116 187` | Campo Azul | 9/9 | Sim | PASS |
+| `-904732` | Dreamscape | `44 192 260` | Dreamscape | 6/9 | Sim | PASS mínimo |
+| `73199013` | Campo Azul | `117 177 357` | Campo Azul | 7/9 | Sim | PASS |
+| `73199013` | Dreamscape | `44 195 196` | Dreamscape | 9/9 | Sim | PASS |
+
+O critério `support >=5/9` consulta apenas **9 voxels abaixo do piso 3×3 ao redor do baú**; não valida o perímetro inteiro da estrutura, pilares, conexões a outras ilhas ou uma rota até sua origem. A ruína de Dreamscape na seed `20261108` possui baú fisicamente válido e loot table correta, mas **não passa** o limiar de apoio de 5/9; isso exige inspeção visual e potencial preflight de geração antes de certificar o sistema como seguro. O `/locate` informa começo de estrutura (X/Z), não necessariamente posição do baú e não garante acessibilidade de jogador.
+
+**IDs e loot observados:** `blue_dream_ruins` → `dreamsdimensions:chests/blue_dream_ruins`; `fragmented_dream_ruins` → `dreamsdimensions:chests/fragmented_dream_ruins`, todos 8/8 com `LootTable` pendente, sem trigger de abertura. **Não medidos**: quantos continham efetivamente Despertador, se persistem após restart, tentativas candidatas/rejeitadas, distâncias entre várias estruturas e tempos de exploração P90/P95. O modelo Python de 1.000 sorteios por tabela (263 e 253 acertos de 1.000) não representa o motor de loot real do Minecraft.
+
+### 9.1 TPs de inspeção de coordenadas verificadas
+
+Use **somente Spectator** para os seguintes TPs; são coordenadas posicionadas 2 blocos acima do baú **real**, não spawns seguros homologados para Survival:
+
+```mcfunction
+/gamemode spectator
+/execute in dreamsdimensions:campo_onirico_azul run tp @s 59 104 187
+/execute in dreamsdimensions:dreamscape run tp @s 164 197 172
+```
+
+Seed `20261108`:
+
+```mcfunction
+/gamemode spectator
+/execute in dreamsdimensions:campo_onirico_azul run tp @s 133 143 59
+/execute in dreamsdimensions:dreamscape run tp @s 300 139 -4
+```
+
+Seed `-904732`:
+
+```mcfunction
+/gamemode spectator
+/execute in dreamsdimensions:campo_onirico_azul run tp @s 181 118 187
+/execute in dreamsdimensions:dreamscape run tp @s 44 194 260
+```
+
+Seed `73199013`:
+
+```mcfunction
+/gamemode spectator
+/execute in dreamsdimensions:campo_onirico_azul run tp @s 117 179 357
+/execute in dreamsdimensions:dreamscape run tp @s 44 197 196
+```
+
+**Importante:** cada par pertence à própria seed e à versão de mundo do workflow. Se seu save já tinha estes chunks antes da 5.7, não haverá retrogeração natural de ruínas; confirme usando `/locate` em chunks novos.
+
+### 9.2 Recomendação e pendências de release
+
+Não alterar `dream_entry_enabled=false` em produção. A geração natural e o baú físico passaram nos oito locais, mas **não há** comprovação de recuperação viável em Survival sem comandos, integridade completa do terreno no Dreamscape, persistência de inventário com dois jogadores nem sorteio real de 1000 baús. A ocorrência com apenas 4/9 apoios recomenda uma Task corretiva **5.7.1 — preflight limitado de terreno/suporte para ruínas Dreamscape**, condicionada a inspeção real e com rejeição antes de placement, preservando `/locate` e a frequência medida. Não consertar de forma falsa elevando `terrain_adaptation` agressivamente ou construindo pontes gratuitas. Validar também Campo Azul em relevo irregular.
