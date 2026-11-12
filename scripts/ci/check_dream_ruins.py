@@ -157,6 +157,15 @@ def validate_catalog():
         j = read_json(DATA / f"dimension/{dimension.split(':')[1]}.json")
         assert j["generator"]["biome_source"]["biome"] == biome
     assert len({v["biome"] for v in SPECS.values()}) == 2
+    # 26.3 no longer injects a beardifier into noise final_density.
+    # Prevent a silent no-op when Dreamscape's Jigsaw uses beard_thin.
+    noise = read_json(DATA / "worldgen/noise_settings/dreamscape_noise.json")
+    final = noise["noise_router"]["final_density"]
+    assert final["type"] == "minecraft:add"
+    assert final["right"] == {"type": "minecraft:beardifier"}
+    assert final["left"] == {"type": "minecraft:interpolated",
+                            "input": "dreamsdimensions:dreamscape_solid_density",
+                            "cell_size_xz": 4, "cell_size_y": 4}
 
 
 def validate_structure(name, spec):

@@ -127,9 +127,14 @@ def check_static():
                 old = max(land, island) > 0
                 new = max(land, island, cap) > 0
                 assert old == new, (y, land, island)
+    # Structure bearding is explicit in Minecraft 26.3. Preserve base
+    # Dreamscape terrain everywhere else, and use native beardifier near ruins.
     assert settings["noise_router"]["final_density"] == {
-        "type": "minecraft:interpolated", "input": PREFIX + "solid_density",
-        "cell_size_xz": 4, "cell_size_y": 4
+        "type": "minecraft:add",
+        "left": {"type": "minecraft:interpolated",
+                 "input": PREFIX + "solid_density",
+                 "cell_size_xz": 4, "cell_size_y": 4},
+        "right": {"type": "minecraft:beardifier"}
     }
     assert settings["noise_router"]["chunk_surface_level"] == {
         "type": "minecraft:find_top_surface",

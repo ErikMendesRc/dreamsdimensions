@@ -88,9 +88,14 @@ def static_checks():
     assert settings["legacy_random_source"] is False
     assert settings["default_block"] == GROUND[0] and settings["sea_level"] < 0
     router = settings["noise_router"]
+    # Minecraft 26.3 no longer adds beardifier implicitly. This pairing
+    # is required for terrain_adaptation=beard_thin to stabilize island ruins.
     assert router["final_density"] == {
-        "type": "minecraft:interpolated", "input": PREFIX + "solid_density",
-        "cell_size_xz": 4, "cell_size_y": 4}
+        "type": "minecraft:add",
+        "left": {"type": "minecraft:interpolated",
+                 "input": PREFIX + "solid_density",
+                 "cell_size_xz": 4, "cell_size_y": 4},
+        "right": {"type": "minecraft:beardifier"}}
     assert router["chunk_surface_level"] == {
         "type": "minecraft:find_top_surface", "density": PREFIX + "solid_density",
         "lower_bound": 0, "upper_bound": 248, "cell_height": 8}
