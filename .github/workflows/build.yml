@@ -23,6 +23,8 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       - name: Build
         run: ./gradlew --no-daemon clean build
+      - name: Validate reusable Task 7.1 QA contract
+        run: python3 scripts/ci/check_qa_contract.py
       - name: Validate Task 5.6 Overworld resource economy and Recipe Book
         run: python3 scripts/ci/check_overworld_resource_chain.py
       - name: Validate Task 5.7 native structures, binary NBT and recovery loot
@@ -103,7 +105,7 @@ jobs:
           printf 'eula=true\n' > eula.txt
           printf 'eula=true\n' > run/eula.txt
           printf 'eula=true\n' > runs/server/eula.txt
-          JAVA_TOOL_OPTIONS="-Ddreamsdimensions.worldgenMetrics=true -Ddreamsdimensions.enableBridgeAudit=true -Ddreamsdimensions.enableOreAudit=true -Ddreamsdimensions.enableRuinsAudit=true" ./gradlew --no-daemon runServer > server-smoke.log 2>&1 &
+          JAVA_TOOL_OPTIONS="-Ddreamsdimensions.worldgenMetrics=true -Ddreamsdimensions.enableBridgeAudit=true -Ddreamsdimensions.enableOreAudit=true -Ddreamsdimensions.enableRuinsAudit=true -Ddreamsdimensions.qa.enabled=true -Ddreamsdimensions.qa.runId=ci-seed-${{ matrix.seed }} -Ddreamsdimensions.qa.reportDir=$GITHUB_WORKSPACE/qa-reports" ./gradlew --no-daemon runServer > server-smoke.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true; tail -n 180 server-smoke.log || true' EXIT
           started=0
@@ -135,6 +137,9 @@ jobs:
             python3 scripts/ci/audit_dream_ruins_runtime.py \
               --expected-seed '${{ matrix.seed }}' \
               --output dream-ruins-seed-${{ matrix.seed }}.json
+            python3 scripts/ci/audit_qa_runtime.py \
+              --seed '${{ matrix.seed }}' \
+              --output qa-reports/dreamqa-ci-seed-${{ matrix.seed }}.json
           fi
           if [ "$started" -ne 1 ]; then
             echo "::error::O servidor não concluiu a inicialização ou falhou ao carregar datapacks."
@@ -149,6 +154,23 @@ jobs:
             exit 1
           fi
           echo "Servidor 26.3 iniciou, carregou datapacks e forçou chunks nas duas dimensões."
+      - name: Build versioned Task 7.1 QA report
+        run: |
+          python3 scripts/ci/collect_qa_report.py \
+            --seed '${{ matrix.seed }}' \
+            --runtime qa-reports/dreamqa-ci-seed-${{ matrix.seed }}.json \
+            --ore ore-audit-seed-${{ matrix.seed }}.json \
+            --ruins dream-ruins-seed-${{ matrix.seed }}.json \
+            --out qa-report-seed-${{ matrix.seed }}.json
+      - name: Upload Task 7.1 QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-report-seed-${{ matrix.seed }}
+          path: |
+            qa-report-seed-${{ matrix.seed }}.json
+            qa-reports/dreamqa-ci-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
       - name: Upload server smoke test log
         if: always()
         uses: actions/upload-artifact@v4
@@ -169,4 +191,30 @@ jobs:
         with:
           name: dream-ruins-survey-seed-${{ matrix.seed }}
           path: dream-ruins-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
+
+  qa-summary:
+    needs: build
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Download QA reports across four seeds
+        uses: actions/download-artifact@v4
+        with:
+          pattern: qa-report-seed-*
+          path: qa-matrix
+          merge-multiple: true
+      - name: Aggregate versioned QA reports (fail on missing seeds)
+        run: |
+          python3 scripts/ci/collect_qa_report.py \
+            --input-dir qa-matrix \
+            --out qa-summary.json
+      - name: Upload QA four-seed summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamsdimensions-qa-four-seed-summary
+          path: qa-summary.json
           if-no-files-found: ignore
