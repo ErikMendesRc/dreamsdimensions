@@ -7,6 +7,7 @@ import com.dreamsdimensions.mod.config.DreamEntryConfig;
 import com.dreamsdimensions.mod.dimension.DreamDimensionCatalog;
 import com.dreamsdimensions.mod.diagnostics.DreamscapeBridgeAuditCommand;
 import com.dreamsdimensions.mod.diagnostics.OverworldOreAuditCommand;
+import com.dreamsdimensions.mod.diagnostics.MarkedStoneAuditCommand;
 import com.dreamsdimensions.mod.diagnostics.DreamRuinsAuditCommand;
 import com.dreamsdimensions.mod.event.CommonEvents;
 import com.dreamsdimensions.mod.event.EchoMossInteractionHandler;
@@ -63,6 +64,10 @@ public class DreamsDimensions {
         // CI/development-only; read-only scan of preloaded Overworld chunks.
         if (Boolean.getBoolean("dreamsdimensions.enableOreAudit")) {
             NeoForge.EVENT_BUS.addListener(OverworldOreAuditCommand::register);
+        }
+        // Task 7.4: opt-in read-only natural Marked Stone survey, never loads chunks.
+        if (Boolean.getBoolean("dreamsdimensions.enableMarkedStoneAudit")) {
+            NeoForge.EVENT_BUS.addListener(MarkedStoneAuditCommand::register);
         }
         // Task 5.7: read-only, bounded, operator-only; NEVER active by default.
         if (Boolean.getBoolean("dreamsdimensions.enableRuinsAudit")) {
