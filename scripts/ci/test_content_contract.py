@@ -94,6 +94,17 @@ class ContentContractTest(unittest.TestCase):
         self.assertEqual(report["counts"]["registered_blocks"], 1)
         self.assertEqual(report["counts"]["registered_items"], 2)
 
+    def test_missing_block_item_registration_fails_closed(self):
+        path = self.root / "src/main/java/com/dreamsdimensions/mod/registry/ModItems.java"
+        source = path.read_text()
+        source = source.replace(
+            'public static final DeferredItem<BlockItem> MARKED_STONE_ITEM = ITEMS.registerSimpleBlockItem(\n'
+            '        ModBlocks.MARKED_STONE);',
+            '')
+        path.write_text(source)
+        with self.assertRaisesRegex(ContentContractError, "missing a BlockItem"):
+            validate(self.root)
+
     def test_missing_blockstate_fails_closed(self):
         (self.root / "src/main/resources/assets/dreamsdimensions/blockstates/marked_stone.json").unlink()
         with self.assertRaisesRegex(ContentContractError, "Blockstate mismatch"):
