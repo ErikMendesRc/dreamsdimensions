@@ -114,6 +114,20 @@ def audit(root: Path, enforce_current_presentation: bool = True) -> dict:
         hashes.setdefault(info["sha256"], []).append(rel)
     duplicate_content = [sorted(v) for v in hashes.values() if len(v) > 1]
 
+    # Canonical 16x16 F0 and ore/dust presentation assets cannot regress
+    # to oversized renders after this visual quality pass.
+    canonical_pixel_art = (
+        "textures/block/marked_stone.png",
+        "textures/block/cut_marked_stone.png",
+        "textures/block/dream_ore.png",
+        "textures/block/deepslate_dream_ore.png",
+        "textures/item/dream_dust.png",
+    )
+    if enforce_current_presentation:
+        for name in canonical_pixel_art:
+            require(name in texture_details and texture_details[name]["pixel_art_16"],
+                    f"Expected original 16x16 texture for {name}")
+
     # High-resolution artwork in existing repository is intentionally NOT
     # resampled blind. This debt will need an artistic A/B client review.
     legacy = [
@@ -215,6 +229,7 @@ def audit(root: Path, enforce_current_presentation: bool = True) -> dict:
             "locale_keys": len(en),
             "creative_entries": len(creative),
             "rotation_materials": len(visual_variants),
+            "strict_pixel_art_family": len(canonical_pixel_art),
         },
         "legacy_texture_debt": sorted(legacy, key=lambda row: -row["bytes"]),
         "potential_duplicate_textures": duplicate_content,

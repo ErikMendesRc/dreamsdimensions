@@ -38,7 +38,7 @@
 3. **Experiência multiplayer e visual:** build/servidor dedicado não prova renderização GeckoLib, qualidade dos biomas, dificuldade de exploração, drops físicos, nem sincronização entre dois jogadores.
 4. **Economia F0:** 7.4–7.5 mediram pedras geradas e loot nativo, **não** percentis de descoberta por jogadores.
 5. **Overworld:** ainda não existe sistema jogável de anomalias; o protótipo Java inerte da antiga 7.6 foi retirado na Task 8. Não alegar Cicatriz Silenciosa, Eixo Fraturado, portal ou manifestação gerada no mapa.
-6. **Assets:** imagens legadas de alta resolução precisam de comparação visual no cliente e de revisão artística individual antes de substituição por sprites 16×16; nenhuma textura existente foi redimensionada automaticamente.
+6. **Assets:** 3 texturas críticas de minério/pó foram redesenhadas em pixel art original 16×16, enquanto imagens legadas restantes precisam de revisão individual; nenhuma textura foi redimensionada automaticamente.
 7. **Design futuro:** nenhum novo minério, planta, mob, dimensão ou POI entra no backlog executável sem papel claro em Survival e critério de aceite.
 
 ## Fonte das provas

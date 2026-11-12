@@ -9,7 +9,7 @@
 | Subetapa | Mudança realmente aplicada | Evidência |
 | --- | --- | --- |
 | **8.0 Auditoria** | Scanner read-only de arquivos PNG, resolução, CRC do cabeçalho, modelos, referências, duplicatas, traduções e Creative Tab. Relatório JSON por seed. | `scripts/ci/audit_visual_assets.py`, `test_visual_assets.py` |
-| **8.1 Padronização** | Apresentação da Flor Onírica agora é sprite de item plano em vez de modelo 3D em cruz no inventário. Partículas do bloco apontam explicitamente para sua textura. | `models/item/dream_flower_block.json`, `models/block/dream_flower_block.json` |
+| **8.1 Padronização** | Três texturas críticas foram **redesenhadas em pixel art original 16×16**, com paleta de cristais coerente: Dream Ore, Deepslate Dream Ore e Dream Dust. A Flor Onírica agora tem sprite plano no inventário e partículas usando a própria textura. | `textures/block/{dream_ore,deepslate_dream_ore}.png`, `textures/item/dream_dust.png`, `models/item/dream_flower_block.json`, `models/block/dream_flower_block.json` |
 | **8.2 Ambientação** | Quatro variações de rotação horizontal de um mesmo modelo para **9 blocos naturais já existentes** (Pedra Serena, Pedra Azul, Pedregulho Azul, Areia, Terra, Terra Azul, Musgo, Grama e Grama Azul); escolha estável por posição via blockstates do vanilla. | `assets/dreamsdimensions/blockstates/*.json` |
 | **8.3 Polimento** | Creative Tab reordenada: equipamento/consumível, minérios e construção, pedra, terreno e natureza. Ícone da aba alterado para o Colar dos Sonhos, cujo sprite já existe. | `ModCreativeTabs.java`; validação de unicidade das entradas |
 | **Coerência** | Removido código puramente experimental da Task 7.6 que nunca foi ligado ao jogo, seu catálogo e seus testes isolados. | Git diff; sem modificação dos sistemas ativos |
@@ -18,20 +18,20 @@ Os **22 itens/blocos registrados na Creative Tab foram preservados**, apenas reo
 
 ## Descobertas e dívida visual legítima
 
-Os PNGs do repositório incluem artwork legado de alta resolução, muitos arquivos significativamente maiores do que os sprites 16×16 de Pedra Marcada / Pedra Marcada Lapidada. **Não reduzir cegamente essas texturas para 16×16**, porque um simples resize degradaria os detalhes originais e poderia gerar borrão ou perda de silhueta.
+O núcleo Overworld agora tem **5 sprites originais 16×16**: Pedra Marcada, Pedra Marcada Lapidada, Dream Ore, Deepslate Dream Ore e Dream Dust. Os três últimos foram **redesenhados pixel a pixel**, sem redimensionamento automático, mantendo o mesmo padrão cristalino nos dois minérios e no item coletado. O restante da arte inclui PNGs de alta resolução, muitos significativamente maiores do que o estilo vanilla. **Não reduzir cegamente esses arquivos para 16×16**, pois isso borraria detalhes e poderia destruir a silhueta.
 
-O relatório `qa-visual-assets.json` publica:
+O relatório `qa-visual-assets.json` publica e protege os 5 sprites críticos em **16×16**:
 - resolução real e tamanho por textura com resolução fora do alvo;
 - quantos arquivos de bloco não são 16×16 e quantos sprites de item excedem 64px;
 - hashes de duplicatas binárias e candidatas a modelos sem referências diretas;
 - paridade `en_us`/`pt_br`, consistência de `assets/items`, e 9 grupos de variações;
 - **`visual_review: NOT_RUN`** até que alguém de fato abra o mod no cliente.
 
-**Não se deve confundir arquivo de 1024px com arte melhor**: o objetivo é vanilla+, mas a próxima decisão sobre cada textura grande requer uma comparação 1:1 em cliente e um novo sprite desenhado em pixel art, não um redimensionamento automático por código. Se a fonte original parecer boa ao jogador, manter e otimizar de forma consciente.
+**Não se deve confundir arquivo de 1024px com arte melhor**: o objetivo é vanilla+. Os três sprites redesenhados devem passar por uma comparação real no cliente antes de serem considerados visualmente aprovados. Para cada arquivo legado restante, decidir individualmente após uma comparação 1:1 em cliente e produzir pixel art genuína se necessário, não um resize por código. Os originais substituídos permanecem disponíveis no histórico Git.
 
 ### Melhorias condicionais — não executadas por falta de avaliação visual
 
-- Substituir individualmente PNGs enormes por pixel art 16×16 após revisar o original, preservando leitura de ores, itens e vegetação.
+- Revisar outros PNGs grandes para eventual substituição individual por pixel art, preservando especialmente silhuetas de itens e vegetação; os 3 sprites críticos já foram redesenhados e permanecem sujeitos a teste visual.
 - Medir legibilidade de tiling 5×5, ocorrência de rotações visivelmente artificiais e coerência entre verde/azul nas transições ambientais.
 - Validar o sprite da Flor Onírica com canal alfa real, incluindo mão, chão, GUI e `/give`.
 - Inspecionar duas entidades GeckoLib no cliente e FPS/MSPT com partículas reduzidas, sem aumentar spawn ou densidade.
@@ -65,6 +65,9 @@ No mundo descartável com cheats:
 /give @s dreamsdimensions:blue_dream_grass 64
 /give @s dreamsdimensions:dream_sand_block 64
 /give @s dreamsdimensions:dream_glow_moss 64
+/give @s dreamsdimensions:dream_ore 64
+/give @s dreamsdimensions:deepslate_dream_ore 64
+/give @s dreamsdimensions:dream_dust 64
 /give @s dreamsdimensions:marked_stone 64
 /give @s dreamsdimensions:cut_marked_stone 64
 ```

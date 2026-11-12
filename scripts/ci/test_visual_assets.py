@@ -34,7 +34,7 @@ class VisualAssetTest(unittest.TestCase):
     def save(self, name, content):
         path = self.root / name
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_bytes(content if isinstance(content, bytes) else content.encode("utf-8"))
+        path.write_bytes(content if isinstance(content, (bytes, bytearray)) else content.encode("utf-8"))
         return path
 
     def test_repo_assets_model_rotation_and_localization(self):
