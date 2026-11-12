@@ -19,7 +19,7 @@
 - `service/DreamTeleportService.java`, `util/DreamSpawnHelper.java`: entrada no sonho e chegada segura.
 - `item/OneiricAwakenerItem.java`, `service/OneiricReturnPolicy.java` e utilitários de retorno: 60 ticks de uso, retorno confirmado antes do consumo, cooldown e destinos seguros.
 - `service/DreamRespawnService.java`: respawn no mundo onírico respeitando posição física validada.
-- **Sem integração com anomalias da 7.6:** o código em `anomaly/` é uma biblioteca experimental inerte, sem registro de worldgen nem eventos de gameplay.
+- **Task 7.6 aposentada:** as classes Java de anomalias não tinham integração de gameplay, evento ou worldgen e foram removidas na Task 8, junto com testes/fixtures exclusivos. Nenhum sistema de entrada ou retorno foi afetado.
 
 ## Worldgen e conteúdo
 

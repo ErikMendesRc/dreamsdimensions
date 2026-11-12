@@ -34,6 +34,17 @@ jobs:
           name: repository-docs-seed-${{ matrix.seed }}
           path: qa-repository-docs-${{ matrix.seed }}.json
           if-no-files-found: ignore
+      - name: Audit Task 8 visual assets, localization and creative presentation
+        run: |
+          python3 scripts/ci/test_visual_assets.py
+          python3 scripts/ci/audit_visual_assets.py --report qa-visual-assets-seed-${{ matrix.seed }}.json
+      - name: Upload Task 8 visual asset report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-assets-seed-${{ matrix.seed }}
+          path: qa-visual-assets-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
       - name: Validate Task 7.2 reusable content & asset contract
         run: |
           python3 scripts/ci/test_content_contract.py
@@ -75,17 +86,6 @@ jobs:
         with:
           name: qa-f0-static-seed-${{ matrix.seed }}
           path: qa-f0-static-seed-${{ matrix.seed }}.json
-          if-no-files-found: ignore
-      - name: Validate Task 7.6 anomaly architecture, causal profiles and hard gates
-        run: |
-          python3 scripts/ci/test_oneiric_anomaly_contract.py
-          python3 scripts/ci/check_oneiric_anomaly_contract.py --report qa-oneiric-anomalies-seed-${{ matrix.seed }}.json
-      - name: Upload Task 7.6 inert anomaly contract evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: anomaly-contract-seed-${{ matrix.seed }}
-          path: qa-oneiric-anomalies-seed-${{ matrix.seed }}.json
           if-no-files-found: ignore
       - name: Validate reusable Task 7.1 QA contract
         run: python3 scripts/ci/check_qa_contract.py

@@ -39,7 +39,11 @@ Mais detalhes sobre os padrões reutilizáveis em [Dream Mob Framework](DREAM_MO
 
 ## Limites de identidade do Overworld
 
-A Pedra Marcada **ainda não tem uma mecânica exclusiva de sonhos**; é material natural de construção. O experimento 7.6 contém classes Java puras para investigação, mas **não** gera anomalias nem modifica o Overworld. Qualquer nova anomalia requer primeiro função de gameplay convincente, conexão com a temática geral dos sonhos (não apenas as duas dimensões atuais) e implementação validada, não um manifesto JSON.
+A Pedra Marcada **ainda não tem uma mecânica exclusiva de sonhos**; é material natural de construção. O experimento inerte da antiga 7.6 foi removido na Task 8 e **não** gerou anomalias nem modificou o Overworld. Qualquer nova anomalia requer primeiro função de gameplay convincente, conexão com a temática geral dos sonhos (não apenas as duas dimensões atuais) e implementação validada, não um manifesto JSON.
+
+## Refinamento visual Task 8
+
+Nove superfícies naturais (grama, terra, rochas, areia e musgo existentes) possuem agora quatro variantes de orientação **apenas no blockstate do cliente**. Isso reduz padrões repetidos na aparência, **sem alterar a distribuição, a seed, a colisão ou a geração de mundo**. A Flor Onírica usa ícone plano vanilla-style e partículas da própria textura; a aba criativa usa Colar como ícone e categorias ordenadas. PNGs legados de alta resolução foram preservados até revisão artística real. Veja [Task 8](TASK_8_VISUAL_QUALITY_PASS.md).
 
 ## Ferramentas de diagnóstico
 

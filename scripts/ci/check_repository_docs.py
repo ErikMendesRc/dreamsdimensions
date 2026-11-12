@@ -21,7 +21,7 @@ REQUIRED = (
     "docs/QA_E_VALIDACAO.md",
     "docs/MIGRATION_26_3.md",
     "docs/F0_TASK_7_5_MANUAL_TEMPLATE.json",
-    "scripts/ci/fixtures/ONEIRIC_ANOMALIES_V1.json",
+    "docs/TASK_8_VISUAL_QUALITY_PASS.md",
 )
 RETIRED = (
     "docs/GAMEPLAY_ROADMAP.md",
@@ -45,11 +45,6 @@ def check(root: Path, strict: bool = True) -> dict:
         for name in RETIRED:
             if (root / name).exists():
                 errors.append("retired_document_reintroduced:" + name)
-        script = root / "scripts/ci/check_oneiric_anomaly_contract.py"
-        if script.is_file():
-            content = script.read_text(encoding="utf-8")
-            if 'MANIFEST = "scripts/ci/fixtures/ONEIRIC_ANOMALIES_V1.json"' not in content:
-                errors.append("anomaly_fixture_not_relocated")
         workflow = root / ".github/workflows/build.yml"
         if workflow.is_file():
             content = workflow.read_text(encoding="utf-8")

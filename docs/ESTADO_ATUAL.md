@@ -27,7 +27,7 @@
 | Eco do Musgo e Pacto de Vigília | IMPLEMENTADO; homologação completa MANUAL_PENDENTE | `event/EchoMossInteractionHandler.java`, `registry/ModEffects.java` |
 | Ruínas de recuperação e loot nativo | IMPLEMENTADO, CI_VERIFICADO; travessia/baú aberto em Survival MANUAL_PENDENTE | `data/.../worldgen/structure/`, `scripts/ci/audit_dream_ruins_runtime.py` |
 | Telemetria e relatórios das quatro seeds | IMPLEMENTADO, CI_VERIFICADO; coleta opt-in | `qa/DreamQaRecorder.java`, `scripts/ci/` |
-| Contrato Java de anomalias da antiga Task 7.6 | **EXPERIMENTAL_INATIVO**, sem geração real | `anomaly/OneiricAnomalyContract.java`, `AnomalyScenePlanner.java`; fixture em `scripts/ci/fixtures/` |
+| Qualidade visual Task 8 | **MELHORIAS DE APRESENTAÇÃO IMPLEMENTADAS**; revisão no cliente pendente | `assets/.../blockstates/`, `models/item/dream_flower_block.json`, `scripts/ci/audit_visual_assets.py` |
 
 **Crítico:** as duas dimensões atuais são exemplos iniciais. **Não** amarrar progressão geral do DreamsDimensions à lore, aos materiais ou às peculiaridades exclusivas delas.
 
@@ -37,8 +37,9 @@
 2. **Compatibilidade:** mundo migrado de Minecraft 1.21.4 para 26.3 só pode ser validado numa **cópia** real de save, com teste de blocos, entidades, attachments, biomas e estruturas.
 3. **Experiência multiplayer e visual:** build/servidor dedicado não prova renderização GeckoLib, qualidade dos biomas, dificuldade de exploração, drops físicos, nem sincronização entre dois jogadores.
 4. **Economia F0:** 7.4–7.5 mediram pedras geradas e loot nativo, **não** percentis de descoberta por jogadores.
-5. **Overworld:** ainda não existe sistema jogável de anomalias; não alegar Cicatriz Silenciosa, Eixo Fraturado, portal ou manifestação gerada no mapa.
-6. **Design futuro:** nenhum novo minério, planta, mob, dimensão ou POI entra no backlog executável sem papel claro em Survival e critério de aceite.
+5. **Overworld:** ainda não existe sistema jogável de anomalias; o protótipo Java inerte da antiga 7.6 foi retirado na Task 8. Não alegar Cicatriz Silenciosa, Eixo Fraturado, portal ou manifestação gerada no mapa.
+6. **Assets:** imagens legadas de alta resolução precisam de comparação visual no cliente e de revisão artística individual antes de substituição por sprites 16×16; nenhuma textura existente foi redimensionada automaticamente.
+7. **Design futuro:** nenhum novo minério, planta, mob, dimensão ou POI entra no backlog executável sem papel claro em Survival e critério de aceite.
 
 ## Fonte das provas
 

@@ -15,6 +15,8 @@ python scripts/ci/check_marked_stone_7_4.py
 python scripts/ci/test_f0_homologation.py
 python scripts/ci/f0_homologation.py --static --output qa-f0-static.json
 python scripts/ci/check_qa_contract.py
+python scripts/ci/test_visual_assets.py
+python scripts/ci/audit_visual_assets.py --report qa-visual-assets.json
 .\gradlew.bat runClient
 ```
 
@@ -54,6 +56,8 @@ O GitHub Actions em `.github/workflows/build.yml` executa build, JUnit, scripts 
 | `STATIC_CHECK` | Arquivos, contratos, grafos de assets e receitas | Crafting/drops experimentados por um jogador |
 | `RUNTIME_OBSERVED` | Servidor real carregou chunks/entidades/loot tables ou executou comandos nativos | Acessibilidade, cenário visual, UX, Survival real |
 | `MANUAL_VERIFIED` | Jogador testou e anexou prova rastreável | Qualquer caso sem evidência deve permanecer `NOT_RUN` |
+
+**Visual Task 8:** a auditoria estática inspeciona metadados de PNGs, modelos, idiomas, Creative Tab e variantes rotacionais; **não** comprova a aparência no cliente. Exige-se inspeção de texturas em paredes 5×5, flor no inventário, partículas de quebra, folhas, mobs GeckoLib e análise de performance com arte de alta resolução. Veja [Task 8](TASK_8_VISUAL_QUALITY_PASS.md).
 
 **Gates pendentes:** sonho com Colar em Survival (desativado em produção); retorno com Despertador consumível, respawn e baú de recuperação em multiplayer; Fortune/Silk Touch; coerência de mobs em população real; aparência/tiling; persistência e saves antigos. **Não** habilitar `dream_entry_enabled` por sucesso de JUnit ou uma única seed.
 
