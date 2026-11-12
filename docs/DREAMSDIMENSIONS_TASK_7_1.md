@@ -10,7 +10,7 @@
 Foi criada uma **camada de diagnóstico leve**; não um segundo motor de spawn, worldgen ou recuperação:
 
 - `qa/DreamQaRecorder.java`: gravador central opt-in, registros limitados, contadores agregados e snapshots JSON versionados.
-- `qa/DreamQaCommand.java`: comandos administrativos `/dreamqa`, habilitados somente quando `-Ddreamsdimensions.qa.enabled=true`.
+- `qa/DreamQaCommand.java`: status e help sempre registrados; operador ativa ou desativa a coleta com `/dreamqa enable` e `/dreamqa disable`.
 - Instrumentação não decisória em `DreamMobPopulationService`, `DreamTeleportService` e `OneiricAwakenerItem`.
 - `DreamQaRecorderTest`: testes JUnit de modo desligado, capacidade do buffer, descarte, contadores, exportação, isolamento e concorrência.
 - `scripts/ci/check_qa_contract.py`: testes do contrato de relatório e regressões de integração.
@@ -61,7 +61,7 @@ Os estados aceitos são `PASS`, `FAIL`, `WARN`, `SKIPPED` e `NOT_RUN`. A agrega�
 
 ## 3. Segurança e custo
 
-Por padrão `DreamQaRecorder.global().enabled()` é **false**; os comandos `/dreamqa` nem são registrados. Sem ativação não há eventos, buffers, exports nem I/O por tick. Quando ativado:
+Por padrão `DreamQaRecorder.global().enabled()` é **false**; `/dreamqa status` e `/dreamqa help` ficam disponíveis mesmo sem coleta. A telemetria só registra eventos quando ativada por operador ou por JVM. Desabilitar limpa o buffer e os contadores. Quando ativado:
 
 - Eventos são agregados em `LongAdder` e amostrados num buffer de 16 a 4096 eventos (padrão 512).
 - Eventos antigos são substituídos ao atingir o limite; `dropped_events` informa quantos foram descartados.
@@ -102,18 +102,19 @@ O contrato é extensível; ainda não há coleta periódica automática, interfa
 
 ## 5. Comandos administrativos
 
-Com a flag ligada e permissão de operador:
+Com a versão atualizada do mod, `/dreamqa status` e `/dreamqa help` funcionam sem configurar flags da JVM. Para coletar:
 
 ```mcfunction
-/dreamqa help
 /dreamqa status
+/dreamqa enable
 /dreamqa snapshot
 /dreamqa reset
+/dreamqa disable
 ```
 
-`status` informa estado/capacidade; `snapshot` exporta JSON; `reset` zera agregados e buffer, sem alterar entidades ou chunks; `help` exibe sintaxe.
+`enable`, `disable`, `snapshot` e `reset` exigem operador (ou cheats ativados no mundo Singleplayer); `status` e `help` são somente leitura. Após `disable`, os eventos são limpos e novos eventos deixam de ser registrados. `snapshot` só funciona quando a coleta está ativa. Desligar o servidor integrado restaura a opção inicial definida pela JVM.
 
-Se o Minecraft responder comando desconhecido, reiniciar a JVM com a system property habilitada. Não é possível habilitar o serviço somente executando o comando quando ele não foi registrado.
+Se `/dreamqa status` ainda aparecer como comando desconhecido, atualizar o JAR carregado e reiniciar o cliente ou servidor; não basta dar `/reload` no mundo. Para testar comandos de operador no mundo local, habilitar cheats nas configurações do mundo ou temporariamente por **Abrir para LAN > Permitir Cheats**.
 
 ## 6. Homologação manual — mundo de teste
 

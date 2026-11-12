@@ -30,7 +30,8 @@ public final class DreamQaRecorder {
     public record Event(String timestampUtc, String category, String subsystem,
             String name, String dimension, String status, String reason, Long durationMs) {}
 
-    private final boolean enabled;
+    // JVM opt-in remains the default, but operators can toggle collection in-game.
+    private volatile boolean enabled;
     private final int capacity;
     private final String runId;
     private final ArrayDeque<Event> events = new ArrayDeque<>();
@@ -49,6 +50,18 @@ public final class DreamQaRecorder {
 
     public boolean enabled() {
         return enabled;
+    }
+
+    /** Session-only operator toggle. Disabling clears buffered events and counters. */
+    public void setEnabled(boolean state) {
+        synchronized (events) {
+            enabled = state;
+            if (!state) {
+                events.clear();
+                counters.clear();
+                dropped = 0;
+            }
+        }
     }
 
     public String runId() {
@@ -79,9 +92,10 @@ public final class DreamQaRecorder {
         }
         if (durationMs != null && durationMs < 0) return;
         String key = cat + "." + sys + "." + event + "." + state;
-        counters.computeIfAbsent(key, ignored -> new LongAdder()).increment();
         Event row = new Event(Instant.now().toString(), cat, sys, event, dim, state, code, durationMs);
         synchronized (events) {
+            if (!enabled) return; // No event may survive an operator disable.
+            counters.computeIfAbsent(key, ignored -> new LongAdder()).increment();
             if (events.size() == capacity) {
                 events.removeFirst();
                 dropped++;

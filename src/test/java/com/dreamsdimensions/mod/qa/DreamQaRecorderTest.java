@@ -19,6 +19,20 @@ class DreamQaRecorderTest {
         assertThrows(IllegalStateException.class, () -> qa.writeSnapshot(temp));
     }
 
+    @Test void canEnableDuringGameplayAndDisableClearsData() {
+        DreamQaRecorder qa = new DreamQaRecorder(false, 16, "local");
+        qa.record("SPAWN", "vigia", "ATTEMPT", "dreamsdimensions:dreamscape", "PASS", "CANDIDATE");
+        assertEquals(0, qa.bufferedEvents());
+        qa.setEnabled(true);
+        qa.record("SPAWN", "vigia", "ATTEMPT", "dreamsdimensions:dreamscape", "PASS", "CANDIDATE");
+        assertEquals(1, qa.bufferedEvents());
+        qa.setEnabled(false);
+        assertEquals(0, qa.bufferedEvents());
+        assertFalse(qa.snapshotJson().contains("SPAWN.vigia.ATTEMPT.PASS"));
+        qa.record("SPAWN", "vigia", "ATTEMPT", "dreamsdimensions:dreamscape", "PASS", "CANDIDATE");
+        assertEquals(0, qa.bufferedEvents());
+    }
+
     @Test void boundedBufferPreservesCountersAndReportsDrops() {
         DreamQaRecorder qa = new DreamQaRecorder(true, 16, "ci-seed-14011");
         for (int i = 0; i < 22; i++) qa.record("SPAWN", "vigia_adormecido",

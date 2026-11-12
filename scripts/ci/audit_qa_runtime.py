@@ -13,6 +13,9 @@ def run(seed: int, output: Path) -> dict:
         status = con.command("dreamqa status")
         assert "DREAM_QA status=OK enabled=true" in status, status
         assert f"run_id=ci-seed-{seed}" in status, status
+        assert "DREAM_QA status=OK enabled=false" in con.command("dreamqa disable")
+        assert "enabled=false" in con.command("dreamqa status")
+        assert "DREAM_QA status=OK enabled=true" in con.command("dreamqa enable")
         reply = con.command("dreamqa snapshot")
         assert "DREAM_QA_SNAPSHOT status=OK" in reply, reply
         assert output.is_file(), f"/dreamqa snapshot did not create {output}: {reply}"

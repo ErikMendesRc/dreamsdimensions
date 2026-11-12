@@ -69,10 +69,9 @@ public class DreamsDimensions {
             NeoForge.EVENT_BUS.addListener(DreamRuinsAuditCommand::register);
         }
 
-        if (DreamQaRecorder.global().enabled()) {
-            NeoForge.EVENT_BUS.addListener(DreamQaCommand::register);
-            NeoForge.EVENT_BUS.addListener(DreamQaCommand::onServerStopped);
-        }
+        // Always register command; telemetry recording stays off until opted in.
+        NeoForge.EVENT_BUS.addListener(DreamQaCommand::register);
+        NeoForge.EVENT_BUS.addListener(DreamQaCommand::onServerStopped);
         NeoForge.EVENT_BUS.addListener(CommonEvents::onServerStarting);
         NeoForge.EVENT_BUS.addListener(EchoMossInteractionHandler::onRightClickBlock);
         NeoForge.EVENT_BUS.addListener(EchoMossInteractionHandler::onPlayerLoggedOut);

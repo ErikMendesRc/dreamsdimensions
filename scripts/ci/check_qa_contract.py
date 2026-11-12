@@ -74,6 +74,9 @@ class QaContractTest(unittest.TestCase):
         assert "DreamQaRecorder.global()" in (base / "entity/spawn/DreamMobPopulationService.java").read_text()
         assert 'Boolean.getBoolean("dreamsdimensions.qa.enabled")' in recorder
         assert 'Commands.hasPermission(Commands.LEVEL_ADMINS)' in command
+        assert 'Commands.literal("enable")' in command
+        assert 'Commands.literal("disable")' in command
+        assert 'setEnabled(boolean state)' in recorder
         assert "writeSnapshot" in command
         assert (root / "src/test/java/com/dreamsdimensions/mod/qa/DreamQaRecorderTest.java").exists()
 
