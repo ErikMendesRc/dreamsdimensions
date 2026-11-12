@@ -89,6 +89,8 @@ def declared_content(root: Path) -> tuple[dict[str, str], set[str], set[str]]:
         require(block_symbol in blocks, f"Item {symbol}: unknown ModBlocks.{block_symbol}")
     items = set(named.values()) | {blocks[symbol] for symbol in item_blocks.values()}
     require(len(items) == len(named) + len(item_blocks), "Duplicate registered item ID")
+    require(set(blocks.values()) <= items,
+            f"Registered blocks missing a BlockItem: {sorted(set(blocks.values()) - items)}")
     return blocks, items, set(blocks.values())
 
 
