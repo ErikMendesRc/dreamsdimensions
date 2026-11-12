@@ -7,6 +7,7 @@
 **Data:** 12/11/2026. **Branch:** `migration/minecraft-26.3`. **HEAD base auditado:** `785962e43a74785f88452ebe59c34859792f7af8`.  
 **Stack verificada:** Minecraft 26.3, NeoForge 26.3, Java 25, ModDevGradle, GeckoLib 5; Curios para Colar.  
 **Objetivo:** implementação em **26 tasks 7.0–7.25** distribuídas em trains; algumas condicionais, mutuamente exclusivas e canceláveis.  
+**ATUALIZAÇÃO 12/11/2026:** a numeração 7.6–7.9 foi priorizada novamente para **Anomalias Oníricas**. Este documento é preservado como roadmap histórico; consultar [adendo 7.6](OVERWORLD_ANOMALY_ROADMAP_ADDENDUM_TASK_7_6.md) antes de executar tasks >= 7.6. **Não executar simultaneamente a antiga e a nova Task 7.6.**  
 **Próxima task executiva real recomendada:** **Task 7.0 — Homologação e Segurança da Recuperação Onírica**.  
 **Alternativa paralela segura:** 7.1 pode caminhar com 7.0 por ser infraestrutura de QA e não alterar gameplay.  
 **Não:** merge automático na main; prometer um End Game/boss final; criar conteúdo por quota numérica.
