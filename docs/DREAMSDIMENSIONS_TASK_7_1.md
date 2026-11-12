@@ -116,6 +116,12 @@ Com a versão atualizada do mod, `/dreamqa status` e `/dreamqa help` funcionam s
 
 Se `/dreamqa status` ainda aparecer como comando desconhecido, atualizar o JAR carregado e reiniciar o cliente ou servidor; não basta dar `/reload` no mundo. Para testar comandos de operador no mundo local, habilitar cheats nas configurações do mundo ou temporariamente por **Abrir para LAN > Permitir Cheats**.
 
+### Diagnóstico de snapshot no cliente
+
+O comando `/dreamqa snapshot` não liga a telemetria automaticamente. Antes dele, execute `/dreamqa enable` e verifique `/dreamqa status` com `enabled=true`. Quando desativado, a resposta agora será `DREAM_QA_SNAPSHOT status=FAIL reason=telemetry_disabled action=/dreamqa enable`, em vez de uma falha genérica.
+
+Se aparecer `reason=access_denied`, verifique permissões da pasta configurada para `qa-reports`. Se aparecer `reason=io_error` ou `reason=invalid_path_or_runtime_error`, examine `logs/latest.log` no diretório do jogo/servidor para o stack trace `DREAM_QA_SNAPSHOT`. O chat apresenta somente a classificação do erro, sem vazar caminhos locais ou detalhes de exceção.
+
 ## 6. Homologação manual — mundo de teste
 
 **Usar um mundo novo ou descartável.** Os teletransportes abaixo são coordenadas exemplificativas, **somente em Spectator**, não pontos Survival validados:

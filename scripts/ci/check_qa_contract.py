@@ -76,6 +76,10 @@ class QaContractTest(unittest.TestCase):
         assert 'Commands.hasPermission(Commands.LEVEL_ADMINS)' in command
         assert 'Commands.literal("enable")' in command
         assert 'Commands.literal("disable")' in command
+        assert 'reason=telemetry_disabled' in command
+        assert 'reason=' in command and 'action=check_latest.log' in command
+        assert 'snapshotFailed(source, "access_denied"' in command
+        assert 'snapshotFailed(source, "io_error"' in command
         assert 'setEnabled(boolean state)' in recorder
         assert "writeSnapshot" in command
         assert (root / "src/test/java/com/dreamsdimensions/mod/qa/DreamQaRecorderTest.java").exists()

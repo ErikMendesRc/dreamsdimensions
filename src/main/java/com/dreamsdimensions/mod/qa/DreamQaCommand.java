@@ -2,6 +2,7 @@ package com.dreamsdimensions.mod.qa;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Path;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -49,18 +50,39 @@ public final class DreamQaCommand {
     }
 
     private static int snapshot(CommandSourceStack source) {
+        // A disabled collector has no evidence to export. This is a normal
+        // user-facing state, not a filesystem exception or a gameplay failure.
+        if (!DreamQaRecorder.global().enabled()) {
+            source.sendFailure(Component.literal(
+                    "DREAM_QA_SNAPSHOT status=FAIL reason=telemetry_disabled "
+                    + "action=/dreamqa enable"));
+            return 0;
+        }
         try {
             Path directory = Path.of(System.getProperty("dreamsdimensions.qa.reportDir", "qa-reports"));
             Path file = DreamQaRecorder.global().writeSnapshot(directory);
-            // The export contains diagnostic aggregates only, never player identifiers.
             source.sendSuccess(() -> Component.literal("DREAM_QA_SNAPSHOT status=OK file="
                     + file.toAbsolutePath()), false);
             return 1;
-        } catch (IOException | RuntimeException error) {
-            DreamsDimensions.LOGGER.warn("DREAM_QA_SNAPSHOT status=FAIL", error);
-            source.sendFailure(Component.literal("DREAM_QA_SNAPSHOT status=FAIL"));
-            return 0;
+        } catch (AccessDeniedException error) {
+            return snapshotFailed(source, "access_denied", error);
+        } catch (IOException error) {
+            return snapshotFailed(source, "io_error", error);
+        } catch (IllegalStateException error) {
+            // Covers a concurrent operator disable during snapshot.
+            return snapshotFailed(source, "telemetry_disabled", error);
+        } catch (RuntimeException error) {
+            return snapshotFailed(source, "invalid_path_or_runtime_error", error);
         }
+    }
+
+    private static int snapshotFailed(CommandSourceStack source, String reason, Exception error) {
+        // Preserve stack trace in server log, but never echo local paths or
+        // arbitrary exception text into chat. Reason is a stable diagnostic ID.
+        DreamsDimensions.LOGGER.warn("DREAM_QA_SNAPSHOT status=FAIL reason={}", reason, error);
+        source.sendFailure(Component.literal("DREAM_QA_SNAPSHOT status=FAIL reason=" + reason
+                + " action=check_latest.log"));
+        return 0;
     }
 
     private static int reset(CommandSourceStack source) {
