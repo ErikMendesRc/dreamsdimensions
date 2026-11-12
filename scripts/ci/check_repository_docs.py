@@ -73,13 +73,13 @@ def check(root: Path, strict: bool = True) -> dict:
                 continue
             link_count += 1
             if raw_path.startswith("/"):
-                errors.append(f"absolute_local_link:{md.relative_to(root)}:{raw_path}")
+                errors.append(f"absolute_local_link:{md.relative_to(root).as_posix()}:{raw_path}")
                 continue
             destination = (md.parent / raw_path).resolve()
             if not destination.is_relative_to(root):
-                errors.append(f"link_escapes_repository:{md.relative_to(root)}:{raw_path}")
+                errors.append(f"link_escapes_repository:{md.relative_to(root).as_posix()}:{raw_path}")
             elif not destination.exists():
-                errors.append(f"broken_link:{md.relative_to(root)}:{raw_path}")
+                errors.append(f"broken_link:{md.relative_to(root).as_posix()}:{raw_path}")
     return {
         "schema_version": "dreamsdimensions.qa.v1",
         "test_id": "current_repository_documentation",

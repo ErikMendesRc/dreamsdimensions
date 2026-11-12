@@ -30,6 +30,11 @@ class DocumentationTest(unittest.TestCase):
         self.assertEqual(result["status"], "FAIL")
         self.assertIn("broken_link:docs/index.md:REMOVED.md", result["errors"])
 
+    def test_nested_broken_link_has_platform_independent_path(self):
+        self.write("docs/nested/page.md", "[Missing](missing.md)")
+        result = check(self.root, strict=False)
+        self.assertIn("broken_link:docs/nested/page.md:missing.md", result["errors"])
+
     def test_ignores_external_and_anchors(self):
         self.write("README.md", "[External](https://example.org/dreams) [Here](#story)\n")
         self.assertEqual(check(self.root, strict=False)["status"], "PASS")
