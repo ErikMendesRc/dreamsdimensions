@@ -114,7 +114,27 @@ python scripts/ci/f0_homologation.py --manual-template --output qa-f0-manual.jso
 .\gradlew.bat runClient
 ```
 
-Para preencher e avaliar resultados manuais no consolidado: copie `docs/F0_TASK_7_5_MANUAL_TEMPLATE.json` para um arquivo fora do repositório (ou sob `qa/` ignorado pelo Git), preencha status `PASS/FAIL/NOT_RUN` e evidências reais de testes. **Não** mudar o template de CI para mentir sobre playtests. O template em branco será usado na CI.
+Para preencher e avaliar resultados manuais, copie `docs/F0_TASK_7_5_MANUAL_TEMPLATE.json` para um arquivo fora do repositório, preencha somente o que você realmente testou (status `PASS/FAIL/NOT_RUN` + evidência referenciável) e execute:
+
+```powershell
+Copy-Item docs/F0_TASK_7_5_MANUAL_TEMPLATE.json qa-f0-meus-testes.json
+python scripts/ci/f0_homologation.py --manual-review --manual qa-f0-meus-testes.json --output qa-f0-manual-review.json
+```
+
+A avaliação **não marca PASS sozinha**. O programa exige uma referência a evidência real (foto/log/notas rastreáveis) para cada teste marcado. Use `NOT_RUN` até testar; nunca editar o template da CI para fingir playtest. Evite publicar arquivo com dados pessoais.
+
+Cada sessão de descoberta real em `discovery_sessions` tem o seguinte formato — **exemplo de preenchimento, não resultado medido**:
+
+```json
+{
+  "id": "sessao_001",
+  "environment": "eligible_geology_overworld",
+  "duration_minutes": 28,
+  "found": false
+}
+```
+
+Se `found=false`, a sessão terminou sem descoberta e é computada como **observação censurada**, nunca como “tempo zero” ou sessão removida. Com `found=true`, informe o tempo decorrido até a **primeira** descoberta natural. Registre seed, versão e local nos apontamentos, mas não inclua identidade dos jogadores. É preciso pelo menos dez sessões elegíveis e observações suficientes para calcular P50/P90.
 
 ### Comandos de inspeção / QA sem estragar sua experiência de descoberta
 
