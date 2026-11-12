@@ -135,8 +135,8 @@ Se o Minecraft responder comando desconhecido, reiniciar a JVM com a system prop
 /execute in dreamsdimensions:campo_onirico_azul run locate structure dreamsdimensions:blue_dream_ruins
 /give @s dreamsdimensions:oneiric_awakener 1
 /give @s dreamsdimensions:dream_necklace 1
-/kill @e[type=dreamsdimensions:fragmento_errante,tag=dd_qa_manual]
-/kill @e[type=dreamsdimensions:vigia_adormecido,tag=dd_qa_manual]
+/execute in dreamsdimensions:dreamscape run kill @e[type=dreamsdimensions:fragmento_errante,tag=dd_qa_manual]
+/execute in dreamsdimensions:dreamscape run kill @e[type=dreamsdimensions:vigia_adormecido,tag=dd_qa_manual]
 ```
 
 Os `/summon` são para inspecionar entidade e animações, **não** para testar spawn natural; os contadores do coordenador não devem aumentar por esse comando. `/kill` atinge apenas entidades marcadas manualmente com `dd_qa_manual` (não é a rotina de gameplay normal).
