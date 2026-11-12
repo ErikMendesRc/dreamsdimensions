@@ -30,5 +30,8 @@
   "tooltip.dreamsdimensions.dream_necklace.line1": "Allows sleep to open paths to other dimensions.",
   "tooltip.dreamsdimensions.dream_necklace.line2": "Must be equipped to work.",
   "tooltip.dreamsdimensions.dream_necklace.line3": "Entering without an Awakener may mean a long journey back.",
-  "message.dreamsdimensions.oneiric_awakener.item_mismatch": "You returned, but your inventory changed during the transition. The Awakener was not consumed; check the log."
+  "message.dreamsdimensions.oneiric_awakener.item_mismatch": "You returned, but your inventory changed during the transition. The Awakener was not consumed; check the log.",
+  "block.dreamsdimensions.dream_flower_block": "Dream Flower",
+  "block.dreamsdimensions.dream_log_block": "Dream Log",
+  "block.dreamsdimensions.dream_leaves_block": "Dream Leaves"
 }
