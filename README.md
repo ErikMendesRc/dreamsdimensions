@@ -1,79 +1,52 @@
-# Dreams Dimensions
+# DreamsDimensions
 
-**Minecraft 26.3 · NeoForge 26.3.0.101 · Java 25 · Gradle 9.2.1 · ModDevGradle 2.0.148**
+**Mod Minecraft 26.3 · NeoForge 26.3.0.101 · Java 25 · GeckoLib 5.5.7 · Curios 17.0.1+26.3**
 
-Mod de exploração de dimensões oníricas: ao dormir em uma cama do Overworld por **100 ticks**, o jogador visita uma dimensão de sonho. O item **Despertador Onírico** (`dreamsdimensions:oneiric_awakener`) permite retornar ao Overworld após **60 ticks de uso**.
+DreamsDimensions é um mod de **exploração e gameplay relacionados aos sonhos**. Seu universo prevê diversas dimensões futuras, incluindo sonhos pacíficos, pesadelos e outras experiências. As **duas dimensões existentes são a fundação técnica inicial, não o limite da identidade do mod**. O Overworld deve funcionar como uma aventura interessante por si só e sustentar os sistemas compartilhados entre sonhos.
 
-> **Status da migração:** desenvolvimento na branch `migration/minecraft-26.3`. A existência do código compilável não comprova o carregamento das dimensões, a qualidade do terreno ou a compatibilidade com saves antigos. Leia [o registro da migração](docs/MIGRATION_26_3.md) antes de usar em um mundo importante.
+> **Status real:** desenvolvimento na branch `migration/minecraft-26.3`; **sem merge na `main`**. O projeto tem conteúdo e sistemas compiláveis, mas a homologação completa de entrada/retorno em sonhos, experiência Survival, multiplayer e saves antigos ainda exige ensaios manuais. A entrada em sonhos está **desabilitada por padrão** pela configuração `dream_entry_enabled=false`, apesar de seu fluxo e políticas existirem no código.
 
-## Mecânicas e conteúdo
+## Documentação atual — começar aqui
 
-- **Dimensões:** `dreamsdimensions:dreamscape` e `dreamsdimensions:campo_onirico_azul`, definidas por datapacks.
-- **Sono:** no servidor, o `SleepTeleportHandler` acompanha 100 ticks contínuos; seleciona uma dimensão configurada e procura um ponto seguro.
-- **Retorno:** o `OneiricAwakenerItem` canaliza por 60 ticks e aplica cooldown. O `DreamReturnHelper` prioriza a cama válida no Overworld, o respawn pessoal válido e um spawn mundial seguro. Se nenhum local for seguro, o retorno não deve ocorrer.
-- **Estado do jogador:** attachment `dreamsdimensions:dream_return`; persistência e migração de mundos precisam ser verificadas.
-- **Efeitos:** Slow Falling no `campo_onirico_azul`.
-- **Blocos e itens:** blocos de terreno, minérios, `dream_dust`, `oneiric_awakener`, aba criativa, receitas e loot tables.
+| Documento | Finalidade |
+| --- | --- |
+| [Estado atual](docs/ESTADO_ATUAL.md) | O que existe, o que está em teste, o que está desabilitado e o que ainda é experimental |
+| [Gameplay e direção](docs/GAMEPLAY_E_DIRECAO.md) | Identidade universal do mod, Overworld e regras para aprovar novas mecânicas |
+| [Arquitetura atual](docs/ARQUITETURA_ATUAL.md) | Onde estão os sistemas implementados, registros e extensões |
+| [Worldgen e conteúdo](docs/WORLDGEN_E_CONTEUDO.md) | Biomas, dimensões, recursos, estruturas, mobs, Pedra Marcada e limites de evidência |
+| [QA e validação](docs/QA_E_VALIDACAO.md) | Build, testes, seeds, comandos e critérios para diferenciar CI de playtest |
+| [Migração 26.3](docs/MIGRATION_26_3.md) | Histórico de compatibilidade e riscos de mundos/saves |
 
-Não altere os IDs de blocos, itens e dimensões ao corrigir incompatibilidades: eles fazem parte da identidade dos mundos salvos.
+Os documentos técnicos detalhados que permanecem em `docs/` são contratos de **sistemas já implementados**, relatórios de medição real, instruções de QA ou evidências de riscos ainda relevantes. Documentos de design especulativo e roadmaps contraditórios foram retirados da árvore atual; podem ser consultados pelo histórico Git.
 
-## Ambiente de desenvolvimento
+## Iniciar o projeto
 
-Use um **JDK 25** instalado ou disponibilizado pelo Gradle Toolchains e um IDE que suporte Java 25 (IntelliJ IDEA 2025.2+, por exemplo). O wrapper gerencia a versão do Gradle, não é preciso instalá-lo separadamente.
-
-Em Linux/macOS:
-
-```bash
-./gradlew clean build
-./gradlew runClient
-./gradlew runServer
-```
-
-No Windows PowerShell:
+Em Windows PowerShell, na raiz do repositório:
 
 ```powershell
-.\gradlew.bat clean build
+git switch migration/minecraft-26.3
+git pull origin migration/minecraft-26.3
+.\gradlew.bat --no-daemon clean build
 .\gradlew.bat runClient
+```
+
+Para iniciar um servidor de desenvolvimento:
+
+```powershell
 .\gradlew.bat runServer
 ```
 
-Para data generation, quando habilitada no ModDevGradle, use `./gradlew runData`. Consulte `./gradlew tasks` para os nomes efetivos.
+**Aviso:** não ligue `dream_entry_enabled` em mundos importantes antes de validar a recuperação com jogador real. Execute testes de migração somente em **cópias** de saves, não em seus mundos originais.
 
-O build utiliza o plugin `net.neoforged.moddev`. As propriedades do projeto estão em `gradle.properties`; o arquivo de metadados é gerado a partir de `src/main/templates/META-INF/neoforge.mods.toml`.
+## Onde fica o código
 
-## Organização
+- `src/main/java/com/dreamsdimensions/mod/`: mod, registros, políticas e serviços.
+- `src/main/java/com/dreamsdimensions/mod/dimension/`: catálogo de dimensões extensível.
+- `src/main/java/com/dreamsdimensions/mod/event/`: sono, retorno, efeitos e interações.
+- `src/main/java/com/dreamsdimensions/mod/entity/`: entidades e framework de população/IA.
+- `src/main/java/com/dreamsdimensions/mod/qa/`: telemetria opt-in.
+- `src/main/resources/data/dreamsdimensions/`: worldgen, dimensões, estruturas, receitas, loot.
+- `src/main/resources/assets/dreamsdimensions/`: modelos, texturas, client item definitions e traduções.
+- `scripts/ci/` e `.github/workflows/build.yml`: testes estáticos e sondas de runtime nas quatro seeds.
 
-| Diretório | Responsabilidade |
-|---|---|
-| `src/main/java/com/dreamsdimensions/mod/registry/` | Blocos, itens, abas e attachments |
-| `.../event/` | Sono, spawn, efeitos dimensionais e eventos do servidor |
-| `.../item/` | Despertador e outros itens |
-| `.../attachment/` | Dados persistentes de retorno |
-| `.../util/` | Resolução segura do destino de retorno |
-| `.../client/` | Tela de transição e recursos client-only |
-| `.../config/` | Configuração de dimensões oníricas |
-| `src/main/resources/data/dreamsdimensions/dimension/` | Dimensões |
-| `src/main/resources/data/dreamsdimensions/dimension_type/` | Regras e limites das dimensões |
-| `src/main/resources/data/dreamsdimensions/worldgen/` | Biomas, noise settings e features |
-| `src/main/resources/data/dreamsdimensions/loot_table/` | Loot tables |
-| `src/main/resources/assets/dreamsdimensions/` | Modelos, texturas, traduções |
-
-## Testes antes de publicar
-
-1. Compilar no CI (`clean build`) com JDK 25 e verificar o artifact gerado.
-2. Abrir o cliente Minecraft 26.3 e iniciar um servidor dedicado.
-3. Criar um mundo **novo** e entrar nas duas dimensões, verificando geração de chunks, biomas, superfícies e altura.
-4. Testar sono por 100 ticks, transição, retorno pelo Despertador por 60 ticks e cooldown, incluindo multiplayer.
-5. Verificar minérios, blocos, drops, receitas, modelos, tradução e efeitos.
-6. Testar cama destruída, falta de respawn, reconexão, morte e desconexão.
-7. Somente então testar **cópias** dos saves antigos, nunca os originais.
-
-**Atenção:** build não valida codecs dinâmicos de worldgen; testes de runtime são indispensáveis. Não existe garantia de compatibilidade dos saves Minecraft 1.21.4 com 26.3 sem testes específicos.
-
-## Referências
-
-- [NeoForge MDK 26.3](https://github.com/NeoForgeMDKs/MDK-26.3-ModDevGradle)
-- [Migration Primers](https://docs.neoforged.net/primer/docs/)
-- [Primer 26.3](https://docs.neoforged.net/primer/docs/26.3/)
-- [NeoForge código-fonte](https://github.com/neoforged/NeoForge)
-- [ModDevGradle](https://github.com/neoforged/ModDevGradle)
+**Regra para próximas tasks:** primeiro comprovar a função de gameplay e o consumidor de um recurso; depois registrar novos blocos/itens/entidades. Não transformar protótipos ou documentação em funcionalidades declaradas como existentes.
