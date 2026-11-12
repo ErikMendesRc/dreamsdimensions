@@ -43,6 +43,15 @@ jobs:
           name: marked-stone-static-seed-${{ matrix.seed }}
           path: qa-marked-stone-static-seed-${{ matrix.seed }}.json
           if-no-files-found: ignore
+      - name: Validate Task 7.4 F0b worldgen and stonecutter contract
+        run: python3 scripts/ci/check_marked_stone_7_4.py --report qa-marked-stone-7-4-static-${{ matrix.seed }}.json
+      - name: Upload Task 7.4 static QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: marked-stone-7-4-static-${{ matrix.seed }}
+          path: qa-marked-stone-7-4-static-${{ matrix.seed }}.json
+          if-no-files-found: ignore
       - name: Validate reusable Task 7.1 QA contract
         run: python3 scripts/ci/check_qa_contract.py
       - name: Validate Task 5.6 Overworld resource economy and Recipe Book
@@ -125,7 +134,7 @@ jobs:
           printf 'eula=true\n' > eula.txt
           printf 'eula=true\n' > run/eula.txt
           printf 'eula=true\n' > runs/server/eula.txt
-          JAVA_TOOL_OPTIONS="-Ddreamsdimensions.worldgenMetrics=true -Ddreamsdimensions.enableBridgeAudit=true -Ddreamsdimensions.enableOreAudit=true -Ddreamsdimensions.enableRuinsAudit=true -Ddreamsdimensions.qa.enabled=true -Ddreamsdimensions.qa.runId=ci-seed-${{ matrix.seed }} -Ddreamsdimensions.qa.reportDir=$GITHUB_WORKSPACE/qa-reports" ./gradlew --no-daemon runServer > server-smoke.log 2>&1 &
+          JAVA_TOOL_OPTIONS="-Ddreamsdimensions.worldgenMetrics=true -Ddreamsdimensions.enableBridgeAudit=true -Ddreamsdimensions.enableOreAudit=true -Ddreamsdimensions.enableMarkedStoneAudit=true -Ddreamsdimensions.enableRuinsAudit=true -Ddreamsdimensions.qa.enabled=true -Ddreamsdimensions.qa.runId=ci-seed-${{ matrix.seed }} -Ddreamsdimensions.qa.reportDir=$GITHUB_WORKSPACE/qa-reports" ./gradlew --no-daemon runServer > server-smoke.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true; tail -n 180 server-smoke.log || true' EXIT
           started=0
@@ -160,6 +169,10 @@ jobs:
             python3 scripts/ci/audit_qa_runtime.py \
               --seed '${{ matrix.seed }}' \
               --output qa-reports/dreamqa-ci-seed-${{ matrix.seed }}.json
+            # Task 7.4 reads natural generated voxels; /setblock never proves worldgen.
+            python3 scripts/ci/audit_marked_stone_worldgen_runtime.py \
+              --expected-seed '${{ matrix.seed }}' \
+              --output marked-stone-worldgen-seed-${{ matrix.seed }}.json
             python3 scripts/ci/audit_marked_stone_runtime.py \
               --expected-seed '${{ matrix.seed }}' \
               --output marked-stone-runtime-seed-${{ matrix.seed }}.json
@@ -200,6 +213,13 @@ jobs:
         with:
           name: marked-stone-runtime-seed-${{ matrix.seed }}
           path: marked-stone-runtime-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
+      - name: Upload Task 7.4 real natural worldgen survey
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: marked-stone-worldgen-seed-${{ matrix.seed }}
+          path: marked-stone-worldgen-seed-${{ matrix.seed }}.json
           if-no-files-found: ignore
       - name: Upload server smoke test log
         if: always()
