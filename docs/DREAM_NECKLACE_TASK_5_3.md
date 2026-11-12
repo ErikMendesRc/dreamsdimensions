@@ -32,7 +32,7 @@ O Overworld continua origem. O item `dreamsdimensions:dream_necklace` é um aces
 | `data/dreamsdimensions/curios/entities/dream_necklace.json` | Atribuição do slot preset necklace aos players |
 | `data/curios/tags/item/necklace.json` | Tag do único item equípavel na categoria |
 | `DreamEntryPolicyTest.java`, `DreamSleepCycleTest.java` | JUnit de elegibilidade, RNG e idempotência de ciclo |
-| `docs/GAMEPLAY_ROADMAP.md`, `docs/GAMEPLAY_CONTENT_MATRIX.md` | Addenda sem reescrever histórico |
+| `docs/GAMEPLAY_E_DIRECAO.md`, `docs/ESTADO_ATUAL.md` | Conteúdo atual consolidado; histórico via Git |
 
 **Intocado:** `DreamTeleportService`, `DreamSpawnHelper`, `WeightedDimensionPicker`, `DreamReturnData`, `DreamReturnHelper`, `OneiricAwakenerItem`, `dimension_type`, `worldgen`, mobs, receitas antigas, assets antigos e IDs existentes.
 

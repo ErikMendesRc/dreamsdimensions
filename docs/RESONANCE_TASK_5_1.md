@@ -3,7 +3,7 @@
 **Branch:** migration/minecraft-26.3  
 **Baseline inicial:** 8aea8e2073a06c1ca55cd2ae574c957236cd1931 (10/11/2026)  
 **Stack:** Minecraft 26.3, NeoForge 26.3.0.101, Java 25, ModDevGradle 2.0.148, GeckoLib 5.5.7.  
-**Contrato:** docs/GAMEPLAY_ROADMAP.md, seção 2; docs/GAMEPLAY_EXPLORATION_TASK_5_0.md; docs/GAMEPLAY_CONTENT_MATRIX.md.
+**Fonte atual:** docs/GAMEPLAY_E_DIRECAO.md e docs/ARQUITETURA_ATUAL.md. Os documentos de planejamento da 5.0 foram aposentados e permanecem no histórico Git.
 
 ## Experiência entregue no código
 

@@ -27,7 +27,7 @@ A leitura integral dos relatórios originais `FRAGMENTO_ERRANTE_TASK_4_3.md`, `D
 | `assets/dreamsdimensions/blockstates/*dream_ore.json` | **Não alterados** | Variantes `clicked=false` e `clicked=true` continuam legíveis por mundos antigos, evitando migração de saves nesta task |
 | `worldgen/biome/dreamscape_biome.json` | **Não alterado** | Preserva mecânica histórica e distribuição de mobs, pesos, grupos e taxa de worldgen |
 | `scripts/ci/check_spawn_population_contract.py`, `.github/workflows/build.yml` | Nova guarda CI integrada ao workflow | Assegura entradas JSON únicas por espécie, ambos os registros e limites do coordenador, simplificação da poeira e preservação de estados antigos |
-| `docs/GAMEPLAY_ROADMAP.md`, `docs/GAMEPLAY_CONTENT_MATRIX.md` | Addenda | Preservar histórico e registrar conclusão |
+| `docs/GAMEPLAY_E_DIRECAO.md`, `docs/ESTADO_ATUAL.md` | Fontes atuais | Histórico preservado no Git |
 
 Nenhum ID de bloco/item/entidade/bioma alterado, nenhum NBT convertido, nenhuma receita modificada. Mobs, GeckoLib, teleporte, Curios, atmosfera e mundo onírico ficam iguais.
 

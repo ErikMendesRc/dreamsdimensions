@@ -149,11 +149,11 @@ Registrar seed, versão/commit, XYZ observados, biome, quantidade coletada, temp
 
 ## Referências
 
-- [Task 6.2 — Geologia e Pedra Marcada](OVERWORLD_RESOURCES_GEOLOGY_FLORA_BLOCKS_TASK_6_2.md)
-- [Task 6.6 — Crafting 1:1](OVERWORLD_CRAFTING_PROCESSING_PROGRESSION_TASK_6_6.md)
-- [Task 6.7 — Art Bible](OVERWORLD_VISUAL_DIRECTION_TEXTURES_MODELS_ASSETS_TASK_6_7.md)
-- [Task 6.8 — Balanceamento e P50/P90](OVERWORLD_ECONOMY_RARITY_BALANCING_TASK_6_8.md)
-- [Task 6.9 — Roadmap](OVERWORLD_EXECUTIVE_IMPLEMENTATION_ROADMAP_TASK_6_9.md)
+- [Worldgen e conteúdo atual](WORLDGEN_E_CONTEUDO.md)
+- [Processamento e recursos implementados](WORLDGEN_E_CONTEUDO.md)
+- [Worldgen e conteúdo atual](WORLDGEN_E_CONTEUDO.md)
+- [QA e balanceamento observado](QA_E_VALIDACAO.md)
+- [Direção atual de gameplay](GAMEPLAY_E_DIRECAO.md)
 - [Task 7.2 — Contrato de conteúdo/Assets](DREAMSDIMENSIONS_TASK_7_2.md)
 - [Task 7.3 — Pedra Marcada F0a](DREAMSDIMENSIONS_TASK_7_3.md)
 - [NeoForge — Biome Modifiers](https://docs.neoforged.net/docs/worldgen/biomemodifier/)

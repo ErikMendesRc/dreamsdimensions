@@ -1,6 +1,8 @@
 # Migração do Dreams Dimensions: Minecraft 1.21.4 → 26.3
 
-**Estado: parcialmente concluída, aguardando validação de gameplay e compatibilidade.** 
+**Estado em 12/11/2026: migração de código e validações de CI realizadas; homologação de gameplay, multiplayer e saves antigos continua pendente.**
+
+**Esta é a cronologia técnica da migração, não o relatório de estado atual.** Para registros/funcionalidades existentes e QA executado depois da migração, consultar [Estado atual](ESTADO_ATUAL.md) e [QA](QA_E_VALIDACAO.md). 
 Trabalho isolado em `migration/minecraft-26.3`; não foi realizado merge em `main`.
 
 ## 1. Estado de partida e stack final

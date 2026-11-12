@@ -182,16 +182,14 @@ Para testar compatibilidade entre dimensões, somente como Spectator:
 
 Se quiser testar a geração real no próprio servidor de desenvolvimento, o comando `/marked_stone_audit -4 -4 4` só está disponível com JVM opt-in `-Ddreamsdimensions.enableMarkedStoneAudit=true` e exige chunks da região já carregados. Não habilitar scans/forceload permanentes em servidor público.
 
-## 6. Critérios para a próxima fase (anomalias do Limiar)
+## 6. Critérios para novas mecânicas do Overworld
 
-A F0 já tem **um ciclo econômico**. Ainda não tem **fenômeno dos sonhos** no Overworld. Depois do QA manual, a decisão do projeto será introduzir um **contrato de Anomalias Oníricas** reutilizável, no qual as formações naturais de Pedra Marcada podem servir de pistas verdadeiras, sem ativação infinita de blocos colocados em bases. **Isso é design futuro, não uma funcionalidade implementada pela Task 7.5.**
-
-Nenhuma taxa de spawn, flora, mob, estrutura, receita de Dream Dust ou regra de viagem foi alterada nesta homologação.
+A F0 tem um ciclo material real de descoberta, mineração e construção. **Não há uma anomalia onírica jogável implementada nem um roadmap 7.7+ aprovado.** Novas mecânicas só devem ser criadas após definir a função Survival, o consumidor do recurso e sua relação com o universo geral de sonhos (não apenas com as duas dimensões atuais). A Pedra Marcada permanece um material de construção; sua função não precisa ser artificialmente ampliada.
 
 ## 7. Links internos
 
 - [Contrato 7.2](DREAMSDIMENSIONS_TASK_7_2.md)
 - [F0a 7.3](DREAMSDIMENSIONS_TASK_7_3.md)
 - [F0b 7.4](DREAMSDIMENSIONS_TASK_7_4.md)
-- [Economia 6.8](OVERWORLD_ECONOMY_RARITY_BALANCING_TASK_6_8.md)
-- [Roadmap 6.9](OVERWORLD_EXECUTIVE_IMPLEMENTATION_ROADMAP_TASK_6_9.md)
+- [QA e balanceamento observado](QA_E_VALIDACAO.md)
+- [Direção atual de gameplay](GAMEPLAY_E_DIRECAO.md)

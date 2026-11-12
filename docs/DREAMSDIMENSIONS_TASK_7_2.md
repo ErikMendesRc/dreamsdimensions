@@ -93,6 +93,6 @@ Para teste de sucesso no console da CI, o script imprime contadores e `STATIC PA
 - NeoForge Client Items: https://docs.neoforged.net/docs/resources/client/models/items/
 - NeoForge Models & Blockstates: https://docs.neoforged.net/docs/resources/client/models/
 - NeoForge Loot Tables: https://docs.neoforged.net/docs/resources/server/loottables/
-- [Art Bible 6.7](OVERWORLD_VISUAL_DIRECTION_TEXTURES_MODELS_ASSETS_TASK_6_7.md)
-- [Roadmap 6.9](OVERWORLD_EXECUTIVE_IMPLEMENTATION_ROADMAP_TASK_6_9.md)
+- [Worldgen e conteúdo atual](WORLDGEN_E_CONTEUDO.md)
+- [Direção atual de gameplay](GAMEPLAY_E_DIRECAO.md)
 - [QA 7.1](DREAMSDIMENSIONS_TASK_7_1.md)

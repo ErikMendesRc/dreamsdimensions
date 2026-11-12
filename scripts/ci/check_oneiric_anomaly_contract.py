@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Task 7.6 — design + architecture gate, not a gameplay implementation.
 
-This deliberately validates files under docs/contracts, NOT in assets/ or
+This deliberately validates a preserved experimental QA fixture, NOT in assets/ or
 data/: until Task 7.7 commits actual physical sites and server provenance,
 these scenarios must remain inactive. Fail closed on cosmetic-only profiles.
 """
@@ -19,7 +19,7 @@ EXPECTED = {
     "BLUE_FIELD": "dreamsdimensions:campo_onirico_azul",
     "DREAMSCAPE": "dreamsdimensions:dreamscape",
 }
-MANIFEST = "docs/contracts/ONEIRIC_ANOMALIES_V1.json"
+MANIFEST = "scripts/ci/fixtures/ONEIRIC_ANOMALIES_V1.json"
 SOURCE = "src/main/java/com/dreamsdimensions/mod/anomaly"
 VALID_METRICS = {
     "natural_candidates", "placed_sites", "terrain_rejections",

@@ -6,7 +6,7 @@
 **Escopo implementado:** correção de terreno da ruína `fragmented_dream_ruins` e critérios estáticos/runtime de suporte, sem alterar economia ou retorno.  
 **Escopo ainda pendente:** homologação de rota em Survival, loot **efetivamente aberto** em baús naturais, persistência após restart, multiplayer com duas contas, estimativas de tempo para recuperar e regressão em saves antigos.  
 **Status formal:** **CORREÇÃO DE WORLDGEN APROVADA EM CI 4/4; HOMOLOGAÇÃO INTEGRAL DE GAMEPLAY AINDA NÃO APROVADA**.  
-**Referências:** [5.7 — ruínas e baús](DREAM_RUINS_TASK_5_7.md), [6.8 — balanceamento](OVERWORLD_ECONOMY_RARITY_BALANCING_TASK_6_8.md), [6.9 — roadmap executivo](OVERWORLD_EXECUTIVE_IMPLEMENTATION_ROADMAP_TASK_6_9.md).
+**Referências:** [5.7 — ruínas e baús](DREAM_RUINS_TASK_5_7.md), [QA e balanceamento observado](QA_E_VALIDACAO.md), [Direção atual de gameplay](GAMEPLAY_E_DIRECAO.md).
 
 > Esta task NÃO deve ser interpretada como prova de que o jogador consegue recuperar o Despertador em tempo viável em qualquer seed. A correção removeu **um defeito reproduzível na checagem de sustentação**; o teste completo de exploração e retorno permanece separado.
 

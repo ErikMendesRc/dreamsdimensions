@@ -147,10 +147,10 @@ Os checks nativos/estáticos não podem promover os itens de Survival para `PASS
 
 ## 8. Fontes e continuidade
 
-- [Art Bible 6.7](OVERWORLD_VISUAL_DIRECTION_TEXTURES_MODELS_ASSETS_TASK_6_7.md)
-- [Geologia F0 / Task 6.2](OVERWORLD_RESOURCES_GEOLOGY_FLORA_BLOCKS_TASK_6_2.md)
-- [Crafting 6.6](OVERWORLD_CRAFTING_PROCESSING_PROGRESSION_TASK_6_6.md)
-- [Roadmap 6.9](OVERWORLD_EXECUTIVE_IMPLEMENTATION_ROADMAP_TASK_6_9.md)
+- [Worldgen e conteúdo atual](WORLDGEN_E_CONTEUDO.md)
+- [Worldgen e conteúdo atual](WORLDGEN_E_CONTEUDO.md)
+- [Processamento e recursos implementados](WORLDGEN_E_CONTEUDO.md)
+- [Direção atual de gameplay](GAMEPLAY_E_DIRECAO.md)
 - [Contrato de assets 7.2](DREAMSDIMENSIONS_TASK_7_2.md)
 - [NeoForge 26.3 models](https://docs.neoforged.net/docs/resources/client/models/)
 - [NeoForge 26.3 client items](https://docs.neoforged.net/docs/resources/client/models/items/)
