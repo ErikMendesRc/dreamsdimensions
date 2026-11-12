@@ -103,6 +103,10 @@ public final class ModItems {
             ModBlocks.MARKED_STONE
     );
 
+    public static final DeferredItem<BlockItem> CUT_MARKED_STONE_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.CUT_MARKED_STONE
+    );
+
     public static final DeferredItem<BlockItem> DREAM_SHIMMER_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(
             ModBlocks.DREAM_SHIMMER_BLOCK
     );

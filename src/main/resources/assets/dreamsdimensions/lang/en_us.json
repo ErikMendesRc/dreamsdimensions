@@ -34,5 +34,6 @@
   "block.dreamsdimensions.dream_flower_block": "Dream Flower",
   "block.dreamsdimensions.dream_log_block": "Dream Log",
   "block.dreamsdimensions.dream_leaves_block": "Dream Leaves",
-  "block.dreamsdimensions.marked_stone": "Marked Stone"
+  "block.dreamsdimensions.marked_stone": "Marked Stone",
+  "block.dreamsdimensions.cut_marked_stone": "Cut Marked Stone"
 }

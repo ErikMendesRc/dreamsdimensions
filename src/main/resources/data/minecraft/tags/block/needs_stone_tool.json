@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "dreamsdimensions:marked_stone"
+    "dreamsdimensions:marked_stone",
+    "dreamsdimensions:cut_marked_stone"
   ]
 }

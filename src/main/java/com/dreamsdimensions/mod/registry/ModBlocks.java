@@ -86,6 +86,15 @@ public final class ModBlocks {
                     .requiresCorrectToolForDrops()
     );
 
+    /** F0b: architectural cut variant; produced 1:1 in a vanilla stonecutter. */
+    public static final DeferredBlock<Block> CUT_MARKED_STONE = BLOCKS.registerSimpleBlock(
+            "cut_marked_stone",
+            () -> BlockBehaviour.Properties.ofFullCopy(Blocks.TUFF)
+                    .mapColor(MapColor.STONE)
+                    .strength(1.5F, 6.0F)
+                    .requiresCorrectToolForDrops()
+    );
+
     public static final DeferredBlock<Block> DREAM_SHIMMER_BLOCK = BLOCKS.registerSimpleBlock(
             "dream_shimmer_block",
             () -> BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_BLOCK)
