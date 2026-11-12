@@ -20,32 +20,39 @@ public final class ModCreativeTabs {
     public static final Supplier<CreativeModeTab> DREAMS_DIMENSIONS_TAB = CREATIVE_MODE_TABS.register(
             "dreams_dimensions_tab",
             () -> CreativeModeTab.builder()
-                    .icon(() -> new ItemStack(ModItems.DREAM_DUST.get()))
+                    .icon(() -> new ItemStack(ModItems.DREAM_NECKLACE.get()))
                     .title(Component.translatable("itemGroup." + DreamsDimensions.MODID + ".dreams_dimensions_tab"))
                     .displayItems((params, output) -> {
-                        output.accept(ModItems.DREAM_DUST.get());
-                        output.accept(ModItems.ONEIRIC_AWAKENER.get());
+                        // Functional ordering: travel gear, Overworld resources,
+                        // construction materials, terrain, then nature/lighting.
                         output.accept(ModItems.DREAM_NECKLACE.get());
+                        output.accept(ModItems.ONEIRIC_AWAKENER.get());
+                        output.accept(ModItems.DREAM_DUST.get());
 
-                        output.accept(ModBlocks.DREAM_GRASS_BLOCK.get());
-                        output.accept(ModBlocks.BLUE_DREAM_GRASS.get());
-                        output.accept(ModBlocks.DREAM_DIRT_BLOCK.get());
-                        output.accept(ModBlocks.BLUE_DREAM_DIRT.get());
-                        output.accept(ModBlocks.DREAM_SAND_BLOCK.get());
-                        output.accept(ModBlocks.SERENE_STONE_BLOCK.get());
-                        output.accept(ModBlocks.BLUE_DREAM_STONE.get());
-                        output.accept(ModBlocks.BLUE_DREAM_COBBLESTONE.get());
-                        output.accept(ModBlocks.MARKED_STONE.get());
-                        output.accept(ModBlocks.CUT_MARKED_STONE.get());
-                        output.accept(ModBlocks.DREAM_SHIMMER_BLOCK.get());
-                        output.accept(ModBlocks.DREAM_GLOW_MOSS.get());
                         output.accept(ModBlocks.DREAM_ORE.get());
                         output.accept(ModBlocks.DEEPSLATE_DREAM_ORE.get());
+                        output.accept(ModBlocks.MARKED_STONE.get());
+                        output.accept(ModBlocks.CUT_MARKED_STONE.get());
+
+                        output.accept(ModBlocks.SERENE_STONE_BLOCK.get());
                         output.accept(ModBlocks.DREAM_INFUSED_STONE.get());
                         output.accept(ModBlocks.ONEIRIC_CORE_BLOCK.get());
-                        output.accept(ModBlocks.DREAM_FLOWER_BLOCK.get());
+
+                        output.accept(ModBlocks.BLUE_DREAM_STONE.get());
+                        output.accept(ModBlocks.BLUE_DREAM_COBBLESTONE.get());
+                        output.accept(ModBlocks.BLUE_DREAM_GRASS.get());
+                        output.accept(ModBlocks.BLUE_DREAM_DIRT.get());
+
+                        output.accept(ModBlocks.DREAM_GRASS_BLOCK.get());
+                        output.accept(ModBlocks.DREAM_DIRT_BLOCK.get());
+                        output.accept(ModBlocks.DREAM_SAND_BLOCK.get());
+
                         output.accept(ModBlocks.DREAM_LOG_BLOCK.get());
                         output.accept(ModBlocks.DREAM_LEAVES_BLOCK.get());
+                        output.accept(ModBlocks.DREAM_FLOWER_BLOCK.get());
+
+                        output.accept(ModBlocks.DREAM_GLOW_MOSS.get());
+                        output.accept(ModBlocks.DREAM_SHIMMER_BLOCK.get());
                     })
                     .build()
     );
