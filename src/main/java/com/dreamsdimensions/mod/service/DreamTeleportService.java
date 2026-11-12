@@ -1,6 +1,7 @@
 package com.dreamsdimensions.mod.service;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
+import com.dreamsdimensions.mod.qa.DreamQaRecorder;
 import com.dreamsdimensions.mod.config.DreamsConfig;
 import com.dreamsdimensions.mod.dimension.DreamDimensionDefinition;
 import com.dreamsdimensions.mod.dimension.WeightedDimensionPicker;
@@ -26,8 +27,17 @@ import net.minecraft.world.phys.Vec3;
 public final class DreamTeleportService {
     private DreamTeleportService() {}
 
+    private static void qa(String name, String dimension, String status, String reason) {
+        DreamQaRecorder.global().record("TELEPORT", "dream_entry",
+                name, dimension, status, reason);
+    }
+
     public static boolean enterDream(ServerPlayer player, BlockPos bedPos, float bedYaw) {
-        if (!player.isAlive() || player.level().dimension() != Level.OVERWORLD) return false;
+        if (!player.isAlive() || player.level().dimension() != Level.OVERWORLD) {
+            qa("DREAM_ENTRY_REJECTED", "minecraft:overworld", "SKIPPED", "INVALID_SOURCE");
+            return false;
+        }
+        qa("DREAM_ENTRY_REQUESTED", "minecraft:overworld", "PASS", "ELIGIBLE_REQUEST");
 
         MinecraftServer server = ((ServerLevel) player.level()).getServer();
         List<WeightedDimensionPicker.Candidate<DreamDimensionDefinition>> available = new ArrayList<>();
@@ -42,6 +52,7 @@ public final class DreamTeleportService {
         }
 
         if (available.isEmpty()) {
+            qa("DREAM_ENTRY_REJECTED", "minecraft:overworld", "FAIL", "DIMENSION_UNAVAILABLE");
             DreamsDimensions.LOGGER.warn("Teleporte onírico bloqueado: nenhuma dimensão habilitada está carregada.");
             player.sendSystemMessage(Component.literal(
                     "Dreams Dimensions: nenhuma dimensão dos sonhos está disponível."));
@@ -70,6 +81,8 @@ public final class DreamTeleportService {
                         || teleported.level().dimension() != target.dimension()) {
                     DreamsDimensions.LOGGER.warn("Teleporte recusado para jogador {} em {}.",
                             player.getUUID(), definition.dimension().identifier());
+                    qa("DREAM_ENTRY_REJECTED", target.dimension().identifier().toString(),
+                            "FAIL", "TELEPORT_UNCONFIRMED");
                     return false; // Do not blindly retry after a partial transition.
                 }
 
@@ -79,16 +92,21 @@ public final class DreamTeleportService {
                 // Task 5.5: a new expedition starts only AFTER a confirmed
                 // sleep journey, never during a failed roll or admin /tp.
                 DreamRespawnService.recordExpedition(teleported, spawn.get());
+                qa("DREAM_ENTRY_COMPLETED", target.dimension().identifier().toString(),
+                        "PASS", "CONFIRMED");
                 DreamsDimensions.LOGGER.info("Jogador {} entrou em {} após sono completo.",
                         player.getUUID(), definition.dimension().identifier());
                 return true;
             } catch (RuntimeException exception) {
                 DreamsDimensions.LOGGER.error("Falha de teleporte para {} em {} (sem tentar outro mundo).",
                         player.getUUID(), definition.dimension().identifier(), exception);
+                qa("DREAM_ENTRY_REJECTED", target.dimension().identifier().toString(),
+                        "FAIL", "TELEPORT_EXCEPTION");
                 return false;
             }
         }
 
+        qa("DREAM_ENTRY_REJECTED", "minecraft:overworld", "FAIL", "NO_SAFE_DESTINATION");
         player.sendSystemMessage(Component.literal(
                 "Dreams Dimensions: não encontrei um local seguro nas dimensões dos sonhos. Consulte latest.log."));
         return false;

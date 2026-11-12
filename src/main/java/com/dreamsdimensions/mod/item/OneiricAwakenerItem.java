@@ -1,6 +1,7 @@
 package com.dreamsdimensions.mod.item;
 
 import com.dreamsdimensions.mod.config.DreamsConfig;
+import com.dreamsdimensions.mod.qa.DreamQaRecorder;
 import com.dreamsdimensions.mod.service.OneiricReturnGuard;
 import com.dreamsdimensions.mod.service.OneiricReturnPolicy;
 import com.dreamsdimensions.mod.service.DreamRespawnService;
@@ -103,6 +104,8 @@ public class OneiricAwakenerItem extends Item {
         }
 
         var source = player.level().dimension();
+        DreamQaRecorder.global().record("RECOVERY", "oneiric_awakener",
+                "DREAM_RETURN_REQUESTED", source.identifier().toString(), "PASS", "CLAIMED");
         int before = stack.getCount();
         try {
             // Build the existing bed -> personal respawn -> safe world spawn fallback.
@@ -122,6 +125,8 @@ public class OneiricAwakenerItem extends Item {
             try {
                 returned = player.teleport(transition);
             } catch (RuntimeException exception) {
+                DreamQaRecorder.global().record("RECOVERY", "oneiric_awakener",
+                        "DREAM_RETURN_REJECTED", source.identifier().toString(), "FAIL", "TELEPORT_EXCEPTION");
                 LOGGER.error("ONEIRIC_RETURN player_uuid={} source={} target=minecraft:overworld "
                         + "result=teleport_exception consumed=0 hand={}", uuid,
                         source.identifier(), hand, exception);
@@ -177,6 +182,8 @@ public class OneiricAwakenerItem extends Item {
             DreamRespawnService.completeExpedition(returned);
             returned.sendSystemMessage(Component.translatable(
                     "message.dreamsdimensions.oneiric_awakener.success"));
+            DreamQaRecorder.global().record("RECOVERY", "oneiric_awakener",
+                    "DREAM_RETURN_COMPLETED", "minecraft:overworld", "PASS", "CONFIRMED");
             LOGGER.info("ONEIRIC_RETURN player_uuid={} source={} target={} result=success "
                             + "consumed={} hand={} before={} after={}",
                     uuid, source.identifier(), returned.level().dimension().identifier(),
@@ -192,6 +199,8 @@ public class OneiricAwakenerItem extends Item {
 
     private static void failed(ServerPlayer player, UUID uuid, InteractionHand hand,
             String source, Result reason) {
+        DreamQaRecorder.global().record("RECOVERY", "oneiric_awakener",
+                "DREAM_RETURN_REJECTED", source, "FAIL", reason.name());
         LOGGER.warn("ONEIRIC_RETURN player_uuid={} source={} target={} result={} consumed=0 hand={}",
                 uuid, source, player.level().dimension().identifier(), reason, hand);
         if (player.level().dimension() != Level.OVERWORLD) {

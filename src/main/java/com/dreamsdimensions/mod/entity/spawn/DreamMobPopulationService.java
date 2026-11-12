@@ -1,6 +1,7 @@
 package com.dreamsdimensions.mod.entity.spawn;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
+import com.dreamsdimensions.mod.qa.DreamQaRecorder;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -25,6 +26,7 @@ import net.neoforged.neoforge.event.server.ServerStoppedEvent;
  */
 public final class DreamMobPopulationService {
     private static final List<MobPopulationProfile<? extends Mob>> PROFILES = new ArrayList<>();
+    private static final DreamQaRecorder QA = DreamQaRecorder.global();
     private static final int REGION_SHIFT = 7; // 128-block cells
     private static final int MAX_REGION_KEYS = 256;
     // Opt-in diagnostics only. No persistent tags or second spawn system.
@@ -89,7 +91,10 @@ public final class DreamMobPopulationService {
                 profile.maxSpawnY() + 10, player.getZ() + profile.countRadius());
         List<T> existing = level.getEntitiesOfClass(
                 profile.mobClass(), surrounding, Mob::isAlive);
-        if (existing.size() >= profile.localCap()) return;
+        if (existing.size() >= profile.localCap()) {
+            observe(profile, level, "ENTITY_SPAWN_REJECTED", "SKIPPED", "LOCAL_CAP");
+            return;
+        }
 
         RandomSource random = level.getRandom();
         int spawned = 0;
@@ -97,14 +102,19 @@ public final class DreamMobPopulationService {
         for (int attempt = 0; attempt < profile.candidateLimit()
                 && spawned < profile.maxPerPass()
                 && existing.size() + spawned < profile.localCap(); attempt++) {
+            observe(profile, level, "ENTITY_SPAWN_ATTEMPT", "PASS", "CANDIDATE");
             BlockPos surface = profile.candidateSelection().select(level, player, random, profile);
-            if (surface == null || !level.hasChunkAt(surface)) continue;
+            if (surface == null || !level.hasChunkAt(surface)) {
+                observe(profile, level, "ENTITY_SPAWN_REJECTED", "SKIPPED", "NO_LOADED_SURFACE");
+                continue;
+            }
             int y = surface.getY();
             Vec3 target = Vec3.atBottomCenterOf(surface);
             if (!profile.habitat().isValid(level, surface)
                     || Math.abs(y - origin.y) > profile.maxVerticalDistance()
                     || origin.distanceToSqr(target)
                             < profile.minimumPlayerDistance() * profile.minimumPlayerDistance()) {
+                observe(profile, level, "ENTITY_SPAWN_REJECTED", "SKIPPED", "HABITAT_OR_DISTANCE");
                 continue;
             }
             boolean closeToExisting = false;
@@ -123,12 +133,19 @@ public final class DreamMobPopulationService {
                     break;
                 }
             }
-            if (closeToExisting) continue;
+            if (closeToExisting) {
+                observe(profile, level, "ENTITY_SPAWN_REJECTED", "SKIPPED", "MOB_SPACING");
+                continue;
+            }
 
             // Vanilla entity initialization and NeoForge spawn events are kept.
             T mob = profile.entityType().get().spawn(
                     level, surface, EntitySpawnReason.NATURAL);
-            if (mob == null) continue;
+            if (mob == null) {
+                observe(profile, level, "ENTITY_SPAWN_REJECTED", "FAIL", "VANILLA_SPAWN_FAILED");
+                continue;
+            }
+            observe(profile, level, "ENTITY_SPAWN_SUCCESS", "PASS", "COORDINATOR_NATURAL");
             // Distinguishes coordinator contribution from vanilla population
             // during in-game sampling, without changing mob NBT or behavior.
             if (AUDIT_SPAWNS) {
@@ -140,6 +157,14 @@ public final class DreamMobPopulationService {
             spawned++;
             newPositions.add(target);
             if (profile.stopAfterFirstSuccess()) break; // Preserve the Fragmento's one-success rule.
+        }
+    }
+
+    private static void observe(MobPopulationProfile<?> profile, ServerLevel level,
+            String eventName, String status, String reason) {
+        if (QA.enabled()) {
+            QA.record("SPAWN", profile.id(), eventName,
+                    level.dimension().identifier().toString(), status, reason);
         }
     }
 

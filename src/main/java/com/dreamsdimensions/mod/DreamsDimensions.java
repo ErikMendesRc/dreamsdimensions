@@ -1,6 +1,8 @@
 package com.dreamsdimensions.mod;
 
 import com.dreamsdimensions.mod.config.DreamsConfig;
+import com.dreamsdimensions.mod.qa.DreamQaRecorder;
+import com.dreamsdimensions.mod.qa.DreamQaCommand;
 import com.dreamsdimensions.mod.config.DreamEntryConfig;
 import com.dreamsdimensions.mod.dimension.DreamDimensionCatalog;
 import com.dreamsdimensions.mod.diagnostics.DreamscapeBridgeAuditCommand;
@@ -67,6 +69,10 @@ public class DreamsDimensions {
             NeoForge.EVENT_BUS.addListener(DreamRuinsAuditCommand::register);
         }
 
+        if (DreamQaRecorder.global().enabled()) {
+            NeoForge.EVENT_BUS.addListener(DreamQaCommand::register);
+            NeoForge.EVENT_BUS.addListener(DreamQaCommand::onServerStopped);
+        }
         NeoForge.EVENT_BUS.addListener(CommonEvents::onServerStarting);
         NeoForge.EVENT_BUS.addListener(EchoMossInteractionHandler::onRightClickBlock);
         NeoForge.EVENT_BUS.addListener(EchoMossInteractionHandler::onPlayerLoggedOut);
