@@ -47,30 +47,32 @@ def run(seed, output):
                 f"execute in minecraft:overworld run loot spawn {x} {y+3} {z} "
                 f"mine {x} {y} {z} minecraft:stone_pickaxe")
             check_response(spawn, "/loot mine")
-            # The native command's returned count must be exactly one stack.
-            # It does not prove actual physical Survival block breaking.
-            if not re.search(r"\b1\b", spawn):
-                raise AssertionError(f"Native loot did not report one stack: {block}: {spawn!r}")
-            query = (
-                f"execute in minecraft:overworld positioned {x} {y+3} {z} "
-                f"if entity @e[type=minecraft:item,distance=..8,"
-                f'nbt={{Item:{{id:"{block}"}}}}] run seed'
-            )
-            actual = client.command(query)
-            check_response(actual, "item entity identity")
-            if seed not in [int(v) for v in re.findall(r"-?\d+", actual)]:
-                raise AssertionError(f"Expected dropped item was not observed: {block}, {actual!r}")
+            # Verify the NATIVE loot command response, which names the exact
+            # table and display item. Do not rely on a dropped Item entity:
+            # it may fall/move between RCON requests in a headless server.
+            name = "Marked Stone" if block.endswith(":marked_stone") else "Cut Marked Stone"
+            table = "dreamsdimensions:blocks/" + block.split(":", 1)[1]
+            expected = f"Dropped 1 [{name}] from loot table {table}"
+            if expected not in spawn:
+                raise AssertionError(
+                    f"Unexpected native loot resolution: block={block}, "
+                    f"expected={expected!r}, actual={spawn!r}"
+                )
             records.append({
                 "block": block, "tool_in_loot_context": "minecraft:stone_pickaxe",
-                "loot_api": "minecraft:loot_mine", "observed_item": block,
+                "loot_api": "minecraft:loot_mine",
                 "native_loot_response": spawn.strip(),
+                "output_count_confirmed_by_native_response": 1,
+                "item_label_confirmed_by_native_response": name,
+                "item_entity_nbt_not_claimed": True,
             })
             # Remove only test item entities at the isolated high-altitude
             # test position in a temporary CI world.
             purge = client.command(
                 f"execute in minecraft:overworld positioned {x} {y+3} {z} "
                 f"run kill @e[type=minecraft:item,distance=..8]")
-            check_response(purge, "cleanup dropped test items")
+            # Item entities may already have fallen; cleanup is best-effort.
+            # The only required evidence is the native loot-resolution response.
         report = {
             "schema_version": "dreamsdimensions.qa.v1",
             "test_id": "task_7_5_f0_native_loot_context",
@@ -80,6 +82,7 @@ def run(seed, output):
             "records": records,
             "limitations": [
                 "Native /loot mine is a simulated block loot context, NOT physical player mining",
+                "Dropped entity NBT is not asserted; server-provided table ID, item label and count are asserted",
                 "Wrong-tier tool drops, Fortune, Silk Touch and actual Survival action NOT_RUN",
                 "Exactly one temporary world test position; no natural generation claim",
             ],
