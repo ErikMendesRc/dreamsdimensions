@@ -54,7 +54,7 @@ def run(seed, output):
             query = (
                 f"execute in minecraft:overworld positioned {x} {y+3} {z} "
                 f"if entity @e[type=minecraft:item,distance=..8,"
-                f"nbt={{Item:{{id:\\"{block}\\"}}}}] run seed"
+                f'nbt={{Item:{{id:"{block}"}}}}] run seed'
             )
             actual = client.command(query)
             check_response(actual, "item entity identity")
@@ -101,3 +101,11 @@ def run(seed, output):
                 client.command("execute in minecraft:overworld run forceload remove 16 16")
         finally:
             client.close()
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--expected-seed", type=int, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    args = parser.parse_args()
+    run(args.expected_seed, args.output)
