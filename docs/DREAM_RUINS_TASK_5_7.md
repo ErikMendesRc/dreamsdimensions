@@ -2,6 +2,8 @@
 
 **Branch:** `migration/minecraft-26.3` · **Data:** 2026-11-10 (America/Sao_Paulo) · **Baseline:** `50399472b0ddc2cbf59603bbe22333e5e6080408` · **Versão:** Minecraft 26.3 / NeoForge 26.3.0.101 / Java 25.
 
+> **Atualização do estado atual (12/11/2026):** este relatório registra as medições **históricas** da 5.7. A falha de suporte 4/9 foi corrigida posteriormente na Task 7.0; para Dreamscape o recurso atual usa `terrain_adaptation=beard_thin` e o worldgen foi validado com gate rígido em quatro seeds. A ruína do Campo Azul permanece com `terrain_adaptation=none`. A homologação humana de acesso, abertura de baú, persistência e multiplayer continua pendente. Veja [Recuperação 7.0](DREAM_RECOVERY_SAFETY_TASK_7_0.md) e [Estado atual](ESTADO_ATUAL.md).
+
 ## 1. Contrato de gameplay
 
 O Colar dos Sonhos concede uma chance de viagem por sono. O Despertador Onírico (`dreamsdimensions:oneiric_awakener`) funciona por 60 ticks e é consumido **somente após retorno confirmado** ao Overworld. A morte mantém o jogador no sonho. Esta Task implementa uma **fonte exploratória, rara e persistente** do Despertador completo para quem perdeu/entrou sem o item.
@@ -13,7 +15,7 @@ O Colar dos Sonhos concede uma chance de viagem por sono. O Despertador Onírico
 - Estruturas **nativas** data-driven: `minecraft:jigsaw` com um único template inicial (`size=1`), `minecraft:single_pool_element`, `minecraft:empty` fallback. Isso preserva `/locate structure` e `/place structure`, persistência vanilla e geração por Structure Set em chunks novos.
 - Diretórios 26.3: `data/dreamsdimensions/worldgen/structure/*.json`, `worldgen/structure_set/*.json`, `worldgen/template_pool/ruins/*.json`, `structure/ruins/*.nbt` **singular** e `loot_table/chests/*.json` **singular**.
 - Templates reais: NBT binário **gzip**, big-endian, `DataVersion=5023`, paleta moderna `id` / `properties`. Gerados com geometria independente, auditados por parser NBT da CI. Cada template tem **um único chest block entity** com a propriedade `LootTable` (não faz o sorteio durante a geração). Sem `LootTableSeed` fixo.
-- JSON worldgen usa `project_start_to_heightmap: WORLD_SURFACE_WG`, `terrain_adaptation:none` (evita gerar terra extra/alterar density) e start height 0 como offset. Não foi criado Java para gerar ou posicionar estruturas em tick. **Limitação**: Jigsaw/heightmap sozinho não valida o apoio real de *todos* os pilares/cantos em ilhas, nem garante conexão navegável com uma ilha adjacente. Não declarar Dreamscape homologado sem conferir suporte em estruturas reais; um futuro preflight customizado deverá ser adicionado **somente se necessário e demonstrado**.
+- O worldgen usa `project_start_to_heightmap: WORLD_SURFACE_WG` e start height 0 como offset. **Configuração efetiva após 7.0:** `terrain_adaptation: none` na ruína do Campo Azul e `terrain_adaptation: beard_thin` na Dreamscape, com `beardifier` no noise da dimensão. O valor `none` para as duas ruínas pertence ao baseline histórico da 5.7. Não há geração adicional por tick. A correção melhorou o suporte local em quatro seeds, mas não comprova caminho acessível em Survival, e não retrogera ruínas de saves antigos.
 
 Fontes: [NeoForge 26.3](https://docs.neoforged.net/primer/docs/26.3/), [Worldgen](https://docs.neoforged.net/docs/worldgen/), [Loot](https://docs.neoforged.net/docs/resources/server/loottables/), [Minecraft Java 26.3](https://www.minecraft.net/en-us/article/minecraft-java-edition-26-3).
 
@@ -50,7 +52,7 @@ Cada tabela contém:
 
 `scripts/ci/audit_dream_ruins_runtime.py` inicia com seed validada por `/seed`, usa `/execute in <dimension> run locate structure <id>` para encontrar candidato nativo (sem chamar `/place`), faz forceload transitório da região **somente no mundo descartável do workflow**, executa o diagnóstico e remove tickets. Produz `dream-ruins-seed-<seed>.json`; o log `DREAM_RUINS_CHEST` registra **X Y Z reais se encontrados**, bioma, status loot e suporte. Se alguma região não puder ser avaliada, marcar `NOT RUN`, `LOCATE_FAILED` ou `AUDIT_FAILED`, nunca inventar coordenadas.
 
-**Seeds:** 14011, 20261108, -904732, 73199013. **Validação real concluída em 10/11/2026:** [workflow 42942964404](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42942964404) **4/4 success** após correção obrigatória do campo 26.3 `use_expansion_hack=false`. Localizadas as oito estruturas (uma de cada dimensão/seed), com oito baús físicos e loot table correta, ainda não abertos. Suporte local conservador: **7/8 aprovados, 1/8 com suporte insuficiente**. Detalhes em seção 9. Dedicated server + /locate **não comprova** travessia real, persistência após reboot, o sorteio real ou a raridade populacional. É necessário expandir a amostra de vários setores por seed para estimar distâncias e rejeições.
+**Seeds:** 14011, 20261108, -904732, 73199013. **Validação real concluída em 10/11/2026:** [workflow 42942964404](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42942964404) **4/4 success** após correção obrigatória do campo 26.3 `use_expansion_hack=false`. Localizadas as oito estruturas (uma de cada dimensão/seed), com oito baús físicos e loot table correta, ainda não abertos. Suporte local conservador **no baseline da 5.7**: **7/8 aprovados, 1/8 com suporte insuficiente**; a Task 7.0 corrigiu a falha e aprovou os gates locais das oito ruínas nas quatro seeds. Detalhes em seção 9. Dedicated server + /locate **não comprova** travessia real, persistência após reboot, o sorteio real ou a raridade populacional. É necessário expandir a amostra de vários setores por seed para estimar distâncias e rejeições.
 
 ## 6. Comandos copiáveis de teste
 
@@ -127,7 +129,7 @@ Depois da **primeira abertura**, `LootTable` deixa de estar pendente; consultar 
 | NBT real + estrutura JSON + 25% single-roll | **PASS CI** | Prova formato e regra configurada |
 | Build/JUnit + datapack dedicated server | **PASS 4/4 seeds** | Confirma classes, registries e parsing |
 | /locate real por seed/dimensão | **PASS 8/8 ocorrências** | Confirma estrutura nativa localizável |
-| Baú físico + referência de loot + suporte local | **Baú + loot PASS 8/8; suporte >=5/9 PASS 7/8** | Observação real não-destrutiva |
+| Baú físico + referência de loot + suporte local | **Baú + loot PASS 8/8; suporte >=5/9 PASS 7/8 no baseline 5.7; gates locais 8/8 após Task 7.0** | Observação real não-destrutiva |
 | 1.000 loot rolls executados pelo Minecraft | **NOT RUN** | Modelo Python não substitui essa medição |
 | Acesso aos baús em Survival | **NOT RUN** | Travel routes/queda/mobs em jogo |
 | Persistência após reload/restart/duas contas | **NOT RUN** | Não inferir somente de lógica vanilla |
@@ -206,4 +208,4 @@ Seed `73199013`:
 
 ### 9.2 Recomendação e pendências de release
 
-Não alterar `dream_entry_enabled=false` em produção. A geração natural e o baú físico passaram nos oito locais, mas **não há** comprovação de recuperação viável em Survival sem comandos, integridade completa do terreno no Dreamscape, persistência de inventário com dois jogadores nem sorteio real de 1000 baús. A ocorrência com apenas 4/9 apoios recomenda uma Task corretiva **5.7.1 — preflight limitado de terreno/suporte para ruínas Dreamscape**, condicionada a inspeção real e com rejeição antes de placement, preservando `/locate` e a frequência medida. Não consertar de forma falsa elevando `terrain_adaptation` agressivamente ou construindo pontes gratuitas. Validar também Campo Azul em relevo irregular.
+Não alterar `dream_entry_enabled=false` em produção. A geração natural e o baú físico passaram nos oito locais, mas **não há** comprovação de recuperação viável em Survival sem comandos, integridade completa do terreno no Dreamscape, persistência de inventário com dois jogadores nem sorteio real de 1000 baús. A ocorrência histórica com 4/9 apoios motivou a **correção já executada na Task 7.0**, sem pilares artificiais. Não iniciar uma Task 5.7.1 baseada apenas neste diagnóstico antigo; reproduzir qualquer nova falha no estado atual antes de alterar worldgen. Validar Campo Azul e Dreamscape em percurso Survival real.
