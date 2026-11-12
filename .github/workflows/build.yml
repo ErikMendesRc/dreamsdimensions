@@ -34,6 +34,15 @@ jobs:
           name: content-contract-seed-${{ matrix.seed }}
           path: qa-content-contract-${{ matrix.seed }}.json
           if-no-files-found: ignore
+      - name: Validate Task 7.3 Marked Stone F0a and full 16x16 PNG
+        run: python3 scripts/ci/check_marked_stone.py --report qa-marked-stone-static-seed-${{ matrix.seed }}.json
+      - name: Upload Task 7.3 static QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: marked-stone-static-seed-${{ matrix.seed }}
+          path: qa-marked-stone-static-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
       - name: Validate reusable Task 7.1 QA contract
         run: python3 scripts/ci/check_qa_contract.py
       - name: Validate Task 5.6 Overworld resource economy and Recipe Book
@@ -151,6 +160,9 @@ jobs:
             python3 scripts/ci/audit_qa_runtime.py \
               --seed '${{ matrix.seed }}' \
               --output qa-reports/dreamqa-ci-seed-${{ matrix.seed }}.json
+            python3 scripts/ci/audit_marked_stone_runtime.py \
+              --expected-seed '${{ matrix.seed }}' \
+              --output marked-stone-runtime-seed-${{ matrix.seed }}.json
           fi
           if [ "$started" -ne 1 ]; then
             echo "::error::O servidor não concluiu a inicialização ou falhou ao carregar datapacks."
@@ -181,6 +193,13 @@ jobs:
           path: |
             qa-report-seed-${{ matrix.seed }}.json
             qa-reports/dreamqa-ci-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
+      - name: Upload Task 7.3 native block placement evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: marked-stone-runtime-seed-${{ matrix.seed }}
+          path: marked-stone-runtime-seed-${{ matrix.seed }}.json
           if-no-files-found: ignore
       - name: Upload server smoke test log
         if: always()
