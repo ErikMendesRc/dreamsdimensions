@@ -74,6 +74,18 @@ public final class ModBlocks {
                     .requiresCorrectToolForDrops()
     );
 
+    /**
+     * F0a / Task 7.3: buildable Overworld vestige stone. No natural generation
+     * until Task 7.4; drops only itself when mined with stone-tier pickaxe+.
+     */
+    public static final DeferredBlock<Block> MARKED_STONE = BLOCKS.registerSimpleBlock(
+            "marked_stone",
+            () -> BlockBehaviour.Properties.ofFullCopy(Blocks.TUFF)
+                    .mapColor(MapColor.STONE)
+                    .strength(1.5F, 6.0F)
+                    .requiresCorrectToolForDrops()
+    );
+
     public static final DeferredBlock<Block> DREAM_SHIMMER_BLOCK = BLOCKS.registerSimpleBlock(
             "dream_shimmer_block",
             () -> BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_BLOCK)

@@ -33,5 +33,6 @@
   "message.dreamsdimensions.oneiric_awakener.item_mismatch": "Você retornou, mas o inventário mudou durante a transição. O Despertador não foi consumido; consulte o log.",
   "block.dreamsdimensions.dream_flower_block": "Flor Onírica",
   "block.dreamsdimensions.dream_log_block": "Tronco Onírico",
-  "block.dreamsdimensions.dream_leaves_block": "Folhas Oníricas"
+  "block.dreamsdimensions.dream_leaves_block": "Folhas Oníricas",
+  "block.dreamsdimensions.marked_stone": "Pedra Marcada"
 }

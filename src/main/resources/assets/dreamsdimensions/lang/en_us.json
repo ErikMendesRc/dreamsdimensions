@@ -33,5 +33,6 @@
   "message.dreamsdimensions.oneiric_awakener.item_mismatch": "You returned, but your inventory changed during the transition. The Awakener was not consumed; check the log.",
   "block.dreamsdimensions.dream_flower_block": "Dream Flower",
   "block.dreamsdimensions.dream_log_block": "Dream Log",
-  "block.dreamsdimensions.dream_leaves_block": "Dream Leaves"
+  "block.dreamsdimensions.dream_leaves_block": "Dream Leaves",
+  "block.dreamsdimensions.marked_stone": "Marked Stone"
 }

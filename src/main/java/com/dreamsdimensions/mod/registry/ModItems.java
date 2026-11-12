@@ -99,6 +99,10 @@ public final class ModItems {
             ModBlocks.BLUE_DREAM_COBBLESTONE
     );
 
+    public static final DeferredItem<BlockItem> MARKED_STONE_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.MARKED_STONE
+    );
+
     public static final DeferredItem<BlockItem> DREAM_SHIMMER_BLOCK_ITEM = ITEMS.registerSimpleBlockItem(
             ModBlocks.DREAM_SHIMMER_BLOCK
     );
