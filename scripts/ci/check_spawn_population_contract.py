@@ -57,7 +57,11 @@ def validate_coordinator():
     assert main.count("DreamMobPopulationService::onServerStopped") == 1
     assert "EntitySpawnReason.NATURAL" in core
     assert "getEntitiesOfClass(" in core and "profile.localCap()" in core
-    assert "if (existing.size() >= profile.localCap()) return;" in core
+    # The cap must still exit before candidate work; Task 7.1 may record a
+    # read-only rejection before returning.
+    assert "if (existing.size() >= profile.localCap()) {" in core
+    assert 'observe(profile, level, "ENTITY_SPAWN_REJECTED", "SKIPPED", "LOCAL_CAP");' in core
+    assert "return;\n        }" in core
     assert "if (!reserveRegion(level, player, profile)) continue;" in core
     assert "MAX_REGION_KEYS = 256" in core and "RECENT.clear();" in core
     assert "level.hasChunkAt(chunkProbe)" in core
