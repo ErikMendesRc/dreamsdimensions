@@ -403,6 +403,7 @@ def main() -> None:
     group.add_argument("--static", action="store_true")
     group.add_argument("--aggregate", action="store_true")
     group.add_argument("--manual-template", action="store_true")
+    group.add_argument("--manual-review", action="store_true")
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument("--marked-dir", type=Path)
     parser.add_argument("--ore-dir", type=Path)
@@ -414,6 +415,18 @@ def main() -> None:
         report = static_report(args.root.resolve())
     elif args.manual_template:
         report = manual_template()
+    elif args.manual_review:
+        if args.manual is None:
+            parser.error("--manual-review requires --manual path/to/manual-results.json")
+        results = manual_status(load(args.manual))
+        report = {
+            "schema_version": SCHEMA,
+            "test_id": "task_7_5_f0_manual_review",
+            "status": results["status"],
+            "evidence_type": "MANUAL_VERIFIED",
+            "results": results,
+            "note": "Manual evidence was evaluated from user-supplied results, not verified by CI.",
+        }
     else:
         if not all((args.marked_dir, args.ore_dir, args.ruins_dir)):
             parser.error("--aggregate requires --marked-dir, --ore-dir and --ruins-dir")
