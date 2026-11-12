@@ -206,7 +206,7 @@ Confirmar renascimento local, inventário preservado. Testar **ambas** dimensõe
 - Alterado: `DreamsDimensions.java` — listeners únicos em NeoForge bus.
 - Alterados: dois `dimension_type` — bloqueio de cama e explosão.
 - Novo: `DreamRespawnPolicyTest.java`, `check_dream_respawn.py` (validação estática da estrutura opcional de codec).
-- Atualizados: CI `.github/workflows/build.yml`, `GAMEPLAY_ROADMAP.md` e `TRAVEL_RETURN_TEST_MATRIX_TASK_5_2.md`.
+- Na implementação original, o CI e a matriz de viagem/retorno foram atualizados. O roadmap antigo da Task 5.0 foi posteriormente retirado da árvore por estar superado; o histórico permanece no Git. A referência de QA vigente é `QA_E_VALIDACAO.md`.
 
 **Não alterados:** ID/codec do `dream_return`, inventário/Curios, receitas, frequência/algoritmo de spawn de mobs, mundo/biomas, geometria, Despertador 60 ticks, cooldown 60 ticks, Colar e chance, economia, densidade, spawn do Vigia.
 

@@ -3,7 +3,7 @@
 **Data:** 2026-11-10 · **Branch:** `migration/minecraft-26.3` · **HEAD auditado:** `c5e5c5ba63cab73e3de9e1ff1227992a4c3b52ed` · **Tipo:** documentação/auditoria, sem alteração em runtime.
 **Stack comprovada:** Minecraft 26.3; NeoForge 26.3.0.101; Java 25; ModDevGradle 2.0.148; GeckoLib 5.5.7. Fonte: `gradle.properties`/`build.gradle`.
 
-> **Precedência:** os requisitos fechados nesta Task 5.2 têm prioridade nas **novas implementações de viagem/retorno** sobre propostas históricas da Task 5.0 e da nota `PROGRESSION_OVERWORLD_FIRST.md`. Não reinterpretar seus relatórios como resultados novos. Termos: **RC** requisito confirmado pelo produto, **GD** recomendação de game design, **TP** decisão técnica proposta, **PV** pendência de validação, **IF** implementação futura, **C** evidência de código lido; **não** significa teste in-game.
+> **Precedência:** os requisitos fechados nesta Task 5.2 têm prioridade nas **novas implementações de viagem/retorno** sobre propostas históricas da Task 5.0 e da antiga nota de progressão 5.0 (hoje arquivada no histórico Git). Não reinterpretar seus relatórios como resultados novos. Termos: **RC** requisito confirmado pelo produto, **GD** recomendação de game design, **TP** decisão técnica proposta, **PV** pendência de validação, **IF** implementação futura, **C** evidência de código lido; **não** significa teste in-game.
 
 ## 1. Ciclo de Survival e invariantes
 
@@ -38,7 +38,7 @@
 | `dimension_type/*.json` | Ambos `bed_rule.can_sleep=when_dark`, `can_set_spawn=always`, sem explosão indicada | **P0:** sono atualmente permitido em condições de escuridão; criar política explícita em 5.5 | 5.5 |
 | `recipe/oneiric_awakener.json` | Pena + núcleo onírico + frasco; cadeia total do núcleo consome Dream Dust | Receita não prova obtenção em Survival; dificuldade atual é requisito | 5.6 |
 | Loot tables | Há tabelas de drops de blocos; **não** há baús de recuperação/estruturas da 5.7 | Softlock ao entrar sem item até estruturar recuperação | 5.7 |
-| `GAMEPLAY_EXPLORATION_TASK_5_0.md`, `GAMEPLAY_CONTENT_MATRIX.md`, `GAMEPLAY_ROADMAP.md`, `PROGRESSION_OVERWORLD_FIRST.md` | Documentam base e várias hipóteses anteriores | Referências a “Despertador reutilizável” e IDs 5.2–5.7 antigos conflitavam; esta task os complementa sem apagar histórico | 5.2 |
+| `GAMEPLAY_E_DIRECAO.md`, `ESTADO_ATUAL.md` | Contratos atuais; rascunhos da Task 5.0 arquivados no histórico Git | A hipótese anterior de “Despertador reutilizável” foi superada pelo item consumível da Task 5.4 | 5.2 |
 
 Classificações: **IMPLEMENTADO (código):** seleção, teleporte, spawn e attachment; **IMPLEMENTADO COM DEFEITO:** custo do Despertador e confirmação de retorno, entrada irrestrita sob novas regras; **PENDENTE DE VALIDAÇÃO:** sono real, morte, spawn, reconexão, collision, playtest; **NÃO IMPLEMENTADO:** colar, probabilidade, âncora, baús e recuperação; **PROPOSTA FUTURA:** políticas abaixo.
 

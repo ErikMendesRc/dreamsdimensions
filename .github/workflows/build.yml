@@ -23,6 +23,17 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       - name: Build
         run: ./gradlew --no-daemon clean build
+      - name: Validate current docs and internal references
+        run: |
+          python3 scripts/ci/test_repository_docs.py
+          python3 scripts/ci/check_repository_docs.py --report qa-repository-docs-${{ matrix.seed }}.json
+      - name: Upload documentation integrity report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: repository-docs-seed-${{ matrix.seed }}
+          path: qa-repository-docs-${{ matrix.seed }}.json
+          if-no-files-found: ignore
       - name: Validate Task 7.2 reusable content & asset contract
         run: |
           python3 scripts/ci/test_content_contract.py
