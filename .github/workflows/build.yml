@@ -43,6 +43,8 @@ jobs:
           name: marked-stone-static-seed-${{ matrix.seed }}
           path: qa-marked-stone-static-seed-${{ matrix.seed }}.json
           if-no-files-found: ignore
+      - name: Test Task 7.4 strict four-seed evidence aggregation
+        run: python3 scripts/ci/test_marked_stone_worldgen_aggregate.py
       - name: Validate Task 7.4 F0b worldgen and stonecutter contract
         run: python3 scripts/ci/check_marked_stone_7_4.py --report qa-marked-stone-7-4-static-${{ matrix.seed }}.json
       - name: Upload Task 7.4 static QA evidence
@@ -267,4 +269,22 @@ jobs:
         with:
           name: dreamsdimensions-qa-four-seed-summary
           path: qa-summary.json
+          if-no-files-found: ignore
+      - name: Download Task 7.4 real Overworld surveys
+        uses: actions/download-artifact@v4
+        with:
+          pattern: marked-stone-worldgen-seed-*
+          path: marked-stone-matrix
+          merge-multiple: true
+      - name: Aggregate Task 7.4 natural Marked Stone in four seeds
+        run: |
+          python3 scripts/ci/aggregate_marked_stone_worldgen.py \
+            --input-dir marked-stone-matrix \
+            --output marked-stone-four-seeds-summary.json
+      - name: Upload Task 7.4 natural worldgen summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamsdimensions-marked-stone-7-4-four-seeds
+          path: marked-stone-four-seeds-summary.json
           if-no-files-found: ignore
