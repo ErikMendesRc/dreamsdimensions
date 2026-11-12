@@ -23,6 +23,7 @@ SPECS = {
         "size": (11, 8, 11),
         "expected_blocks_min": 65,
         "max_spacing": 64,
+        "terrain_adaptation": "none",
     },
     DREAM: {
         "biome": "dreamsdimensions:dreamscape_biome",
@@ -30,6 +31,7 @@ SPECS = {
         "size": (9, 8, 9),
         "expected_blocks_min": 50,
         "max_spacing": 64,
+        "terrain_adaptation": "beard_thin",
     }
 }
 
@@ -162,7 +164,7 @@ def validate_structure(name, spec):
     assert data["type"] == "minecraft:jigsaw"
     assert data["biomes"] == spec["biome"]
     assert data["step"] == "surface_structures"
-    assert data["terrain_adaptation"] == "none"
+    assert data["terrain_adaptation"] == spec["terrain_adaptation"]
     assert data["spawn_overrides"] == {}
     assert data["start_pool"] == f"dreamsdimensions:{spec['pool']}"
     assert data["size"] == 1
@@ -187,7 +189,7 @@ def validate_structure(name, spec):
     assert 20 <= p["spacing"] <= spec["max_spacing"]
     assert 8 <= p["separation"] < p["spacing"]
     assert isinstance(p["salt"], int)
-    return {"spacing_chunks":p["spacing"],"separation_chunks":p["separation"],
+    return {"terrain_adaptation":data["terrain_adaptation"],"spacing_chunks":p["spacing"],"separation_chunks":p["separation"],
             "salt":p["salt"]}
 
 
