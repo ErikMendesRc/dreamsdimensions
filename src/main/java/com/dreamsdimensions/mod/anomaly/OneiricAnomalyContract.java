@@ -16,7 +16,7 @@ import java.util.Objects;
 public final class OneiricAnomalyContract {
     public static final int VERSION = 1;
     public static final String OVERWORLD = "minecraft:overworld";
-    public static final int TRACE_MIN_SEPARATION = 12;
+    public static final int TRACE_MIN_SEPARATION = 20;
     public static final int TRACE_MAX_DISTANCE = 96;
     public static final int PAYOFF_MIN_DISTANCE = 36;
     public static final int PAYOFF_MAX_DISTANCE = 192;
@@ -234,6 +234,11 @@ public final class OneiricAnomalyContract {
         }
         if (!evidence.serverValidated()) {
             return reject(previous, Reason.UNTRUSTED_EVENT);
+        }
+        // Do not let a player begin investigating an incomplete, non-committed
+        // scene. That would create an attractive but permanently false clue.
+        if (!site.payoffCommitted()) {
+            return reject(previous, Reason.TARGET_UNAVAILABLE);
         }
         if (previous.resolved()) {
             return unchanged(previous, Reason.ALREADY_RESOLVED);
