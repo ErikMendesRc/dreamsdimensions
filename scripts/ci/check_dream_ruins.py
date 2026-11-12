@@ -23,6 +23,7 @@ SPECS = {
         "size": (11, 8, 11),
         "expected_blocks_min": 65,
         "max_spacing": 64,
+        "terrain_adaptation": "none",
     },
     DREAM: {
         "biome": "dreamsdimensions:dreamscape_biome",
@@ -30,6 +31,7 @@ SPECS = {
         "size": (9, 8, 9),
         "expected_blocks_min": 50,
         "max_spacing": 64,
+        "terrain_adaptation": "beard_thin",
     }
 }
 
@@ -155,6 +157,15 @@ def validate_catalog():
         j = read_json(DATA / f"dimension/{dimension.split(':')[1]}.json")
         assert j["generator"]["biome_source"]["biome"] == biome
     assert len({v["biome"] for v in SPECS.values()}) == 2
+    # 26.3 no longer injects a beardifier into noise final_density.
+    # Prevent a silent no-op when Dreamscape's Jigsaw uses beard_thin.
+    noise = read_json(DATA / "worldgen/noise_settings/dreamscape_noise.json")
+    final = noise["noise_router"]["final_density"]
+    assert final["type"] == "minecraft:add"
+    assert final["right"] == {"type": "minecraft:beardifier"}
+    assert final["left"] == {"type": "minecraft:interpolated",
+                            "input": "dreamsdimensions:dreamscape_solid_density",
+                            "cell_size_xz": 4, "cell_size_y": 4}
 
 
 def validate_structure(name, spec):
@@ -162,7 +173,7 @@ def validate_structure(name, spec):
     assert data["type"] == "minecraft:jigsaw"
     assert data["biomes"] == spec["biome"]
     assert data["step"] == "surface_structures"
-    assert data["terrain_adaptation"] == "none"
+    assert data["terrain_adaptation"] == spec["terrain_adaptation"]
     assert data["spawn_overrides"] == {}
     assert data["start_pool"] == f"dreamsdimensions:{spec['pool']}"
     assert data["size"] == 1
@@ -187,7 +198,7 @@ def validate_structure(name, spec):
     assert 20 <= p["spacing"] <= spec["max_spacing"]
     assert 8 <= p["separation"] < p["spacing"]
     assert isinstance(p["salt"], int)
-    return {"spacing_chunks":p["spacing"],"separation_chunks":p["separation"],
+    return {"terrain_adaptation":data["terrain_adaptation"],"spacing_chunks":p["spacing"],"separation_chunks":p["separation"],
             "salt":p["salt"]}
 
 

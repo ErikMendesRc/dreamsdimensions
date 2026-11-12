@@ -2,7 +2,7 @@
   "type": "minecraft:jigsaw",
   "biomes": "dreamsdimensions:dreamscape_biome",
   "step": "surface_structures",
-  "terrain_adaptation": "none",
+  "terrain_adaptation": "beard_thin",
   "spawn_overrides": {},
   "start_pool": "dreamsdimensions:ruins/fragmented_dream_ruins",
   "size": 1,

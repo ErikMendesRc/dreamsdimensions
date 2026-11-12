@@ -104,10 +104,12 @@ def invoke(expected_seed, output):
         for row in details:
             if row["status"]!="OBSERVED" or row["chest_count"] != 1 or row["loot_matches"] != 1:
                 raise AssertionError(f"Native ruins/chest validation failed: {row}")
-            # Stable support is separately measured, not presumed.
+            # Task 7.0: physical floor/walkability is a HARD GATE.
+            # A passing /locate + chest reference is insufficient for safe recovery.
             if row["stable_chests"] != 1:
-                print("::warning::Ruin has chest but failed strict 3x3 local support/walkability "
-                      f"test: {row}",flush=True)
+                raise AssertionError("Unsafe natural recovery ruin: a real chest exists, "
+                                     "but local support/walkability failed: "
+                                     f"{row}")
         return summary
     finally:
         con.close()
