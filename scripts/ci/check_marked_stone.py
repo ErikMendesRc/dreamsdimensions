@@ -116,20 +116,20 @@ def run(root):
         "modifier": [{"type": "minecraft:explosion_decay"}]}],
         "Marked Stone must drop exactly itself, not dust or XP or Fortune bonus")
     require("dream_dust" not in json.dumps(loot), "Marked Stone must not drop Dream Dust")
-    for category in ("recipe", "worldgen/feature", "worldgen/placed_feature"):
-        require(not (data / category / "marked_stone.json").exists(),
-                f"Task 7.3 must not ship {category}/marked_stone.json")
-    require(not (data / "recipe/cut_marked_stone.json").exists(),
-            "Lapidation belongs to Task 7.4")
+    # Task 7.3 remains a valid content/asset slice when Task 7.4 adds
+    # natural generation and its stonecutter extension. Worldgen and the cut
+    # variant are guarded separately by check_marked_stone_7_4.py.
     return {
         "schema_version": SCHEMA, "test_id": "task_7_3_marked_stone_static",
         "category": "CONTENT", "status": "PASS", "evidence_type": "STATIC_CHECK",
         "block_id": f"{MOD}:marked_stone",
         "stone_or_better": True, "loot": "own_block_1_no_fortune",
-        "has_natural_worldgen": False, "has_lapidation": False, "texture": texture,
+        "has_natural_worldgen": (data / "worldgen/feature/marked_stone.json").exists(),
+        "has_lapidation": (data / "recipe/cut_marked_stone_from_marked_stone_stonecutting.json").exists(),
+        "texture": texture,
         "limitations": [
             "Static evidence does not prove client rendering or Survival mining/drops",
-            "Natural placement and stonecutting remain reserved for Task 7.4",
+            "Natural placement and stonecutting are validated by Task 7.4; this script covers F0a",
         ],
     }
 
