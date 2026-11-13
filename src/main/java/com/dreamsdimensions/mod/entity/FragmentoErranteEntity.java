@@ -480,7 +480,7 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
             }
             if (listener instanceof net.minecraft.server.level.ServerPlayer explorer) {
                 ItemStack memory = new ItemStack(ModItems.REMINISCENCE.get());
-                if (!explorer.getInventory().add(memory)) explorer.drop(memory, false);
+                if (!explorer.getInventory().add(memory)) net.minecraft.world.level.block.Block.popResource(explorer.level(),explorer.blockPosition(),memory);
             }
             resonanceCooldown = RESONANCE_COOLDOWN;
             curiosityCooldown = Math.max(curiosityCooldown, 60);

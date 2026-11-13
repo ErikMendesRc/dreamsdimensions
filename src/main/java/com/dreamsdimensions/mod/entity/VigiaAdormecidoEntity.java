@@ -272,7 +272,7 @@ public final class VigiaAdormecidoEntity extends PathfinderMob implements GeoEnt
         if (anchor != null && DreamAnchorService.grant(serverPlayer, anchor)) {
             triggerAnim(CONTROLLER, "inspect_ground");
             ItemStack memory = new ItemStack(ModItems.REMINISCENCE.get());
-            if (!serverPlayer.getInventory().add(memory)) serverPlayer.drop(memory, false);
+            if (!serverPlayer.getInventory().add(memory)) net.minecraft.world.level.block.Block.popResource(serverPlayer.level(),serverPlayer.blockPosition(),memory);
             ritualCooldown = PACT_COOLDOWN_TICKS;
         }
         resetRitual();

@@ -188,7 +188,7 @@ public final class ModBlocks {
 
     public static final DeferredBlock<OneiricKettleBlock> ONEIRIC_KETTLE =
             BLOCKS.registerBlock("oneiric_kettle", OneiricKettleBlock::new,
-                    () -> BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BLOCK)
+                    () -> BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)
                             .strength(2.5f,6.0f).noOcclusion());
 
     public static final DeferredBlock<TemporaryPlumeBridgeBlock> TEMPORARY_PLUME_BRIDGE =

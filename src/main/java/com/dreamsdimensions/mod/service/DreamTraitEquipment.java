@@ -63,7 +63,7 @@ public final class DreamTraitEquipment {
         if(!player.getAbilities().instabuild)lining.shrink(1);
         if(previous){
             ItemStack returned=new ItemStack(ModItems.PLUME_LINING.get());
-            if(!player.getInventory().add(returned))player.drop(returned,false);
+            if(!player.getInventory().add(returned))net.minecraft.world.level.block.Block.popResource(player.level(),player.blockPosition(),returned);
         }
     }
 }

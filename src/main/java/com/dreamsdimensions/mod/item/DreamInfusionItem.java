@@ -33,7 +33,7 @@ public final class DreamInfusionItem extends Item {
             stack.shrink(1);
             ItemStack bottle=new ItemStack(Items.GLASS_BOTTLE);
             if(stack.isEmpty())return bottle;
-            if(!player.getInventory().add(bottle))player.drop(bottle,false);
+            if(!player.getInventory().add(bottle))net.minecraft.world.level.block.Block.popResource(level,player.blockPosition(),bottle);
         }
         return stack;
     }

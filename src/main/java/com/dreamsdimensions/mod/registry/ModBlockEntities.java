@@ -13,8 +13,8 @@ public final class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> TYPES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, DreamsDimensions.MODID);
     public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<OneiricKettleBlockEntity>> KETTLE =
-            TYPES.register("oneiric_kettle", () -> BlockEntityType.Builder.of(
-                    OneiricKettleBlockEntity::new, ModBlocks.ONEIRIC_KETTLE.get()).build(null));
+            TYPES.register("oneiric_kettle", () -> new BlockEntityType<>(
+                    OneiricKettleBlockEntity::new, ModBlocks.ONEIRIC_KETTLE.get()));
     private ModBlockEntities() {}
     public static void register(IEventBus bus) {TYPES.register(bus);}
 }

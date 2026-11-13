@@ -55,20 +55,12 @@ public final class OneiricKettleBlock extends BaseEntityBlock {
         if(!level.isClientSide()) {
             ItemStack finished=kettle.removeOne();
             if(!finished.isEmpty()) {
-                if(!player.getInventory().add(finished))player.drop(finished,false);
+                if(!player.getInventory().add(finished))Block.popResource(level,pos,finished);
             } else {
                 player.sendSystemMessage(Component.translatable("message.dreamsdimensions.kettle.status",
                         kettle.getBottles(),kettle.getProgress()));
             }
         }
         return InteractionResult.SUCCESS;
-    }
-    @Override protected void onRemove(BlockState state,Level level,BlockPos pos,
-            BlockState replacement,boolean movedByPiston) {
-        if(!state.is(replacement.getBlock()) && !level.isClientSide()
-                && level.getBlockEntity(pos) instanceof OneiricKettleBlockEntity kettle) {
-            kettle.dropStored(level,pos);
-        }
-        super.onRemove(state,level,pos,replacement,movedByPiston);
     }
 }

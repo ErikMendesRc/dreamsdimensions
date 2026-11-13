@@ -102,6 +102,12 @@ public final class OneiricKettleBlockEntity extends BlockEntity {
         waterBottles=0;herbBase=false;reagent=0;progress=0;ready=false;
     }
 
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        if (level != null && !level.isClientSide()) dropStored(level, pos);
+        super.preRemoveSideEffects(pos, state);
+    }
+
     @Override protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         output.putInt("bottles",waterBottles);
