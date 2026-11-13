@@ -28,6 +28,7 @@
 | Ruínas de recuperação e loot nativo | IMPLEMENTADO, CI_VERIFICADO; travessia/baú aberto em Survival MANUAL_PENDENTE | `data/.../worldgen/structure/`, `scripts/ci/audit_dream_ruins_runtime.py` |
 | Telemetria e relatórios das quatro seeds | IMPLEMENTADO, CI_VERIFICADO; coleta opt-in | `qa/DreamQaRecorder.java`, `scripts/ci/` |
 | Qualidade visual Tasks 8.0–8.7 | **MELHORIAS DE ASSETS E CLIENTE IMPLEMENTADAS**; avaliação visual/Survival MANUAL_PENDENTE | `assets/.../textures/`, `client/feedback/`, `block/OneiricCoreBlock.java`, `scripts/ci/visual_release_gate.py` |
+| Task 9.0 — Contrato Universal e catálogo Overworld | **DESIGN_ONLY**; implementação da F1 e playtest não realizados | [Contrato 9.0](TASK_9_0_OVERWORLD_GAMEPLAY_CONTRACT.md), [catálogo 9.0](OVERWORLD_CONTENT_CATALOG_TASK_9_0.json), `scripts/ci/check_overworld_contract_9_0.py` |
 
 **Crítico:** as duas dimensões atuais são exemplos iniciais. **Não** amarrar progressão geral do DreamsDimensions à lore, aos materiais ou às peculiaridades exclusivas delas.
 
