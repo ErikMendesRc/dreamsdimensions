@@ -1,6 +1,7 @@
 package com.dreamsdimensions.mod.item;
 
 import com.dreamsdimensions.mod.config.DreamsConfig;
+import com.dreamsdimensions.mod.registry.ModItems;
 import com.dreamsdimensions.mod.qa.DreamQaRecorder;
 import com.dreamsdimensions.mod.service.OneiricReturnGuard;
 import com.dreamsdimensions.mod.service.OneiricReturnPolicy;
@@ -9,6 +10,7 @@ import com.dreamsdimensions.mod.service.OneiricReturnPolicy.Result;
 import com.dreamsdimensions.mod.util.DreamReturnHelper;
 import com.mojang.logging.LogUtils;
 import java.util.UUID;
+import java.util.Optional;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -51,7 +53,8 @@ public class OneiricAwakenerItem extends Item {
 
     @Override
     public ItemUseAnimation getUseAnimation(ItemStack stack) {
-        return ItemUseAnimation.BOW;
+        // A talisman does not draw a bow; keep its artwork visible while channeling.
+        return ItemUseAnimation.NONE;
     }
 
     @Override
@@ -109,7 +112,19 @@ public class OneiricAwakenerItem extends Item {
         int before = stack.getCount();
         try {
             // Build the existing bed -> personal respawn -> safe world spawn fallback.
-            var target = DreamReturnHelper.buildReturnTransition(player);
+            Optional<TeleportTransition> target;
+            try {
+                target = DreamReturnHelper.buildReturnTransition(player);
+            } catch (RuntimeException exception) {
+                // An invalid/corrupted bed or unloaded return context may fail
+                // while resolving the destination, before any teleport occurs.
+                // Preserve the initiating stack and avoid crashing the item tick.
+                LOGGER.error("ONEIRIC_RETURN player_uuid={} source={} "
+                        + "result=target_resolution_exception consumed=0 hand={}",
+                        uuid, source.identifier(), hand, exception);
+                failed(player, uuid, hand, source.identifier().toString(), Result.INVALID_TARGET);
+                return stack;
+            }
             if (target.isEmpty()) {
                 failed(player, uuid, hand, source.identifier().toString(), Result.INVALID_TARGET);
                 return stack;
@@ -211,7 +226,10 @@ public class OneiricAwakenerItem extends Item {
 
     public static void onStoppedUsing(
             net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent.Stop event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
+        // Ignore Stop events from unrelated items. Only the original
+        // Awakener's interrupted use can invalidate its pending ticket.
+        if (event.getEntity() instanceof ServerPlayer player
+                && event.getItem().is(ModItems.ONEIRIC_AWAKENER.get())) {
             GUARD.cancel(player.getUUID());
         }
     }

@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_column",
   "textures": {
-    "all": "dreamsdimensions:block/oneiric_core_block"
+    "end": "dreamsdimensions:block/oneiric_core_block_top",
+    "side": "dreamsdimensions:block/oneiric_core_block_side",
+    "particle": "dreamsdimensions:block/oneiric_core_block_side"
   }
 }
