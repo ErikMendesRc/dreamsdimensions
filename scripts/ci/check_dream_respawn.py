@@ -48,7 +48,9 @@ assert 'optionalFieldOf("yaw")' in anchor
 assert "new DreamExpeditionAnchorData()" not in anchor.split("CODEC =", 1)[0]
 assert '"dream_expedition_anchor"' in attachment
 assert "DreamExpeditionAnchorData.CODEC" in attachment
-assert attachment.count(".copyOnDeath()") == 2
+# 9.3: hangover must also persist through death, without rewriting legacy codecs.
+assert attachment.count(".copyOnDeath()") == 3
+assert '"dream_hangover"' in attachment and "DreamHangoverData.CODEC" in attachment
 assert '"dream_return"' in attachment
 assert "DreamReturnData.CODEC" in attachment
 assert '"dimension"' in original_return and '"pos"' in original_return and '"yaw"' in original_return
