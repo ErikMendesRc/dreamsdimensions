@@ -158,3 +158,36 @@ Testes:
 Arquivos previstos: `item/OneiricAwakenerItem.java`, `service/OneiricReturnPolicy.java`, `service/OneiricReturnGuard.java`, `registry/ModItems.java`, `DreamsDimensions.java`, traduções, 2 JUnit, este relatório, matriz e roadmap.
 
 **Commit de implementação:** [ed166e9f3a88c55666d8ce24754d22926d199a6a](https://github.com/ErikMendesRc/dreamsdimensions/commit/ed166e9f3a88c55666d8ce24754d22926d199a6a) — `fix(gameplay): consume oneiric awakener after confirmed return`. **CI:** [run 42895974012](https://github.com/ErikMendesRc/dreamsdimensions/actions/runs/42895974012); os quatro jobs `build (14011)`, `build (20261108)`, `build (-904732)` e `build (73199013)` concluíram com **success**. Isso cobre JDK 25 + Gradle `clean build` (JUnit incluído), checks estáticos e dedicated server smoke. **Não é prova** de ativação de 60 ticks por jogador real nem de sincronização de inventário em multiplayer; tais testes continuam explicitamente PENDENTES.
+
+
+## Adendo — Polimento visual e proteção do retorno (12/11/2026)
+
+A revisão pós-Task 8 **não muda a receita, o ID, o consumo, o tempo de ativação (60 ticks) nem o cooldown (60 ticks)**. Corrige e melhora exclusivamente o que segue:
+
+- **Despertador**: novo ícone talismã de cristal **32×32**, com transparência real e tons ciano/violeta; removida a pose visual de arco (`ItemUseAnimation.BOW` → `NONE`). A duração do uso vanilla continua a mesma; confirmar legibilidade na mão e no inventário.
+- **Núcleo Onírico**: topo com selo circular e laterais com canal vertical de energia; modelo `cube_column`, partículas ligadas à lateral, arte original 32×32. O arquivo antigo de textura sem consumidor foi retirado; o ID `dreamsdimensions:oneiric_core_block` permanece intacto.
+- **Falha defensiva 1**: exceções lançadas **ao resolver o destino de retorno**, antes de teleportar, não escapam da callback de uso. O item não é consumido, não recebe cooldown, e o jogador recebe a mensagem de falha; a exceção real é registrada no servidor.
+- **Falha defensiva 2**: o evento `LivingEntityUseItemEvent.Stop` agora cancela a ativação pendente **somente se o item interrompido for o Despertador**, não se for outro item qualquer. Confirmado o método `getItem()` na API NeoForge 26.3.
+- **Testes**: auditoria estática verifica as três texturas 32×32 (CRC completo e dados de imagem), modelo lateral/topo e ausência da textura antiga. Esses gates são verificados na CI existente em quatro seeds.
+
+**Honestidade de QA:** os ajustes de exceção/Stop são endurecimento preventivo de casos possíveis; não são prova de que o bug específico havia sido reproduzido em Survival. Build/JUnit e cliente manual devem verificar uso de 60 ticks, cancelamento e retorno com cama destruída/corrompida. O resultado final de retorno com dois jogadores ainda precisa de homologação humana.
+
+### Comandos de validação
+
+```powershell
+python scripts/ci/test_visual_assets.py
+python scripts/ci/audit_visual_assets.py --report qa-visual-assets.json
+.\gradlew.bat --no-daemon clean build
+.\gradlew.bat runClient
+```
+
+```mcfunction
+/gamemode creative
+/give @s dreamsdimensions:oneiric_awakener 1
+/give @s dreamsdimensions:oneiric_core_block 16
+/gamemode spectator
+/execute in dreamsdimensions:dreamscape run tp @s 0 180 0
+/execute in minecraft:overworld run tp @s 0 140 0
+```
+
+Os `/tp` acima são **para observar em Spectator**, não coordenadas seguras de Survival. Teste o uso em um mundo descartável, somente depois de confirmar uma plataforma segura na dimensão e com `/gamemode survival`.

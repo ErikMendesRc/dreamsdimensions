@@ -8,7 +8,7 @@ import unittest
 import zlib
 
 from audit_visual_assets import (
-    VisualAuditError, ROTATED_NATURAL, audit, png_details, unique_lang_keys
+    VisualAuditError, ROTATED_NATURAL, audit, png_details, unique_lang_keys, assert_png_integrity
 )
 
 
@@ -43,6 +43,20 @@ class VisualAssetTest(unittest.TestCase):
         self.assertEqual(result["visual_review"], "NOT_RUN")
         self.assertEqual(result["counts"]["rotation_materials"], len(ROTATED_NATURAL))
         self.assertEqual(result["counts"]["creative_entries"], 22)
+
+    def test_real_oneiric_art_model_and_pngs(self):
+        result = audit(ROOT)
+        self.assertEqual(result["counts"]["premium_32_textures"], 3)
+        self.assertNotIn("textures/block/oneiric_core_block.png",
+                         [row["asset"] for row in result["legacy_texture_debt"]])
+
+    def test_oneiric_png_corrupt_idat_fails(self):
+        original = bytearray(small_png(32))
+        # Corrupt the compressed payload, leaving IHDR untouched.
+        original[45] ^= 1
+        file = self.save("damaged.png", original)
+        with self.assertRaisesRegex(VisualAuditError, "PNG chunk CRC failed"):
+            assert_png_integrity(file)
 
     def test_valid_16_pixel_texture(self):
         file = self.save("stone.png", small_png(16))

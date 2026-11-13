@@ -90,3 +90,8 @@ Colocar paredes 5×5 das duas pedras e grama/terra, observar **de dia e à noite
 - **VISUAL_CLIENT:** `NOT_RUN` até player validar comparação lado a lado, inventário, mobs e performance. Não declarar “texturas aprovadas” com base apenas no relatório JSON.
 
 **Decisão:** depois desta task, não lançar mais conteúdo visual por quota. O audit será a referência única para problemas evidenciados; mudanças adicionais devem atender um problema visual demonstrado, não um conceito genérico.
+
+
+## Polimento posterior — Despertador e Núcleo Onírico
+
+Sem novos sistemas de gameplay: Despertador e Núcleo receberam sprites **32×32** originais, topo/lateral distintos no Core e limpeza da textura anterior. As correções de robustez de uso/retorno estão documentadas no [contrato do Despertador](ONEIRIC_AWAKENER_TASK_5_4.md). Os novos assets são verificáveis pela auditoria visual, mas a renderização e o retorno em cliente continuam sujeitos a teste manual.

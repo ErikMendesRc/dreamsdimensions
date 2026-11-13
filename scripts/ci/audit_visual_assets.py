@@ -70,6 +70,37 @@ def png_details(path: Path) -> dict:
     }
 
 
+def assert_png_integrity(path: Path) -> None:
+    """Full chunk CRC and IDAT integrity for the 3 new 32x32 sprites."""
+    data = path.read_bytes()
+    require(data.startswith(PNG_SIG), f"Invalid PNG signature: {path}")
+    index = 8
+    compressed = []
+    seen_end = False
+    while index + 12 <= len(data):
+        size = struct.unpack(">I", data[index:index + 4])[0]
+        require(size <= len(data) - index - 12,
+                f"Truncated PNG chunk in {path}")
+        tag = data[index + 4:index + 8]
+        payload = data[index + 8:index + 8 + size]
+        crc = struct.unpack(">I", data[index + 8 + size:index + 12 + size])[0]
+        require(zlib.crc32(tag + payload) & 0xffffffff == crc,
+                f"PNG chunk CRC failed: {path}: {tag!r}")
+        index += 12 + size
+        if tag == b"IDAT":
+            compressed.append(payload)
+        if tag == b"IEND":
+            seen_end = True
+            break
+    require(seen_end and index == len(data) and compressed,
+            f"PNG missing IEND/IDAT or has trailing bytes: {path}")
+    try:
+        raw = zlib.decompress(b"".join(compressed))
+    except zlib.error as exc:
+        raise VisualAuditError(f"Corrupt PNG compressed image: {path}: {exc}") from exc
+    require(raw, f"PNG contains no decoded image data: {path}")
+
+
 def unique_lang_keys(path: Path) -> dict:
     pairs = []
 
@@ -127,6 +158,34 @@ def audit(root: Path, enforce_current_presentation: bool = True) -> dict:
         for name in canonical_pixel_art:
             require(name in texture_details and texture_details[name]["pixel_art_16"],
                     f"Expected original 16x16 texture for {name}")
+
+    # The Awakener and the Core are intentionally drawn at 32x32 for an
+    # ornate silhouette. Check both dimensions and full PNG byte integrity;
+    # 32px is a deliberate exception to the F0 16px convention.
+    premium_32 = (
+        "textures/item/oneiric_awakener.png",
+        "textures/block/oneiric_core_block_top.png",
+        "textures/block/oneiric_core_block_side.png",
+    )
+    if enforce_current_presentation:
+        for name in premium_32:
+            require(name in texture_details
+                    and texture_details[name]["width"] == 32
+                    and texture_details[name]["height"] == 32,
+                    f"Expected premium 32x32 texture for {name}")
+            assert_png_integrity(assets / name)
+
+        core_model = load_json(assets / "models/block/oneiric_core_block.json")
+        require(core_model.get("parent") == "minecraft:block/cube_column",
+                "Oneiric Core must use distinct top/side artwork")
+        textures_model = core_model.get("textures", {})
+        require(textures_model.get("end") == "dreamsdimensions:block/oneiric_core_block_top"
+                and textures_model.get("side") == "dreamsdimensions:block/oneiric_core_block_side"
+                and textures_model.get("particle") ==
+                "dreamsdimensions:block/oneiric_core_block_side",
+                "Oneiric Core model has missing/incorrect faces or particles")
+        require(not (assets / "textures/block/oneiric_core_block.png").exists(),
+                "Retired old Core Block texture must not remain unreferenced")
 
     # High-resolution artwork in existing repository is intentionally NOT
     # resampled blind. This debt will need an artistic A/B client review.
@@ -230,6 +289,7 @@ def audit(root: Path, enforce_current_presentation: bool = True) -> dict:
             "creative_entries": len(creative),
             "rotation_materials": len(visual_variants),
             "strict_pixel_art_family": len(canonical_pixel_art),
+            "premium_32_textures": len(premium_32),
         },
         "legacy_texture_debt": sorted(legacy, key=lambda row: -row["bytes"]),
         "potential_duplicate_textures": duplicate_content,
