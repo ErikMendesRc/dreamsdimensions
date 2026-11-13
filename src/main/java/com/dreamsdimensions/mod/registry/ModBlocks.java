@@ -2,6 +2,7 @@ package com.dreamsdimensions.mod.registry;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.block.DreamOreBlock;
+import com.dreamsdimensions.mod.block.OneiricCoreBlock;
 import com.dreamsdimensions.mod.block.DreamLeavesBlock;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
@@ -132,8 +133,9 @@ public final class ModBlocks {
                     .requiresCorrectToolForDrops()
     );
 
-    public static final DeferredBlock<Block> ONEIRIC_CORE_BLOCK = BLOCKS.registerSimpleBlock(
+    public static final DeferredBlock<OneiricCoreBlock> ONEIRIC_CORE_BLOCK = BLOCKS.registerBlock(
             "oneiric_core_block",
+            OneiricCoreBlock::new,
             () -> BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)
                     .requiresCorrectToolForDrops()
     );
