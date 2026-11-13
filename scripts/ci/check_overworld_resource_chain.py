@@ -93,7 +93,7 @@ def validate_worldgen():
     provider = herb_feature["to_place"]
     assert provider["type"] == "minecraft:simple"
     assert provider["state"]["id"] == "dreamsdimensions:vigil_herb"
-    assert provider["state"]["properties"] == {"age": "3", "open": "true"}
+    assert provider["state"]["properties"] == {"age": "3", "open": "false"}, ("Wild mature herbs initialize closed and unfold at night via scheduled ticks")
     placed_herb = load(DATA / "worldgen/placed_feature/vigil_herb_patch.json")
     assert placed_herb["feature"] == "dreamsdimensions:vigil_herb_patch"
     modifiers = placed_herb["placement"]
