@@ -15,9 +15,10 @@ MINECRAFT = ROOT / "src/main/resources/data/minecraft"
 MODIFIER_DIR = DATA / "neoforge/biome_modifier"
 ORE_IDS = ("dreamsdimensions:dream_ore", "dreamsdimensions:deepslate_dream_ore")
 ORE_NAMES = ("dream_ore", "deepslate_dream_ore")
-RECIPE_NAMES = ("dream_necklace", "dream_infused_stone", "oneiric_core_block", "oneiric_awakener")
+RECIPE_NAMES = ("dream_necklace", "dream_infused_stone", "oneiric_core_block")
 OUR_ITEMS = {f"dreamsdimensions:{name}" for name in (
-    "dream_dust", "dream_necklace", "dream_infused_stone", "oneiric_core_block", "oneiric_awakener")}
+    "dream_dust", "dream_necklace", "dream_infused_stone", "oneiric_core_block", "oneiric_awakener",
+    "return_charge", "toasted_vigil_herb", "vigil_herb_leaf", "vigil_herb_seeds")}
 VANILLA_INPUTS = {"minecraft:copper_ingot", "minecraft:amethyst_shard",
                   "minecraft:stone", "minecraft:clock", "minecraft:feather",
                   "minecraft:glass_bottle"}
@@ -156,6 +157,7 @@ def recipe_data(name):
 def calculate_economy():
     recipes = {name: recipe_data(name) for name in RECIPE_NAMES}
     costs = {}
+
     def expand(identifier, ancestors=frozenset()):
         if identifier in ancestors:
             raise AssertionError(f"Circular crafting dependency at {identifier}")
@@ -173,30 +175,53 @@ def calculate_economy():
 
     for name in RECIPE_NAMES:
         expand("dreamsdimensions:" + name)
-    expected = {
-        "dream_necklace": 3,
-        "dream_infused_stone": 2,
-        "oneiric_core_block": 12,
-        "oneiric_awakener": 12,
-    }
-    # These are the decisions from Tasks 5.2-5.6. If the recipe changes
-    # intentionally later, the game design contract and this audit must agree.
-    for name, target in expected.items():
-        assert costs[name][DUST] == target, (name, costs[name][DUST], target)
-    assert costs["oneiric_awakener"]["minecraft:stone"] == 8
-    assert costs["oneiric_awakener"]["minecraft:clock"] == 1
-    assert costs["oneiric_awakener"]["minecraft:feather"] == 1
-    assert costs["oneiric_awakener"]["minecraft:glass_bottle"] == 1
+
+    for name, dust_count in {
+        "dream_necklace": 3, "dream_infused_stone": 2, "oneiric_core_block": 12
+    }.items():
+        assert costs[name][DUST] == dust_count, (name, costs[name][DUST], dust_count)
+
+    assert costs["oneiric_core_block"]["minecraft:stone"] == 8
+    assert costs["oneiric_core_block"]["minecraft:clock"] == 1
     assert costs["dream_necklace"]["minecraft:copper_ingot"] == 3
     assert costs["dream_necklace"]["minecraft:amethyst_shard"] == 1
+
+    # Task 9.2: the Awakener must not be craftable from vanilla Crafting Table.
+    assert not (DATA / "recipe/oneiric_awakener.json").exists(), (
+        "The old Awakener recipe must not consume a Core after the migration")
+
+    charge = load(DATA / "recipe/return_charge.json")
+    assert charge["type"] == "minecraft:crafting_shapeless"
+    assert charge["result"] == {"id": "dreamsdimensions:return_charge", "count": 1}
+    assert Counter(charge["ingredients"]) == Counter({
+        DUST: 3, "dreamsdimensions:toasted_vigil_herb": 2
+    }), "Return Charge requires both geology and botany"
+
+    for name in ("toasted_vigil_herb_smoking", "toasted_vigil_herb_campfire"):
+        recipe = load(DATA / f"recipe/{name}.json")
+        assert recipe["ingredient"] == "dreamsdimensions:vigil_herb_leaf"
+        assert recipe["result"] == {"id": "dreamsdimensions:toasted_vigil_herb", "count": 1}
+
+    menu_file = ROOT / "src/main/java/com/dreamsdimensions/mod/menu/OneiricCoreMenu.java"
+    menu = menu_file.read_text(encoding="utf-8")
+    for ingredient in ("RETURN_CHARGE", "Items.FEATHER", "Items.GLASS_BOTTLE"):
+        assert ingredient in menu, f"Missing Core assembly ingredient {ingredient}"
+    assert "ONEIRIC_AWAKENER" in menu, "Core menu output missing"
+    assert "private final ResultContainer result" in menu
+    assert "clearContainer(player, inputs)" in menu
+
     summary = {
         "one_necklace": dict(costs["dream_necklace"]),
-        "one_awakener": dict(costs["oneiric_awakener"]),
-        "cost_dust_for_necklace_plus_n_awakeners": {
-            str(n): costs["dream_necklace"][DUST] + n * costs["oneiric_awakener"][DUST]
-            for n in (1, 2, 3)
-        },
+        "first_core": dict(costs["oneiric_core_block"]),
+        "return_charge": dict(Counter(charge["ingredients"])),
+        "dust_first_necklace_core_awakener": (
+            costs["dream_necklace"][DUST] + costs["oneiric_core_block"][DUST]
+            + Counter(charge["ingredients"])[DUST]
+        ),
+        "dust_each_subsequent_awakener": Counter(charge["ingredients"])[DUST],
     }
+    assert summary["dust_first_necklace_core_awakener"] == 18
+    assert summary["dust_each_subsequent_awakener"] == 3
     return summary
 
 
@@ -206,8 +231,8 @@ def validate_recipe_book():
             {"dreamsdimensions:dream_necklace", "dreamsdimensions:dream_infused_stone"}),
         "dream_infused_stone_discovered": ("dreamsdimensions:dream_infused_stone",
             {"dreamsdimensions:oneiric_core_block"}),
-        "oneiric_core_discovered": ("dreamsdimensions:oneiric_core_block",
-            {"dreamsdimensions:oneiric_awakener"}),
+        "return_charge_discovered": ("dreamsdimensions:toasted_vigil_herb",
+            {"dreamsdimensions:return_charge"}),
     }
     directory = DATA / "advancement/recipes"
     assert {p.stem for p in directory.glob("*.json")} == set(expected)
@@ -224,7 +249,7 @@ def validate_recipe_book():
         assert set(rewards["recipes"]) == unlocks
         assert not rewards_seen.intersection(unlocks), "Duplicate recipe book reward"
         rewards_seen |= unlocks
-    assert rewards_seen == {f"dreamsdimensions:{name}" for name in RECIPE_NAMES}
+    assert rewards_seen == {f"dreamsdimensions:{name}" for name in RECIPE_NAMES} | {"dreamsdimensions:return_charge"}
 
 
 if __name__ == "__main__":
@@ -234,7 +259,7 @@ if __name__ == "__main__":
     validate_recipe_book()
     print("TASK 5.6 STATIC_DATA_PASS: ore worldgen JSON, single Overworld modifier, "
           "26.3 silk/fortune loot, iron tool tags, recovered expensive blocks, "
-          "acyclic recipes and recipe-book unlocks.")
+          "acyclic recipes, reusable Core assembly and updated recipe-book unlocks.")
     print("TASK 5.6 WORLDGEN_PARAMETERS (NOT OBSERVED):",
           json.dumps(details, sort_keys=True))
     print("TASK 5.6 ECONOMY_CRAFTING (DERIVED FROM RECIPES):",
