@@ -18,7 +18,7 @@ O Dreamscape possui o Traço `FALL` no catálogo; o Campo Onírico Azul permanec
 
 | Recurso | Insumos e estação | Utilidade |
 |---|---|---|
-| Chaleira Onírica | 4 Lingotes de Cobre + 1 Pó Onírico na bancada | Caldeira persistente sobre fogueira acesa; até 3 garrafas, Erva Torrada + reagente; 400 ticks |
+| Chaleira Onírica | 5 Lingotes de Cobre + 1 Pó Onírico na bancada | Caldeira persistente sobre fogueira acesa; até 3 garrafas, Erva Torrada + reagente; 400 ticks |
 | Infusão de Leveza | Na Chaleira: água + Erva Torrada + Lasca de Plumita | 3 min: metade do dano de queda e Salto I, sem Queda Lenta |
 | Infusão de Vigília | Na Chaleira: água + 2 Ervas Torradas (base+reagente) | Efeito de Vigília de 3 min, preparado para interagir com o futuro Traço Torpor |
 | Forro de Pluma | 3 Lascas + Couro + Pó Onírico | Usar na mesa de ferraria com Forro na mão principal e armadura na secundária; redução de 35% por peça, limitada a 2 |
