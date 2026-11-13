@@ -2,6 +2,7 @@ package com.dreamsdimensions.mod.dimension;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -20,7 +21,8 @@ public record DreamDimensionDefinition(
         int naturalSpawnRadius,
         DimensionEffectPolicy effectPolicy,
         Optional<Identifier> atmosphereId,
-        Optional<Transition> transition
+        Optional<Transition> transition,
+        Set<DreamTrait> traits
 ) {
     public DreamDimensionDefinition {
         Objects.requireNonNull(dimension, "dimension");
@@ -28,6 +30,8 @@ public record DreamDimensionDefinition(
         Objects.requireNonNull(effectPolicy, "effectPolicy");
         Objects.requireNonNull(atmosphereId, "atmosphereId");
         Objects.requireNonNull(transition, "transition");
+        traits = Set.copyOf(Objects.requireNonNull(traits, "traits"));
+        if (traits.size() > 3) throw new IllegalArgumentException("At most three traits per dream");
         if (dimension == Level.OVERWORLD) {
             throw new IllegalArgumentException("Overworld is not a dream dimension");
         }

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "dreamsdimensions:plumite_block"
+  ],
+  "result": {
+    "id": "dreamsdimensions:plumite_shard",
+    "count": 9
+  }
+}

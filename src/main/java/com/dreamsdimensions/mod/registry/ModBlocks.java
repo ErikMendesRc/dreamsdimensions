@@ -4,6 +4,7 @@ import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.block.DreamOreBlock;
 import com.dreamsdimensions.mod.block.OneiricCoreBlock;
 import com.dreamsdimensions.mod.block.VigilHerbBlock;
+import com.dreamsdimensions.mod.block.PlumiteBlock;
 import com.dreamsdimensions.mod.block.DreamLeavesBlock;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
@@ -168,6 +169,19 @@ public final class ModBlocks {
             () -> BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)
                     .randomTicks().noCollision().instabreak()
                     .lightLevel(VigilHerbBlock::lightLevel)
+    );
+
+    public static final DeferredBlock<Block> PLUMITE_ORE = BLOCKS.registerSimpleBlock(
+            "plumite_ore",
+            () -> BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_ORE)
+                    .mapColor(MapColor.STONE).strength(3.0f, 3.0f)
+                    .requiresCorrectToolForDrops()
+    );
+
+    public static final DeferredBlock<PlumiteBlock> PLUMITE_BLOCK = BLOCKS.registerBlock(
+            "plumite_block", PlumiteBlock::new,
+            () -> BlockBehaviour.Properties.ofFullCopy(Blocks.CALCITE)
+                    .strength(2.4f, 6.0f).requiresCorrectToolForDrops()
     );
 
     private ModBlocks() {

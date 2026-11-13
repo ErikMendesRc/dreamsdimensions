@@ -161,6 +161,20 @@ public final class ModItems {
             "return_charge", Item::new, () -> new Item.Properties().rarity(Rarity.UNCOMMON)
     );
 
+    public static final DeferredItem<BlockItem> PLUMITE_ORE_ITEM =
+            ITEMS.registerSimpleBlockItem(ModBlocks.PLUMITE_ORE);
+
+    public static final DeferredItem<BlockItem> PLUMITE_BLOCK_ITEM =
+            ITEMS.registerSimpleBlockItem(ModBlocks.PLUMITE_BLOCK);
+
+    public static final DeferredItem<Item> PLUMITE_SHARD = ITEMS.registerItem(
+            "plumite_shard", Item::new, Item.Properties::new);
+
+    /** Exclusive return from dream exploration, never the first Awakener. */
+    public static final DeferredItem<Item> REMINISCENCE = ITEMS.registerItem(
+            "reminiscence", Item::new,
+            () -> new Item.Properties().rarity(Rarity.UNCOMMON));
+
     private ModItems() {
     }
 

@@ -51,5 +51,9 @@
   "message.dreamsdimensions.echo_moss.recovery": "The moss reveals a ruin %s, roughly %s blocks from here.",
   "message.dreamsdimensions.echo_moss.recovery_missing": "No Recovery Ruin was located in this area. Explore and try again.",
   "tooltip.dreamsdimensions.cracked_awakener.line1": "Hold for 10 seconds to return to the Overworld.",
-  "tooltip.dreamsdimensions.cracked_awakener.line2": "Emergency return: causes Dream Hangover and locks the Necklace for three nights."
+  "tooltip.dreamsdimensions.cracked_awakener.line2": "Emergency return: causes Dream Hangover and locks the Necklace for three nights.",
+  "block.dreamsdimensions.plumite_ore": "Plumite Ore",
+  "block.dreamsdimensions.plumite_block": "Block of Plumite",
+  "item.dreamsdimensions.plumite_shard": "Plumite Shard",
+  "item.dreamsdimensions.reminiscence": "Reminiscence"
 }

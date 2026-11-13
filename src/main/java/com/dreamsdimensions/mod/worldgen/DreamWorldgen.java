@@ -16,6 +16,7 @@ public final class DreamWorldgen {
         FEATURES.register("dream_vegetation", () -> DreamVegetationFeature.CODEC);
         FEATURES.register("dream_formation", () -> DreamFormationFeature.CODEC);
         FEATURES.register("dreamscape_ecosystem", () -> DreamscapeEcosystemFeature.CODEC);
+        FEATURES.register("plumite_outcrop", () -> PlumiteOutcropFeature.CODEC);
     }
 
     private DreamWorldgen() {}

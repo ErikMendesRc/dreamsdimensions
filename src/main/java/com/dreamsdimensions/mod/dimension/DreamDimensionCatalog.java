@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -24,11 +25,12 @@ public final class DreamDimensionCatalog {
                     DREAMSCAPE, true, 1, ModBlocks.SERENE_STONE_BLOCK, 12,
                     DimensionEffectPolicy.NONE, Optional.of(id("dreamscape_ambience")),
                     Optional.of(new DreamDimensionDefinition.Transition(
-                            Level.OVERWORLD, DreamDimensionDefinition.TransitionVisual.DREAM_MESSAGE))),
+                            Level.OVERWORLD, DreamDimensionDefinition.TransitionVisual.DREAM_MESSAGE)),
+                    Set.of(DreamTrait.FALL)),
             new DreamDimensionDefinition(
                     BLUE_FIELD, true, 1, ModBlocks.BLUE_DREAM_STONE, 24,
                     DimensionEffectPolicy.SLOW_FALLING,
-                    Optional.of(id("blue_field")), Optional.empty())
+                    Optional.of(id("blue_field")), Optional.empty(), Set.of())
     );
     private static final Map<ResourceKey<Level>, DreamDimensionDefinition> BY_DIMENSION;
 

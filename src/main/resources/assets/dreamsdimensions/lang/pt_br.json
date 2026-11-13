@@ -51,5 +51,9 @@
   "message.dreamsdimensions.echo_moss.recovery": "O musgo revela uma ruína a %s, aproximadamente %s blocos daqui.",
   "message.dreamsdimensions.echo_moss.recovery_missing": "Nenhuma ruína de recuperação foi localizada nesta área. Explore e tente novamente.",
   "tooltip.dreamsdimensions.cracked_awakener.line1": "Segure por 10 segundos para retornar ao Overworld.",
-  "tooltip.dreamsdimensions.cracked_awakener.line2": "Retorno de emergência: causa Ressaca Onírica e bloqueia o Colar por três noites."
+  "tooltip.dreamsdimensions.cracked_awakener.line2": "Retorno de emergência: causa Ressaca Onírica e bloqueia o Colar por três noites.",
+  "block.dreamsdimensions.plumite_ore": "Minério de Plumita",
+  "block.dreamsdimensions.plumite_block": "Bloco de Plumita",
+  "item.dreamsdimensions.plumite_shard": "Lasca de Plumita",
+  "item.dreamsdimensions.reminiscence": "Reminiscência"
 }

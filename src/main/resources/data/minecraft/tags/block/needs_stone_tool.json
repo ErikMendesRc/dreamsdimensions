@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "dreamsdimensions:marked_stone",
-    "dreamsdimensions:cut_marked_stone"
+    "dreamsdimensions:cut_marked_stone",
+    "dreamsdimensions:plumite_ore",
+    "dreamsdimensions:plumite_block"
   ]
 }
