@@ -135,18 +135,19 @@
       "phase": "early",
       "task": "legacy",
       "origin": "minecraft:overworld",
-      "action": "Coletar de E01/E02 no Overworld.",
+      "action": "Coletar de E01 ou E02 no Overworld.",
       "cost": "Mineração, Fortune/Silk e disponibilidade controlados por loot.",
       "output": "Componente exclusivamente originado no Overworld.",
       "use": "Colar, Pedra Infundida e custo completo de Despertador.",
-      "depends_on": [
-        "E01",
-        "E02"
-      ],
+      "depends_on": [],
       "validation": "Registro/receita verificável no repositório; obtenção e comportamento em Survival exigem teste humano.",
       "minecraft_relation": "Integra recursos vanilla sem substituir a progressão do jogo.",
       "code_anchor": "src/main/java/com/dreamsdimensions/mod/registry/ModItems.java",
-      "registry_id": "dream_dust"
+      "registry_id": "dream_dust",
+      "source_alternatives": [
+        "E01",
+        "E02"
+      ]
     },
     {
       "id": "E04",
@@ -181,8 +182,7 @@
       "output": "Item consumível de retorno.",
       "use": "Recuperação de expedição; sem teleporte gratuito.",
       "depends_on": [
-        "E03",
-        "E08"
+        "E09"
       ],
       "validation": "Registro/receita verificável no repositório; obtenção e comportamento em Survival exigem teste humano.",
       "minecraft_relation": "Integra recursos vanilla sem substituir a progressão do jogo.",
