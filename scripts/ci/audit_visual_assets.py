@@ -303,9 +303,10 @@ def audit(root: Path, enforce_current_presentation: bool = True) -> dict:
     if enforce_current_presentation:
         require("new ItemStack(ModItems.DREAM_NECKLACE.get())" in creative_source,
                 "Creative tab needs the compact necklace icon")
-        require(creative[:3] == [
+        require(creative[:4] == [
             ("ModItems", "DREAM_NECKLACE"),
             ("ModItems", "ONEIRIC_AWAKENER"),
+            ("ModItems", "CRACKED_AWAKENER"),
             ("ModItems", "DREAM_DUST"),
         ], "Creative tab navigation group out of order")
     return {
