@@ -10,17 +10,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Planting is deliberately not implemented using a second BlockItem for the
- * same plant. There is exactly one block->item mapping; seeds place an immature
- * state and are spent only on successful server-side placement.
+ * Seeds always place a young, non-glowing herb. The block item separately
+ * places an adult specimen for decoration and artist testing.
  */
 public final class VigilHerbSeedsItem extends Item {
     public VigilHerbSeedsItem(Properties properties) {
         super(properties);
-    }
-
-    private static boolean isDaytime(Level level) {
-        return Math.floorMod(level.getOverworldClockTime(), 24000L) < 12000L;
     }
 
     @Override
@@ -33,7 +28,7 @@ public final class VigilHerbSeedsItem extends Item {
 
         BlockState state = ModBlocks.VIGIL_HERB.get().defaultBlockState()
                 .setValue(VigilHerbBlock.AGE, 0)
-                .setValue(VigilHerbBlock.OPEN, isDaytime(level));
+                .setValue(VigilHerbBlock.OPEN, false);
         if (!state.canSurvive(level, pos)) return InteractionResult.FAIL;
 
         if (!level.isClientSide()) {

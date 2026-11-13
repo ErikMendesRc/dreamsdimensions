@@ -49,6 +49,7 @@ jobs:
         run: |
           python3 scripts/ci/test_visual_assets.py
           python3 scripts/ci/check_task_9_2_1_art.py
+          python3 scripts/ci/check_task_9_2_2_bloom.py
           python3 scripts/ci/audit_visual_assets.py --report qa-visual-assets-seed-${{ matrix.seed }}.json
           python3 scripts/ci/test_visual_release_gate.py
           python3 scripts/ci/visual_release_gate.py --report qa-visual-release-seed-${{ matrix.seed }}.json
@@ -201,6 +202,7 @@ jobs:
           done
           if [ "$started" -eq 1 ]; then
             python3 scripts/ci/check_dimensions.py
+            python3 scripts/ci/check_task_9_2_2_bloom.py --rcon
             python3 scripts/ci/check_fragmento_errante_behavior.py --rcon
             python3 scripts/ci/check_dreamscape_geography.py --rcon
             python3 scripts/ci/check_dreamscape_ecosystem.py --rcon

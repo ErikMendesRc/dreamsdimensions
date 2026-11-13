@@ -167,6 +167,7 @@ public final class ModBlocks {
             "vigil_herb", VigilHerbBlock::new,
             () -> BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)
                     .randomTicks().noCollision().instabreak()
+                    .lightLevel(VigilHerbBlock::lightLevel)
     );
 
     private ModBlocks() {
