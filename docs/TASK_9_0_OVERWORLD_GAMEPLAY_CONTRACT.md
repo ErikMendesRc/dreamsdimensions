@@ -1,190 +1,186 @@
-# Task 9.0 — Contrato Universal de Gameplay e Expansão do Overworld
+# Task 9.0 — Contrato Universal de Gameplay e Preparação para os Sonhos
 
-**Projeto:** DreamsDimensions — Minecraft 26.3 / NeoForge 26.3 / Java 25  
-**Branch:** `migration/minecraft-26.3` · **não fazer merge na `main`**  
-**Tipo:** contrato de design verificável + inventário de dependências · **não é implementação de novos blocos, itens, mobs ou estruturas**.  
-**Data:** 12/11/2026 · **Status:** contrato codificado, homologação da experiência ainda pendente.
+**Projeto:** DreamsDimensions · Minecraft 26.3, NeoForge 26.3, Java 25  
+**Branch:** `migration/minecraft-26.3` · sem merge na `main`  
+**Revisão:** 13/11/2026, versão 2 — **a direção anterior centrada em construção foi substituída.**  
+**Estado:** `DESIGN_ONLY`; a Task 9.1 ainda não implementou seus recursos novos.  
+**Fonte de verdade verificável:** [catálogo e grafo 9.0](OVERWORLD_CONTENT_CATALOG_TASK_9_0.json); [estado do código](ESTADO_ATUAL.md).
 
-> A Task 9.0 não reativa o protótipo antigo de anomalias 7.6 e não resgata documentos especulativos aposentados. O catálogo atual é o contrato de decisão para a próxima implementação, não uma Game Design Bible fingindo que o código já existe.
+## 1. A promessa: preparar-se para o desconhecido
 
-## 1. Objetivo que guia o mod
+**O Overworld é a base do jogador.** Nele se consegue comida, ferramentas, armas, proteção, minerais, plantas, suprimentos e conhecimento, e se constrói a infraestrutura de fabricação. O sonho não é o lugar onde o jogador precisa aprender a produzir o item essencial de saída. É a expedição para a qual ele se prepara.
 
-O **Overworld é a origem e a base independente** da exploração. O mod deve justificar uso em Survival sem exigir que o jogador visite uma dimensão de sonho. As dimensões atuais (Campo Onírico Azul e Dreamscape) comprovam sistemas técnicos e não esgotam o universo futuro, que poderá incluir sonhos pacíficos, estranhos e pesadelos.
+O Colar permite tentar entrar nos sonhos, mas **a dimensão sorteada é desconhecida**: mundos pacíficos, hostis, escuros, instáveis, isolados ou com mecânicas ambientais diversas poderão coexistir. Os dois sonhos atuais são apenas testes iniciais, sem determinar a economia ou a dificuldade de todo o universo.
 
-**Progressão:** acompanhar o Minecraft vanilla, sem árvore de missões mandatória, sem End Game próprio e sem substituir a exploração livre. O contato com sonhos é **opcional e mais consistente no mid/late game**, desde que o retorno seja seguro e custoso; Late Game não torna consumíveis infinitos, viagens gratuitas ou recompensas garantidas.
+O **Despertador Onírico é o item crítico**: deve ser viável produzir o primeiro ainda no jogo inicial, porém depois de esforço e decisões reais. O Overworld precisa oferecer o caminho completo de obtenção. No mid/late game, o custo **marginal e o tempo de preparo** devem diminuir devido à infraestrutura, cultivo, ferramentas e aprendizado; a saída não se torna gratuita ou ilimitada.
 
-**Três loops independentes com pontes opcionais:**
+A progressão deve **conversar com o Minecraft vanilla**, sem criar End Game paralelo, boss obrigatório, Nether ou End compulsórios, quests lineares nem dano inevitável por cair num sonho aleatório.
 
-1. **Material/construção:** sair em busca de depósitos → colher com ferramenta adequada → processar sem duplicação → construir e recuperar materiais → decidir onde buscar novos insumos.
-2. **Ecologia/descoberta:** observar habitat → reconhecer pistas visuais e comportamentos → chegar a plantas, formas naturais ou estruturas → obter recompensa proporcional → decidir nova exploração.
-3. **Sonhos (posterior):** preparar-se no Overworld → acessar uma experiência onírica quando habilitada com segurança → explorar e assumir riscos → retornar mediante regra existente → aplicar recursos ou aprendizado de forma opcional no Overworld.
+## 2. Diagnóstico factual do código atual (não confundir com proposta)
 
-Uma pessoa que não se envolve com o terceiro loop deve continuar tendo motivos para usar o mod.
-
-## 2. Evidência: o que já existe (fonte de verdade)
-
-| Feature ou sistema | Estado verificável | Referência |
+| Componente | Comportamento no código de hoje | Limitação de design |
 | --- | --- | --- |
-| Dream Ore / Deepslate Dream Ore → Dream Dust | Implementado, gerado naturalmente em amostras reais do Overworld; obtenção por jogador pendente | [Economia 5.6](OVERWORLD_ECONOMY_TASK_5_6.md) |
-| Colar dos Sonhos, Pedra Infundida, Núcleo e Despertador | Registrados com receitas, retorno protegido; testes em Survival/multiplayer pendentes | [Estado atual](ESTADO_ATUAL.md) |
-| Pedra Marcada / Lapidada | F0: geração natural, mineração/corte 1:1, testes de CI; descoberta humana pendente | [Homologação F0 7.5](DREAMSDIMENSIONS_TASK_7_5.md) |
-| Campo Azul / Dreamscape, mobs e ruínas dimensionais | Bases de teste implementadas; **não** são conteúdo do Overworld | [Worldgen e conteúdo](WORLDGEN_E_CONTEUDO.md) |
-| Líquen, Argamassa, Marcos, Abrigos, Galeria e anomalias | **NÃO IMPLEMENTADOS**. Ideias de planejamento recuperadas e agora reavaliadas no catálogo 9.0 | [Catálogo 9.0](OVERWORLD_CONTENT_CATALOG_TASK_9_0.json) |
+| `dream_ore` e `deepslate_dream_ore` | Geram no Overworld e dão Pó Onírico. Duas origens alternativas; mineração real amostrada. | Maioria da progressão é mineração repetida. |
+| `dream_dust` | Insumo de Colar, Pedra Infundida e Núcleo, com origem natural exclusiva no Overworld. | Não existe integração com botânica ou descoberta. |
+| `dream_necklace` | 3 Pós, não consumido; participa da política de entrada por sono. | Entrada permanece `dream_entry_enabled=false` para release. |
+| `dream_infused_stone` | Receita 2 Pedra + 2 Pós → 1 bloco. | Serve principalmente de intermediário. |
+| `oneiric_core_block` | 4 Pedras Infundidas + 4 Pós + relógio → Núcleo. É bloco decorativo/ingrediente, consumido no crafting do Despertador. | Não tem função de estação reutilizável. |
+| `oneiric_awakener` | Núcleo + pena + frasco → Despertador. 12 Pós totais por unidade; uso 60 ticks e consumo após retorno confirmado. | Preço igual em todas as fases; nenhuma infraestrutura reduz esforço. |
+| Ruínas de recuperação | Ruínas dimensionais com chance configurada de 25% de um Despertador completo em cada baú principal. | Não constitui **garantia** de fuga ou prova de acessibilidade em Survival; P0 pendente. |
+| Pedra Marcada | Rocha e Stonecutter 1:1, construção independente. | É arquitetura complementar, não o eixo do mod. |
 
-O Overworld já contém uma cadeia econômica de **3 Pós por Colar** e **12 Pós por Despertador**, conforme as receitas existentes. A Pedra Marcada é material de construção independente do Pó. **O Pó Onírico continua com origem natural exclusiva no Overworld**: não espalhar minério, receitas de geração de Pó ou drops garantidos dele pelos sonhos.
+Referências: [economia Task 5.6](OVERWORLD_ECONOMY_TASK_5_6.md), [ruínas 5.7](DREAM_RUINS_TASK_5_7.md), [segurança 7.0](DREAM_RECOVERY_SAFETY_TASK_7_0.md) e [worldgen](WORLDGEN_E_CONTEUDO.md).
 
-A Task 7.6 antiga tinha apenas experimento sem integração e foi removida na Task 8. Nenhuma anomalia está ativa.
+**Nenhuma receita acima foi modificada na Task 9.0.** O custo atual, a sorte da dimensão, a duração do uso e os gates de segurança permanecem vigentes até implementação e homologação de uma mudança explícita.
 
-## 3. Invariantes não negociáveis
+## 3. Grafo pretendido: ramos que se encontram
 
-1. **Função antes do registro:** toda feature proposta deve especificar origem → ação do jogador → custo/risco → resultado → consumidor → prova. Arte decorativa é válida, mas deve dizer claramente que é decorativa.
-2. **Sem hard-lock dimensional:** nenhum sistema universal pode exigir especificamente Campo Azul ou Dreamscape. Sonhos futuros devem ser extensíveis por contratos reais, sem framework inventado de antemão.
-3. **Sem progressão paralela forçada:** não criar missões obrigatórias, chefes obrigatórios, classe de poder que inutilize vanilla ou End Game próprio. Ferramenta proposta deve demonstrar vantagem distinta da picareta, do mapa, da bússola, das tesouras e do Stonecutter.
-4. **Sem retorno grátis:** não conceder Despertador por regra geral, usar /tp de gameplay, contornar morte/recuperação, baratear 12 Pós por expedição ou ativar `dream_entry_enabled` antes dos gates P0.
-5. **Economia rastreável:** cada transformação tem entrada e saída, rendimentos explícitos, anti-loop/anti-duplicação, ferramenta e loot. Variantes arquitetônicas não criam matéria do nada.
-6. **Worldgen aditivo e seguro:** novas features só em chunks novos, sem retro-gen no save do jogador, sem tickets permanentes, sem scans de chunks em ticks, sem sobreposição destrutiva de construções.
-7. **Respeitar o vanilla:** distribuir por habitat e custo, preservar tags/ferramentas e convivência com biomas de outros mods; não substituir pedra, minérios, árvores e estruturas existentes.
-8. **Visual Vanilla+**: sprites de bloco em pixel art legível, distinção real do vanilla e textura contextual; visual pastel direcionado apenas a blocos exclusivos dos sonhos, sem obrigatoriedade para Overworld.
-9. **Aprovação em camadas:** `STATIC_CHECK` não é `RUNTIME_OBSERVED`, nem `MANUAL_VERIFIED`. Não converter contagem de chunks em percentis de descoberta do jogador.
-10. **Sem código especulativo:** não introduzir registries, abstrações globais, polling contínuo ou sistemas sem consumidor implementável na fatia atual.
+O objetivo é evitar a cadeia artificial `minério A → lingote B → item C`, sem mais nada. A cadeia central de retorno reúne **geologia + botânica + processamento + infraestrutura**, e as cadeias laterais tornam a expedição mais segura.
 
-## 4. Catálogo amplo e dependências verificáveis
+```text
+OVERWORLD — origem e base do jogador
+├── GEOLOGIA: Dream Ore / deepslate → Pó Onírico
+│   ├── Colar dos Sonhos (equipamento de entrada; existente)
+│   ├── Pedra Infundida → Núcleo Onírico (existentes)
+│   │   └── [PROPOSTA] estação permanente de montagem
+│   └── [PROPOSTA] Carga de Retorno ← Pó + Erva da Vigília + materiais vanilla
+├── BOTÂNICA: Erva da Vigília [PROPOSTA, geração no Overworld]
+│   ├── Carga de Retorno (obrigatória para montar Despertador na nova receita)
+│   ├── Tônico de Lucidez (proteção situacional e temporária)
+│   ├── Componentes de armamento/escudo
+│   └── Horta de Vigília (mid game: logística renovável, NÃO produz Pó)
+├── INFRAESTRUTURA: Núcleo reutilizável [PROPOSTA]
+│   ├── Carga + insumos → DESPERTADOR (MESMO ID; consumido no retorno)
+│   ├── Sonda de Ressonância (mid game; ajuda a procurar recursos)
+│   └── Amplificação do Núcleo (late game; retorno mais barato, nunca grátis)
+├── ARMAMENTO / DEFESA
+│   ├── Lâmina de Vigília (interação específica com ameaças oníricas)
+│   └── Escudo de Vigília / reforços (proteção limitada)
+├── SUSTENTAÇÃO / NAVEGAÇÃO
+│   ├── Tônico de Lucidez, lanterna de marcação e kit de expedição
+│   └── Sinais de recuperação e informações parciais de risco
+└── ESTRUTURAS E CRIATURAS
+    ├── Vestígios temporais / pistas e aprimoramentos opcionais
+    └── Mob, habitat, loot e mecânicas somente se tiverem consumidor real
+```
 
-**Fonte de planejamento versionada:** [`OVERWORLD_CONTENT_CATALOG_TASK_9_0.json`](OVERWORLD_CONTENT_CATALOG_TASK_9_0.json), formato `dreamsdimensions.overworld.contract.v1`.
+A dependência `depends_on` no [catálogo](OVERWORLD_CONTENT_CATALOG_TASK_9_0.json) é verificável e acíclica. As origens alternativas de Pó permanecem alternativas, não pré-requisitos simultâneos. Cada nó tem origem, ação, custo, resultado, uso, validação e relação com o vanilla. Conteúdo marcado `CANDIDATE` **não está autorizado para codificação**.
 
-O catálogo reúne **35 entradas**:
-- **9 `IMPLEMENTED_CODE`**: nós de referência de registros existentes, sem declaração de validação manual.
-- **3 `SELECTED`**: próxima fatia F1 da Task 9.1 — escolha de design, ainda não implementada.
-- **23 `CANDIDATE`**: hipóteses de conteúdo; cada uma possui risco/custo, utilidade, consumidor e condição de aceite. Nenhuma recebeu registry ID reservado.
-- **9 famílias:** geologia, recurso, flora, processamento, construção, estruturas, fauna, equipamento e sistema.
+### Por que o Despertador é o centro
 
-Os identificadores `F1_*` e similares são **IDs de catálogo, não IDs Minecraft**. A dependência `depends_on` significa pré-requisito de conteúdo e forma um **grafo acíclico**; quando existem origens alternativas, `source_alternatives` distingue fontes em vez de exigir todas simultaneamente.
+O objetivo não é fazer o jogador passar horas só minerando para mais uma cópia do mesmo item. A primeira fabricação exige **investimento de capital e exploração diversificada**. A repetição usa a infraestrutura já construída, com custos por expedição ainda relevantes. Uma pessoa preparada deve poder guardar Despertadores de reserva sem eles perderem significado.
 
-### Matriz executiva de dependências
+O Núcleo já possui o ID `dreamsdimensions:oneiric_core_block` e textura/partículas aprovadas: a revisão proposta **mantém o mesmo ID e blocos já salvos**, mas dá uma função que existe em gameplay. Como continuará havendo saves, receitas e compatibilidade legada, o design não assume que uma simples troca de JSON resolva a migração.
 
-| Caminho | Entrada real | Etapa proposta | Consumidor concreto | Situação |
-| --- | --- | --- | --- | --- |
-| Mineração onírica | Dream Ore **ou** Deepslate Dream Ore | Dream Dust → Núcleo | Colar / Despertador | **Implementado**; Survival pendente |
-| Material F0 | Pedra Marcada no Overworld | Stonecutter 1:1 | Pedra Marcada Lapidada | **Implementado**; Survival pendente |
-| **F1 — Vestígios construíveis** | Afloramentos rochosos / Pedra Marcada | Líquen → Argamassa | Alvenaria Marcada | **Selecionado para 9.1** |
-| Arqueologia ambiental | F1 + habitats | Marcos → Abrigos → Galerias | Pistas, locais opcionais, materiais | **Candidato 9.3** |
-| Construção avançada | F1 Alvenaria | Lajes, paredes e ferramentas justificadas | Bases, conservação e arquitetura | **Candidato 9.4** |
-| Ecologia e criaturas | Habitat geológico/vegetal | Vegetação + fauna contextual | Observação, pistas e risco justo | **Candidato 9.2/9.5** |
-| Sistemas tardios | Descoberta física de estruturas | Cartografia/conservação | Investimento lateral, sem radar ou loot infinito | **Candidato 9.6** |
+## 4. Early, mid e late game
 
-O objetivo **não** é forçar todos os ramos por uma única sequência de crafting. Construção, ecologia, exploração e engenharia devem oferecer caminhos paralelos.
+| Fase | O jogador precisa fazer | O que fica mais acessível | O que continua valendo |
+| --- | --- | --- | --- |
+| **Early — primeira expedição** | Conseguir ferramenta de ferro, minerar Pó, localizar Erva da Vigília, fabricar Núcleo, produzir Carga, montar primeiro Despertador e estocar suprimentos. | A fabricação é possível **antes de Nether/End**, mas o primeiro Núcleo e a busca são dispendiosos. | Despertador não é dado gratuitamente. Dormir com Colar exige decisão e risco. |
+| **Mid — expedições regulares** | Proteger e melhorar base, cultivar Erva, construir lanterna/arma/escudo, usar ferramentas limitadas de localização. | O Núcleo já está pago; cultivo e acesso a minério reduzem preparo por expedição. | Cada Despertador usa Carga real; equipamento degrada, tônicos acabam. |
+| **Late — expedições especializadas** | Construir melhorias caras do Núcleo, logística de suprimentos, armas e ferramentas situacionais. | Produção em lote e preparação do inventário se tornam eficientes. | Não há Despertador infinito, escolha garantida de dimensão ou fuga gratuita. |
 
-## 5. Primeira fatia jogável selecionada: F1 / Task 9.1
+### Hipótese econômica inicial — precisa de teste, não é receita
 
-**Nome:** *Vestígios construíveis: rocha, líquen e argamassa.*  
-**Compromisso:** produzir uma feature testável e pequena, que termine num uso de Survival próprio, sem requerer um sistema de sonhos ou um POI complexo.
+- **Investimento inicial:** manter aproximadamente os atuais **12 Pós Oníricos** na fabricação de um Núcleo permanente; somar exploração botânica e ferramentas necessárias.
+- **Preço marginal:** explorar uma Carga que custe inicialmente aproximadamente **4 Pós + material vegetal**, além de insumos vanilla para um Despertador. O primeiro Despertador, após fabricar o Núcleo, custaria aproximadamente **16 Pós cumulativos** (mais itens), contra os 12 Pós atuais por Despertador. Com o Colar, seriam aproximadamente 19 Pós na primeira preparação completa.
+- **Após a infraestrutura:** o Despertador seguinte consome Carga e materiais, **não** outro Núcleo de 12 Pós. Cultivo e ferramentas ajudam; upgrades no late podem reduzir tempo/custo de modo limitado, nunca a zero.
+- **Essa é hipótese de balanceamento**, não decisão imutável. As quatro seeds de minério mostram contagem subterrânea e apenas uma parcela exposta ao ar; não mediram tempo para 12/16/19 Pós em Survival. A Task 9.1 precisa experimentar custo cumulativo, custo marginal, acesso ao ferro, tempo até primeiro Despertador e custo em série de 5–10 viagens **antes de publicar valores**.
 
-### F1.A — Líquen dos Vestígios (`F1_LICHEN`)
+Não adicionar um fragmento que só aparece num chefe, numa dimensão ou numa estrutura rara como requisito para o **primeiro Despertador**. Isso criaria soft-lock e contradiria a promessa de preparação no Overworld.
 
-- **Origem:** manchas naturais e reconhecíveis em zonas rochosas/afloramentos do Overworld; variante distinta do Glow Lichen vanilla.
-- **Interação:** o jogador identifica habitat e coleta com ferramenta vanilla; comportamento exato de quebra, itemização e renovação serão fixados e testados na 9.1.
-- **Custo/risco:** deslocamento, escalada/mineração e densidade natural limitada; não exigir mob exclusivo.
-- **Resultado:** recurso de origem ambiental, com coleta auditável.
-- **Uso:** ingrediente obrigatório da Argamassa (F1.B), além de aplicação decorativa opcional.
-- **Aceite:** geração real em quatro seeds, pelo menos uma sessão de descoberta humana não assistida, teste de ferramentas/drop e ausência de duplicação. Sem assumir taxa de sucesso antes da medição.
+## 5. Preparação para uma dimensão que o jogador não conhece
 
-### F1.B — Argamassa dos Vestígios (`F1_MORTAR`)
+Antes do sono, o jogador deve ter um kit razoável que funcione diante de **vários tipos de risco**, não uma armadura específica para um único sonho.
 
-- **Origem:** combinação de Líquen coletado e insumos vanilla comuns (ingrediente/quantidade definidos na 9.1).
-- **Interação:** receita na Crafting Table, sem criar nova máquina ou GUI.
-- **Custo:** consumo material controlado; sem receita inversa de produção ilimitada.
-- **Resultado:** componente não obrigatório para a progressão vanilla.
-- **Uso:** Alvenaria Marcada (F1.C).
-- **Aceite:** ingredientes reais, receita e advancement coerentes, grafo acíclico, custo por 64/256 blocos e crafting manual em Survival.
-
-### F1.C — Alvenaria Marcada (`F1_MASONRY`)
-
-- **Origem:** Pedra Marcada já existente (F0) e Argamassa F1.
-- **Interação:** fabricar, colocar, construir, minerar e recuperar.
-- **Custo:** proporção rastreável, sem multiplicar matéria bruta e sem substituir a conversão F0 `marked_stone -> cut_marked_stone` 1:1.
-- **Resultado:** bloco arquitetônico com identidade própria, textura legível e categoria clara.
-- **Uso:** bases, refúgios e arquitetura de exploração do Overworld.
-- **Aceite:** faces/costuras em paredes 5×5, ferramenta, loot, save/reload, colocação em multiplayer, compatibilidade e rendimento honesto.
-
-**Definição de pronto F1:** o jogador, num mundo novo, encontra os dois insumos naturais, colhe, fabrica Argamassa, produz Alvenaria, constrói e recupera material sem comandos; CI mede o que é automatizável, enquanto a sessão humana comprova o loop real. Se a mecânica não for divertida ou o Líquen não for distinto da alternativa vanilla, a Task 9.1 deve ajustar/recusar o candidato antes de registrar conteúdo.
-
-**Sem inventar aceites numéricos agora:** a Task 9.1 deve apresentar alvo inicial de densidade, medições por 4 seeds, tempo até primeira descoberta (amostra censurada), custo construtivo e tolerâncias de regressão. Não recalibrar minério existente só para tornar F1 mais acessível.
-
-## 6. Sequenciamento pós-9.0 (planejamento, não conteúdo pronto)
-
-| Task | Entrega vertical proposta | Dependência/gate |
+| Necessidade | Resposta de gameplay | Observação |
 | --- | --- | --- |
-| **9.1 — Geologia e primeira cadeia F1** | Líquen + Argamassa + Alvenaria, com geração natural, crafting, construção e QA | Task 9.0, F0, auditoria Overworld, aceites Survival |
-| **9.2 — Ecologia regional** | 1–2 habitats/plantas úteis e coerência de transições, sem redesenhar todo Overworld | F1 validada, função de cada espécie |
-| **9.3 — Marcos e Abrigos** | Dois POIs distintos, acessíveis e com propósito de exploração, sem loot gratuito de progressão | Sistema de worldgen, loot e provas em quatro seeds |
-| **9.4 — Construção e ferramentas** | Variantes arquitetônicas e um equipamento somente se provar vantagem própria | F1, uso real, sem replicar vanilla |
-| **9.5 — Fauna e habitats** | Primeiro mob contextual do Overworld, seguido de ecossistema escalável | Habitat definido, AI/GeckoLib onde necessário, spawn verificado |
-| **9.6 — Integração universal** | Pistas/engenharia e interfaces **opcionais** para sonhos futuros, sem reativar 7.6 | Economia e segurança comprovadas; gameplay de Overworld já útil |
+| **Voltar** | Despertador Onírico + reserva opcional | **Indispensável** para retorno normal; consumo pós-retorno confirmado permanece. |
+| **Combater** | Arma vanilla + futura Lâmina de Vigília | Lâmina só vale a pena se fizer algo distinto de espada encantada, sem stunlock/imunidade. |
+| **Defender** | Armadura e escudo vanilla + possível Escudo de Vigília | Proteção para ameaças de perfil desconhecido, nunca 100% universal. |
+| **Atravessar** | Ferramentas, comida e blocos que o jogador escolhe levar | Respeitar ilha, gravidade, exploração e escolhas de inventário. |
+| **Lidar com efeitos** | Tônico de Lucidez com duração/custo | Resiste a condição onírica específica; não é Totem ou leite melhorado. |
+| **Não se perder** | Lanterna/marcador físico e, mais tarde, pistas de recuperação | Nada de radar passivo com busca de chunks por tick. |
 
-**Sequência de desenvolvimento dentro de cada task:** contrato curto → implementação mínima → assets/receitas/loot → teste estático → servidor real em 4 seeds → playtest Survival/multiplayer → revisão de distribuição → só então expansão. Não aprovar uma feature apenas por uma documentação extensa.
+**A imprevisibilidade é importante.** O mod não deve dar a escolha explícita da dimensão de destino como um upgrade comum. Uma ferramenta tardia pode informar **indícios de risco**, nunca revelar todo o resultado do sorteio.
 
-### Filtros de seleção para futuras ideias
+### Contrato de chegada e recuperação
 
-- Primeiro: utilidade real e distinção contra vanilla.
-- Segundo: múltiplos usos e consumidores claros, incluindo decoração honesta.
-- Terceiro: descoberta espacial/habitat/riscos mensuráveis.
-- Quarto: custo técnico, desempenho e riscos de saves.
-- Quinto: coerência temática de sonhos, sem uniformizar tudo em azul/violeta.
+A combinação `Colar equipado + sono válido` não deve conduzir a um soft-lock previsível. A Task 9.1, antes de habilitar entrada, deve especificar uma **verificação de prontidão** ou aviso forte para jogadores sem Despertador e demonstrar: chegada em piso seguro; tempo/área suficiente para recuperar controle; inventário persistente; uso e interrupção corretos do Despertador; cenário em que o item é perdido. Escolher entre entrada bloqueada sem Despertador e modo de expedição de alto risco **é decisão futura de UX/gameplay**, não mudança feita aqui.
 
-Itens do catálogo em `CANDIDATE` ficam **fora do backlog de implementação autorizado**, até um contrato de fatia aprovar origem, consumidor e testes. Nem todos serão produzidos.
+Se perder o item, a saída continua exigindo um **Despertador real** (fabricado previamente ou encontrado). As ruínas atuais têm 25% de chance por baú e não garantem retorno em tempo viável; isso precisa de homologação e, possivelmente, um caminho de recuperação raro mas confiável. **Não** dar teleport de emergência grátis nem tornar morte/cama saída automática; também não publicar uma dimensão que prende pessoas indefinidamente por falta de rota plausível.
 
-## 7. QA da própria Task 9.0
+A entrada continua desligada: `dream_entry_enabled=false`. O retorno usa **60 ticks**, servidor autoritativo e consumo único **após chegada validada ao Overworld**. Não reduzir segurança para fazer a nova economia.
 
-O validador [`scripts/ci/check_overworld_contract_9_0.py`](../scripts/ci/check_overworld_contract_9_0.py) verifica: IDs únicos, campos obrigatórios, famílias/quantidade, estados reais vs. propostos, anchors de registry existentes, fontes Overworld, pré-requisitos presentes, DAG sem ciclos, ordem de fases, receita conceitual do F1 e invariantes. O teste negativo [`scripts/ci/test_overworld_contract_9_0.py`](../scripts/ci/test_overworld_contract_9_0.py) verifica rejeição de regressões. O relatório usa `dreamsdimensions.qa.v1` com **`evidence_type=STATIC_CHECK`** e **`design_status=DESIGN_ONLY_NOT_PLAYABLE`**.
+## 6. Próximo slice aprovado — Task 9.1
 
-Em Windows PowerShell, na raiz:
+**F1: preparação de expedição e economia do retorno**. Esta é a primeira fatia priorizada; construção arquitetônica passa a ser uma opção lateral posterior, não o centro da produção.
+
+1. **`F1_VIGIL_HERB` — Erva da Vigília:** planta de habitat Overworld com coleta real; recurso para cargas e futuros consumíveis. Definir distribuição e colheita sem farm impossível de controlar.
+2. **`F1_RETURN_CHARGE` — Carga de Retorno:** item consumível do circuito `Pó + Erva + vanilla`, receita acíclica, sem fabricar Pó a partir dele. Precisar de dois tipos de exploração; custo em Dust controlado.
+3. **`F1_CORE_STATION` — Núcleo permanente:** transformar o bloco **já existente** em infraestrutura funcional de montagem com transação server-side, sem duplicação em multiplayer, relog ou quebra. Manter ID, drops e migração segura em saves antigos.
+4. **`F1_AWAKENER_BALANCE` — Despertador:** migrar de `Núcleo consumido em Crafting Table` para `montagem no Núcleo com Carga + insumos`. Preservar o **mesmo** `oneiric_awakener`, o uso 60 ticks, cooldown e consumo pós-retorno. Atualizar recipe book/avancements/QA de economia no mesmo patch, sem compatibilidade silenciosamente quebrada.
+
+**Entrega jogável do slice:** na base Overworld, o jogador produz e coloca Núcleo, colhe Erva, minera Pó, fabrica Carga, monta um Despertador, guarda cópia e pode repetir sem gastar o Núcleo novamente. **Não precisa entrar em sonho para completar esse loop.**
+
+**Ordem técnica da 9.1:** levantamento detalhado da API 26.3 e dos saves → protótipo funcional de montagem/consumo → novo conteúdo e textura → worldgen natural e loot → receitas/livro → regressões de custo e save → servidor dedicado e quatro seeds → testes Survival e dois jogadores. Só aceitar quando o resultado for observável, não somente por registro JSON.
+
+**Critérios de bloqueio:** nunca remover o Despertador atual sem migração segura; nenhum clique que consuma duas vezes; não gerar item se falta carga; custo inicial não depender de mob/dimensão/estrutura futura; Pó mantém origem Overworld; mundo novo e save migrado devem continuar íntegros.
+
+## 7. Roadmap corrigido (design não implementado)
+
+| Task proposta | Objetivo jogável | Pontes entre ramos |
+| --- | --- | --- |
+| **9.1 — Preparação e Retorno F1** | Núcleo funcional + planta + Carga + Despertador balanceado | Geologia + botânica + crafting + infraestrutura |
+| **9.2 — Kit de Sobrevivência Onírica** | Primeira arma especial, consumível, proteção e marcação úteis contra riscos distintos | Botânica + minério + equipamento + ameaça |
+| **9.3 — Descoberta e Logística do Overworld** | Habitats, estruturas opcionais, sonda limitada, cultivo e recursos avançados | Exploração + geração natural + agricultura + produção |
+| **9.4 — Upgrade de Infraestrutura** | Estabilização, aprimoramento caro do Núcleo e especialização | Tecnologia + economia + equipamento |
+| **9.5 — Fauna, Ambientes e Recuperação** | Mobs/POIs funcionais com risco e recompensa; verificar recuperação se perde o Despertador | Ecologia + combate + segurança |
+| **9.6 — Integração Multi-Dimensão** | Contratos genéricos de perigo, equipamento situacional e expansão futura sem dependência das duas dimensões iniciais | Kit universal + habilidades + motor de sonhos |
+
+A antiga cadeia **Líquen → Argamassa → Alvenaria** continua no catálogo como `CANDIDATE` e poderá virar conteúdo arquitetônico mais tarde. Não foi implementada, portanto a revisão não remove itens nem altera saves. Estruturas, plantas, minério e mobs passam a ser selecionados pelo efeito em **preparação, exploração, sobrevivência, retorno ou progressão**, não pela quantidade do catálogo.
+
+## 8. QA e segurança da revisão
+
+O validador [`check_overworld_contract_9_0.py`](../scripts/ci/check_overworld_contract_9_0.py) e os testes negativos [`test_overworld_contract_9_0.py`](../scripts/ci/test_overworld_contract_9_0.py) verificam: fontes Overworld, referências reais vs. propostas, grafo acíclico, quatro escolhas F1, seis caminhos de progressão, eras early/mid/late, Despertador como item central e entrada desligada. A CI em quatro seeds registra apenas `STATIC_CHECK` / `DESIGN_ONLY_NOT_PLAYABLE`, **não** prova crafting ou sobrevida.
 
 ```powershell
 git switch migration/minecraft-26.3
 git pull origin migration/minecraft-26.3
 python scripts/ci/test_overworld_contract_9_0.py
 python scripts/ci/check_overworld_contract_9_0.py --report qa-overworld-design-9-0.json
-python scripts/ci/test_repository_docs.py
-python scripts/ci/check_repository_docs.py --report qa-repository-docs.json
-python scripts/ci/test_content_contract.py
 .\gradlew.bat --no-daemon clean build
 .\gradlew.bat runClient
 ```
 
-### Comandos reais para inspecionar a base F0 existente
-
-Mundo de laboratório com cheats/OP, sem fingir que F1 existe:
+### Comandos de laboratório — **itens existentes**, sem fingir que a 9.1 já existe
 
 ```mcfunction
 /gamemode creative
-/give @s dreamsdimensions:marked_stone 64
-/give @s dreamsdimensions:cut_marked_stone 64
-/give @s minecraft:stonecutter 1
-/give @s minecraft:stone_pickaxe 1
-/give @s minecraft:clay_ball 64
 /give @s dreamsdimensions:dream_dust 16
+/give @s dreamsdimensions:dream_necklace 1
+/give @s dreamsdimensions:dream_infused_stone 4
+/give @s dreamsdimensions:oneiric_core_block 1
+/give @s dreamsdimensions:oneiric_awakener 2
+/give @s minecraft:iron_pickaxe 1
+/give @s minecraft:shield 1
+/give @s minecraft:bread 32
 /gamemode spectator
 /execute in minecraft:overworld run tp @s 0 140 0
 ```
 
-No mundo da seed `73199013`, a Task 7.4 registrou Pedra Marcada exposta em `-49 15 -33`. **Somente para depuração em Spectator e chunks gerados no mesmo baseline**:
+*Os itens Erva da Vigília, Carga de Retorno, Lâmina e Escudo de Vigília ainda não possuem registry IDs nem comandos de give. A posição do TP é apenas para observação em Spectator, não ponto seguro de Survival.*
 
-```mcfunction
-/execute in minecraft:overworld run tp @s -49 15 -33
-```
+## 9. Gates de conclusão
 
-Não existe `/give dreamsdimensions:lichen...` nem teleporte de um Marco/Abrigo F1 neste estágio. Os IDs e comandos novos só poderão ser divulgados **após a Task 9.1 realmente registrar os conteúdos**.
+- [x] Reidentificar receita, Núcleo, consumos e limitações atuais pelo código do repo.
+- [x] Substituir o foco arquitetônico pela preparação antes do sonho.
+- [x] Catálogo de ramos e dependências de geologia, botânica, combate, suporte, exploração, infraestrutura.
+- [x] Desenhar economia de primeira vs. repetidas expedições sem free return.
+- [x] Contrato da Task 9.1 alinhado à função central do Despertador.
+- [x] Atualizar validador estático, testes negativos e CI existentes.
+- [ ] Implementar F1; medir com CI e jogadores.
+- [ ] Fechar safety P0 de chegada, retorno, perda de item, ruínas, multiplayer e save.
+- [ ] Equilibrar a economia com dados humanos, e não só distribuição por chunk.
 
-## 8. Critérios de conclusão
-
-- [x] Base atual reconstruída a partir do código, receitas e docs.
-- [x] Decisões universais e limitações explícitas.
-- [x] Catálogo multidisciplinar com consumidores, origens, dependências e status.
-- [x] Primeira fatia F1 selecionada, independente de dimensões.
-- [x] Contrato e testes estáticos versionados e incluídos na CI.
-- [ ] **F1 implementada em jogo** — pertence à Task 9.1.
-- [ ] **Teste humano Survival / construção / multiplayer** — exige jogador e versão 9.1.
-- [ ] **Revisão de raridade por dados de descoberta** — exige amostra real.
-- [ ] **Entry P0 de sonhos liberada** — não faz parte da 9.0; permanece desligada.
-
-**Resultado de 9.0: contrato de engenharia e backlog condicionado. Não alterar loot, receitas, mundo ou saves nesta task.**
+**Estado final da 9.0:** uma árvore de preparação universal do Overworld, não novas features já existentes. Não modificar receitas, registro de item, chances, teleport ou chunks nesta revisão.
