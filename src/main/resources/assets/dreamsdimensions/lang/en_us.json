@@ -55,5 +55,21 @@
   "block.dreamsdimensions.plumite_ore": "Plumite Ore",
   "block.dreamsdimensions.plumite_block": "Block of Plumite",
   "item.dreamsdimensions.plumite_shard": "Plumite Shard",
-  "item.dreamsdimensions.reminiscence": "Reminiscence"
+  "item.dreamsdimensions.reminiscence": "Reminiscence",
+  "block.dreamsdimensions.oneiric_kettle": "Oneiric Kettle",
+  "block.dreamsdimensions.temporary_plume_bridge": "Temporary Plume Bridge",
+  "item.dreamsdimensions.infusion_lightness": "Infusion of Lightness",
+  "item.dreamsdimensions.infusion_vigil": "Infusion of Vigil",
+  "item.dreamsdimensions.plume_lining": "Plume Lining",
+  "item.dreamsdimensions.vigil_tether": "Vigil Tether",
+  "item.dreamsdimensions.plume_bridge": "Plume Bridge",
+  "effect.dreamsdimensions.lightness": "Plume Lightness",
+  "effect.dreamsdimensions.vigil_infusion": "Vigil",
+  "message.dreamsdimensions.kettle.needs_fire": "Place the kettle on a lit campfire.",
+  "message.dreamsdimensions.kettle.loaded": "Kettle loaded: %s bottle(s). Brew: %s/400 ticks.",
+  "message.dreamsdimensions.kettle.invalid": "Use water bottles, Toasted Vigil Herb or Plumite Shards. Collect the batch before restarting.",
+  "message.dreamsdimensions.kettle.status": "Kettle: %s bottle(s), %s/400 ticks. Use an empty hand to collect completed infusions.",
+  "tooltip.dreamsdimensions.plume_lining": "At a smithing table: lining in main hand, armor in offhand.",
+  "tooltip.dreamsdimensions.vigil_tether": "Arm before crossing; one rescue within two minutes.",
+  "tooltip.dreamsdimensions.plume_bridge": "Creates a temporary 3×3 floor for 30 seconds."
 }

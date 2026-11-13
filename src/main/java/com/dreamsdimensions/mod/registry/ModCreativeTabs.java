@@ -31,6 +31,11 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.DREAM_DUST.get());
                         output.accept(ModItems.PLUMITE_SHARD.get());
                         output.accept(ModItems.REMINISCENCE.get());
+                        output.accept(ModItems.INFUSION_LIGHTNESS.get());
+                        output.accept(ModItems.INFUSION_VIGIL.get());
+                        output.accept(ModItems.PLUME_LINING.get());
+                        output.accept(ModItems.VIGIL_TETHER.get());
+                        output.accept(ModItems.PLUME_BRIDGE.get());
                         output.accept(ModItems.RETURN_CHARGE.get());
                         output.accept(ModItems.VIGIL_HERB_LEAF.get());
                         output.accept(ModItems.TOASTED_VIGIL_HERB.get());
@@ -40,6 +45,7 @@ public final class ModCreativeTabs {
                         output.accept(ModBlocks.DREAM_ORE.get());
                         output.accept(ModBlocks.PLUMITE_ORE.get());
                         output.accept(ModBlocks.PLUMITE_BLOCK.get());
+                        output.accept(ModBlocks.ONEIRIC_KETTLE.get());
                         output.accept(ModBlocks.DEEPSLATE_DREAM_ORE.get());
                         output.accept(ModBlocks.MARKED_STONE.get());
                         output.accept(ModBlocks.CUT_MARKED_STONE.get());

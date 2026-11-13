@@ -206,8 +206,11 @@ def validate_loot(name):
     table = read_json(DATA / f"loot_table/chests/{name}.json")
     assert table["type"] == "minecraft:chest"
     assert table["random_sequence"] == f"dreamsdimensions:chests/{name}"
-    assert len(table["pools"]) == 3
-    guaranteed, rare, supplies = table["pools"]
+    assert len(table["pools"]) == 4
+    guaranteed, rare, supplies, reminiscence = table["pools"]
+    assert reminiscence == {"rolls": 1, "entries": [
+        {"type": "minecraft:item", "name": "dreamsdimensions:reminiscence"}]}
+    assert all(pool["rolls"] == 1 for pool in (guaranteed, reminiscence))
     assert guaranteed == {
         "rolls": 1,
         "entries": [{"type": "minecraft:item",

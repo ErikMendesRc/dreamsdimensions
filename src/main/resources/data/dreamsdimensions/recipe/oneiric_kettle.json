@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "C C",
+    "CDC",
+    " C "
+  ],
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "D": "dreamsdimensions:dream_dust"
+  },
+  "result": {
+    "id": "dreamsdimensions:oneiric_kettle",
+    "count": 1
+  }
+}

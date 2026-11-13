@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "PPP",
+    " L ",
+    " D "
+  ],
+  "key": {
+    "P": "dreamsdimensions:plumite_shard",
+    "L": "minecraft:leather",
+    "D": "dreamsdimensions:dream_dust"
+  },
+  "result": {
+    "id": "dreamsdimensions:plume_lining",
+    "count": 1
+  }
+}

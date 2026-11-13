@@ -1,5 +1,8 @@
 package com.dreamsdimensions.mod.entity;
 
+import com.dreamsdimensions.mod.registry.ModItems;
+import net.minecraft.world.item.ItemStack;
+
 import com.geckolib.animatable.GeoEntity;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -474,6 +477,10 @@ public final class FragmentoErranteEntity extends PathfinderMob implements GeoEn
                         MobEffects.SLOW_FALLING, SLOW_FALLING_TICKS, 0, true, true));
                 server.sendParticles(ParticleTypes.END_ROD,
                         getX(), getY() + 0.9, getZ(), 12, 0.4, 0.5, 0.4, 0.02);
+            }
+            if (listener instanceof net.minecraft.server.level.ServerPlayer explorer) {
+                ItemStack memory = new ItemStack(ModItems.REMINISCENCE.get());
+                if (!explorer.getInventory().add(memory)) explorer.drop(memory, false);
             }
             resonanceCooldown = RESONANCE_COOLDOWN;
             curiosityCooldown = Math.max(curiosityCooldown, 60);

@@ -25,6 +25,9 @@ import com.dreamsdimensions.mod.entity.behavior.DreamAnchorService;
 import com.dreamsdimensions.mod.entity.spawn.DreamMobPopulationService;
 import com.dreamsdimensions.mod.registry.ModItems;
 import com.dreamsdimensions.mod.registry.ModMenuTypes;
+import com.dreamsdimensions.mod.registry.ModBlockEntities;
+import com.dreamsdimensions.mod.service.DreamTraitEquipment;
+import com.dreamsdimensions.mod.service.DreamTetherService;
 import com.dreamsdimensions.mod.item.OneiricAwakenerItem;
 import com.dreamsdimensions.mod.worldgen.DreamWorldgen;
 import com.dreamsdimensions.mod.service.DreamRespawnService;
@@ -51,6 +54,7 @@ public class DreamsDimensions {
 
         ModItems.register(modEventBus);
         ModMenuTypes.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         ModAttachments.register(modEventBus);
@@ -103,6 +107,12 @@ public class DreamsDimensions {
         NeoForge.EVENT_BUS.addListener(DreamRespawnService::onRespawnComplete);
         NeoForge.EVENT_BUS.addListener(DreamRespawnService::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(DreamTraitEquipment::onFall);
+        NeoForge.EVENT_BUS.addListener(DreamTraitEquipment::onSmithing);
+        NeoForge.EVENT_BUS.addListener(DreamTetherService::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(DreamTetherService::onLogout);
+        NeoForge.EVENT_BUS.addListener(DreamTetherService::onClone);
+        NeoForge.EVENT_BUS.addListener(DreamTetherService::onStopped);
         NeoForge.EVENT_BUS.addListener(DreamTeleportService::onServerStopped);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerWakeUp);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerLoggedOut);

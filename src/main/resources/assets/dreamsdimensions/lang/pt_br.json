@@ -55,5 +55,21 @@
   "block.dreamsdimensions.plumite_ore": "Minério de Plumita",
   "block.dreamsdimensions.plumite_block": "Bloco de Plumita",
   "item.dreamsdimensions.plumite_shard": "Lasca de Plumita",
-  "item.dreamsdimensions.reminiscence": "Reminiscência"
+  "item.dreamsdimensions.reminiscence": "Reminiscência",
+  "block.dreamsdimensions.oneiric_kettle": "Chaleira Onírica",
+  "block.dreamsdimensions.temporary_plume_bridge": "Ponte de Pluma Temporária",
+  "item.dreamsdimensions.infusion_lightness": "Infusão de Leveza",
+  "item.dreamsdimensions.infusion_vigil": "Infusão de Vigília",
+  "item.dreamsdimensions.plume_lining": "Forro de Pluma",
+  "item.dreamsdimensions.vigil_tether": "Amarra de Vigília",
+  "item.dreamsdimensions.plume_bridge": "Ponte de Pluma",
+  "effect.dreamsdimensions.lightness": "Leveza de Pluma",
+  "effect.dreamsdimensions.vigil_infusion": "Vigília",
+  "message.dreamsdimensions.kettle.needs_fire": "A Chaleira precisa estar sobre uma fogueira acesa.",
+  "message.dreamsdimensions.kettle.loaded": "Chaleira carregada: %s garrafa(s). Preparo: %s/400 ticks.",
+  "message.dreamsdimensions.kettle.invalid": "Use garrafa de água, Erva Torrada ou Lasca de Plumita. Retire o lote antes de reiniciar.",
+  "message.dreamsdimensions.kettle.status": "Chaleira: %s garrafa(s), %s/400 ticks. Use a mão vazia para retirar a Infusão pronta.",
+  "tooltip.dreamsdimensions.plume_lining": "Na mesa de ferraria: Forro na mão principal, armadura na outra.",
+  "tooltip.dreamsdimensions.vigil_tether": "Ative antes da travessia; resgate único por 2 minutos.",
+  "tooltip.dreamsdimensions.plume_bridge": "Cria um piso temporário 3×3 por 30 segundos."
 }

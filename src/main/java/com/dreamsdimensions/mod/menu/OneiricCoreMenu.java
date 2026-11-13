@@ -47,10 +47,10 @@ public final class OneiricCoreMenu extends AbstractContainerMenu {
             @Override public boolean mayPlace(ItemStack stack) { return stack.is(ModItems.RETURN_CHARGE.get()); }
         });
         this.addSlot(new Slot(inputs, 1, 54, 34) {
-            @Override public boolean mayPlace(ItemStack stack) { return stack.is(Items.FEATHER); }
+            @Override public boolean mayPlace(ItemStack stack) { return stack.is(Items.FEATHER) || stack.is(ModItems.PLUMITE_SHARD.get()); }
         });
         this.addSlot(new Slot(inputs, 2, 79, 34) {
-            @Override public boolean mayPlace(ItemStack stack) { return stack.is(Items.GLASS_BOTTLE); }
+            @Override public boolean mayPlace(ItemStack stack) { return stack.is(Items.GLASS_BOTTLE) || stack.is(Items.STRING); }
         });
         this.addSlot(new Slot(result, 0, 138, 34) {
             @Override public boolean mayPlace(ItemStack stack) { return false; }
@@ -62,8 +62,9 @@ public final class OneiricCoreMenu extends AbstractContainerMenu {
             @Override public void onTake(Player player, ItemStack stack) {
                 // Only the server is allowed to debit materials.
                 if (!player.level().isClientSide() && OneiricCoreMenu.this.ready()) {
+                    boolean tether = OneiricCoreMenu.this.isTether();
                     for (int i = 0; i < INPUT_SLOTS; i++) {
-                        inputs.removeItem(i, 1);
+                        inputs.removeItem(i, tether && i == 1 ? 2 : 1);
                     }
                     OneiricCoreMenu.this.slotsChanged(inputs);
                 }
@@ -82,11 +83,20 @@ public final class OneiricCoreMenu extends AbstractContainerMenu {
         }
     }
 
-    private boolean ready() {
+    private boolean isTether() {
+        return inputs.getItem(0).is(ModItems.RETURN_CHARGE.get())
+                && inputs.getItem(1).is(ModItems.PLUMITE_SHARD.get())
+                && inputs.getItem(1).getCount() >= 2
+                && inputs.getItem(2).is(Items.STRING);
+    }
+
+    private boolean isAwakener() {
         return inputs.getItem(0).is(ModItems.RETURN_CHARGE.get())
                 && inputs.getItem(1).is(Items.FEATHER)
                 && inputs.getItem(2).is(Items.GLASS_BOTTLE);
     }
+
+    private boolean ready() {return isAwakener() || isTether();}
 
     @Override
     public void slotsChanged(Container container) {
@@ -94,7 +104,8 @@ public final class OneiricCoreMenu extends AbstractContainerMenu {
         // the result and synchronizes the output through vanilla menu slots.
         if (!container.getItem(0).isEmpty() || container == inputs) {
             if (ready()) {
-                result.setItem(0, new ItemStack(ModItems.ONEIRIC_AWAKENER.get()));
+                result.setItem(0, new ItemStack(isTether()
+                        ? ModItems.VIGIL_TETHER.get() : ModItems.ONEIRIC_AWAKENER.get()));
             } else {
                 result.setItem(0, ItemStack.EMPTY);
             }
@@ -127,8 +138,8 @@ public final class OneiricCoreMenu extends AbstractContainerMenu {
             }
         } else {
             int target = stack.is(ModItems.RETURN_CHARGE.get()) ? 0
-                    : stack.is(Items.FEATHER) ? 1
-                    : stack.is(Items.GLASS_BOTTLE) ? 2 : -1;
+                    : stack.is(Items.FEATHER) || stack.is(ModItems.PLUMITE_SHARD.get()) ? 1
+                    : stack.is(Items.GLASS_BOTTLE) || stack.is(Items.STRING) ? 2 : -1;
             if (target == -1 || !moveItemStackTo(stack, target, target + 1, false)) {
                 return ItemStack.EMPTY;
             }

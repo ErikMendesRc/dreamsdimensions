@@ -5,6 +5,8 @@ import com.dreamsdimensions.mod.block.DreamOreBlock;
 import com.dreamsdimensions.mod.block.OneiricCoreBlock;
 import com.dreamsdimensions.mod.block.VigilHerbBlock;
 import com.dreamsdimensions.mod.block.PlumiteBlock;
+import com.dreamsdimensions.mod.block.OneiricKettleBlock;
+import com.dreamsdimensions.mod.block.TemporaryPlumeBridgeBlock;
 import com.dreamsdimensions.mod.block.DreamLeavesBlock;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
@@ -183,6 +185,16 @@ public final class ModBlocks {
             () -> BlockBehaviour.Properties.ofFullCopy(Blocks.CALCITE)
                     .strength(2.4f, 6.0f).requiresCorrectToolForDrops()
     );
+
+    public static final DeferredBlock<OneiricKettleBlock> ONEIRIC_KETTLE =
+            BLOCKS.registerBlock("oneiric_kettle", OneiricKettleBlock::new,
+                    () -> BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_BLOCK)
+                            .strength(2.5f,6.0f).noOcclusion());
+
+    public static final DeferredBlock<TemporaryPlumeBridgeBlock> TEMPORARY_PLUME_BRIDGE =
+            BLOCKS.registerBlock("temporary_plume_bridge", TemporaryPlumeBridgeBlock::new,
+                    () -> BlockBehaviour.Properties.ofFullCopy(Blocks.CALCITE)
+                            .strength(-1.0f,3600000.0f).noLootTable());
 
     private ModBlocks() {
     }

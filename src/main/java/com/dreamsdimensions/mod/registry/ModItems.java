@@ -2,6 +2,9 @@ package com.dreamsdimensions.mod.registry;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.item.OneiricAwakenerItem;
+import com.dreamsdimensions.mod.item.DreamInfusionItem;
+import com.dreamsdimensions.mod.item.VigilTetherItem;
+import com.dreamsdimensions.mod.item.PlumeBridgeItem;
 import com.dreamsdimensions.mod.item.CrackedAwakenerItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -174,6 +177,29 @@ public final class ModItems {
     public static final DeferredItem<Item> REMINISCENCE = ITEMS.registerItem(
             "reminiscence", Item::new,
             () -> new Item.Properties().rarity(Rarity.UNCOMMON));
+
+    public static final DeferredItem<BlockItem> ONEIRIC_KETTLE_ITEM =
+            ITEMS.registerSimpleBlockItem(ModBlocks.ONEIRIC_KETTLE);
+
+    public static final DeferredItem<DreamInfusionItem> INFUSION_LIGHTNESS = ITEMS.registerItem(
+            "infusion_lightness", p -> new DreamInfusionItem(true,p),
+            () -> new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
+
+    public static final DeferredItem<DreamInfusionItem> INFUSION_VIGIL = ITEMS.registerItem(
+            "infusion_vigil", p -> new DreamInfusionItem(false,p),
+            () -> new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
+
+    public static final DeferredItem<Item> PLUME_LINING = ITEMS.registerItem(
+            "plume_lining",Item::new,
+            () -> new Item.Properties().rarity(Rarity.UNCOMMON));
+
+    public static final DeferredItem<VigilTetherItem> VIGIL_TETHER = ITEMS.registerItem(
+            "vigil_tether",VigilTetherItem::new,
+            () -> new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON));
+
+    public static final DeferredItem<PlumeBridgeItem> PLUME_BRIDGE = ITEMS.registerItem(
+            "plume_bridge",PlumeBridgeItem::new,
+            () -> new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON));
 
     private ModItems() {
     }

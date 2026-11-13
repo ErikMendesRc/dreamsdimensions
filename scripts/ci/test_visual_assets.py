@@ -42,7 +42,26 @@ class VisualAssetTest(unittest.TestCase):
         self.assertEqual(result["status"], "PASS")
         self.assertEqual(result["visual_review"], "NOT_RUN")
         self.assertEqual(result["counts"]["rotation_materials"], len(ROTATED_NATURAL))
-        self.assertEqual(result["counts"]["creative_entries"], 28)
+        self.assertEqual(result["counts"]["creative_entries"], 38)
+
+    def test_task_9_4_native_pixel_assets(self):
+        assets = ROOT / "src/main/resources/assets/dreamsdimensions"
+        names = ["plumite_ore", "plumite_block", "kettle_side",
+                 "kettle_top", "kettle_bottom"]
+        names = ["textures/block/" + n + ".png" for n in names]
+        names += ["textures/item/" + n + ".png" for n in
+                  ["plumite_shard", "reminiscence", "infusion_lightness",
+                   "infusion_vigil", "plume_lining", "vigil_tether", "plume_bridge"]]
+        for name in names:
+            image = assets / name
+            info = png_details(image)
+            self.assertEqual((info["width"], info["height"]), (16, 16), name)
+            assert_png_integrity(image)
+        for name in ("lightness", "vigil_infusion"):
+            path = assets / "textures/mob_effect" / (name + ".png")
+            info = png_details(path)
+            self.assertEqual((info["width"], info["height"]), (18, 18))
+            assert_png_integrity(path)
 
     def test_task_9_3_cracked_awakener_and_hangover_art(self):
         assets = ROOT / "src/main/resources/assets/dreamsdimensions"
@@ -140,7 +159,7 @@ class VisualAssetTest(unittest.TestCase):
         self.assertEqual(report["counts"]["curated_terrain_16_textures"], 17)
         self.assertEqual(report["counts"]["oversized_or_non16_assets"], 0)
         self.assertEqual(report["counts"]["orphan_model_candidates"], 0)
-        self.assertEqual(report["counts"]["png_textures"], 39)
+        self.assertEqual(report["counts"]["png_textures"], 53)
         self.assertGreater(report["counts"]["pixel_art_16_textures"], 20)
 
     def test_cutout_vegetation_and_log_orientations(self):

@@ -3,6 +3,8 @@ package com.dreamsdimensions.mod.registry;
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.effect.PactoVigiliaEffect;
 import com.dreamsdimensions.mod.effect.DreamHangoverEffect;
+import com.dreamsdimensions.mod.effect.LightnessEffect;
+import com.dreamsdimensions.mod.effect.VigilInfusionEffect;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
 import net.neoforged.bus.api.IEventBus;
@@ -23,7 +25,13 @@ public final class ModEffects {
     public static final DeferredHolder<MobEffect, DreamHangoverEffect> RESSACA_ONIRICA =
             EFFECTS.register("ressaca_onirica", DreamHangoverEffect::new);
 
-    private ModEffects() {}
+    public static final DeferredHolder<MobEffect, LightnessEffect> LIGHTNESS =
+            EFFECTS.register("lightness", LightnessEffect::new);
+
+    public static final DeferredHolder<MobEffect, VigilInfusionEffect> VIGIL_INFUSION =
+            EFFECTS.register("vigil_infusion", VigilInfusionEffect::new);
+
+    private ModEffects() {
 
     public static void register(IEventBus modBus) {
         EFFECTS.register(modBus);

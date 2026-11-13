@@ -1,0 +1,10 @@
+{
+  "parent": "minecraft:block/cauldron",
+  "textures": {
+    "particle": "dreamsdimensions:block/kettle_side",
+    "side": "dreamsdimensions:block/kettle_side",
+    "top": "dreamsdimensions:block/kettle_top",
+    "bottom": "dreamsdimensions:block/kettle_bottom",
+    "inside": "dreamsdimensions:block/kettle_top"
+  }
+}

@@ -1,5 +1,8 @@
 package com.dreamsdimensions.mod.entity;
 
+import com.dreamsdimensions.mod.registry.ModItems;
+import net.minecraft.world.item.ItemStack;
+
 import com.dreamsdimensions.mod.entity.behavior.CalmPlayerInteraction;
 import com.dreamsdimensions.mod.entity.behavior.DreamAnchorService;
 import com.dreamsdimensions.mod.entity.navigation.SafeGroundNavigation;
@@ -268,6 +271,8 @@ public final class VigiaAdormecidoEntity extends PathfinderMob implements GeoEnt
         BlockPos anchor = findSafeAnchor(server, serverPlayer);
         if (anchor != null && DreamAnchorService.grant(serverPlayer, anchor)) {
             triggerAnim(CONTROLLER, "inspect_ground");
+            ItemStack memory = new ItemStack(ModItems.REMINISCENCE.get());
+            if (!serverPlayer.getInventory().add(memory)) serverPlayer.drop(memory, false);
             ritualCooldown = PACT_COOLDOWN_TICKS;
         }
         resetRitual();
