@@ -44,6 +44,33 @@ class VisualAssetTest(unittest.TestCase):
         self.assertEqual(result["counts"]["rotation_materials"], len(ROTATED_NATURAL))
         self.assertEqual(result["counts"]["creative_entries"], 22)
 
+    def test_task_9_1_infused_stone_recipe_and_texture_wiring(self):
+        # Snapshot of the current Survival recipe; Task 9.1 changes art only.
+        from audit_visual_assets import assert_png_integrity
+        root = ROOT / "src/main/resources"
+        texture = root / "assets/dreamsdimensions/textures/block/dream_infused_stone.png"
+        info = png_details(texture)
+        self.assertEqual((info["width"], info["height"], info["color_type"]), (16, 16, 6))
+        assert_png_integrity(texture)
+
+        recipe = json.loads((root / "data/dreamsdimensions/recipe/dream_infused_stone.json").read_text())
+        self.assertEqual(recipe["type"], "minecraft:crafting_shaped")
+        self.assertEqual(recipe["pattern"], ["SD", "DS"])
+        self.assertEqual(recipe["key"], {
+            "S": "minecraft:stone",
+            "D": "dreamsdimensions:dream_dust",
+        })
+        self.assertEqual(recipe["result"], {
+            "id": "dreamsdimensions:dream_infused_stone", "count": 1,
+        })
+
+        assets = root / "assets/dreamsdimensions"
+        block_model = json.loads((assets / "models/block/dream_infused_stone.json").read_text())
+        item_def = json.loads((assets / "items/dream_infused_stone.json").read_text())
+        self.assertEqual(block_model["parent"], "minecraft:block/cube_all")
+        self.assertEqual(block_model["textures"]["all"], "dreamsdimensions:block/dream_infused_stone")
+        self.assertEqual(item_def["model"]["model"], "dreamsdimensions:block/dream_infused_stone")
+
     def test_real_oneiric_art_model_and_pngs(self):
         result = audit(ROOT)
         self.assertEqual(result["counts"]["premium_32_textures"], 3)
