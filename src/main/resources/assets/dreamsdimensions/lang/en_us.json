@@ -41,5 +41,6 @@
   "item.dreamsdimensions.vigil_herb_leaf": "Vigil Leaf",
   "item.dreamsdimensions.toasted_vigil_herb": "Toasted Vigil Herb",
   "item.dreamsdimensions.return_charge": "Return Charge",
-  "container.dreamsdimensions.oneiric_core": "Oneiric Core"
+  "container.dreamsdimensions.oneiric_core": "Oneiric Core",
+  "container.dreamsdimensions.oneiric_core.recipe_hint": "Charge + Feather + Bottle"
 }

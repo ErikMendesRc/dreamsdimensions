@@ -37,5 +37,8 @@ public final class OneiricCoreScreen extends AbstractContainerScreen<OneiricCore
         graphics.text(this.font, this.title, this.titleLabelX, this.titleLabelY, 0xFF3F5555, false);
         graphics.text(this.font, this.playerInventoryTitle,
                 this.inventoryLabelX, this.inventoryLabelY, 0xFF596260, false);
+        graphics.text(this.font,
+                Component.translatable("container.dreamsdimensions.oneiric_core.recipe_hint"),
+                25, 60, 0xFF526B70, false);
     }
 }

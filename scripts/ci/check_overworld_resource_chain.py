@@ -85,6 +85,29 @@ def validate_worldgen():
         content = json.dumps(load(path))
         for ore in ORE_IDS:
             assert ore not in content, f"Dream ore appears outside its Overworld owner: {path}"
+    # Task 9.2: vegetation generation uses the Minecraft 26.3 codec.
+    # random_patch no longer exists; random_offset was renamed to offset.
+    herb_feature = load(DATA / "worldgen/feature/vigil_herb_patch.json")
+    assert herb_feature["type"] == "minecraft:simple_block"
+    assert "config" not in herb_feature
+    provider = herb_feature["to_place"]
+    assert provider["type"] == "minecraft:simple"
+    assert provider["state"]["id"] == "dreamsdimensions:vigil_herb"
+    assert provider["state"]["properties"] == {"age": "3", "open": "true"}
+    placed_herb = load(DATA / "worldgen/placed_feature/vigil_herb_patch.json")
+    assert placed_herb["feature"] == "dreamsdimensions:vigil_herb_patch"
+    modifiers = placed_herb["placement"]
+    kinds = [row["type"] for row in modifiers]
+    assert kinds == ["minecraft:rarity_filter", "minecraft:in_square",
+                     "minecraft:heightmap", "minecraft:biome", "minecraft:count",
+                     "minecraft:offset", "minecraft:block_predicate_filter"], kinds
+    assert 0 < modifiers[4]["count"] <= 4096
+    for axis in ("x", "y", "z"):
+        assert axis in modifiers[5], "26.3 offset must define x/y/z"
+    herb_owner = load(MODIFIER_DIR / "vigil_herb_overworld.json")
+    assert herb_owner["features"] == ["dreamsdimensions:vigil_herb_patch"]
+    assert herb_owner["step"] == "vegetal_decoration"
+    assert all(biome.startswith("minecraft:") for biome in herb_owner["biomes"])
     return details
 
 
