@@ -100,8 +100,8 @@ if(typeof require==="function"&&typeof module!=="undefined"&&require.main===modu
   const original=child.execFileSync("git",["show",baseline+":"+rel]);
   const expected=t.convert(Uint8Array.from(original),spec),current=fs.readFileSync(f);
   const same=current.length===expected.length&&current.every((v,i)=>v===expected[i]);
-  if(same)process.stdout.write("PASS "+spec[0]+"\\n");
-  else{drift++;if(apply){fs.writeFileSync(f,expected);process.stdout.write("RESTORED "+spec[0]+"\\n");}else process.stdout.write("DRIFT "+spec[0]+" (run with --apply to restore)\\n");}
+  if(same)process.stdout.write("PASS "+spec[0]+"\n");
+  else{drift++;if(apply){fs.writeFileSync(f,expected);process.stdout.write("RESTORED "+spec[0]+"\n");}else process.stdout.write("DRIFT "+spec[0]+" (run with --apply to restore)\n");}
  }
  if(drift&&!apply)process.exitCode=1;
 }
