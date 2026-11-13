@@ -1,0 +1,754 @@
+{
+  "schema_version": "dreamsdimensions.overworld.contract.v1",
+  "task": "9.0",
+  "scope": "DESIGN_ONLY",
+  "revision": "2026-11-12",
+  "baseline": {
+    "branch": "migration/minecraft-26.3",
+    "commit": "f21aeddec260f162372f70fbd5f57ba337b88b00",
+    "source_of_truth": [
+      "src/main/java/com/dreamsdimensions/mod/registry/ModBlocks.java",
+      "src/main/java/com/dreamsdimensions/mod/registry/ModItems.java",
+      "src/main/resources/data/dreamsdimensions/recipe",
+      "docs/GAMEPLAY_E_DIRECAO.md",
+      "docs/ESTADO_ATUAL.md",
+      "docs/WORLDGEN_E_CONTEUDO.md"
+    ],
+    "manual_survival": "PENDING"
+  },
+  "principles": {
+    "no_custom_endgame": true,
+    "vanilla_progression_compatible": true,
+    "overworld_independent": true,
+    "no_mandatory_quest": true,
+    "no_free_dream_return": true,
+    "dream_dust_origin": "minecraft:overworld",
+    "dream_entry_default_disabled": true,
+    "no_retro_generation": true,
+    "early_overworld_optional_dreams": true,
+    "no_one_dimension_hard_dependency": true,
+    "design_does_not_register_content": true
+  },
+  "selected_slice": {
+    "id": "F1",
+    "task": "9.1",
+    "name": "Vestígios construíveis: rocha, líquen e argamassa",
+    "entry_ids": [
+      "F1_LICHEN",
+      "F1_MORTAR",
+      "F1_MASONRY"
+    ],
+    "experience": "Explorar afloramentos reais, coletar material distinto, processar sem nova estação e construir um resultado material persistente.",
+    "required_evidence": [
+      "STATIC_CHECK",
+      "RUNTIME_OBSERVED",
+      "MANUAL_PENDING"
+    ],
+    "non_goals": [
+      "Sem estruturas e mobs nesta fatia",
+      "Sem alterar minério/Pó Onírico ou entrada em sonhos",
+      "Sem retro-gen",
+      "Sem alterar F0/Stonecutter 1:1"
+    ],
+    "decision": "SELECTED_FOR_NEXT_TASK_NOT_IMPLEMENTED"
+  },
+  "families": [
+    {
+      "family": "geologia",
+      "purpose": "rochas e sedimentos com uso e origem real"
+    },
+    {
+      "family": "recurso",
+      "purpose": "materiais de processamento rastreáveis"
+    },
+    {
+      "family": "flora",
+      "purpose": "coleta e habitats com utilidade mensurável"
+    },
+    {
+      "family": "processamento",
+      "purpose": "conversões acíclicas com consumidores"
+    },
+    {
+      "family": "construcao",
+      "purpose": "variações arquitetônicas e custos honestos"
+    },
+    {
+      "family": "estrutura",
+      "purpose": "descoberta e deslocamento com retorno funcional"
+    },
+    {
+      "family": "fauna",
+      "purpose": "ecologia, observação e encontros opcionais"
+    },
+    {
+      "family": "equipamento",
+      "purpose": "ferramentas que não duplicam vanilla"
+    },
+    {
+      "family": "sistema",
+      "purpose": "pistas e engenharia sem world scans caros"
+    }
+  ],
+  "entries": [
+    {
+      "id": "E01",
+      "name": "Minério Onírico",
+      "family": "geologia",
+      "status": "IMPLEMENTED_CODE",
+      "phase": "early",
+      "task": "legacy",
+      "origin": "minecraft:overworld",
+      "action": "Minerar depósitos gerados em pedra vanilla com ferramenta compatível.",
+      "cost": "Mineração correta e tempo de exploração; sem coleta grátis.",
+      "output": "Pó Onírico via loot existente.",
+      "use": "Economia de preparação/retorno onírico.",
+      "depends_on": [],
+      "validation": "Registro/receita verificável no repositório; obtenção e comportamento em Survival exigem teste humano.",
+      "minecraft_relation": "Integra recursos vanilla sem substituir a progressão do jogo.",
+      "code_anchor": "src/main/java/com/dreamsdimensions/mod/registry/ModBlocks.java",
+      "registry_id": "dream_ore"
+    },
+    {
+      "id": "E02",
+      "name": "Minério Onírico de Ardósia",
+      "family": "geologia",
+      "status": "IMPLEMENTED_CODE",
+      "phase": "early",
+      "task": "legacy",
+      "origin": "minecraft:overworld",
+      "action": "Minerar minério profundo em deepslate.",
+      "cost": "Ferramenta apropriada e risco de cavernas profundas.",
+      "output": "Pó Onírico via loot existente.",
+      "use": "Mesma economia de preparo do Overworld.",
+      "depends_on": [],
+      "validation": "Registro/receita verificável no repositório; obtenção e comportamento em Survival exigem teste humano.",
+      "minecraft_relation": "Integra recursos vanilla sem substituir a progressão do jogo.",
+      "code_anchor": "src/main/java/com/dreamsdimensions/mod/registry/ModBlocks.java",
+      "registry_id": "deepslate_dream_ore"
+    },
+    {
+      "id": "E03",
+      "name": "Pó Onírico",
+      "family": "recurso",
+      "status": "IMPLEMENTED_CODE",
+      "phase": "early",
+      "task": "legacy",
+      "origin": "minecraft:overworld",
+      "action": "Coletar de E01/E02 no Overworld.",
+      "cost": "Mineração, Fortune/Silk e disponibilidade controlados por loot.",
+      "output": "Componente exclusivamente originado no Overworld.",
+      "use": "Colar, Pedra Infundida e custo completo de Despertador.",
+      "depends_on": [
+        "E01",
+        "E02"
+      ],
+      "validation": "Registro/receita verificável no repositório; obtenção e comportamento em Survival exigem teste humano.",
+      "minecraft_relation": "Integra recursos vanilla sem substituir a progressão do jogo.",
+      "code_anchor": "src/main/java/com/dreamsdimensions/mod/registry/ModItems.java",
+      "registry_id": "dream_dust"
+    },
+    {
+      "id": "E04",
+      "name": "Colar dos Sonhos",
+      "family": "equipamento",
+      "status": "IMPLEMENTED_CODE",
+      "phase": "early",
+      "task": "legacy",
+      "origin": "minecraft:overworld",
+      "action": "Fabricar e equipar Colar com materiais vanilla e E03.",
+      "cost": "3 Pós Oníricos; não consumível; entrada em sonhos desabilitada por configuração.",
+      "output": "Equipamento de preparo onírico.",
+      "use": "Desbloqueia oportunidade de viagem em configuração segura, não missão obrigatória.",
+      "depends_on": [
+        "E03"
+      ],
+      "validation": "Registro/receita verificável no repositório; obtenção e comportamento em Survival exigem teste humano.",
+      "minecraft_relation": "Integra recursos vanilla sem substituir a progressão do jogo.",
+      "code_anchor": "src/main/java/com/dreamsdimensions/mod/registry/ModItems.java",
+      "registry_id": "dream_necklace"
+    },
+    {
+      "id": "E05",
+      "name": "Despertador Onírico",
+      "family": "equipamento",
+      "status": "IMPLEMENTED_CODE",
+      "phase": "early",
+      "task": "legacy",
+      "origin": "minecraft:overworld",
+      "action": "Preparar e usar item de retorno com a política de segurança existente.",
+      "cost": "Custo equivalente a 12 Pós Oníricos por unidade; consumido só após retorno confirmado.",
+      "output": "Item consumível de retorno.",
+      "use": "Recuperação de expedição; sem teleporte gratuito.",
+      "depends_on": [
+        "E03",
+        "E08"
+      ],
+      "validation": "Registro/receita verificável no repositório; obtenção e comportamento em Survival exigem teste humano.",
+      "minecraft_relation": "Integra recursos vanilla sem substituir a progressão do jogo.",
+      "code_anchor": "src/main/java/com/dreamsdimensions/mod/registry/ModItems.java",
+      "registry_id": "oneiric_awakener"
+    },
+    {
+      "id": "E06",
+      "name": "Pedra Marcada",
+      "family": "geologia",
+      "status": "IMPLEMENTED_CODE",
+      "phase": "early",
+      "task": "legacy",
+      "origin": "minecraft:overworld",
+      "action": "Encontrar veios e afloramentos naturais e minerar.",
+      "cost": "Picareta de pedra ou superior; procura real em chunks novos.",
+      "output": "Pedra construtiva bruta.",
+      "use": "Material arquitetônico sem dependência de sonho.",
+      "depends_on": [],
+      "validation": "Registro/receita verificável no repositório; obtenção e comportamento em Survival exigem teste humano.",
+      "minecraft_relation": "Integra recursos vanilla sem substituir a progressão do jogo.",
+      "code_anchor": "src/main/java/com/dreamsdimensions/mod/registry/ModBlocks.java",
+      "registry_id": "marked_stone"
+    },
+    {
+      "id": "E07",
+      "name": "Pedra Marcada Lapidada",
+      "family": "construcao",
+      "status": "IMPLEMENTED_CODE",
+      "phase": "early",
+      "task": "legacy",
+      "origin": "minecraft:overworld",
+      "action": "Lapidar E06 no Stonecutter.",
+      "cost": "Conversão 1:1; sem multiplicação de recurso.",
+      "output": "Bloco arquitetônico lapidado.",
+      "use": "Construção do Overworld.",
+      "depends_on": [
+        "E06"
+      ],
+      "validation": "Registro/receita verificável no repositório; obtenção e comportamento em Survival exigem teste humano.",
+      "minecraft_relation": "Integra recursos vanilla sem substituir a progressão do jogo.",
+      "code_anchor": "src/main/java/com/dreamsdimensions/mod/registry/ModBlocks.java",
+      "registry_id": "cut_marked_stone"
+    },
+    {
+      "id": "E08",
+      "name": "Pedra Infundida",
+      "family": "recurso",
+      "status": "IMPLEMENTED_CODE",
+      "phase": "early",
+      "task": "legacy",
+      "origin": "minecraft:overworld",
+      "action": "Fabricar pela receita existente.",
+      "cost": "Pedra vanilla e Pó Onírico.",
+      "output": "Componente de crafting do Núcleo.",
+      "use": "Preparação de Despertador, sem source dimensional.",
+      "depends_on": [
+        "E03"
+      ],
+      "validation": "Registro/receita verificável no repositório; obtenção e comportamento em Survival exigem teste humano.",
+      "minecraft_relation": "Integra recursos vanilla sem substituir a progressão do jogo.",
+      "code_anchor": "src/main/java/com/dreamsdimensions/mod/registry/ModBlocks.java",
+      "registry_id": "dream_infused_stone"
+    },
+    {
+      "id": "E09",
+      "name": "Núcleo Onírico",
+      "family": "recurso",
+      "status": "IMPLEMENTED_CODE",
+      "phase": "early",
+      "task": "legacy",
+      "origin": "minecraft:overworld",
+      "action": "Fabricar via receita existente.",
+      "cost": "Pedra Infundida, Pó Onírico e relógio.",
+      "output": "Componente do Despertador.",
+      "use": "Gasto rastreável, sem duplicação.",
+      "depends_on": [
+        "E08",
+        "E03"
+      ],
+      "validation": "Registro/receita verificável no repositório; obtenção e comportamento em Survival exigem teste humano.",
+      "minecraft_relation": "Integra recursos vanilla sem substituir a progressão do jogo.",
+      "code_anchor": "src/main/java/com/dreamsdimensions/mod/registry/ModBlocks.java",
+      "registry_id": "oneiric_core_block"
+    },
+    {
+      "id": "F1_LICHEN",
+      "name": "Líquen dos Vestígios",
+      "family": "flora",
+      "status": "SELECTED",
+      "phase": "early",
+      "task": "9.1",
+      "origin": "minecraft:overworld",
+      "action": "Localizar manchas discretas em afloramentos rochosos do Overworld e coletar com ferramenta vanilla apropriada.",
+      "cost": "Deslocamento e acesso seguro à rocha; rendimento sem duplicação.",
+      "output": "Líquen colhido como recurso natural.",
+      "use": "Ingrediente para argamassa e uso decorativo secundário.",
+      "depends_on": [
+        "E06"
+      ],
+      "validation": "Observar manchas naturais em quatro seeds; colher em Survival; validar ferramentas, drops, ausência em dimensões e renovação não explorável.",
+      "minecraft_relation": "Distinguir do Glow Lichen vanilla pelo comportamento, contexto de geração e função construtiva.",
+      "registry_id": null
+    },
+    {
+      "id": "F1_MORTAR",
+      "name": "Argamassa dos Vestígios",
+      "family": "processamento",
+      "status": "SELECTED",
+      "phase": "early",
+      "task": "9.1",
+      "origin": "minecraft:overworld",
+      "action": "Misturar Líquen dos Vestígios com materiais comuns em crafting vanilla.",
+      "cost": "Consumo real de líquen e ingrediente vanilla; sem ciclo de rendimento infinito.",
+      "output": "Argamassa para assentamento.",
+      "use": "Consumida para construir Alvenaria Marcada.",
+      "depends_on": [
+        "F1_LICHEN"
+      ],
+      "validation": "Receita nativa, custo unitário, contabilização de insumos, crafting real e anti-duplicação.",
+      "minecraft_relation": "Usar Crafting Table; não criar nova GUI ou estação sem necessidade.",
+      "registry_id": null
+    },
+    {
+      "id": "F1_MASONRY",
+      "name": "Alvenaria Marcada",
+      "family": "construcao",
+      "status": "SELECTED",
+      "phase": "early",
+      "task": "9.1",
+      "origin": "minecraft:overworld",
+      "action": "Assentar Pedra Marcada com Argamassa e colocar blocos em base.",
+      "cost": "Consome Pedra Marcada e Argamassa; não multiplica o mineral.",
+      "output": "Bloco arquitetônico distinto, minerável e recuperável.",
+      "use": "Construções, refúgios e ambientação próprios do Overworld.",
+      "depends_on": [
+        "E06",
+        "F1_MORTAR"
+      ],
+      "validation": "Colocação/remoção real, ferramenta/drop, paredes 5x5, crafting, save/reload e custo de 64/256 blocos.",
+      "minecraft_relation": "Complementa Stonecutter em vez de substituir a Pedra Marcada Lapidada.",
+      "registry_id": null
+    },
+    {
+      "id": "G02_STRATA",
+      "name": "Estratos de Rocha Antiga",
+      "family": "geologia",
+      "status": "CANDIDATE",
+      "phase": "early",
+      "task": "9.1+",
+      "origin": "minecraft:overworld",
+      "action": "Reconhecer camadas geológicas em paredões/cavernas naturais.",
+      "cost": "Exploração de terrenos adequados; ocorrência calibrada.",
+      "output": "Material de alvenaria alternativo.",
+      "use": "Construção e elementos de ambientação regional.",
+      "depends_on": [],
+      "validation": "Medir exposição, distribuição, construção e distinção visual em cavernas.",
+      "minecraft_relation": "Não ser apenas Stone recolorido sem utilidade arquitetônica ou descoberta.",
+      "registry_id": null
+    },
+    {
+      "id": "G03_POROUS",
+      "name": "Pedra Porosa",
+      "family": "geologia",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.1+",
+      "origin": "minecraft:overworld",
+      "action": "Localizar rocha porosa perto de água subterrânea.",
+      "cost": "Exploração e mineração seletiva.",
+      "output": "Blocos porosos.",
+      "use": "Consumidor deve ser definido: utilidade ambiental real ou construção assumidamente decorativa.",
+      "depends_on": [],
+      "validation": "Exigir consumidor concreto antes de aprovar implementação.",
+      "minecraft_relation": "Não adicionar função de purificação de água inexistente no vanilla por conveniência.",
+      "registry_id": null
+    },
+    {
+      "id": "G04_DEPOSITS",
+      "name": "Depósitos de Cascalho Sedimentar",
+      "family": "geologia",
+      "status": "CANDIDATE",
+      "phase": "early",
+      "task": "9.1+",
+      "origin": "minecraft:overworld",
+      "action": "Encontrar bolsões superficiais em planícies rochosas ou encostas.",
+      "cost": "Escavação simples e volume disponível limitado.",
+      "output": "Sedimentos especializados.",
+      "use": "Matéria-prima para acabamentos/argamassa alternativa, se a receita justificar.",
+      "depends_on": [],
+      "validation": "Propor consumidor sem redundância com Gravel; medir acesso e drops.",
+      "minecraft_relation": "Não introduzir outro minério raro sem papel.",
+      "registry_id": null
+    },
+    {
+      "id": "N02_DEW_MOSS",
+      "name": "Musgo de Orvalho",
+      "family": "flora",
+      "status": "CANDIDATE",
+      "phase": "early",
+      "task": "9.2",
+      "origin": "minecraft:overworld",
+      "action": "Explorar rochas úmidas e coletar musgo localizado.",
+      "cost": "Habitat úmido específico e coleta sem farm involuntária.",
+      "output": "Musgo natural.",
+      "use": "Compostagem/decor com mecânica aprovada antes do registro.",
+      "depends_on": [],
+      "validation": "Comparar com Moss Block vanilla e validar habitat/consumidor.",
+      "minecraft_relation": "Pode ser decorativo se declarado e distinto visualmente.",
+      "registry_id": null
+    },
+    {
+      "id": "N03_SHADE_FUNGI",
+      "name": "Fungos de Sombra",
+      "family": "flora",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.2",
+      "origin": "minecraft:overworld",
+      "action": "Reconhecer colônias em cavernas escuras sem falso brilho excessivo.",
+      "cost": "Exploração de caverna e risco normal de mobs vanilla.",
+      "output": "Fungo coletável.",
+      "use": "Culinária ou tingimento apenas se houver utilidade e custo próprio.",
+      "depends_on": [],
+      "validation": "Testar visibilidade, spawn natural, função escolhida e repetição de farm.",
+      "minecraft_relation": "Não duplicar Cogumelo marrom/vermelho por aparência.",
+      "registry_id": null
+    },
+    {
+      "id": "N04_WATCH_HERB",
+      "name": "Erva da Vigília",
+      "family": "flora",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.2",
+      "origin": "minecraft:overworld",
+      "action": "Encontrar pequena planta em zonas de transição.",
+      "cost": "Coleta manual e taxa de geração mensurável.",
+      "output": "Erva para elaboração.",
+      "use": "Consumível situacional de exploração a definir, sem negar riscos de sonho.",
+      "depends_on": [],
+      "validation": "Protótipo deve especificar efeito, duração, custo e incompatibilidades.",
+      "minecraft_relation": "Nenhuma cura garantida, invulnerabilidade ou retorno grátis.",
+      "registry_id": null
+    },
+    {
+      "id": "N05_DRY_BUSH",
+      "name": "Arbusto de Pedra",
+      "family": "flora",
+      "status": "CANDIDATE",
+      "phase": "early",
+      "task": "9.2",
+      "origin": "minecraft:overworld",
+      "action": "Observar vegetação resiliente em rochas expostas.",
+      "cost": "Sem risco extra; recurso meramente decorativo declarado.",
+      "output": "Bloco de vegetação.",
+      "use": "Ambientação coerente e material opcional de decoração.",
+      "depends_on": [],
+      "validation": "Validar baixa densidade, bioma, textura 16x16 e contraste com vanilla.",
+      "minecraft_relation": "Decoração assumida; não inventar efeito para justificar sua existência.",
+      "registry_id": null
+    },
+    {
+      "id": "B02_SLABS",
+      "name": "Conjunto de Lajes e Escadas Marcadas",
+      "family": "construcao",
+      "status": "CANDIDATE",
+      "phase": "early",
+      "task": "9.4",
+      "origin": "minecraft:overworld",
+      "action": "Transformar rocha arquitetônica em componentes de construção.",
+      "cost": "Stonecutter com yields nativos sem geração líquida de material.",
+      "output": "Lajes e escadas.",
+      "use": "Construção variada sem grind artificial.",
+      "depends_on": [
+        "E07"
+      ],
+      "validation": "Validar receitas/rendimento/drop, creative tab e construção 5x5.",
+      "minecraft_relation": "Usar famílias de blocos vanilla e não reimplementar Stonecutter.",
+      "registry_id": null
+    },
+    {
+      "id": "B03_RUBBLE",
+      "name": "Muralhas de Alvenaria",
+      "family": "construcao",
+      "status": "CANDIDATE",
+      "phase": "early",
+      "task": "9.4",
+      "origin": "minecraft:overworld",
+      "action": "Produzir variantes de F1_MASONRY.",
+      "cost": "Custo de bloco material e proporção declarados.",
+      "output": "Paredes de construção.",
+      "use": "Fortificações e arquitetura regional.",
+      "depends_on": [
+        "F1_MASONRY"
+      ],
+      "validation": "Verificar conexões/colisão/loot com paredes vanilla.",
+      "minecraft_relation": "Não adicionar resistência gratuita superior a Netherite por lore.",
+      "registry_id": null
+    },
+    {
+      "id": "B04_TRAIL_MARKER",
+      "name": "Marco de Trilha Construível",
+      "family": "construcao",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.4",
+      "origin": "minecraft:overworld",
+      "action": "Criar um marcador físico para orientar rotas em exploração.",
+      "cost": "Materiais de pedra e tempo de construção.",
+      "output": "Marcador estático sem radar.",
+      "use": "Marcação de caminhos sem substituir mapa/bússola.",
+      "depends_on": [
+        "E06"
+      ],
+      "validation": "Testar colocação/visibilidade e não criar localização automática de estruturas.",
+      "minecraft_relation": "Se só decoração, declarar explicitamente.",
+      "registry_id": null
+    },
+    {
+      "id": "P01_VESTIGE_MARKER",
+      "name": "Marco dos Vestígios",
+      "family": "estrutura",
+      "status": "CANDIDATE",
+      "phase": "early",
+      "task": "9.3",
+      "origin": "minecraft:overworld",
+      "action": "Reconhecer formação humana antiga com indícios e materiais colhíveis.",
+      "cost": "Deslocamento até estrutura; sem coordenada gratuita.",
+      "output": "Descoberta de arquitetura antiga e recursos localizáveis.",
+      "use": "Apresenta material ou caminho opcional no Overworld.",
+      "depends_on": [
+        "F1_LICHEN"
+      ],
+      "validation": "Gerar starts reais em 4 seeds, testar leitura visual e acesso em Survival.",
+      "minecraft_relation": "Não ser portal nem mesa de loot com Despertador automático.",
+      "registry_id": null
+    },
+    {
+      "id": "P02_OLD_SHELTER",
+      "name": "Abrigo Antigo",
+      "family": "estrutura",
+      "status": "CANDIDATE",
+      "phase": "early",
+      "task": "9.3",
+      "origin": "minecraft:overworld",
+      "action": "Encontrar abrigo degradado em exploração terrestre.",
+      "cost": "Risco de exploração natural; loot modesto sem progressão obrigatória.",
+      "output": "Cobertura/recursos contextuais e narrativa ambiental.",
+      "use": "Ajuda deslocamento e dá opção de construir/basear.",
+      "depends_on": [
+        "P01_VESTIGE_MARKER"
+      ],
+      "validation": "Validar spawn, entradas, iluminação e coexistência com vilas vanilla.",
+      "minecraft_relation": "Sem baú obrigatório de Pó Onírico ou teleporte.",
+      "registry_id": null
+    },
+    {
+      "id": "P03_BURIED_GALLERY",
+      "name": "Galeria Soterrada",
+      "family": "estrutura",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.3",
+      "origin": "minecraft:overworld",
+      "action": "Investigar galeria semi-enterrada com pistas visuais.",
+      "cost": "Mineração, iluminação e navegação; risco justo.",
+      "output": "Materiais arquitetônicos e descobertas opcionais.",
+      "use": "Exploração de médio prazo, materiais raros sem hard-lock.",
+      "depends_on": [
+        "P01_VESTIGE_MARKER"
+      ],
+      "validation": "Verificar integridade da estrutura, não esmagar construções, loot nativo e travessia.",
+      "minecraft_relation": "Não copiar Mineshaft vanilla sem mecânica/arquitetura distintas.",
+      "registry_id": null
+    },
+    {
+      "id": "P04_OLD_PASSAGE",
+      "name": "Travessia Antiga",
+      "family": "estrutura",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.3",
+      "origin": "minecraft:overworld",
+      "action": "Encontrar ponte/escadaria sobre obstáculos naturais.",
+      "cost": "Exploração e perigos ambientais vanilla.",
+      "output": "Atalho situacional e sinal de civilização antiga.",
+      "use": "Orientação/viagem e curiosidade no Overworld.",
+      "depends_on": [
+        "P02_OLD_SHELTER"
+      ],
+      "validation": "Validar suportes, acessibilidade, interseções e geração sem flutuar.",
+      "minecraft_relation": "Não virar portal nem transporte instantâneo.",
+      "registry_id": null
+    },
+    {
+      "id": "P05_OUTLOOK",
+      "name": "Mirante da Vigília",
+      "family": "estrutura",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.3",
+      "origin": "minecraft:overworld",
+      "action": "Identificar ponto de observação no relevo.",
+      "cost": "Subida/exposição a mobs e clima normal.",
+      "output": "Vista e oportunidades de orientação.",
+      "use": "Descoberta de arredores sem HUD de radar.",
+      "depends_on": [],
+      "validation": "Testar panorâmica, altitude real, entrada e navegação.",
+      "minecraft_relation": "Não substituir mapas/exploração aberta.",
+      "registry_id": null
+    },
+    {
+      "id": "M01_SMALL_DIGGER",
+      "name": "Escavador das Encostas",
+      "family": "fauna",
+      "status": "CANDIDATE",
+      "phase": "early",
+      "task": "9.5",
+      "origin": "minecraft:overworld",
+      "action": "Observar criatura em encostas e comportamento de escavação.",
+      "cost": "Perseguição/observação; sem loot necessário.",
+      "output": "Indício ambiental de tipos de terreno, não marcador exato.",
+      "use": "Profundidade ecológica e sinal de habitat.",
+      "depends_on": [
+        "G02_STRATA"
+      ],
+      "validation": "Validar habitat, spawn natural, animação, persistência e ausência de grief.",
+      "minecraft_relation": "Não quebrar blocos do jogador; reaproveitar framework somente se apropriado ao Overworld.",
+      "registry_id": null
+    },
+    {
+      "id": "M02_DUSK_MOTH",
+      "name": "Mariposa Crepuscular",
+      "family": "fauna",
+      "status": "CANDIDATE",
+      "phase": "early",
+      "task": "9.5",
+      "origin": "minecraft:overworld",
+      "action": "Observar movimentação próxima de vegetação crepuscular.",
+      "cost": "Tempo de exploração e ciclo dia/noite.",
+      "output": "Feedback ecológico, não item de loot.",
+      "use": "Ambiente vivo e indicação orgânica de vegetação.",
+      "depends_on": [
+        "N05_DRY_BUSH"
+      ],
+      "validation": "Validar spawn limit, movimento, noite/dia, servidor dedicado e FPS.",
+      "minecraft_relation": "Não duplicar Bee/bat; evitar partículas constantes.",
+      "registry_id": null
+    },
+    {
+      "id": "M03_RUIN_GUARD",
+      "name": "Sentinela de Ruínas",
+      "family": "fauna",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.5",
+      "origin": "minecraft:overworld",
+      "action": "Encontrar defensor contextual apenas em estruturas apropriadas.",
+      "cost": "Encontro com combate evitável e escape possível.",
+      "output": "Desafio territorial e loot proporcional.",
+      "use": "Recompensa opcional de exploração.",
+      "depends_on": [
+        "P03_BURIED_GALLERY"
+      ],
+      "validation": "Testar IA, justiça de combate, spawn contextual, reset e loot não obrigatório.",
+      "minecraft_relation": "Sem boss obrigatório ou bloqueio para jogo vanilla.",
+      "registry_id": null
+    },
+    {
+      "id": "Q01_FIELD_NOTE",
+      "name": "Caderno de Vestígios",
+      "family": "equipamento",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.4",
+      "origin": "minecraft:overworld",
+      "action": "Registrar observações de locais descobertos pelo jogador.",
+      "cost": "Tempo, papel/tinta; sem marcador preditivo.",
+      "output": "Registro manual ou semiautomático de descoberta (não GPS).",
+      "use": "Memória da exploração sem missões.",
+      "depends_on": [
+        "P01_VESTIGE_MARKER"
+      ],
+      "validation": "Provar vantagem que mapa vanilla não oferece; se não, cancelar.",
+      "minecraft_relation": "Não criar quests obrigatórias/waypoints automáticos.",
+      "registry_id": null
+    },
+    {
+      "id": "Q02_MASON_TOOL",
+      "name": "Ferramenta de Conservação",
+      "family": "equipamento",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.4",
+      "origin": "minecraft:overworld",
+      "action": "Interagir com estruturas antigas para restaurar peças construtivas.",
+      "cost": "Desgaste, recurso material consumido.",
+      "output": "Restauração pontual não geradora de itens.",
+      "use": "Construção e exploração lateral.",
+      "depends_on": [
+        "P02_OLD_SHELTER",
+        "F1_MORTAR"
+      ],
+      "validation": "Demonstrar uso distinto do Stonecutter/picareta; evitar duplicação.",
+      "minecraft_relation": "Não criar nova ferramenta sem utilidade irredutível.",
+      "registry_id": null
+    },
+    {
+      "id": "S01_ENV_TRACE",
+      "name": "Rastros Ambientais",
+      "family": "sistema",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.6",
+      "origin": "minecraft:overworld",
+      "action": "Reconhecer pistas persistentes próximas de pontos geológicos/estruturas.",
+      "cost": "Observação do ambiente; sem scan em tick/chunk.",
+      "output": "Pista diegética interpretável.",
+      "use": "Conectar descoberta e curiosidade, sem radar e sem portal.",
+      "depends_on": [
+        "P01_VESTIGE_MARKER"
+      ],
+      "validation": "Protótipo opt-in com sondagem limitada e ganho real comprovado; medir custo servidor.",
+      "minecraft_relation": "Não repetir protótipo de anomalias 7.6 aposentado sem consumidor.",
+      "registry_id": null
+    },
+    {
+      "id": "S02_CARTOGRAPHY",
+      "name": "Cartografia de Vestígios",
+      "family": "sistema",
+      "status": "CANDIDATE",
+      "phase": "late",
+      "task": "9.6",
+      "origin": "minecraft:overworld",
+      "action": "Reunir pistas de vários POIs e produzir registro cartográfico.",
+      "cost": "Exploração real + recursos não gratuitos.",
+      "output": "Carta de referências visitadas.",
+      "use": "Planejamento de próximas expedições.",
+      "depends_on": [
+        "Q01_FIELD_NOTE",
+        "P03_BURIED_GALLERY"
+      ],
+      "validation": "Sem revelar estruturas não visitadas; comparar mapa vanilla.",
+      "minecraft_relation": "Não gerar coordenadas grátis.",
+      "registry_id": null
+    },
+    {
+      "id": "S03_ENGINEERING",
+      "name": "Engenharia de Conservação",
+      "family": "sistema",
+      "status": "CANDIDATE",
+      "phase": "late",
+      "task": "9.6",
+      "origin": "minecraft:overworld",
+      "action": "Investir materiais coletados para reparar/construir estruturas.",
+      "cost": "Materiais não gratuitos e manutenção proporcional.",
+      "output": "Melhorias arquitetônicas laterais.",
+      "use": "Uso sustentável de materiais do Overworld.",
+      "depends_on": [
+        "Q02_MASON_TOOL",
+        "F1_MASONRY"
+      ],
+      "validation": "Gate de custo > benefício, multiplayer, recursos finitos e exploits.",
+      "minecraft_relation": "Não criar automação infinita ou End Game próprio.",
+      "registry_id": null
+    }
+  ]
+}
