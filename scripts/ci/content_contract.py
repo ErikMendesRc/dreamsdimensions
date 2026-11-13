@@ -19,6 +19,9 @@ MOD = "dreamsdimensions"
 RESOURCES = Path("src/main/resources")
 JAVA = Path("src/main/java/com/dreamsdimensions/mod/registry")
 CONFIG = Path("scripts/ci/content_contract_exceptions.json")
+# One reviewed ephemeral block: only PlumeBridgeItem can place it.
+# It must NEVER acquire a BlockItem, loot table or recipe.
+RUNTIME_ONLY_NO_ITEM_BLOCKS = {"temporary_plume_bridge"}
 ID = re.compile(r"^([a-z0-9_.-]+):([a-z0-9_./-]+)$")
 DECL_BLOCK = re.compile(
     r"public\s+static\s+final\s+DeferredBlock<[^>]+>\s+(\w+)\s*=\s*"
@@ -89,8 +92,20 @@ def declared_content(root: Path) -> tuple[dict[str, str], set[str], set[str]]:
         require(block_symbol in blocks, f"Item {symbol}: unknown ModBlocks.{block_symbol}")
     items = set(named.values()) | {blocks[symbol] for symbol in item_blocks.values()}
     require(len(items) == len(named) + len(item_blocks), "Duplicate registered item ID")
-    require(set(blocks.values()) <= items,
-            f"Registered blocks missing a BlockItem: {sorted(set(blocks.values()) - items)}")
+    runtime_only = set(blocks.values()) & RUNTIME_ONLY_NO_ITEM_BLOCKS
+    require((set(blocks.values()) - runtime_only) <= items,
+            f"Registered blocks missing a BlockItem: "
+            f"{sorted(set(blocks.values()) - runtime_only - items)}")
+    require(not (runtime_only & items),
+            "Ephemeral runtime-only blocks MUST NOT be registered as player items")
+    for field, ident in blocks.items():
+        if ident not in runtime_only:
+            continue
+        # The block must explicitly disallow loot; no generic escape hatch.
+        segment = blocks_java.split('"' + ident + '"', 1)[1].split("private ModBlocks()", 1)[0]
+        require(".noLootTable()" in segment,
+                f"Runtime-only block {ident} must have no loot table")
+
     return blocks, items, set(blocks.values())
 
 
@@ -237,7 +252,10 @@ class Validator:
     def check_loot(self, exceptions: dict[str, str]) -> int:
         folder = self.data / "loot_table/blocks"
         loot_files = {p.stem for p in folder.glob("*.json")}
-        missing = self.block_ids - loot_files
+        runtime_only = self.block_ids & RUNTIME_ONLY_NO_ITEM_BLOCKS
+        require(not (runtime_only & loot_files),
+                "Ephemeral blocks must not drop an obtainable item")
+        missing = self.block_ids - loot_files - runtime_only
         require(set(exceptions) == missing,
                 f"Missing block loot tables do not match reviewed legacy exceptions: "
                 f"missing={sorted(missing)} exceptions={sorted(exceptions)}")
