@@ -259,10 +259,10 @@ def audit(root: Path, enforce_current_presentation: bool = True) -> dict:
     # future datapacks. Minecraft namespace and symbolic # references are
     # vanilla dependencies; every referenced local image must be present.
     for file in models:
-        textures = load_json(file).get("textures", {})
-        if not isinstance(textures, dict):
+        model_textures = load_json(file).get("textures", {})
+        if not isinstance(model_textures, dict):
             continue
-        for key, ref in textures.items():
+        for key, ref in model_textures.items():
             if isinstance(ref, str) and ref.startswith(f"{MOD}:"):
                 rel = ref.split(":", 1)[1]
                 expected_png = assets / "textures" / f"{rel}.png"
