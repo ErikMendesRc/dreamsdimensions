@@ -91,8 +91,8 @@ public final class DreamTeleportService {
         }
 
         Optional<GroupArrival> nearby = companion(player, bedPos);
-        List<DreamDimensionDefinition> ordered = WeightedDimensionPicker
-                .order(available, ThreadLocalRandom.current());
+        List<DreamDimensionDefinition> ordered = WeightedDimensionPicker.order(
+                available, ThreadLocalRandom.current());
         if (nearby.isPresent()) {
             ResourceKey<Level> shared = nearby.get().dimension();
             // Preserve group destination or fail safely; never quietly choose
