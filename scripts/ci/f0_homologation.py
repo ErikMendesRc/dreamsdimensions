@@ -68,11 +68,31 @@ def static_report(root: Path) -> dict:
     recipe_dir = root / "src/main/resources/data/dreamsdimensions/recipe"
     recipe_files = sorted(recipe_dir.glob("*.json"))
     recipes = [load(path) for path in recipe_files]
-    # Entire registered craft graph: detect cycles across ALL mod recipe
-    # outputs, not only the newly registered stonecutter, even with shared
-    # output IDs from vanilla furnace/blasting alternatives.
+    # The 9:1 Plumite storage block is a mass-conserving pack/unpack pair,
+    # not a circular ingredient-progression recipe. Validate the exact pair
+    # and exclude ONLY its unpacking edge from the progression DAG.
+    pack_file = recipe_dir / "plumite_block.json"
+    unpack_file = recipe_dir / "plumite_shard_from_block.json"
+    ensure(pack_file.exists() == unpack_file.exists(),
+           "Plumite compression and decompression must ship together")
+    if pack_file.exists():
+        pack, unpack = load(pack_file), load(unpack_file)
+        ensure(pack["type"] == "minecraft:crafting_shaped"
+               and pack["pattern"] == ["PPP", "PPP", "PPP"]
+               and pack["key"] == {"P": "dreamsdimensions:plumite_shard"}
+               and pack["result"] == {"id": "dreamsdimensions:plumite_block", "count": 1},
+               "Plumite compression must consume exactly nine shards")
+        ensure(unpack["type"] == "minecraft:crafting_shapeless"
+               and unpack["ingredients"] == ["dreamsdimensions:plumite_block"]
+               and unpack["result"] == {"id": "dreamsdimensions:plumite_shard", "count": 9},
+               "Plumite decompression must return exactly nine shards")
+
+    # All actual gameplay ingredient progressions must remain acyclic,
+    # with a narrowly validated exception for lossless storage unpacking.
     dependencies: dict[str, set[str]] = defaultdict(set)
-    for recipe in recipes:
+    for recipe_file, recipe in zip(recipe_files, recipes):
+        if recipe_file.name == "plumite_shard_from_block.json":
+            continue
         output = recipe.get("result", {}).get("id")
         ensure(isinstance(output, str) and output.startswith(MOD + ":"),
                "Every mod recipe result must be a mod item in this known family")
