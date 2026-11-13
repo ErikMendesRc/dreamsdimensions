@@ -2,7 +2,7 @@
   "schema_version": "dreamsdimensions.overworld.contract.v1",
   "task": "9.0",
   "scope": "DESIGN_ONLY",
-  "revision": "2026-11-12",
+  "revision": "2026-11-13-r2",
   "baseline": {
     "branch": "migration/minecraft-26.3",
     "commit": "f21aeddec260f162372f70fbd5f57ba337b88b00",
@@ -27,28 +27,45 @@
     "no_retro_generation": true,
     "early_overworld_optional_dreams": true,
     "no_one_dimension_hard_dependency": true,
-    "design_does_not_register_content": true
+    "design_does_not_register_content": true,
+    "no_mandatory_dimension_specific_gear": true,
+    "no_return_without_awakener": true,
+    "first_awakener_early_possible_but_hard": true,
+    "mid_late_return_gets_easier_not_free": true,
+    "unknown_dream_destination": true,
+    "preparation_before_entry": true,
+    "no_survival_softlock_by_design": true,
+    "new_features_need_mechanics_not_only_building_blocks": true
   },
   "selected_slice": {
     "id": "F1",
     "task": "9.1",
-    "name": "Vestígios construíveis: rocha, líquen e argamassa",
+    "name": "Preparação de Expedição e Economia do Retorno",
     "entry_ids": [
-      "F1_LICHEN",
-      "F1_MORTAR",
-      "F1_MASONRY"
+      "F1_VIGIL_HERB",
+      "F1_RETURN_CHARGE",
+      "F1_CORE_STATION",
+      "F1_AWAKENER_BALANCE"
     ],
-    "experience": "Explorar afloramentos reais, coletar material distinto, processar sem nova estação e construir um resultado material persistente.",
+    "integrates_existing_ids": [
+      "dreamsdimensions:dream_ore",
+      "dreamsdimensions:dream_dust",
+      "dreamsdimensions:oneiric_core_block",
+      "dreamsdimensions:oneiric_awakener",
+      "dreamsdimensions:dream_necklace"
+    ],
+    "experience": "Encontrar planta de vigília e Pó no Overworld; investir num Núcleo permanente; fabricar cargas de retorno em lotes controlados; preparar Despertador antes do sono; entrar somente com recuperação segura e equipamentos opcionais conforme risco desconhecido.",
     "required_evidence": [
       "STATIC_CHECK",
       "RUNTIME_OBSERVED",
       "MANUAL_PENDING"
     ],
     "non_goals": [
-      "Sem estruturas e mobs nesta fatia",
-      "Sem alterar minério/Pó Onírico ou entrada em sonhos",
-      "Sem retro-gen",
-      "Sem alterar F0/Stonecutter 1:1"
+      "Nenhum novo bioma/dimensão na 9.1",
+      "Não liberar entrada em sonhos antes dos gates P0",
+      "Não conceder retorno gratuito nem reduzir risco de forma invisível",
+      "Não criar mobs ou estruturas apenas para bloquear primeira fabricação",
+      "Não alterar IDs existentes, save, chance de destino ou respawn sem regressão"
     ],
     "decision": "SELECTED_FOR_NEXT_TASK_NOT_IMPLEMENTED"
   },
@@ -88,6 +105,26 @@
     {
       "family": "sistema",
       "purpose": "pistas e engenharia sem world scans caros"
+    },
+    {
+      "family": "combate",
+      "purpose": "armas com mecânica e balanceamento reais"
+    },
+    {
+      "family": "defesa",
+      "purpose": "equipamento protetor com contra-custos"
+    },
+    {
+      "family": "navegacao",
+      "purpose": "pistas e preparação sem radar gratuito"
+    },
+    {
+      "family": "suporte",
+      "purpose": "inventário e logística com risco próprio"
+    },
+    {
+      "family": "consumivel",
+      "purpose": "recursos de uso situacional e duração limitada"
     }
   ],
   "entries": [
@@ -272,9 +309,9 @@
       "id": "F1_LICHEN",
       "name": "Líquen dos Vestígios",
       "family": "flora",
-      "status": "SELECTED",
+      "status": "CANDIDATE",
       "phase": "early",
-      "task": "9.1",
+      "task": "9.5+",
       "origin": "minecraft:overworld",
       "action": "Localizar manchas discretas em afloramentos rochosos do Overworld e coletar com ferramenta vanilla apropriada.",
       "cost": "Deslocamento e acesso seguro à rocha; rendimento sem duplicação.",
@@ -291,9 +328,9 @@
       "id": "F1_MORTAR",
       "name": "Argamassa dos Vestígios",
       "family": "processamento",
-      "status": "SELECTED",
+      "status": "CANDIDATE",
       "phase": "early",
-      "task": "9.1",
+      "task": "9.5+",
       "origin": "minecraft:overworld",
       "action": "Misturar Líquen dos Vestígios com materiais comuns em crafting vanilla.",
       "cost": "Consumo real de líquen e ingrediente vanilla; sem ciclo de rendimento infinito.",
@@ -310,9 +347,9 @@
       "id": "F1_MASONRY",
       "name": "Alvenaria Marcada",
       "family": "construcao",
-      "status": "SELECTED",
+      "status": "CANDIDATE",
       "phase": "early",
-      "task": "9.1",
+      "task": "9.5+",
       "origin": "minecraft:overworld",
       "action": "Assentar Pedra Marcada com Argamassa e colocar blocos em base.",
       "cost": "Consome Pedra Marcada e Argamassa; não multiplica o mineral.",
@@ -749,6 +786,442 @@
       "validation": "Gate de custo > benefício, multiplayer, recursos finitos e exploits.",
       "minecraft_relation": "Não criar automação infinita ou End Game próprio.",
       "registry_id": null
+    },
+    {
+      "id": "F1_VIGIL_HERB",
+      "name": "Erva da Vigília",
+      "family": "flora",
+      "status": "SELECTED",
+      "phase": "early",
+      "task": "9.1",
+      "origin": "minecraft:overworld",
+      "action": "Encontrar planta em habitat real no Overworld e coletar; cultivo só após progressão posterior.",
+      "cost": "Procura ambiental + ferramenta/tempo; não farm gratuito de Pó.",
+      "output": "Folha/fibra da vigília consumível.",
+      "use": "Matéria-prima para Carga de Retorno, futuros elixires e kit de sobrevivência.",
+      "depends_on": [],
+      "validation": "Worldgen real em 4 seeds, tempo de descoberta, drops/colheita com ferramentas e não duplicação.",
+      "minecraft_relation": "Distinta de flores/folhas vanilla por funcionalidade clara; visual Vanilla+.",
+      "registry_id": null
+    },
+    {
+      "id": "F1_RETURN_CHARGE",
+      "name": "Carga de Retorno",
+      "family": "recurso",
+      "status": "SELECTED",
+      "phase": "early",
+      "task": "9.1",
+      "origin": "minecraft:overworld",
+      "action": "Sintetizar carga a partir de Pó Onírico, Erva da Vigília e ingredientes vanilla acessíveis.",
+      "cost": "Consome Pó e planta a cada unidade; sem fonte infinita ou receita inversa.",
+      "output": "Componente energético consumível.",
+      "use": "Usado na montagem de um Despertador através do Núcleo Onírico.",
+      "depends_on": [
+        "E03",
+        "F1_VIGIL_HERB"
+      ],
+      "validation": "Receita com custo verificável, DAG, crafting real, stack counts, Fortune/Silk sem duplicação.",
+      "minecraft_relation": "Não é um novo teleportador, poção de fuga nem forma de criar Pó.",
+      "registry_id": null
+    },
+    {
+      "id": "F1_CORE_STATION",
+      "name": "Núcleo Onírico como estação reutilizável",
+      "family": "sistema",
+      "status": "SELECTED",
+      "phase": "early",
+      "task": "9.1",
+      "origin": "minecraft:overworld",
+      "action": "Colocar o bloco existente e usá-lo como estação de montagem do Despertador com interface/ação transacional server-side.",
+      "cost": "Investimento inicial alto para fabricar o Núcleo; desgaste/insumos por montagem sem consumi-lo.",
+      "output": "Infraestrutura permanente de preparo no Overworld.",
+      "use": "Montar Despertadores usando cargas reais; orientar economia de early versus mid/late.",
+      "depends_on": [
+        "E09",
+        "F1_RETURN_CHARGE"
+      ],
+      "validation": "Save antigo, ciclo server-side de consumo atômico, inventário multiplayer, não dupes/relog e compatibilidade com quebra do bloco.",
+      "minecraft_relation": "Reaproveita ID oneiric_core_block; não inventar segundo núcleo decorativo.",
+      "registry_id": null
+    },
+    {
+      "id": "F1_AWAKENER_BALANCE",
+      "name": "Rebalanceamento da fabricação do Despertador",
+      "family": "sistema",
+      "status": "SELECTED",
+      "phase": "early",
+      "task": "9.1",
+      "origin": "minecraft:overworld",
+      "action": "Substituir o papel consumível do Núcleo na receita antiga por montagem validada na estação e ingredientes físicos; preservar comportamento de uso.",
+      "cost": "Primeiro retorno exige investimento em Núcleo + carga + componentes; cada próximo exige carga e materiais, sem retorno gratuito.",
+      "output": "Mesmo item oneiric_awakener já registrado.",
+      "use": "Preparar entrada e saída sem tornar o jogador refém de dimensão aleatória.",
+      "depends_on": [
+        "F1_CORE_STATION",
+        "F1_RETURN_CHARGE",
+        "E05"
+      ],
+      "validation": "Testar custo total real, migrar recipe book, proteger saves e crafting legado, registrar P50/P90 em Survival, manter 60 ticks e consumo pós-retorno confirmado.",
+      "minecraft_relation": "Não altera o destino aleatório nem concede imunidade a perigos.",
+      "registry_id": null
+    },
+    {
+      "id": "M_VIGIL_TONIC",
+      "name": "Tônico de Lucidez",
+      "family": "consumivel",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.2",
+      "origin": "minecraft:overworld",
+      "action": "Preparar consumível de duração curta com ervas e componentes do Overworld.",
+      "cost": "Coleta e ingredientes consumidos; duração finita, cooldown e efeitos limitados.",
+      "output": "Tônico situacional.",
+      "use": "Reduz um tipo de condição de debuff de sonho; não imunidade e não substitui comida ou poções vanilla.",
+      "depends_on": [
+        "F1_VIGIL_HERB"
+      ],
+      "validation": "Medir duração/custo, compatibilidade com efeitos vanilla, dano e eficácia em múltiplos tipos de dimensão.",
+      "minecraft_relation": "Não duplicar poção vanilla sem mecanismo distinto.",
+      "registry_id": null
+    },
+    {
+      "id": "M_VIGIL_BLADE",
+      "name": "Lâmina de Vigília",
+      "family": "combate",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.2",
+      "origin": "minecraft:overworld",
+      "action": "Forjar arma de combate físico com recurso do Núcleo e reforço geológico.",
+      "cost": "Materiais vanilla + componentes do Overworld, durabilidade e reparos.",
+      "output": "Arma situacional contra alguns mecanismos de mobs oníricos.",
+      "use": "Garantir opção de luta quando a dimensão aleatória for hostil.",
+      "depends_on": [
+        "E03",
+        "F1_VIGIL_HERB"
+      ],
+      "validation": "Comparar DPS/durabilidade com espadas vanilla; uma interação especial objetiva, sem stunlock, sem trivializar chefes.",
+      "minecraft_relation": "Não superar automaticamente netherita nem substituir armas vanilla.",
+      "registry_id": null
+    },
+    {
+      "id": "M_VIGIL_SHIELD",
+      "name": "Escudo de Vigília",
+      "family": "defesa",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.2",
+      "origin": "minecraft:overworld",
+      "action": "Produzir equipamento defensivo de bloqueio/estabilidade.",
+      "cost": "Materiais do Overworld e desgaste; contrapartida de movimento ou tempo de bloqueio.",
+      "output": "Proteção limitada e compartilhável.",
+      "use": "Defender-se de ataques ou empurrões em sonhos hostis.",
+      "depends_on": [
+        "E06",
+        "F1_VIGIL_HERB"
+      ],
+      "validation": "Testar compatibilidade contra múltiplos tipos de ameaça e não reduzir todo dano a zero.",
+      "minecraft_relation": "Não replicar escudo vanilla sem defesa contra nova ameaça específica.",
+      "registry_id": null
+    },
+    {
+      "id": "M_TRAVEL_BEACON",
+      "name": "Lanterna de Vigília",
+      "family": "navegacao",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.2",
+      "origin": "minecraft:overworld",
+      "action": "Carregar e colocar fonte portátil de luz/sinal físico.",
+      "cost": "Consumo de material/fonte de luz; alcance e duração limitados.",
+      "output": "Ponto visual de orientação e iluminação.",
+      "use": "Marcar rotas e desembarques em dimensões desconhecidas.",
+      "depends_on": [
+        "F1_RETURN_CHARGE"
+      ],
+      "validation": "Validar luz real com APIs 26.3, limpeza, no leak de blocos de luz e desempenho.",
+      "minecraft_relation": "Não prometer luz dinâmica em mão sem motor/client implementado.",
+      "registry_id": null
+    },
+    {
+      "id": "M_MAINTENANCE_KIT",
+      "name": "Kit de Expedição Onírica",
+      "family": "suporte",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.2",
+      "origin": "minecraft:overworld",
+      "action": "Montar kit de insumos distintos e preparar inventário antes de dormir.",
+      "cost": "Tem slots/itens reais; não gera cópias ou itens grátis.",
+      "output": "Kit útil de consumíveis e ferramentas vanilla/mod.",
+      "use": "Suportar fome, terreno fragmentado e perigos imprevistos, com seleção do jogador.",
+      "depends_on": [
+        "F1_AWAKENER_BALANCE",
+        "M_VIGIL_TONIC"
+      ],
+      "validation": "Inventário e gerenciamento, nenhum bypass de recuperação, conteúdo acessível antes da primeira entrada.",
+      "minecraft_relation": "Não criar backpack universal que duplique slots/persistência.",
+      "registry_id": null
+    },
+    {
+      "id": "M_TRACE_COMPASS",
+      "name": "Sonda de Ressonância",
+      "family": "navegacao",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.3",
+      "origin": "minecraft:overworld",
+      "action": "Procurar pistas do minério ou ruínas de Overworld apenas sob uso manual com cooldown.",
+      "cost": "Ferramenta custosa/durável, curta distância e verificação limitada de região carregada.",
+      "output": "Direção aproximada/localização não exata.",
+      "use": "Reduzir custo de preparação de Despertadores no mid/late, sem revelar todo o mapa.",
+      "depends_on": [
+        "F1_CORE_STATION",
+        "E03"
+      ],
+      "validation": "Pior caso de CPU bounded, sem chunks gerados ou scans em ticks, medir descoberta.",
+      "minecraft_relation": "Não ser raio-x passivo nem GPS que substitui exploração.",
+      "registry_id": null
+    },
+    {
+      "id": "M_VIGIL_NURSERY",
+      "name": "Horta de Vigília",
+      "family": "flora",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.3",
+      "origin": "minecraft:overworld",
+      "action": "Cultivar plantas da primeira receita após ter encontrado a muda naturalmente.",
+      "cost": "Tempo agrícola, local e insumos; sem drop de Pó.",
+      "output": "Fonte renovável controlada de Erva da Vigília.",
+      "use": "Reduz custo de coleta de cargas, mas mantém custo obrigatório de minério.",
+      "depends_on": [
+        "F1_VIGIL_HERB"
+      ],
+      "validation": "Prova de renovabilidade sem duplicação, sobrevivência e multiplayer; crescimento limitado.",
+      "minecraft_relation": "Integra agricultura vanilla sem substituir vilager farms ou criar pó infinito.",
+      "registry_id": null
+    },
+    {
+      "id": "M_CORE_UPGRADE",
+      "name": "Amplificação do Núcleo",
+      "family": "processamento",
+      "status": "CANDIDATE",
+      "phase": "late",
+      "task": "9.4",
+      "origin": "minecraft:overworld",
+      "action": "Atualizar a estação permanente com materiais avançados, mantendo o item Despertador como consumível.",
+      "cost": "Investimento inicial alto e custo mínimo >0 por carga, sem gerar recursos grátis.",
+      "output": "Melhor rendimento ou velocidade de preparação.",
+      "use": "Facilitar expedições frequentes no late game sem perder o preço de retorno.",
+      "depends_on": [
+        "F1_CORE_STATION",
+        "M_TRACE_COMPASS"
+      ],
+      "validation": "Comparar preço de 10 expedições, reversão, mundos antigos e anti-dupe.",
+      "minecraft_relation": "Não quebrar economia e não fabricar Despertador gratuito.",
+      "registry_id": null
+    },
+    {
+      "id": "M_FIELD_RELIC",
+      "name": "Vestígio Temporal",
+      "family": "estrutura",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.3",
+      "origin": "minecraft:overworld",
+      "action": "Encontrar ruínas do Overworld que dão componente alternativo ou conhecimento para aprimoramento.",
+      "cost": "Exploração e riscos proporcionais, loot nativo não renovável.",
+      "output": "Material/pista de especialização, não obrigatório para primeiro Despertador.",
+      "use": "Upgrade de equipamento e novas receitas opcionais.",
+      "depends_on": [
+        "F1_AWAKENER_BALANCE"
+      ],
+      "validation": "Worldgen natural, loot real, quantidade por 4 seeds, acessibilidade e anti-softlock.",
+      "minecraft_relation": "Nunca exigir uma única estrutura rara para primeiro retorno.",
+      "registry_id": null
+    },
+    {
+      "id": "M_SLEEP_PROBE",
+      "name": "Indicador de Risco Onírico",
+      "family": "suporte",
+      "status": "CANDIDATE",
+      "phase": "late",
+      "task": "9.4",
+      "origin": "minecraft:overworld",
+      "action": "Receber pistas parciais do risco provável ao dormir com o Colar.",
+      "cost": "Componente de preparo não consumido ou custos por uso; sem destino garantido.",
+      "output": "Informação parcial em linguagem de risco, não seleção de dimensão.",
+      "use": "Decisão antes de equipar a carga; planejamento inteligente.",
+      "depends_on": [
+        "M_CORE_UPGRADE"
+      ],
+      "validation": "Não vazar destino exato nem alterar ponderação invisivelmente; manter acordo de chance.",
+      "minecraft_relation": "Não anula a imprevisibilidade dos sonhos.",
+      "registry_id": null
+    },
+    {
+      "id": "M_RECOVERY_SIGNAL",
+      "name": "Sinal de Recuperação",
+      "family": "navegacao",
+      "status": "CANDIDATE",
+      "phase": "late",
+      "task": "9.5",
+      "origin": "minecraft:overworld",
+      "action": "Usar item de ajuda limitado a pistas locais de ruínas de recuperação quando estiver preso.",
+      "cost": "Durabilidade/cooldown, sem teleporte e sem itens gratuitos.",
+      "output": "Indício exploratório para procurar Despertador perdido.",
+      "use": "Mitigar soft-lock com custo de exploração real.",
+      "depends_on": [
+        "F1_AWAKENER_BALANCE"
+      ],
+      "validation": "Testar caso sem Despertador, duas dimensões, mundo novo, multiplayer e dados de tempo para recuperar.",
+      "minecraft_relation": "Não pode obrigar núcleo/dust gerável em sonhos nem garantir loot em qualquer baú.",
+      "registry_id": null
+    },
+    {
+      "id": "M_CORE_STABILIZER",
+      "name": "Reforço de Núcleo",
+      "family": "recurso",
+      "status": "CANDIDATE",
+      "phase": "mid",
+      "task": "9.3",
+      "origin": "minecraft:overworld",
+      "action": "Combinar geologia, botânica e materiais achados para reforçar proteção de equipamentos.",
+      "cost": "Insumos limitados do Overworld, não efeito permanente sem custo.",
+      "output": "Componente de upgrade.",
+      "use": "Sustentação de armas/defesas antes de dimensões perigosas.",
+      "depends_on": [
+        "F1_RETURN_CHARGE",
+        "E06"
+      ],
+      "validation": "Comparar custo, dano mitigado, receita acíclica e manutenção.",
+      "minecraft_relation": "Cobre progressão transversal, não substitui encantamentos vanilla.",
+      "registry_id": null
     }
-  ]
+  ],
+  "progression": {
+    "central_critical_item": "dreamsdimensions:oneiric_awakener",
+    "central_infrastructure": "dreamsdimensions:oneiric_core_block",
+    "accessory": "dreamsdimensions:dream_necklace",
+    "stages": [
+      {
+        "phase": "early",
+        "experience": "Pode produzir primeiro Núcleo e Despertador sem Nether, End, mob raro, estrutura obrigatória ou entrar previamente em sonho; exige exploração de minério, descoberta botânica, crafting e decisão de gastar recursos.",
+        "mandatory_resources": [
+          "dreamsdimensions:dream_dust",
+          "F1_VIGIL_HERB",
+          "F1_RETURN_CHARGE",
+          "F1_CORE_STATION"
+        ],
+        "returns": "Cada Despertador continua consumível e indispensável para retorno normal.",
+        "return_cost_target": "HIPOTESE: Núcleo único custa cerca de 12 Pós da receita atual; carga exige cerca de 4 Pós e materiais botânicos. Primeiro Despertador demanda investimento acumulado alto; revisar em Survival, não é receita implementada."
+      },
+      {
+        "phase": "mid",
+        "experience": "Núcleo permanece na base; planta pode ser cultivada, sonda torna mineração menos aleatória, equipamento de combate e suporte amplifica chances de sobreviver.",
+        "mandatory_resources": [
+          "F1_RETURN_CHARGE"
+        ],
+        "returns": "Despertadores repetidos usam carga real e insumos, sem refazer o Núcleo.",
+        "return_cost_target": "Custo marginal cai com infraestrutura e prática, mas nunca zero."
+      },
+      {
+        "phase": "late",
+        "experience": "Núcleo aprimorado e logística reduzem tempo de preparação; o jogador escolhe kit para o perfil de risco sem conhecer a dimensão exata.",
+        "mandatory_resources": [
+          "F1_RETURN_CHARGE"
+        ],
+        "returns": "Retorno não se torna ilimitado: continua sujeito a item consumível e interação segura.",
+        "return_cost_target": "Redução limitada de custo ou tempo após investimento grande, sem geração infinita de Pó."
+      }
+    ],
+    "branches": [
+      {
+        "id": "GEO",
+        "name": "Geologia e energia",
+        "path": [
+          "E01",
+          "E03",
+          "E08",
+          "E09",
+          "F1_CORE_STATION"
+        ],
+        "purpose": "Núcleo e economia do retorno"
+      },
+      {
+        "id": "BOT",
+        "name": "Botânica e preparação",
+        "path": [
+          "F1_VIGIL_HERB",
+          "F1_RETURN_CHARGE",
+          "F1_AWAKENER_BALANCE"
+        ],
+        "purpose": "Consumível obrigatório de saída; opções de cultivo e proteção"
+      },
+      {
+        "id": "COMBAT",
+        "name": "Combate e defesa",
+        "path": [
+          "M_VIGIL_BLADE",
+          "M_VIGIL_SHIELD",
+          "M_CORE_STABILIZER"
+        ],
+        "purpose": "Enfrentar ameaças não previsíveis com custo e limite, sem imunidade"
+      },
+      {
+        "id": "EXPLORE",
+        "name": "Exploração e navegação",
+        "path": [
+          "P01_VESTIGE_MARKER",
+          "M_FIELD_RELIC",
+          "M_TRACE_COMPASS",
+          "M_RECOVERY_SIGNAL"
+        ],
+        "purpose": "Descoberta, progressão opcional e suporte em expedição"
+      },
+      {
+        "id": "SUPPORT",
+        "name": "Ambiente e sustento",
+        "path": [
+          "M_VIGIL_TONIC",
+          "M_TRAVEL_BEACON",
+          "M_MAINTENANCE_KIT"
+        ],
+        "purpose": "Escuridão, terreno, efeitos e suprimentos"
+      },
+      {
+        "id": "TECH",
+        "name": "Infraestrutura e aprimoramentos",
+        "path": [
+          "F1_CORE_STATION",
+          "M_VIGIL_NURSERY",
+          "M_CORE_UPGRADE",
+          "M_SLEEP_PROBE"
+        ],
+        "purpose": "Reduzir a fricção da preparação com investimento progressivo"
+      }
+    ]
+  },
+  "dream_risk_contract": {
+    "destination": "Destinos oníricos continuam sorteados pelo motor atual; nenhuma arma ou equipamento seleciona dimensão.",
+    "universal_preparation": [
+      "oneiric_awakener",
+      "basic_minecraft_armor",
+      "food",
+      "tools",
+      "blocks_for_traversal"
+    ],
+    "optional_risk_tools": [
+      "M_VIGIL_BLADE",
+      "M_VIGIL_SHIELD",
+      "M_VIGIL_TONIC",
+      "M_TRAVEL_BEACON",
+      "M_MAINTENANCE_KIT"
+    ],
+    "softlock_policy": "Condição de entrada com Despertador deve ser avaliada antes de release, sem apagar mecânica de ruínas; se perdido após a chegada, existir chance realista e testada de conseguir outro Despertador por exploração, nunca saída gratuita.",
+    "safe_arrival": "Chegada fisicamente segura e opção real de entender o ambiente, sem dano inevitável antes de controle do jogador.",
+    "use_return": "Preservar ativação 60 ticks, confirmação de retorno e consumo único do item, inclusive cancelamento e multiplayer.",
+    "default_config": "dream_entry_enabled=false até P0 de teste humano."
+  }
 }
