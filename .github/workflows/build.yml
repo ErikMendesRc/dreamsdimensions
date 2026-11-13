@@ -38,12 +38,16 @@ jobs:
         run: |
           python3 scripts/ci/test_visual_assets.py
           python3 scripts/ci/audit_visual_assets.py --report qa-visual-assets-seed-${{ matrix.seed }}.json
+          python3 scripts/ci/test_visual_release_gate.py
+          python3 scripts/ci/visual_release_gate.py --report qa-visual-release-seed-${{ matrix.seed }}.json
       - name: Upload Task 8 visual asset report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: visual-assets-seed-${{ matrix.seed }}
-          path: qa-visual-assets-seed-${{ matrix.seed }}.json
+          path: |
+            qa-visual-assets-seed-${{ matrix.seed }}.json
+            qa-visual-release-seed-${{ matrix.seed }}.json
           if-no-files-found: ignore
       - name: Validate Task 7.2 reusable content & asset contract
         run: |

@@ -1,0 +1,92 @@
+{
+  "schema_version": "dreamsdimensions.visual_manual.v1",
+  "task": "8.4-8.7",
+  "world_type": "DISPOSABLE_TEST_WORLD",
+  "status": "NOT_RUN",
+  "cases": [
+    {
+      "id": "material_tile_day_night",
+      "description": "Compare Serene/Infused Stone and grass/dirt side seams as 5x5 walls in client, day and night",
+      "status": "NOT_RUN",
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "vegetation_alpha",
+      "description": "Check leaves cutout, flower in world/hand/inventory and decaying foliage after breaking log",
+      "status": "NOT_RUN",
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "blue_material_cohesion",
+      "description": "Check Blue Dream terrain with matching soil, grass top/side, stone and cobble; no tiling seams",
+      "status": "NOT_RUN",
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "necklace_inventory",
+      "description": "Check Dream Necklace existing icon in inventory/creative tab remains legible",
+      "status": "NOT_RUN",
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "awakener_particles_settings",
+      "description": "Hold Awakener in dream with ALL, DECREASED and MINIMAL particles; MINIMAL must emit none",
+      "status": "NOT_RUN",
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "core_ambient_particle",
+      "description": "Place Core Block and confirm subtle nearby ambient particles with acceptable visual density",
+      "status": "NOT_RUN",
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "awakener_survival_return",
+      "description": "Use Awakener for 60 ticks in Survival and verify one consumed after actual Overworld return",
+      "status": "NOT_RUN",
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "awakener_cancel_and_cooldown",
+      "description": "Release use before 60 ticks, including 20 and 59; confirm no teleport/consumption/cooldown",
+      "status": "NOT_RUN",
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "awakener_bed_fallback",
+      "description": "Return with an invalidated Overworld bed and verify safe fallback or clean non-consuming failure",
+      "status": "NOT_RUN",
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "awakener_offhand_creative",
+      "description": "Check exact initiating offhand item and zero consumption in Creative",
+      "status": "NOT_RUN",
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "awakener_multiplayer",
+      "description": "Two connected players use their own Awakeners; no cross-consumption or stale activation",
+      "status": "NOT_RUN",
+      "evidence": [],
+      "notes": ""
+    },
+    {
+      "id": "client_performance_and_reload",
+      "description": "Record client FPS, particle settings, restart/reload and assets on a copy of an old save",
+      "status": "NOT_RUN",
+      "evidence": [],
+      "notes": ""
+    }
+  ]
+}
