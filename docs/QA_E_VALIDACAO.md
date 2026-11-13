@@ -10,6 +10,8 @@ git switch migration/minecraft-26.3
 git pull origin migration/minecraft-26.3
 .\gradlew.bat --no-daemon clean build
 python scripts/ci/test_content_contract.py
+python scripts/ci/test_overworld_contract_9_0.py
+python scripts/ci/check_overworld_contract_9_0.py --report qa-overworld-design-9-0.json
 python scripts/ci/check_content_contract.py --report qa-content-contract.json
 python scripts/ci/check_marked_stone_7_4.py
 python scripts/ci/test_f0_homologation.py
@@ -60,6 +62,8 @@ O GitHub Actions em `.github/workflows/build.yml` executa build, JUnit, scripts 
 | `MANUAL_VERIFIED` | Jogador testou e anexou prova rastreável | Qualquer caso sem evidência deve permanecer `NOT_RUN` |
 
 **Visual Tasks 8.4–8.7:** a auditoria estática agora protege os 17 sprites novos 16×16, referências modelo→textura e a ausência de modelos JSON órfãos. O novo validador separa CI `PASS` de homologação humana `NOT_RUN`. A revisão de paredes 5×5, folhagem, Colar, partículas, FPS, mobs GeckoLib e retorno do Despertador em Survival/multiplayer segue pendente. Veja [Tasks 8.4–8.7](TASK_8_4_TO_8_7.md).
+
+**Task 9.0 — contrato de expansão do Overworld:** o verificador `check_overworld_contract_9_0.py` testa o catálogo, a DAG e os registries existentes e gera apenas `STATIC_CHECK` com `design_status=DESIGN_ONLY_NOT_PLAYABLE`. A seleção F1 da 9.1 **não** registra blocos/itens, **não** introduz estrutura natural e não substitui homologação em Survival. [Contrato 9.0](TASK_9_0_OVERWORLD_GAMEPLAY_CONTRACT.md).
 
 **Gates pendentes:** sonho com Colar em Survival (desativado em produção); retorno com Despertador consumível, respawn e baú de recuperação em multiplayer; Fortune/Silk Touch; coerência de mobs em população real; aparência/tiling; persistência e saves antigos. **Não** habilitar `dream_entry_enabled` por sucesso de JUnit ou uma única seed.
 
