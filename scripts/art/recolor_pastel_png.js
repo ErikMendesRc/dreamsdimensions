@@ -89,7 +89,19 @@ function convert(bytes,sp){let input=decodePng(bytes),result=recolor(input,sp),c
 return {specs,decode64,encode64,decodePng,encodePng,recolor,convert};
 })();
 if(typeof require==="function"&&typeof module!=="undefined"&&require.main===module){
- const fs=require("node:fs"),path=require("node:path"),t=globalThis.DreamPastelPNG;
- const root=path.join(process.cwd(),"src/main/resources/assets/dreamsdimensions/textures/block");
- for(const spec of t.specs){const f=path.join(root,spec[0]+".png");let b=fs.readFileSync(f);fs.writeFileSync(f,t.convert(Uint8Array.from(b),spec));process.stdout.write(spec[0]+": 16x16 RGBA\n");}
+ const fs=require("node:fs"),path=require("node:path"),child=require("node:child_process"),t=globalThis.DreamPastelPNG;
+ // Read approved pre-pastel sprites from Git rather than repeatedly tinting already tinted pixels.
+ // Deterministic and idempotent: --check is default; --apply explicitly restores the intended result.
+ const baseline="e50969944bbe3fea6eb1c6da781b83738ee9ec57",apply=process.argv.includes("--apply");
+ let drift=0;
+ for(const spec of t.specs){
+  const rel="src/main/resources/assets/dreamsdimensions/textures/block/"+spec[0]+".png";
+  const f=path.join(process.cwd(),rel);
+  const original=child.execFileSync("git",["show",baseline+":"+rel]);
+  const expected=t.convert(Uint8Array.from(original),spec),current=fs.readFileSync(f);
+  const same=current.length===expected.length&&current.every((v,i)=>v===expected[i]);
+  if(same)process.stdout.write("PASS "+spec[0]+"\\n");
+  else{drift++;if(apply){fs.writeFileSync(f,expected);process.stdout.write("RESTORED "+spec[0]+"\\n");}else process.stdout.write("DRIFT "+spec[0]+" (run with --apply to restore)\\n");}
+ }
+ if(drift&&!apply)process.exitCode=1;
 }
