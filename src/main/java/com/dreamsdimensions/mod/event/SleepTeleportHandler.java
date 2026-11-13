@@ -5,6 +5,7 @@ import com.dreamsdimensions.mod.config.DreamEntryConfig;
 import com.dreamsdimensions.mod.config.DreamsConfig;
 import com.dreamsdimensions.mod.service.DreamEntryPolicy;
 import com.dreamsdimensions.mod.service.DreamHangoverService;
+import com.dreamsdimensions.mod.service.DreamAwakenerInventory;
 import com.dreamsdimensions.mod.registry.ModItems;
 import net.minecraft.network.chat.Component;
 import com.dreamsdimensions.mod.service.DreamNecklaceEquipmentPolicy;
@@ -62,11 +63,7 @@ public final class SleepTeleportHandler {
         // Warn once per genuine sleeping interval, not on every player tick.
         if (DreamEntryConfig.enabled() && WARNED.add(uuid)
                 && DreamNecklaceEquipmentPolicy.isEquipped(player)) {
-            boolean hasReturn = player.getInventory().getItems().stream()
-                    .anyMatch(stack -> stack.is(ModItems.ONEIRIC_AWAKENER.get())
-                            || stack.is(ModItems.CRACKED_AWAKENER.get()))
-                    || player.getOffhandItem().is(ModItems.ONEIRIC_AWAKENER.get())
-                    || player.getOffhandItem().is(ModItems.CRACKED_AWAKENER.get());
+            boolean hasReturn = DreamAwakenerInventory.hasReturnItem(player, true);
             if (!hasReturn) {
                 player.sendSystemMessage(Component.translatable(
                         "message.dreamsdimensions.sleep.risk"));

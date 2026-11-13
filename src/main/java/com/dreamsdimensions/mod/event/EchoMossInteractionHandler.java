@@ -5,6 +5,7 @@ import com.dreamsdimensions.mod.config.DreamsConfig;
 import com.dreamsdimensions.mod.registry.ModBlocks;
 import com.dreamsdimensions.mod.registry.ModItems;
 import com.dreamsdimensions.mod.service.DreamRecoveryLocator;
+import com.dreamsdimensions.mod.service.DreamAwakenerInventory;
 import com.dreamsdimensions.mod.service.EchoMossCooldown;
 import com.dreamsdimensions.mod.service.EchoMossEligibility;
 import com.dreamsdimensions.mod.service.EchoMossSearch;
@@ -59,9 +60,7 @@ public final class EchoMossInteractionHandler {
         // Recoverable dream: when there is no intact Awakener, redirect the
         // existing Echo interaction toward the nearest recovery structure.
         // Rate-limited by the same per-player cooldown as the ordinary echo.
-        boolean intact = player.getInventory().getItems().stream()
-                .anyMatch(stack -> stack.is(ModItems.ONEIRIC_AWAKENER.get()))
-                || player.getOffhandItem().is(ModItems.ONEIRIC_AWAKENER.get());
+        boolean intact = DreamAwakenerInventory.hasReturnItem(player, false);
         if (!intact) {
             try {
                 var ruin = DreamRecoveryLocator.find(level, origin);
