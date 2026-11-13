@@ -2,7 +2,7 @@
 
 **Mod Minecraft 26.3 · NeoForge 26.3.0.101 · Java 25 · GeckoLib 5.5.7 · Curios 17.0.1+26.3**
 
-DreamsDimensions é um mod de **exploração e gameplay relacionados aos sonhos**. Seu universo prevê diversas dimensões futuras, incluindo sonhos pacíficos, pesadelos e outras experiências. As **duas dimensões existentes são a fundação técnica inicial, não o limite da identidade do mod**. O Overworld deve funcionar como uma aventura interessante por si só e sustentar os sistemas compartilhados entre sonhos.
+DreamsDimensions é um mod de **exploração e gameplay relacionados aos sonhos**. Seu universo prevê diversas dimensões futuras, incluindo sonhos pacíficos, pesadelos e outras experiências. As **duas dimensões existentes são a fundação técnica inicial, não o limite da identidade do mod**. O Overworld é a base de preparação para expedições imprevisíveis: minério, flora, equipamento, sobrevivência, infraestrutura de retorno e exploração independente dos sonhos.
 
 > **Status real:** desenvolvimento na branch `migration/minecraft-26.3`; **sem merge na `main`**. O projeto tem conteúdo e sistemas compiláveis, mas a homologação completa de entrada/retorno em sonhos, experiência Survival, multiplayer e saves antigos ainda exige ensaios manuais. A entrada em sonhos está **desabilitada por padrão** pela configuração `dream_entry_enabled=false`, apesar de seu fluxo e políticas existirem no código.
 
@@ -12,8 +12,8 @@ DreamsDimensions é um mod de **exploração e gameplay relacionados aos sonhos*
 | --- | --- |
 | [Estado atual](docs/ESTADO_ATUAL.md) | O que existe, o que está em teste, o que está desabilitado e o que ainda é experimental |
 | [Gameplay e direção](docs/GAMEPLAY_E_DIRECAO.md) | Identidade universal do mod, Overworld e regras para aprovar novas mecânicas |
-| [Task 9.0 — Contrato Universal do Overworld](docs/TASK_9_0_OVERWORLD_GAMEPLAY_CONTRACT.md) | Contrato de gameplay, loops, dependências e gate da primeira expansão; **design, não implementação** |
-| [Catálogo 9.0 (JSON)](docs/OVERWORLD_CONTENT_CATALOG_TASK_9_0.json) | 9 entradas implementadas, 3 selecionadas e 23 candidatas com origem, consumidor e critérios de aceite |
+| [Task 9.0 — Contrato Universal do Overworld](docs/TASK_9_0_OVERWORLD_GAMEPLAY_CONTRACT.md) | Preparação para sonhos imprevisíveis, Núcleo reutilizável, economia do Despertador e progressão early/mid/late; **design, não implementação** |
+| [Catálogo 9.0 (JSON)](docs/OVERWORLD_CONTENT_CATALOG_TASK_9_0.json) | 9 entradas implementadas, 4 selecionadas e 38 candidatas com origem, consumidor e critérios de aceite |
 | [Arquitetura atual](docs/ARQUITETURA_ATUAL.md) | Onde estão os sistemas implementados, registros e extensões |
 | [Worldgen e conteúdo](docs/WORLDGEN_E_CONTEUDO.md) | Biomas, dimensões, recursos, estruturas, mobs, Pedra Marcada e limites de evidência |
 | [QA e validação](docs/QA_E_VALIDACAO.md) | Build, testes, seeds, comandos e critérios para diferenciar CI de playtest |
