@@ -24,6 +24,20 @@ ROTATED_NATURAL = frozenset((
     "dream_sand_block", "dream_dirt_block", "blue_dream_dirt",
     "dream_glow_moss", "dream_grass_block", "blue_dream_grass",
 ))
+CURATED_TERRAIN = (
+    "blue_dream_cobblestone", "blue_dream_dirt",
+    "blue_dream_grass_side", "blue_dream_grass_top", "blue_dream_stone",
+    "dream_dirt_block", "dream_flower_block", "dream_glow_moss",
+    "dream_grass_block_side", "dream_grass_block_top",
+    "dream_infused_stone", "dream_leaves_block",
+    "dream_log_block", "dream_log_block_top",
+    "dream_sand_block", "dream_shimmer_block", "serene_stone",
+)
+PREMIUM_32 = (
+    "textures/item/oneiric_awakener.png",
+    "textures/block/oneiric_core_block_top.png",
+    "textures/block/oneiric_core_block_side.png",
+)
 MODEL_REF = re.compile(r"^(?:dreamsdimensions):([a-z0-9_./-]+)$")
 ICON_REF = re.compile(r"output\.accept\((ModItems|ModBlocks)\.([A-Z_]+)\.get\(\)\);")
 PNG_SIG = b"\x89PNG\r\n\x1a\n"
@@ -158,15 +172,23 @@ def audit(root: Path, enforce_current_presentation: bool = True) -> dict:
         for name in canonical_pixel_art:
             require(name in texture_details and texture_details[name]["pixel_art_16"],
                     f"Expected original 16x16 texture for {name}")
+            assert_png_integrity(assets / name)
+        for name in CURATED_TERRAIN:
+            filename = f"textures/block/{name}.png"
+            require(filename in texture_details
+                    and texture_details[filename]["pixel_art_16"],
+                    f"Task 8.4 material must be true 16x16 pixel art: {filename}")
+            assert_png_integrity(assets / filename)
+        for cutout in ("dream_flower_block", "dream_leaves_block"):
+            filename = f"textures/block/{cutout}.png"
+            require(texture_details[filename]["color_type"] == 6,
+                    f"{cutout}: must preserve RGBA transparency for cutout rendering")
+
 
     # The Awakener and the Core are intentionally drawn at 32x32 for an
     # ornate silhouette. Check both dimensions and full PNG byte integrity;
     # 32px is a deliberate exception to the F0 16px convention.
-    premium_32 = (
-        "textures/item/oneiric_awakener.png",
-        "textures/block/oneiric_core_block_top.png",
-        "textures/block/oneiric_core_block_side.png",
-    )
+    premium_32 = PREMIUM_32
     if enforce_current_presentation:
         for name in premium_32:
             require(name in texture_details
@@ -198,8 +220,10 @@ def audit(root: Path, enforce_current_presentation: bool = True) -> dict:
                        else "item_sprite_above_64px"),
         }
         for name, info in texture_details.items()
-        if (name.startswith("textures/block/") and not info["pixel_art_16"])
-        or (name.startswith("textures/item/") and max(info["width"], info["height"]) > 64)
+        if name not in PREMIUM_32 and (
+            (name.startswith("textures/block/") and not info["pixel_art_16"])
+            or (name.startswith("textures/item/") and max(info["width"], info["height"]) > 64)
+        )
     ]
 
     en = unique_lang_keys(assets / "lang/en_us.json")
@@ -228,6 +252,22 @@ def audit(root: Path, enforce_current_presentation: bool = True) -> dict:
         for p in models if p.relative_to(assets / "models").with_suffix("").as_posix()
         not in references
     )
+    if enforce_current_presentation:
+        require(not unused_models, f"Unused legacy JSON models remain: {unused_models}")
+
+    # Detect model->texture holes that JSON-only content checks may miss in
+    # future datapacks. Minecraft namespace and symbolic # references are
+    # vanilla dependencies; every referenced local image must be present.
+    for file in models:
+        textures = load_json(file).get("textures", {})
+        if not isinstance(textures, dict):
+            continue
+        for key, ref in textures.items():
+            if isinstance(ref, str) and ref.startswith(f"{MOD}:"):
+                rel = ref.split(":", 1)[1]
+                expected_png = assets / "textures" / f"{rel}.png"
+                require(expected_png.is_file(),
+                        f"Missing material texture {ref} from {file}:{key}")
     # Orphan model inventory is informational: custom display/entity renderers
     # and external resource packs may reference assets not used by client items.
     expected_rotation = (0, 90, 180, 270)
@@ -289,6 +329,7 @@ def audit(root: Path, enforce_current_presentation: bool = True) -> dict:
             "creative_entries": len(creative),
             "rotation_materials": len(visual_variants),
             "strict_pixel_art_family": len(canonical_pixel_art),
+            "curated_terrain_16_textures": len(CURATED_TERRAIN),
             "premium_32_textures": len(premium_32),
         },
         "legacy_texture_debt": sorted(legacy, key=lambda row: -row["bytes"]),
@@ -297,9 +338,9 @@ def audit(root: Path, enforce_current_presentation: bool = True) -> dict:
         "material_variants": dict(sorted(visual_variants.items())),
         "limitations": [
             "Visual check is STATIC: no runtime screenshot, tiling score, FPS or subjective QA claim",
-            "High-resolution textures were retained, not downsampled blindly",
+            "17 large legacy textures replaced by original pixel art; no interpolated downsampling",
             "Worldgen density/count/placements and gameplay content are unchanged",
-            "Texture format report is diagnostic, not automatic permission to delete assets",
+            "Only unreferenced item models were removed after checking all 26.3 item definitions",
         ],
     }
 

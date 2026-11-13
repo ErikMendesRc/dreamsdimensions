@@ -58,6 +58,25 @@ class VisualAssetTest(unittest.TestCase):
         with self.assertRaisesRegex(VisualAuditError, "PNG chunk CRC failed"):
             assert_png_integrity(file)
 
+    def test_all_curated_terrain_is_real_16px(self):
+        from audit_visual_assets import CURATED_TERRAIN
+        self.assertEqual(len(CURATED_TERRAIN), 17)
+        report = audit(ROOT)
+        self.assertEqual(report["counts"]["curated_terrain_16_textures"], 17)
+        self.assertEqual(report["counts"]["oversized_or_non16_assets"], 0)
+        self.assertEqual(report["counts"]["orphan_model_candidates"], 0)
+
+    def test_cutout_vegetation_and_log_orientations(self):
+        assets = ROOT / "src/main/resources/assets/dreamsdimensions"
+        for block in ("dream_flower_block", "dream_leaves_block"):
+            model = json.loads((assets / f"models/block/{block}.json").read_text())
+            self.assertEqual(model["render_type"], "cutout")
+        log = json.loads((assets / "blockstates/dream_log_block.json").read_text())
+        self.assertEqual(sorted(variant["y"] for variant in log["variants"]["axis=y"]),
+                         [0, 90, 180, 270])
+        self.assertEqual(log["variants"]["axis=x"]["x"], 90)
+        self.assertEqual(log["variants"]["axis=z"]["x"], 90)
+
     def test_valid_16_pixel_texture(self):
         file = self.save("stone.png", small_png(16))
         info = png_details(file)
