@@ -43,7 +43,7 @@ A Pedra Marcada **ainda não tem uma mecânica exclusiva de sonhos**; é materia
 
 ## Refinamento visual Task 8
 
-Nove superfícies naturais (grama, terra, rochas, areia e musgo existentes) possuem agora quatro variantes de orientação **apenas no blockstate do cliente**. Isso reduz padrões repetidos na aparência, **sem alterar a distribuição, a seed, a colisão ou a geração de mundo**. A Flor Onírica usa ícone plano vanilla-style e partículas da própria textura; a aba criativa usa Colar como ícone e categorias ordenadas. Dream Ore, Deepslate Dream Ore e Dream Dust foram redesenhados como sprites originais 16×16; os demais PNGs legados grandes permanecem até revisão artística real. Veja [Task 8](TASK_8_VISUAL_QUALITY_PASS.md).
+Nove superfícies naturais receberam quatro rotações no primeiro passe; Pedra Infundida, Dream Shimmer e o tronco vertical ganharam alternativas na 8.6. **Dezessete sprites de terreno/vegetação foram redesenhados diretamente em 16×16**, preservando IDs, geometria e worldgen. A Flor mantém cutout e ícone plano; Dream Ore, Deepslate Dream Ore e Dream Dust continuam 16×16 e o Núcleo/Despertador mantêm as artes 32×32 aprovadas. Sem alteração de distribuição, seed, loot ou economia. Ver [Task 8](TASK_8_VISUAL_QUALITY_PASS.md) e [polimento 8.4–8.7](TASK_8_4_TO_8_7.md).
 
 ## Ferramentas de diagnóstico
 

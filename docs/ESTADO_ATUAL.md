@@ -27,7 +27,7 @@
 | Eco do Musgo e Pacto de Vigília | IMPLEMENTADO; homologação completa MANUAL_PENDENTE | `event/EchoMossInteractionHandler.java`, `registry/ModEffects.java` |
 | Ruínas de recuperação e loot nativo | IMPLEMENTADO, CI_VERIFICADO; travessia/baú aberto em Survival MANUAL_PENDENTE | `data/.../worldgen/structure/`, `scripts/ci/audit_dream_ruins_runtime.py` |
 | Telemetria e relatórios das quatro seeds | IMPLEMENTADO, CI_VERIFICADO; coleta opt-in | `qa/DreamQaRecorder.java`, `scripts/ci/` |
-| Qualidade visual Task 8 | **MELHORIAS DE APRESENTAÇÃO IMPLEMENTADAS**; revisão no cliente pendente | `assets/.../blockstates/`, `models/item/dream_flower_block.json`, `scripts/ci/audit_visual_assets.py` |
+| Qualidade visual Tasks 8.0–8.7 | **MELHORIAS DE ASSETS E CLIENTE IMPLEMENTADAS**; avaliação visual/Survival MANUAL_PENDENTE | `assets/.../textures/`, `client/feedback/`, `block/OneiricCoreBlock.java`, `scripts/ci/visual_release_gate.py` |
 
 **Crítico:** as duas dimensões atuais são exemplos iniciais. **Não** amarrar progressão geral do DreamsDimensions à lore, aos materiais ou às peculiaridades exclusivas delas.
 
@@ -38,7 +38,7 @@
 3. **Experiência multiplayer e visual:** build/servidor dedicado não prova renderização GeckoLib, qualidade dos biomas, dificuldade de exploração, drops físicos, nem sincronização entre dois jogadores.
 4. **Economia F0:** 7.4–7.5 mediram pedras geradas e loot nativo, **não** percentis de descoberta por jogadores.
 5. **Overworld:** ainda não existe sistema jogável de anomalias; o protótipo Java inerte da antiga 7.6 foi retirado na Task 8. Não alegar Cicatriz Silenciosa, Eixo Fraturado, portal ou manifestação gerada no mapa.
-6. **Assets:** 3 texturas críticas de minério/pó foram redesenhadas em pixel art original 16×16, enquanto imagens legadas restantes precisam de revisão individual; nenhuma textura foi redimensionada automaticamente.
+6. **Assets:** 17 texturas legadas de terreno/vegetação foram redesenhadas em 16×16, além das 3 de minério/pó já feitas; sprites premium do Despertador/Núcleo mantidos em 32×32. São necessários playtests visuais e medição de desempenho em cliente.
 7. **Design futuro:** nenhum novo minério, planta, mob, dimensão ou POI entra no backlog executável sem papel claro em Survival e critério de aceite.
 
 ## Fonte das provas

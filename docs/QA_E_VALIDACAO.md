@@ -17,6 +17,8 @@ python scripts/ci/f0_homologation.py --static --output qa-f0-static.json
 python scripts/ci/check_qa_contract.py
 python scripts/ci/test_visual_assets.py
 python scripts/ci/audit_visual_assets.py --report qa-visual-assets.json
+python scripts/ci/test_visual_release_gate.py
+python scripts/ci/visual_release_gate.py --report qa-visual-release.json
 .\gradlew.bat runClient
 ```
 
@@ -57,7 +59,7 @@ O GitHub Actions em `.github/workflows/build.yml` executa build, JUnit, scripts 
 | `RUNTIME_OBSERVED` | Servidor real carregou chunks/entidades/loot tables ou executou comandos nativos | Acessibilidade, cenário visual, UX, Survival real |
 | `MANUAL_VERIFIED` | Jogador testou e anexou prova rastreável | Qualquer caso sem evidência deve permanecer `NOT_RUN` |
 
-**Visual Task 8:** a auditoria estática inspeciona metadados de PNGs, modelos, idiomas, Creative Tab e variantes rotacionais; **não** comprova a aparência no cliente. Exige-se inspeção de texturas em paredes 5×5, flor no inventário, partículas de quebra, folhas, mobs GeckoLib e análise de performance com arte de alta resolução. Veja [Task 8](TASK_8_VISUAL_QUALITY_PASS.md).
+**Visual Tasks 8.4–8.7:** a auditoria estática agora protege os 17 sprites novos 16×16, referências modelo→textura e a ausência de modelos JSON órfãos. O novo validador separa CI `PASS` de homologação humana `NOT_RUN`. A revisão de paredes 5×5, folhagem, Colar, partículas, FPS, mobs GeckoLib e retorno do Despertador em Survival/multiplayer segue pendente. Veja [Tasks 8.4–8.7](TASK_8_4_TO_8_7.md).
 
 **Gates pendentes:** sonho com Colar em Survival (desativado em produção); retorno com Despertador consumível, respawn e baú de recuperação em multiplayer; Fortune/Silk Touch; coerência de mobs em população real; aparência/tiling; persistência e saves antigos. **Não** habilitar `dream_entry_enabled` por sucesso de JUnit ou uma única seed.
 

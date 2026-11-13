@@ -95,3 +95,6 @@ Colocar paredes 5×5 das duas pedras e grama/terra, observar **de dia e à noite
 ## Polimento posterior — Despertador e Núcleo Onírico
 
 Sem novos sistemas de gameplay: Despertador e Núcleo receberam sprites **32×32** originais, topo/lateral distintos no Core e limpeza da textura anterior. As correções de robustez de uso/retorno estão documentadas no [contrato do Despertador](ONEIRIC_AWAKENER_TASK_5_4.md). Os novos assets são verificáveis pela auditoria visual, mas a renderização e o retorno em cliente continuam sujeitos a teste manual.
+
+
+> **Atualização posterior — Tasks 8.4–8.7:** a dívida visual de materiais deste primeiro passe foi tratada com 17 sprites 16×16 adicionais e modelos órfãos removidos. Este documento permanece como registro das Tasks 8.0–8.3. Consultar [relatório consolidado 8.4–8.7](TASK_8_4_TO_8_7.md) para o estado atualizado e os gates de homologação.

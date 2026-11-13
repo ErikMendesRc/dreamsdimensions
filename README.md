@@ -16,7 +16,8 @@ DreamsDimensions é um mod de **exploração e gameplay relacionados aos sonhos*
 | [Worldgen e conteúdo](docs/WORLDGEN_E_CONTEUDO.md) | Biomas, dimensões, recursos, estruturas, mobs, Pedra Marcada e limites de evidência |
 | [QA e validação](docs/QA_E_VALIDACAO.md) | Build, testes, seeds, comandos e critérios para diferenciar CI de playtest |
 | [Migração 26.3](docs/MIGRATION_26_3.md) | Histórico de compatibilidade e riscos de mundos/saves |
-| [Task 8 — Qualidade visual](docs/TASK_8_VISUAL_QUALITY_PASS.md) | Correções de apresentação, auditoria de PNGs e limitações de revisão visual |
+| [Task 8 — Qualidade visual](docs/TASK_8_VISUAL_QUALITY_PASS.md) | Correções iniciais de apresentação e auditoria de PNGs |
+| [Tasks 8.4–8.7 — Polimento final](docs/TASK_8_4_TO_8_7.md) | Texturas revisadas, partículas limitadas, remoção de órfãos e QA do cliente |
 
 Os documentos técnicos detalhados que permanecem em `docs/` são contratos de **sistemas já implementados**, relatórios de medição real, instruções de QA ou evidências de riscos ainda relevantes. Documentos de design especulativo e roadmaps contraditórios foram retirados da árvore atual; podem ser consultados pelo histórico Git.
 
