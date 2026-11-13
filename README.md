@@ -12,6 +12,8 @@ DreamsDimensions é um mod de **exploração e gameplay relacionados aos sonhos*
 | --- | --- |
 | [Estado atual](docs/ESTADO_ATUAL.md) | O que existe, o que está em teste, o que está desabilitado e o que ainda é experimental |
 | [Gameplay e direção](docs/GAMEPLAY_E_DIRECAO.md) | Identidade universal do mod, Overworld e regras para aprovar novas mecânicas |
+| [Task 9.0 — Contrato Universal do Overworld](docs/TASK_9_0_OVERWORLD_GAMEPLAY_CONTRACT.md) | Contrato de gameplay, loops, dependências e gate da primeira expansão; **design, não implementação** |
+| [Catálogo 9.0 (JSON)](docs/OVERWORLD_CONTENT_CATALOG_TASK_9_0.json) | 9 entradas implementadas, 3 selecionadas e 23 candidatas com origem, consumidor e critérios de aceite |
 | [Arquitetura atual](docs/ARQUITETURA_ATUAL.md) | Onde estão os sistemas implementados, registros e extensões |
 | [Worldgen e conteúdo](docs/WORLDGEN_E_CONTEUDO.md) | Biomas, dimensões, recursos, estruturas, mobs, Pedra Marcada e limites de evidência |
 | [QA e validação](docs/QA_E_VALIDACAO.md) | Build, testes, seeds, comandos e critérios para diferenciar CI de playtest |
@@ -19,7 +21,7 @@ DreamsDimensions é um mod de **exploração e gameplay relacionados aos sonhos*
 | [Task 8 — Qualidade visual](docs/TASK_8_VISUAL_QUALITY_PASS.md) | Correções iniciais de apresentação e auditoria de PNGs |
 | [Tasks 8.4–8.7 — Polimento final](docs/TASK_8_4_TO_8_7.md) | Texturas revisadas, partículas limitadas, remoção de órfãos e QA do cliente |
 
-Os documentos técnicos detalhados que permanecem em `docs/` são contratos de **sistemas já implementados**, relatórios de medição real, instruções de QA ou evidências de riscos ainda relevantes. Documentos de design especulativo e roadmaps contraditórios foram retirados da árvore atual; podem ser consultados pelo histórico Git.
+Os documentos técnicos detalhados que permanecem em `docs/` são contratos de **sistemas já implementados**, relatórios de medição real, instruções de QA ou evidências de riscos ainda relevantes. Documentos de design especulativo e roadmaps contraditórios foram retirados da árvore atual; podem ser consultados pelo histórico Git. A **Task 9.0** é uma exceção deliberada: um novo contrato de planejamento verificável, explicitamente marcado **DESIGN_ONLY**, sem alegar novo conteúdo jogável.
 
 ## Iniciar o projeto
 
