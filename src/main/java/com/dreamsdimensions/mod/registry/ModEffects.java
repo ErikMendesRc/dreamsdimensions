@@ -31,7 +31,7 @@ public final class ModEffects {
     public static final DeferredHolder<MobEffect, VigilInfusionEffect> VIGIL_INFUSION =
             EFFECTS.register("vigil_infusion", VigilInfusionEffect::new);
 
-    private ModEffects() {
+    private ModEffects() {}
 
     public static void register(IEventBus modBus) {
         EFFECTS.register(modBus);
