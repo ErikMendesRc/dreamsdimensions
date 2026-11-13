@@ -71,5 +71,12 @@
   "message.dreamsdimensions.kettle.status": "Kettle: %s bottle(s), %s/400 ticks. Use an empty hand to collect completed infusions.",
   "tooltip.dreamsdimensions.plume_lining": "At a smithing table: lining in main hand, armor in offhand.",
   "tooltip.dreamsdimensions.vigil_tether": "Arm before crossing; one rescue within two minutes.",
-  "tooltip.dreamsdimensions.plume_bridge": "Creates a temporary 3×3 floor for 30 seconds."
+  "tooltip.dreamsdimensions.plume_bridge": "Creates a temporary 3×3 floor for 30 seconds.",
+  "tooltip.dreamsdimensions.armor.plume_lining": "Plume Lining installed — protection from Falling (1 level)",
+  "message.dreamsdimensions.plume_lining.already": "This armor already has Plume Lining. No ingredients were consumed.",
+  "message.dreamsdimensions.plume_lining.applied": "Plume Lining installed. Equip it to reduce fall damage in dreams with the Falling trait.",
+  "message.dreamsdimensions.vigil_tether.armed": "Vigil Tether armed for 2 minutes. One rescue from the void.",
+  "message.dreamsdimensions.vigil_tether.unavailable": "The Tether needs safe ground in a Falling dream and cannot be armed again while already active.",
+  "message.dreamsdimensions.vigil_tether.expired": "Your Vigil Tether protection has expired.",
+  "message.dreamsdimensions.vigil_tether.rescued": "Your Vigil Tether rescued you back to your last safe footing!"
 }

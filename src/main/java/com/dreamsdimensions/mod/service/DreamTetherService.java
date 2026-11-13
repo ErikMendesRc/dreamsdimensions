@@ -1,6 +1,8 @@
 package com.dreamsdimensions.mod.service;
 
+import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.dimension.DreamDimensionCatalog;
+import net.minecraft.network.chat.Component;
 import com.dreamsdimensions.mod.dimension.DreamTrait;
 import com.dreamsdimensions.mod.util.DreamSpawnHelper;
 import java.util.HashMap;
@@ -25,10 +27,15 @@ public final class DreamTetherService {
     private DreamTetherService(){}
 
     public static boolean arm(ServerPlayer player) {
-        if (!hasFallTrait(player) || !player.onGround()) return false;
+        if (!hasFallTrait(player) || !player.isAlive() || !player.onGround()) return false;
         ServerLevel level=(ServerLevel)player.level();
         BlockPos feet=player.blockPosition();
         if(!DreamSpawnHelper.isSafeStandingSpace(level,feet,player))return false;
+        Tether existing = ACTIVE.get(player.getUUID());
+        boolean alreadyActive = existing != null
+                && existing.dimension() == level.dimension()
+                && existing.expiry() > level.getGameTime();
+        if (!DreamFallPolicy.mayArmTether(true, true, true, alreadyActive)) return false;
         ACTIVE.put(player.getUUID(),new Tether(level.dimension(),feet,
                 level.getGameTime()+ACTIVE_TICKS));
         return true;
@@ -45,19 +52,46 @@ public final class DreamTetherService {
         Tether active=ACTIVE.get(id);
         if (active==null)return;
         ServerLevel level=(ServerLevel)player.level();
-        if (!player.isAlive()||active.dimension()!=level.dimension()||
-                level.getGameTime()>=active.expiry()) {ACTIVE.remove(id);return;}
+        if (!player.isAlive() || active.dimension()!=level.dimension()) {
+            ACTIVE.remove(id);
+            return;
+        }
+        if (level.getGameTime() >= active.expiry()) {
+            ACTIVE.remove(id);
+            player.sendSystemMessage(Component.translatable(
+                    "message.dreamsdimensions.vigil_tether.expired"));
+            return;
+        }
         if (player.onGround() && DreamSpawnHelper.isSafeStandingSpace(level,player.blockPosition(),player)) {
             ACTIVE.put(id,new Tether(level.dimension(),player.blockPosition(),active.expiry()));
             return;
         }
         if (player.getY()>level.getMinY()+12) return;
-        ACTIVE.remove(id);
+        ACTIVE.remove(id); // Claim the single-use rescue before attempting a transition.
         BlockPos anchor=active.anchor();
         if (!level.isInsideBuildHeight(anchor)
-                || !DreamSpawnHelper.isSafeStandingSpace(level,anchor,player)) return;
-        player.teleport(new TeleportTransition(level, Vec3.atBottomCenterOf(anchor),
-                Vec3.ZERO,player.getYRot(),player.getXRot(),Set.of(),TeleportTransition.DO_NOTHING));
+                || !DreamSpawnHelper.isSafeStandingSpace(level,anchor,player)) {
+            DreamsDimensions.LOGGER.warn("DREAM_TETHER player={} result=unsafe_anchor", id);
+            return;
+        }
+        try {
+            ServerPlayer returned = player.teleport(new TeleportTransition(
+                    level, Vec3.atBottomCenterOf(anchor), Vec3.ZERO,
+                    player.getYRot(), player.getXRot(), Set.of(),
+                    TeleportTransition.DO_NOTHING));
+            if (returned != null && returned.isAlive()
+                    && returned.getUUID().equals(id)
+                    && returned.level().dimension() == level.dimension()) {
+                returned.sendSystemMessage(Component.translatable(
+                        "message.dreamsdimensions.vigil_tether.rescued"));
+            } else {
+                DreamsDimensions.LOGGER.warn(
+                        "DREAM_TETHER player={} result=unconfirmed_teleport", id);
+            }
+        } catch (RuntimeException failure) {
+            DreamsDimensions.LOGGER.error(
+                    "DREAM_TETHER player={} result=teleport_exception", id, failure);
+        }
     }
 
     public static void onLogout(PlayerEvent.PlayerLoggedOutEvent e) {ACTIVE.remove(e.getEntity().getUUID());}

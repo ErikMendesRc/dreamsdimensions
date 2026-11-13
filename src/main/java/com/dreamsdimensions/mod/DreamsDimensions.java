@@ -108,6 +108,7 @@ public class DreamsDimensions {
         NeoForge.EVENT_BUS.addListener(DreamRespawnService::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(DreamTraitEquipment::onFall);
+        NeoForge.EVENT_BUS.addListener(DreamTraitEquipment::onTooltip);
         NeoForge.EVENT_BUS.addListener(DreamTraitEquipment::onSmithing);
         NeoForge.EVENT_BUS.addListener(DreamTetherService::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(DreamTetherService::onLogout);

@@ -5,6 +5,9 @@ import com.dreamsdimensions.mod.dimension.DreamTrait;
 import com.dreamsdimensions.mod.registry.ModEffects;
 import com.dreamsdimensions.mod.registry.ModItems;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -35,10 +38,29 @@ public final class DreamTraitEquipment {
             CustomData custom=gear.get(DataComponents.CUSTOM_DATA);
             if(custom!=null && "plumite".equals(custom.copyTag().getStringOr(LINING_KEY,"")))matched++;
         }
-        double damageMultiplier=1.0;
-        for(int i=0;i<Math.min(2,matched);i++) damageMultiplier*=0.65;
-        if(player.hasEffect(ModEffects.LIGHTNESS))damageMultiplier*=0.5;
-        event.setDamageMultiplier((float)(event.getDamageMultiplier()*damageMultiplier));
+        float multiplier = DreamFallPolicy.damageMultiplier(
+                matched, player.hasEffect(ModEffects.LIGHTNESS));
+        event.setDamageMultiplier(event.getDamageMultiplier() * multiplier);
+    }
+
+    /** The lining must be discoverable on the equipped item itself. */
+    public static void onTooltip(ItemTooltipEvent event) {
+        if (event.getItemStack().is(ModItems.PLUME_LINING.get())) {
+            event.getToolTip().add(Component.translatable(
+                    "tooltip.dreamsdimensions.plume_lining").withStyle(ChatFormatting.GRAY));
+        } else if (event.getItemStack().is(ModItems.VIGIL_TETHER.get())) {
+            event.getToolTip().add(Component.translatable(
+                    "tooltip.dreamsdimensions.vigil_tether").withStyle(ChatFormatting.GRAY));
+        } else if (event.getItemStack().is(ModItems.PLUME_BRIDGE.get())) {
+            event.getToolTip().add(Component.translatable(
+                    "tooltip.dreamsdimensions.plume_bridge").withStyle(ChatFormatting.GRAY));
+        }
+        CustomData data = event.getItemStack().get(DataComponents.CUSTOM_DATA);
+        if (data != null && "plumite".equals(data.copyTag().getStringOr(LINING_KEY, ""))) {
+            event.getToolTip().add(Component.translatable(
+                    "tooltip.dreamsdimensions.armor.plume_lining")
+                    .withStyle(ChatFormatting.AQUA));
+        }
     }
 
     /** Right-click smithing table with Lining in main hand, armor in offhand. */
@@ -58,12 +80,15 @@ public final class DreamTraitEquipment {
         CustomData old=armor.get(DataComponents.CUSTOM_DATA);
         CompoundTag tag=old==null?new CompoundTag():old.copyTag();
         boolean previous="plumite".equals(tag.getStringOr(LINING_KEY,""));
+        if (previous) {
+            player.sendSystemMessage(Component.translatable(
+                    "message.dreamsdimensions.plume_lining.already"));
+            return;
+        }
         tag.putString(LINING_KEY,"plumite");
         armor.set(DataComponents.CUSTOM_DATA,CustomData.of(tag));
         if(!player.getAbilities().instabuild)lining.shrink(1);
-        if(previous){
-            ItemStack returned=new ItemStack(ModItems.PLUME_LINING.get());
-            if(!player.getInventory().add(returned))net.minecraft.world.level.block.Block.popResource(player.level(),player.blockPosition(),returned);
-        }
+        player.sendSystemMessage(Component.translatable(
+                "message.dreamsdimensions.plume_lining.applied"));
     }
 }

@@ -71,5 +71,12 @@
   "message.dreamsdimensions.kettle.status": "Chaleira: %s garrafa(s), %s/400 ticks. Use a mão vazia para retirar a Infusão pronta.",
   "tooltip.dreamsdimensions.plume_lining": "Na mesa de ferraria: Forro na mão principal, armadura na outra.",
   "tooltip.dreamsdimensions.vigil_tether": "Ative antes da travessia; resgate único por 2 minutos.",
-  "tooltip.dreamsdimensions.plume_bridge": "Cria um piso temporário 3×3 por 30 segundos."
+  "tooltip.dreamsdimensions.plume_bridge": "Cria um piso temporário 3×3 por 30 segundos.",
+  "tooltip.dreamsdimensions.armor.plume_lining": "Forro de Pluma instalado — proteção contra Queda (1 nível)",
+  "message.dreamsdimensions.plume_lining.already": "Esta peça já possui Forro de Pluma. Nenhum material foi consumido.",
+  "message.dreamsdimensions.plume_lining.applied": "Forro de Pluma instalado. Equipe a peça para reduzir o dano de queda em sonhos com esse Traço.",
+  "message.dreamsdimensions.vigil_tether.armed": "Amarra de Vigília ativada por 2 minutos. Resgate único contra o vazio.",
+  "message.dreamsdimensions.vigil_tether.unavailable": "A Amarra exige piso firme em um sonho com Queda, e não pode ser reativada enquanto já estiver ativa.",
+  "message.dreamsdimensions.vigil_tether.expired": "A proteção da Amarra de Vigília expirou.",
+  "message.dreamsdimensions.vigil_tether.rescued": "A Amarra de Vigília segurou você e devolveu ao último piso seguro!"
 }
