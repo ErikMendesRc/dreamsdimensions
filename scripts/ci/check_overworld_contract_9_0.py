@@ -8,7 +8,7 @@ be misrepresented as proof that any proposed feature is playable.
 from __future__ import annotations
 
 import argparse
-from collections import Counter, defaultdict
+from collections import Counter
 import json
 from pathlib import Path
 
@@ -19,7 +19,11 @@ REQUIRED_FLAGS = (
     "overworld_independent", "no_mandatory_quest", "no_free_dream_return",
     "dream_entry_default_disabled", "no_retro_generation",
     "early_overworld_optional_dreams", "no_one_dimension_hard_dependency",
-    "design_does_not_register_content",
+    "design_does_not_register_content", "no_mandatory_dimension_specific_gear",
+    "no_return_without_awakener", "first_awakener_early_possible_but_hard",
+    "mid_late_return_gets_easier_not_free", "unknown_dream_destination",
+    "preparation_before_entry", "no_survival_softlock_by_design",
+    "new_features_need_mechanics_not_only_building_blocks",
 )
 ALLOWED_STATUS = {"IMPLEMENTED_CODE", "SELECTED", "CANDIDATE"}
 ALLOWED_PHASES = {"early": 0, "mid": 1, "late": 2}
@@ -110,9 +114,9 @@ def validate(data: object, root: Path | None = None) -> list[str]:
 
     if counts["IMPLEMENTED_CODE"] < 9:
         errors.append("insufficient_code_baseline")
-    if counts["SELECTED"] != 3:
-        errors.append("selected_slice_must_have_three_items")
-    if counts["CANDIDATE"] < 20 or len(families) < 8:
+    if counts["SELECTED"] != 4:
+        errors.append("selected_slice_must_have_four_items")
+    if counts["CANDIDATE"] < 30 or len(families) < 12:
         errors.append("insufficient_breadth")
 
     for uid, item in nodes.items():
@@ -160,10 +164,18 @@ def validate(data: object, root: Path | None = None) -> list[str]:
         selected = {}
         errors.append("selected_slice_missing")
     selected_ids = selected.get("entry_ids", [])
+    expected_first = {"F1_VIGIL_HERB", "F1_RETURN_CHARGE",
+                      "F1_CORE_STATION", "F1_AWAKENER_BALANCE"}
     if (selected.get("id") != "F1" or selected.get("task") != "9.1" or
             not isinstance(selected_ids, list) or
-            set(selected_ids) != {"F1_LICHEN", "F1_MORTAR", "F1_MASONRY"}):
+            len(selected_ids) != 4 or set(selected_ids) != expected_first):
         errors.append("invalid_first_vertical_slice")
+    required_existing = {"dreamsdimensions:dream_ore", "dreamsdimensions:dream_dust",
+                         "dreamsdimensions:oneiric_core_block",
+                         "dreamsdimensions:oneiric_awakener",
+                         "dreamsdimensions:dream_necklace"}
+    if not required_existing.issubset(set(selected.get("integrates_existing_ids", []))):
+        errors.append("missing_existing_preparation_chain")
     actual_selected = {k for k, v in nodes.items() if v.get("status") == "SELECTED"}
     if isinstance(selected_ids, list) and set(selected_ids) != actual_selected:
         errors.append("selection_status_mismatch")
@@ -173,12 +185,61 @@ def validate(data: object, root: Path | None = None) -> list[str]:
         set(selected.get("required_evidence", []))
     ):
         errors.append("missing_evidence_separation")
-    expected_edges = {"F1_LICHEN": "F1_MORTAR", "F1_MORTAR": "F1_MASONRY"}
-    for a, consumer in expected_edges.items():
-        if a not in nodes.get(consumer, {}).get("depends_on", []):
-            errors.append(f"missing_selected_consumer:{a}:{consumer}")
-    if "E06" not in nodes.get("F1_MASONRY", {}).get("depends_on", []):
-        errors.append("masonry_needs_existing_geology")
+    required_edges = {
+        "F1_RETURN_CHARGE": {"F1_VIGIL_HERB", "E03"},
+        "F1_CORE_STATION": {"F1_RETURN_CHARGE", "E09"},
+        "F1_AWAKENER_BALANCE": {"F1_CORE_STATION", "F1_RETURN_CHARGE", "E05"},
+    }
+    for consumer, providers in required_edges.items():
+        actual = set(nodes.get(consumer, {}).get("depends_on", []))
+        for provider in providers - actual:
+            errors.append(f"missing_selected_consumer:{provider}:{consumer}")
+    for legacy in ("F1_LICHEN", "F1_MORTAR", "F1_MASONRY"):
+        if nodes.get(legacy, {}).get("status") == "SELECTED":
+            errors.append("construction_cannot_be_first_slice:" + legacy)
+
+    progression = data.get("progression", {})
+    if not isinstance(progression, dict):
+        progression = {}
+    if (progression.get("central_critical_item") != "dreamsdimensions:oneiric_awakener"
+            or progression.get("central_infrastructure")
+            != "dreamsdimensions:oneiric_core_block"
+            or progression.get("accessory") != "dreamsdimensions:dream_necklace"):
+        errors.append("incorrect_preparation_center")
+    stages = progression.get("stages", [])
+    if not isinstance(stages, list) or [s.get("phase") for s in stages if isinstance(s, dict)] != ["early", "mid", "late"]:
+        errors.append("incorrect_progression_stages")
+    else:
+        for stage in stages:
+            if not stage.get("experience") or not stage.get("return_cost_target"):
+                errors.append("incomplete_progression_stage:" + stage["phase"])
+            for key in stage.get("mandatory_resources", []):
+                if key not in nodes and key not in required_existing:
+                    errors.append("unresolved_stage_input:" + str(key))
+    branches = progression.get("branches", [])
+    if not isinstance(branches, list) or len(branches) < 5:
+        errors.append("insufficient_gameplay_branches")
+    else:
+        for branch in branches:
+            if not isinstance(branch, dict) or not branch.get("purpose"):
+                errors.append("invalid_gameplay_branch")
+                continue
+            for node in branch.get("path", []):
+                if node not in nodes:
+                    errors.append("unresolved_gameplay_branch:" + str(node))
+    risk = data.get("dream_risk_contract", {})
+    if not isinstance(risk, dict):
+        risk = {}
+    for key in ("destination", "safe_arrival", "softlock_policy",
+                "use_return", "default_config", "universal_preparation"):
+        if not risk.get(key):
+            errors.append("missing_dream_risk_rule:" + key)
+    if "dream_entry_enabled=false" not in str(risk.get("default_config", "")):
+        errors.append("dream_entry_must_remain_disabled")
+    if "60 ticks" not in str(risk.get("use_return", "")):
+        errors.append("awakener_60_ticks_must_remain")
+    if "oneiric_awakener" not in str(risk.get("universal_preparation", [])):
+        errors.append("awakener_must_be_in_preparation_kit")
     for uid in actual_selected:
         if nodes[uid].get("task") != "9.1" or nodes[uid].get("phase") != "early":
             errors.append("selection_outside_9_1_early:" + uid)
