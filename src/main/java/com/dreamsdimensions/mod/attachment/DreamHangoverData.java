@@ -1,6 +1,7 @@
 package com.dreamsdimensions.mod.attachment;
 
 import com.mojang.serialization.Codec;
+import com.dreamsdimensions.mod.service.DreamRecoveryPolicy;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -17,11 +18,12 @@ public record DreamHangoverData(int nightsRemaining, long lastBlockedNight) {
     }
 
     public boolean blocks(long nightIndex) {
-        return nightIndex == lastBlockedNight || nightsRemaining > 0;
+        return DreamRecoveryPolicy.hangoverBlocks(nightsRemaining, lastBlockedNight, nightIndex);
     }
 
     public DreamHangoverData blockNight(long nightIndex) {
         if (nightIndex == lastBlockedNight || nightsRemaining == 0) return this;
-        return new DreamHangoverData(nightsRemaining - 1, nightIndex);
+        return new DreamHangoverData(DreamRecoveryPolicy.hangoverNightsAfterSleep(
+                nightsRemaining, lastBlockedNight, nightIndex), nightIndex);
     }
 }

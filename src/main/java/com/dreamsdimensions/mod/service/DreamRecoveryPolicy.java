@@ -15,6 +15,15 @@ public final class DreamRecoveryPolicy {
                 && square <= (long) GROUP_BED_RADIUS * GROUP_BED_RADIUS;
     }
 
+    public static boolean hangoverBlocks(int nightsRemaining, long lastBlockedNight, long nightIndex) {
+        return nightIndex == lastBlockedNight || nightsRemaining > 0;
+    }
+
+    public static int hangoverNightsAfterSleep(int nightsRemaining,
+            long lastBlockedNight, long nightIndex) {
+        return lastBlockedNight == nightIndex ? nightsRemaining : Math.max(0, nightsRemaining - 1);
+    }
+
     public static boolean returnConfirmed(boolean teleported, boolean samePlayer, boolean overworld) {
         return teleported && samePlayer && overworld;
     }
