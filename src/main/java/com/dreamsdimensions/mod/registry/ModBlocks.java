@@ -3,6 +3,7 @@ package com.dreamsdimensions.mod.registry;
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.block.DreamOreBlock;
 import com.dreamsdimensions.mod.block.OneiricCoreBlock;
+import com.dreamsdimensions.mod.block.VigilHerbBlock;
 import com.dreamsdimensions.mod.block.DreamLeavesBlock;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
@@ -160,6 +161,12 @@ public final class ModBlocks {
             () -> BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)
                     .noOcclusion()
                     .strength(0.2f)
+    );
+
+    public static final DeferredBlock<VigilHerbBlock> VIGIL_HERB = BLOCKS.registerBlock(
+            "vigil_herb", VigilHerbBlock::new,
+            () -> BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)
+                    .randomTicks().noCollision().instabreak()
     );
 
     private ModBlocks() {

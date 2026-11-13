@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "dreamsdimensions:dream_dust",
+    "dreamsdimensions:dream_dust",
+    "dreamsdimensions:dream_dust",
+    "dreamsdimensions:toasted_vigil_herb",
+    "dreamsdimensions:toasted_vigil_herb"
+  ],
+  "result": {
+    "id": "dreamsdimensions:return_charge",
+    "count": 1
+  }
+}

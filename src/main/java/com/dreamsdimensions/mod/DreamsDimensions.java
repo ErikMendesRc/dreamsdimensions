@@ -24,6 +24,7 @@ import com.dreamsdimensions.mod.entity.VigiaIslandPopulation;
 import com.dreamsdimensions.mod.entity.behavior.DreamAnchorService;
 import com.dreamsdimensions.mod.entity.spawn.DreamMobPopulationService;
 import com.dreamsdimensions.mod.registry.ModItems;
+import com.dreamsdimensions.mod.registry.ModMenuTypes;
 import com.dreamsdimensions.mod.item.OneiricAwakenerItem;
 import com.dreamsdimensions.mod.worldgen.DreamWorldgen;
 import com.dreamsdimensions.mod.service.DreamRespawnService;
@@ -48,6 +49,7 @@ public class DreamsDimensions {
         modContainer.registerConfig(ModConfig.Type.SYNCED, DreamEntryConfig.SPEC);
 
         ModItems.register(modEventBus);
+        ModMenuTypes.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         ModAttachments.register(modEventBus);

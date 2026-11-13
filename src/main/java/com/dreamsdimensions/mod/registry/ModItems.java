@@ -131,6 +131,27 @@ public final class ModItems {
             ModBlocks.ONEIRIC_CORE_BLOCK
     );
 
+    public static final DeferredItem<BlockItem> VIGIL_HERB_ITEM = ITEMS.registerSimpleBlockItem(
+            ModBlocks.VIGIL_HERB
+    );
+
+    public static final DeferredItem<com.dreamsdimensions.mod.item.VigilHerbSeedsItem> VIGIL_HERB_SEEDS = ITEMS.registerItem(
+            "vigil_herb_seeds", com.dreamsdimensions.mod.item.VigilHerbSeedsItem::new,
+            Item.Properties::new
+    );
+
+    public static final DeferredItem<Item> VIGIL_HERB_LEAF = ITEMS.registerItem(
+            "vigil_herb_leaf", Item::new, Item.Properties::new
+    );
+
+    public static final DeferredItem<Item> TOASTED_VIGIL_HERB = ITEMS.registerItem(
+            "toasted_vigil_herb", Item::new, Item.Properties::new
+    );
+
+    public static final DeferredItem<Item> RETURN_CHARGE = ITEMS.registerItem(
+            "return_charge", Item::new, () -> new Item.Properties().rarity(Rarity.UNCOMMON)
+    );
+
     private ModItems() {
     }
 

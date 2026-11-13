@@ -42,7 +42,7 @@ class VisualAssetTest(unittest.TestCase):
         self.assertEqual(result["status"], "PASS")
         self.assertEqual(result["visual_review"], "NOT_RUN")
         self.assertEqual(result["counts"]["rotation_materials"], len(ROTATED_NATURAL))
-        self.assertEqual(result["counts"]["creative_entries"], 22)
+        self.assertEqual(result["counts"]["creative_entries"], 27)
 
     def test_task_9_1_infused_stone_recipe_and_texture_wiring(self):
         # Snapshot of the current Survival recipe; Task 9.1 changes art only.
@@ -71,6 +71,30 @@ class VisualAssetTest(unittest.TestCase):
         self.assertEqual(block_model["textures"]["all"], "dreamsdimensions:block/dream_infused_stone")
         self.assertEqual(item_def["model"]["model"], "dreamsdimensions:block/dream_infused_stone")
 
+    def test_task_9_2_visual_assets_and_crafting_contract(self):
+        root = ROOT / "src/main/resources"
+        base = root / "assets/dreamsdimensions"
+        for filename in ("vigil_herb_open", "vigil_herb_closed"):
+            path = base / ("textures/block/" + filename + ".png")
+            self.assertEqual((png_details(path)["width"], png_details(path)["height"]), (16, 16))
+            assert_png_integrity(path)
+
+        for filename in ("vigil_herb_seeds", "vigil_herb_leaf",
+                         "toasted_vigil_herb", "return_charge"):
+            path = base / ("textures/item/" + filename + ".png")
+            self.assertEqual((png_details(path)["width"], png_details(path)["height"]), (16, 16))
+            assert_png_integrity(path)
+
+        gui = base / "textures/gui/container/oneiric_core_gui.png"
+        self.assertEqual((png_details(gui)["width"], png_details(gui)["height"]), (176, 166))
+        assert_png_integrity(gui)
+
+        charge = json.loads((root / "data/dreamsdimensions/recipe/return_charge.json").read_text())
+        self.assertEqual(charge["result"], {"id": "dreamsdimensions:return_charge", "count": 1})
+        self.assertEqual(charge["ingredients"].count("dreamsdimensions:dream_dust"), 3)
+        self.assertEqual(charge["ingredients"].count("dreamsdimensions:toasted_vigil_herb"), 2)
+        self.assertFalse((root / "data/dreamsdimensions/recipe/oneiric_awakener.json").exists())
+
     def test_real_oneiric_art_model_and_pngs(self):
         result = audit(ROOT)
         self.assertEqual(result["counts"]["premium_32_textures"], 3)
@@ -92,7 +116,7 @@ class VisualAssetTest(unittest.TestCase):
         self.assertEqual(report["counts"]["curated_terrain_16_textures"], 17)
         self.assertEqual(report["counts"]["oversized_or_non16_assets"], 0)
         self.assertEqual(report["counts"]["orphan_model_candidates"], 0)
-        self.assertEqual(report["counts"]["png_textures"], 30)
+        self.assertEqual(report["counts"]["png_textures"], 37)
         self.assertGreater(report["counts"]["pixel_art_16_textures"], 20)
 
     def test_cutout_vegetation_and_log_orientations(self):

@@ -28,6 +28,11 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.DREAM_NECKLACE.get());
                         output.accept(ModItems.ONEIRIC_AWAKENER.get());
                         output.accept(ModItems.DREAM_DUST.get());
+                        output.accept(ModItems.RETURN_CHARGE.get());
+                        output.accept(ModItems.VIGIL_HERB_LEAF.get());
+                        output.accept(ModItems.TOASTED_VIGIL_HERB.get());
+                        output.accept(ModItems.VIGIL_HERB_SEEDS.get());
+                        output.accept(ModBlocks.VIGIL_HERB.get());
 
                         output.accept(ModBlocks.DREAM_ORE.get());
                         output.accept(ModBlocks.DEEPSLATE_DREAM_ORE.get());

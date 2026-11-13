@@ -35,5 +35,11 @@
   "block.dreamsdimensions.dream_log_block": "Dream Log",
   "block.dreamsdimensions.dream_leaves_block": "Dream Leaves",
   "block.dreamsdimensions.marked_stone": "Marked Stone",
-  "block.dreamsdimensions.cut_marked_stone": "Cut Marked Stone"
+  "block.dreamsdimensions.cut_marked_stone": "Cut Marked Stone",
+  "block.dreamsdimensions.vigil_herb": "Vigil Herb",
+  "item.dreamsdimensions.vigil_herb_seeds": "Vigil Seeds",
+  "item.dreamsdimensions.vigil_herb_leaf": "Vigil Leaf",
+  "item.dreamsdimensions.toasted_vigil_herb": "Toasted Vigil Herb",
+  "item.dreamsdimensions.return_charge": "Return Charge",
+  "container.dreamsdimensions.oneiric_core": "Oneiric Core"
 }

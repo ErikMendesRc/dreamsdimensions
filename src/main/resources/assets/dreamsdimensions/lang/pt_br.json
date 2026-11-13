@@ -35,5 +35,11 @@
   "block.dreamsdimensions.dream_log_block": "Tronco Onírico",
   "block.dreamsdimensions.dream_leaves_block": "Folhas Oníricas",
   "block.dreamsdimensions.marked_stone": "Pedra Marcada",
-  "block.dreamsdimensions.cut_marked_stone": "Pedra Marcada Lapidada"
+  "block.dreamsdimensions.cut_marked_stone": "Pedra Marcada Lapidada",
+  "block.dreamsdimensions.vigil_herb": "Erva da Vigília",
+  "item.dreamsdimensions.vigil_herb_seeds": "Sementes da Vigília",
+  "item.dreamsdimensions.vigil_herb_leaf": "Folha da Vigília",
+  "item.dreamsdimensions.toasted_vigil_herb": "Erva Torrada",
+  "item.dreamsdimensions.return_charge": "Carga de Retorno",
+  "container.dreamsdimensions.oneiric_core": "Núcleo Onírico"
 }
