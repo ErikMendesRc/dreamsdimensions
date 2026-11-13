@@ -33,10 +33,14 @@ public final class VigilHerbBlock extends BushBlock {
         registerDefaultState(stateDefinition.any().setValue(OPEN, true).setValue(AGE, 3));
     }
 
+    private static boolean isDaytime(Level level) {
+        return Math.floorMod(level.getOverworldClockTime(), 24000L) < 12000L;
+    }
+
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return defaultBlockState().setValue(AGE, 0)
-                .setValue(OPEN, context.getLevel().isDay());
+                .setValue(OPEN, isDaytime(context.getLevel()));
     }
 
     @Override
@@ -53,7 +57,7 @@ public final class VigilHerbBlock extends BushBlock {
 
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        boolean open = level.isDay() && level.canSeeSky(pos);
+        boolean open = isDaytime(level) && level.canSeeSky(pos);
         if (state.getValue(OPEN) != open) {
             level.setBlock(pos, state.setValue(OPEN, open), 2);
             state = state.setValue(OPEN, open);
@@ -68,10 +72,10 @@ public final class VigilHerbBlock extends BushBlock {
             Player player, BlockHitResult hit) {
         if (state.getValue(AGE) < 3) return InteractionResult.PASS;
         if (!level.isClientSide()) {
-            boolean day = level.isDay() && level.canSeeSky(pos);
+            boolean day = isDaytime(level) && level.canSeeSky(pos);
             popResource(level, pos, new ItemStack(ModItems.VIGIL_HERB_SEEDS.get()));
             if (day) {
-                popResource(level, pos, new ItemStack(ModItems.VIGIL_HERB_LEAF.get(), 1 + level.random.nextInt(2)));
+                popResource(level, pos, new ItemStack(ModItems.VIGIL_HERB_LEAF.get(), 1 + level.getRandom().nextInt(2)));
             }
             level.setBlock(pos, state.setValue(AGE, 0).setValue(OPEN, day), 3);
         }

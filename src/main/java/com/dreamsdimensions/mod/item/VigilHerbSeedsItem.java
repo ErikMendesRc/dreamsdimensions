@@ -19,11 +19,15 @@ public final class VigilHerbSeedsItem extends Item {
         super(properties);
     }
 
+    private static boolean isDaytime(Level level) {
+        return Math.floorMod(level.getOverworldClockTime(), 24000L) < 12000L;
+    }
+
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos().relative(context.getClickedFace());
-        if (!level.isEmptyBlock(pos) || !level.isDay()
+        if (!level.isEmptyBlock(pos) || !isDaytime(level)
                 || !level.canSeeSky(pos)) {
             return InteractionResult.FAIL;
         }

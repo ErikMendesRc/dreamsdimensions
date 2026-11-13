@@ -24,7 +24,7 @@ public final class OneiricCoreScreen extends AbstractContainerScreen<OneiricCore
     }
 
     @Override
-    protected void extractBackground(GuiGraphicsExtractor graphics,
+    public void extractBackground(GuiGraphicsExtractor graphics,
             int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
         graphics.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND,
