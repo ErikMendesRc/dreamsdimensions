@@ -33,6 +33,8 @@ O **Overworld é a base compartilhada**. Ele deve oferecer exploração, obtenç
 
 **Essas são questões de design, não tarefas numeradas aprovadas.** Nenhuma nova sequência 7.7+ é autorizada por este documento.
 
+**Decisão posterior (Task 9.0):** a expansão do Overworld foi autorizada como **contrato de design**, formalizado em [Task 9.0](TASK_9_0_OVERWORLD_GAMEPLAY_CONTRACT.md) e [catálogo 9.0](OVERWORLD_CONTENT_CATALOG_TASK_9_0.json). A seleção da fatia F1 para a futura 9.1 não registra blocos e não implementa as ideias do catálogo; cada implementação precisa de sua task e de homologação própria.
+
 ## Critério de pronto para qualquer ideia
 
 Um novo recurso só entra quando há especificação de **origem → interação → custo/risco → resultado → uso → validação**, pelo menos um playtest-alvo, e uma justificativa clara de por que não basta usar a alternativa vanilla. Mecânicas universais não devem codificar dependências de duas dimensões apenas porque são as únicas disponíveis hoje.
