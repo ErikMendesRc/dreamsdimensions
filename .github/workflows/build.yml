@@ -48,6 +48,7 @@ jobs:
       - name: Audit Task 8 visual assets, localization and creative presentation
         run: |
           python3 scripts/ci/test_visual_assets.py
+          python3 scripts/ci/check_task_9_2_1_art.py
           python3 scripts/ci/audit_visual_assets.py --report qa-visual-assets-seed-${{ matrix.seed }}.json
           python3 scripts/ci/test_visual_release_gate.py
           python3 scripts/ci/visual_release_gate.py --report qa-visual-release-seed-${{ matrix.seed }}.json
