@@ -51,8 +51,8 @@
           {
             "type": "minecraft:would_survive",
             "state": {
-              "Name": "dreamsdimensions:vigil_herb",
-              "Properties": {
+              "id": "dreamsdimensions:vigil_herb",
+              "properties": {
                 "age": "3",
                 "open": "true"
               }

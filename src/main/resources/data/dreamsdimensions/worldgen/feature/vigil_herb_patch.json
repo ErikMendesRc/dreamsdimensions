@@ -3,8 +3,8 @@
   "to_place": {
     "type": "minecraft:simple",
     "state": {
-      "Name": "dreamsdimensions:vigil_herb",
-      "Properties": {
+      "id": "dreamsdimensions:vigil_herb",
+      "properties": {
         "age": "3",
         "open": "true"
       }

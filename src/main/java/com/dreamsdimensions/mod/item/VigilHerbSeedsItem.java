@@ -27,14 +27,13 @@ public final class VigilHerbSeedsItem extends Item {
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos().relative(context.getClickedFace());
-        if (!level.isEmptyBlock(pos) || !isDaytime(level)
-                || !level.canSeeSky(pos)) {
+        if (!level.isEmptyBlock(pos) || !level.canSeeSky(pos)) {
             return InteractionResult.FAIL;
         }
 
         BlockState state = ModBlocks.VIGIL_HERB.get().defaultBlockState()
                 .setValue(VigilHerbBlock.AGE, 0)
-                .setValue(VigilHerbBlock.OPEN, true);
+                .setValue(VigilHerbBlock.OPEN, isDaytime(level));
         if (!state.canSurvive(level, pos)) return InteractionResult.FAIL;
 
         if (!level.isClientSide()) {
