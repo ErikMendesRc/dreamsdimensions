@@ -68,6 +68,21 @@ final class AtmosphereParticles {
                     x, y, z, dx, 0.004, dz);
         }
 
+        // Gentle canopy drift when actually under existing Dream Leaves.
+        // One extra particle at most once per three ambient cycles; all
+        // checks are local, client-only and require an already loaded chunk.
+        if (tick % (interval * 3L) == 0 && AtmosphereSampling.belowLeaves(level, playerPos)) {
+            BlockPos drift = playerPos.above(2);
+            if (isClearAir(level, drift)) {
+                level.addParticle(CYAN_DUST,
+                        drift.getX() + random.nextDouble(),
+                        drift.getY() + random.nextDouble(),
+                        drift.getZ() + random.nextDouble(),
+                        (random.nextDouble() - 0.5) * 0.004, -0.004,
+                        (random.nextDouble() - 0.5) * 0.004);
+            }
+        }
+
         // Ground-sensitive accent: prioritize the moss directly under the
         // player's feet, then make a small bounded search for nearby gardens.
         BlockPos luminous = playerPos.below();

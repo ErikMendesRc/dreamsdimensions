@@ -66,6 +66,9 @@ assert "12, 2, 8, 160, 160, 8" in profile
 assert "DustParticleOptions" in particles and "BLUE_DUST" in particles
 assert "playerPos.offset(" in particles, "Creative-flight ambient particle fallback is required"
 assert "isClearAir(level, sample)" in particles
+assert "tick % (interval * 3L) == 0 && AtmosphereSampling.belowLeaves(level, playerPos)" in particles
+assert "if (isClearAir(level, drift))" in particles
+assert "drift.getY() + random.nextDouble()" in particles
 assert "random.nextInt(3) == 0" not in audio
 # A second logical profile is expected after Task 3.3, but the Blue profile
 # and its sampling/emission cadence remain unchanged.
