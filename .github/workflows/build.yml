@@ -23,6 +23,17 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       - name: Build
         run: ./gradlew --no-daemon clean build
+      - name: Validate Task 9.0 Overworld design and dependency contract
+        run: |
+          python3 scripts/ci/test_overworld_contract_9_0.py
+          python3 scripts/ci/check_overworld_contract_9_0.py --report qa-overworld-design-9-0-seed-${{ matrix.seed }}.json
+      - name: Upload Task 9.0 design validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: overworld-design-9-0-seed-${{ matrix.seed }}
+          path: qa-overworld-design-9-0-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
       - name: Validate current docs and internal references
         run: |
           python3 scripts/ci/test_repository_docs.py
