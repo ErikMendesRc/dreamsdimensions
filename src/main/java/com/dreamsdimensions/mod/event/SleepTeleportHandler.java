@@ -4,6 +4,9 @@ import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.config.DreamEntryConfig;
 import com.dreamsdimensions.mod.config.DreamsConfig;
 import com.dreamsdimensions.mod.service.DreamEntryPolicy;
+import com.dreamsdimensions.mod.service.DreamHangoverService;
+import com.dreamsdimensions.mod.registry.ModItems;
+import net.minecraft.network.chat.Component;
 import com.dreamsdimensions.mod.service.DreamNecklaceEquipmentPolicy;
 import com.dreamsdimensions.mod.service.DreamSleepCycle;
 import com.dreamsdimensions.mod.service.DreamTeleportService;
@@ -30,6 +33,7 @@ public final class SleepTeleportHandler {
     public static final int TICKS_BEFORE_TELEPORT = 100;
     private static final DreamSleepCycle CYCLES = new DreamSleepCycle();
     private static final Set<UUID> TELEPORTING = new HashSet<>();
+    private static final Set<UUID> WARNED = new HashSet<>();
     private static final Map<UUID, BedOrigin> COMPLETED_WAKEUPS = new HashMap<>();
 
     private record BedOrigin(BlockPos pos, float yaw) {}
@@ -51,7 +55,22 @@ public final class SleepTeleportHandler {
 
         if (!player.isAlive() || player.level().dimension() != Level.OVERWORLD || !player.isSleeping()) {
             CYCLES.onAwake(uuid);
+            WARNED.remove(uuid);
             return;
+        }
+
+        // Warn once per genuine sleeping interval, not on every player tick.
+        if (DreamEntryConfig.enabled() && WARNED.add(uuid)
+                && DreamNecklaceEquipmentPolicy.isEquipped(player)) {
+            boolean hasReturn = player.getInventory().getItems().stream()
+                    .anyMatch(stack -> stack.is(ModItems.ONEIRIC_AWAKENER.get())
+                            || stack.is(ModItems.CRACKED_AWAKENER.get()))
+                    || player.getOffhandItem().is(ModItems.ONEIRIC_AWAKENER.get())
+                    || player.getOffhandItem().is(ModItems.CRACKED_AWAKENER.get());
+            if (!hasReturn) {
+                player.sendSystemMessage(Component.translatable(
+                        "message.dreamsdimensions.sleep.risk"));
+            }
         }
 
         if (!CYCLES.onSleeping(uuid, player.getSleepTimer(), TICKS_BEFORE_TELEPORT)) return;
@@ -93,6 +112,7 @@ public final class SleepTeleportHandler {
         CYCLES.forget(uuid);
         TELEPORTING.remove(uuid);
         COMPLETED_WAKEUPS.remove(uuid);
+        WARNED.remove(uuid);
     }
 
     private static void attemptEntry(ServerPlayer player, BedOrigin origin) {
@@ -101,6 +121,10 @@ public final class SleepTeleportHandler {
         try {
             // Disabled by default: no Curios / RNG / destination work in normal Survival.
             if (!DreamEntryConfig.enabled()) return;
+            // One distinct sleep per night during the recovery penalty.
+            // The attempt remains consumed; retrying within the same night
+            // cannot force entry when the third blocked night ends.
+            if (DreamHangoverService.blockSleepEntry(player)) return;
             boolean overworld = player.level().dimension() == Level.OVERWORLD;
             boolean available = overworld && DreamsConfig.getEnabledDefinitions().stream()
                     .anyMatch(definition ->

@@ -7,6 +7,15 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "name": "dreamsdimensions:cracked_awakener"
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
           "name": "dreamsdimensions:oneiric_awakener",
           "weight": 1
         },

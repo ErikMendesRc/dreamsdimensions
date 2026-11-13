@@ -1,8 +1,10 @@
 package com.dreamsdimensions.mod.event;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
-import com.dreamsdimensions.mod.dimension.DreamDimensionCatalog;
+import com.dreamsdimensions.mod.config.DreamsConfig;
 import com.dreamsdimensions.mod.registry.ModBlocks;
+import com.dreamsdimensions.mod.registry.ModItems;
+import com.dreamsdimensions.mod.service.DreamRecoveryLocator;
 import com.dreamsdimensions.mod.service.EchoMossCooldown;
 import com.dreamsdimensions.mod.service.EchoMossEligibility;
 import com.dreamsdimensions.mod.service.EchoMossSearch;
@@ -36,7 +38,7 @@ public final class EchoMossInteractionHandler {
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (!EchoMossEligibility.accepts(event.getEntity().isAlive(),
                 event.getEntity().gameMode() == GameType.SURVIVAL,
-                event.getLevel().dimension() == DreamDimensionCatalog.DREAMSCAPE,
+                DreamsConfig.isDreamDimension(event.getLevel().dimension()),
                 event.getHand() == InteractionHand.MAIN_HAND,
                 event.getItemStack().isEmpty())) return;
 
@@ -53,6 +55,36 @@ public final class EchoMossInteractionHandler {
         if (!(event.getEntity() instanceof ServerPlayer player)
                 || !(event.getLevel() instanceof ServerLevel level)) return;
         if (!COOLDOWNS.tryAcquire(player.getUUID(), level.getGameTime())) return;
+
+        // Recoverable dream: when there is no intact Awakener, redirect the
+        // existing Echo interaction toward the nearest recovery structure.
+        // Rate-limited by the same per-player cooldown as the ordinary echo.
+        boolean intact = player.getInventory().getItems().stream()
+                .anyMatch(stack -> stack.is(ModItems.ONEIRIC_AWAKENER.get()))
+                || player.getOffhandItem().is(ModItems.ONEIRIC_AWAKENER.get());
+        if (!intact) {
+            try {
+                var ruin = DreamRecoveryLocator.find(level, origin);
+                if (ruin.isPresent()) {
+                    BlockPos target = ruin.get();
+                    signal(player, level, origin,
+                            new EchoMossSearch.Cell(target.getX(), target.getY(), target.getZ()));
+                    int distance = (int) Math.round(Math.sqrt(origin.distSqr(target)));
+                    player.sendSystemMessage(Component.translatable(
+                            "message.dreamsdimensions.echo_moss.recovery",
+                            DreamRecoveryLocator.direction(origin, target), distance));
+                    return;
+                }
+                player.sendOverlayMessage(Component.translatable(
+                        "message.dreamsdimensions.echo_moss.recovery_missing"));
+            } catch (RuntimeException exception) {
+                DreamsDimensions.LOGGER.warn(
+                        "Recovery structure search unavailable for player {}", player.getUUID(), exception);
+                player.sendOverlayMessage(Component.translatable(
+                        "message.dreamsdimensions.echo_moss.unavailable"));
+            }
+            return;
+        }
 
         long started = DEBUG ? System.nanoTime() : 0;
         BlockPos.MutableBlockPos probe = new BlockPos.MutableBlockPos();

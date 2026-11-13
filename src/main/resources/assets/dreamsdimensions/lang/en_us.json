@@ -42,5 +42,14 @@
   "item.dreamsdimensions.toasted_vigil_herb": "Toasted Vigil Herb",
   "item.dreamsdimensions.return_charge": "Return Charge",
   "container.dreamsdimensions.oneiric_core": "Oneiric Core",
-  "container.dreamsdimensions.oneiric_core.recipe_hint": "Charge + Feather + Bottle"
+  "container.dreamsdimensions.oneiric_core.recipe_hint": "Charge + Feather + Bottle",
+  "item.dreamsdimensions.cracked_awakener": "Cracked Awakener",
+  "effect.dreamsdimensions.ressaca_onirica": "Dream Hangover",
+  "message.dreamsdimensions.cracked_awakener.hangover": "You woke through an unstable passage. Your Necklace will not respond for three nights.",
+  "message.dreamsdimensions.dream_hangover.blocked": "Dream Hangover prevents your Necklace from responding tonight. Nights remaining: %s.",
+  "message.dreamsdimensions.sleep.risk": "Warning: you have no Awakener. Search for a Recovery Ruin and follow the Moss Echo.",
+  "message.dreamsdimensions.echo_moss.recovery": "The moss reveals a ruin %s, roughly %s blocks from here.",
+  "message.dreamsdimensions.echo_moss.recovery_missing": "No Recovery Ruin was located in this area. Explore and try again.",
+  "tooltip.dreamsdimensions.cracked_awakener.line1": "Hold for 10 seconds to return to the Overworld.",
+  "tooltip.dreamsdimensions.cracked_awakener.line2": "Emergency return: causes Dream Hangover and locks the Necklace for three nights."
 }

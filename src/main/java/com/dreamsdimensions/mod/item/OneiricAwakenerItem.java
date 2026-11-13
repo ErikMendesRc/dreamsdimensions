@@ -195,6 +195,7 @@ public class OneiricAwakenerItem extends Item {
             // player has paid (or retained item in Creative). Not from the
             // ChangedDimensionEvent, which fires mid-teleport.
             DreamRespawnService.completeExpedition(returned);
+            afterConfirmedReturn(returned);
             returned.sendSystemMessage(Component.translatable(
                     "message.dreamsdimensions.oneiric_awakener.success"));
             DreamQaRecorder.global().record("RECOVERY", "oneiric_awakener",
@@ -210,6 +211,11 @@ public class OneiricAwakenerItem extends Item {
             // the in-flight claim; finish is the only commit/cleanup boundary.
             GUARD.finish(uuid);
         }
+    }
+
+    /** Applies consequences only after a confirmed, paid return. */
+    protected void afterConfirmedReturn(ServerPlayer returned) {
+        // Normal Awakener has no adverse effect.
     }
 
     private static void failed(ServerPlayer player, UUID uuid, InteractionHand hand,
@@ -229,7 +235,8 @@ public class OneiricAwakenerItem extends Item {
         // Ignore Stop events from unrelated items. Only the original
         // Awakener's interrupted use can invalidate its pending ticket.
         if (event.getEntity() instanceof ServerPlayer player
-                && event.getItem().is(ModItems.ONEIRIC_AWAKENER.get())) {
+                && (event.getItem().is(ModItems.ONEIRIC_AWAKENER.get())
+                || event.getItem().is(ModItems.CRACKED_AWAKENER.get()))) {
             GUARD.cancel(player.getUUID());
         }
     }

@@ -2,6 +2,7 @@ package com.dreamsdimensions.mod.registry;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.item.OneiricAwakenerItem;
+import com.dreamsdimensions.mod.item.CrackedAwakenerItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -52,6 +53,14 @@ public final class ModItems {
             () -> new Item.Properties()
                     .stacksTo(1)
                     .rarity(Rarity.RARE)
+                    .useCooldown(OneiricAwakenerItem.COOLDOWN_TICKS / 20.0F)
+    );
+
+    /** Emergency return: found only in recovery ruin chests, never crafted. */
+    public static final DeferredItem<CrackedAwakenerItem> CRACKED_AWAKENER = ITEMS.registerItem(
+            "cracked_awakener",
+            CrackedAwakenerItem::new,
+            () -> new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)
                     .useCooldown(OneiricAwakenerItem.COOLDOWN_TICKS / 20.0F)
     );
 

@@ -2,6 +2,7 @@ package com.dreamsdimensions.mod.registry;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.effect.PactoVigiliaEffect;
+import com.dreamsdimensions.mod.effect.DreamHangoverEffect;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
 import net.neoforged.bus.api.IEventBus;
@@ -18,6 +19,9 @@ public final class ModEffects {
 
     public static final DeferredHolder<MobEffect, PactoVigiliaEffect> PACTO_DE_VIGILIA =
             EFFECTS.register("pacto_de_vigilia", PactoVigiliaEffect::new);
+
+    public static final DeferredHolder<MobEffect, DreamHangoverEffect> RESSACA_ONIRICA =
+            EFFECTS.register("ressaca_onirica", DreamHangoverEffect::new);
 
     private ModEffects() {}
 

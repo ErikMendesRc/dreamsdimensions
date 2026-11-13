@@ -28,6 +28,7 @@ import com.dreamsdimensions.mod.registry.ModMenuTypes;
 import com.dreamsdimensions.mod.item.OneiricAwakenerItem;
 import com.dreamsdimensions.mod.worldgen.DreamWorldgen;
 import com.dreamsdimensions.mod.service.DreamRespawnService;
+import com.dreamsdimensions.mod.service.DreamTeleportService;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -102,6 +103,7 @@ public class DreamsDimensions {
         NeoForge.EVENT_BUS.addListener(DreamRespawnService::onRespawnComplete);
         NeoForge.EVENT_BUS.addListener(DreamRespawnService::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(DreamTeleportService::onServerStopped);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerWakeUp);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerLoggedOut);
         NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerClone);

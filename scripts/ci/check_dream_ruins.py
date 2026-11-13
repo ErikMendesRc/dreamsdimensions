@@ -206,8 +206,13 @@ def validate_loot(name):
     table = read_json(DATA / f"loot_table/chests/{name}.json")
     assert table["type"] == "minecraft:chest"
     assert table["random_sequence"] == f"dreamsdimensions:chests/{name}"
-    assert len(table["pools"]) == 2
-    rare, supplies = table["pools"]
+    assert len(table["pools"]) == 3
+    guaranteed, rare, supplies = table["pools"]
+    assert guaranteed == {
+        "rolls": 1,
+        "entries": [{"type": "minecraft:item",
+                     "name": "dreamsdimensions:cracked_awakener"}]
+    }, "Every recovery ruin chest must yield exactly one Cracked Awakener"
     assert rare["rolls"] == 1
     entries = rare["entries"]
     assert len(entries) == 2
@@ -275,7 +280,7 @@ def run():
     assert template_stats[BLUE]["floor_cells"] != template_stats[DREAM]["floor_cells"]
     regression_guards()
     print("TASK 5.7 STATIC_PASS: native structures/sets/pools, valid 26.3 gzip NBT, "
-          "one real loot chest per distinct template, 25% single-roll loot, "
+          "one real loot chest per distinct template, guaranteed cracked return, 25% intact bonus, "
           "zero dream_dust, no runtime tick generator or gameplay regression.")
     print("TASK 5.7 TEMPLATES:", json.dumps(template_stats,sort_keys=True))
     print("TASK 5.7 STRUCTURE_SET:", json.dumps(structure_stats,sort_keys=True))

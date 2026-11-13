@@ -42,7 +42,31 @@ class VisualAssetTest(unittest.TestCase):
         self.assertEqual(result["status"], "PASS")
         self.assertEqual(result["visual_review"], "NOT_RUN")
         self.assertEqual(result["counts"]["rotation_materials"], len(ROTATED_NATURAL))
-        self.assertEqual(result["counts"]["creative_entries"], 27)
+        self.assertEqual(result["counts"]["creative_entries"], 28)
+
+    def test_task_9_3_cracked_awakener_and_hangover_art(self):
+        assets = ROOT / "src/main/resources/assets/dreamsdimensions"
+        for rel, size in [
+            ("textures/item/cracked_awakener.png", (16, 16)),
+            ("textures/mob_effect/ressaca_onirica.png", (18, 18)),
+        ]:
+            path = assets / rel
+            details = png_details(path)
+            self.assertEqual((details["width"], details["height"]), size)
+            assert_png_integrity(path)
+
+        item = json.loads((assets / "items/cracked_awakener.json").read_text())
+        self.assertEqual(item["model"]["model"], "dreamsdimensions:item/cracked_awakener")
+        model = json.loads((assets / "models/item/cracked_awakener.json").read_text())
+        self.assertEqual(model["textures"]["layer0"], "dreamsdimensions:item/cracked_awakener")
+        for ruin in ("blue_dream_ruins", "fragmented_dream_ruins"):
+            loot = json.loads((ROOT / "src/main/resources/data/dreamsdimensions/loot_table/chests"
+                               / (ruin + ".json")).read_text())
+            self.assertEqual(loot["pools"][0]["entries"][0]["name"],
+                             "dreamsdimensions:cracked_awakener")
+            self.assertEqual(loot["pools"][0]["rolls"], 1)
+            self.assertEqual(loot["pools"][1]["entries"][0]["weight"], 1)
+            self.assertEqual(loot["pools"][1]["entries"][1]["weight"], 3)
 
     def test_task_9_1_infused_stone_recipe_and_texture_wiring(self):
         # Snapshot of the current Survival recipe; Task 9.1 changes art only.
@@ -116,7 +140,7 @@ class VisualAssetTest(unittest.TestCase):
         self.assertEqual(report["counts"]["curated_terrain_16_textures"], 17)
         self.assertEqual(report["counts"]["oversized_or_non16_assets"], 0)
         self.assertEqual(report["counts"]["orphan_model_candidates"], 0)
-        self.assertEqual(report["counts"]["png_textures"], 37)
+        self.assertEqual(report["counts"]["png_textures"], 39)
         self.assertGreater(report["counts"]["pixel_art_16_textures"], 20)
 
     def test_cutout_vegetation_and_log_orientations(self):

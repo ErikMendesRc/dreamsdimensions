@@ -27,6 +27,7 @@ public final class ModCreativeTabs {
                         // construction materials, terrain, then nature/lighting.
                         output.accept(ModItems.DREAM_NECKLACE.get());
                         output.accept(ModItems.ONEIRIC_AWAKENER.get());
+                        output.accept(ModItems.CRACKED_AWAKENER.get());
                         output.accept(ModItems.DREAM_DUST.get());
                         output.accept(ModItems.RETURN_CHARGE.get());
                         output.accept(ModItems.VIGIL_HERB_LEAF.get());

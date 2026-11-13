@@ -42,5 +42,14 @@
   "item.dreamsdimensions.toasted_vigil_herb": "Erva Torrada",
   "item.dreamsdimensions.return_charge": "Carga de Retorno",
   "container.dreamsdimensions.oneiric_core": "Núcleo Onírico",
-  "container.dreamsdimensions.oneiric_core.recipe_hint": "Carga + Pena + Frasco"
+  "container.dreamsdimensions.oneiric_core.recipe_hint": "Carga + Pena + Frasco",
+  "item.dreamsdimensions.cracked_awakener": "Despertador Rachado",
+  "effect.dreamsdimensions.ressaca_onirica": "Ressaca Onírica",
+  "message.dreamsdimensions.cracked_awakener.hangover": "Você acordou por uma rota instável. Seu Colar ficará adormecido por três noites.",
+  "message.dreamsdimensions.dream_hangover.blocked": "A Ressaca Onírica impede que seu Colar responda esta noite. Noites restantes: %s.",
+  "message.dreamsdimensions.sleep.risk": "Aviso: você está sem Despertador. No sonho, procure uma Ruína de Recuperação e siga o Eco do Musgo.",
+  "message.dreamsdimensions.echo_moss.recovery": "O musgo revela uma ruína a %s, aproximadamente %s blocos daqui.",
+  "message.dreamsdimensions.echo_moss.recovery_missing": "Nenhuma ruína de recuperação foi localizada nesta área. Explore e tente novamente.",
+  "tooltip.dreamsdimensions.cracked_awakener.line1": "Segure por 10 segundos para retornar ao Overworld.",
+  "tooltip.dreamsdimensions.cracked_awakener.line2": "Retorno de emergência: causa Ressaca Onírica e bloqueia o Colar por três noites."
 }

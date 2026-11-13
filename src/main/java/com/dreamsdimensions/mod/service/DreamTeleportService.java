@@ -8,11 +8,16 @@ import com.dreamsdimensions.mod.dimension.WeightedDimensionPicker;
 import com.dreamsdimensions.mod.registry.ModAttachments;
 import com.dreamsdimensions.mod.util.DreamSpawnHelper;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,6 +30,32 @@ import net.minecraft.world.phys.Vec3;
  * teleport and successful-bed persistence. The sleep event owns no worldgen.
  */
 public final class DreamTeleportService {
+    // Ephemeral party rendezvous. Never stores persisted player data, never ticks
+    // or generates chunks. The existing safe-spawn helper validates each arrival.
+    private record GroupArrival(UUID owner, BlockPos bed, ResourceKey<Level> dimension,
+            BlockPos destination, long enteredAt) {}
+    private static final Map<UUID, GroupArrival> GROUP_ARRIVALS = new HashMap<>();
+
+    private static Optional<GroupArrival> companion(ServerPlayer player, BlockPos bed) {
+        long now = player.level().getGameTime();
+        GROUP_ARRIVALS.entrySet().removeIf(row ->
+                now - row.getValue().enteredAt() > DreamRecoveryPolicy.GROUP_WINDOW_TICKS
+                        || now < row.getValue().enteredAt());
+        return GROUP_ARRIVALS.values().stream()
+                .filter(visit -> !visit.owner().equals(player.getUUID()))
+                .filter(visit -> DreamRecoveryPolicy.canGroup(
+                        visit.bed().getX() - bed.getX(),
+                        visit.bed().getY() - bed.getY(),
+                        visit.bed().getZ() - bed.getZ(),
+                        now - visit.enteredAt()))
+                .min((a, b) -> Double.compare(
+                        a.bed().distSqr(bed), b.bed().distSqr(bed)));
+    }
+
+    public static void onServerStopped(net.neoforged.neoforge.event.server.ServerStoppedEvent event) {
+        GROUP_ARRIVALS.clear();
+    }
+
     private DreamTeleportService() {}
 
     private static void qa(String name, String dimension, String status, String reason) {
@@ -59,11 +90,26 @@ public final class DreamTeleportService {
             return false;
         }
 
-        for (DreamDimensionDefinition definition :
-                WeightedDimensionPicker.order(available, ThreadLocalRandom.current())) {
+        Optional<GroupArrival> nearby = companion(player, bedPos);
+        List<DreamDimensionDefinition> ordered = WeightedDimensionPicker
+                .order(available, ThreadLocalRandom.current());
+        if (nearby.isPresent()) {
+            ResourceKey<Level> shared = nearby.get().dimension();
+            // Preserve group destination or fail safely; never quietly choose
+            // a different world from the companion.
+            ordered = ordered.stream().filter(def -> def.dimension() == shared).toList();
+            if (ordered.isEmpty()) {
+                qa("DREAM_ENTRY_REJECTED", "minecraft:overworld", "FAIL",
+                        "GROUP_DESTINATION_UNAVAILABLE");
+                return false;
+            }
+        }
+        for (DreamDimensionDefinition definition : ordered) {
             ServerLevel target = server.getLevel(definition.dimension());
             if (target == null) continue; // May unload between eligibility and selection.
-            BlockPos spawnOrigin = target.getLevelData().getRespawnData().pos();
+            BlockPos spawnOrigin = nearby.isPresent()
+                    ? nearby.get().destination()
+                    : target.getLevelData().getRespawnData().pos();
             var spawn = DreamSpawnHelper.findOrCreateSafeArrival(target, definition, spawnOrigin, player);
             if (spawn.isEmpty()) {
                 DreamsDimensions.LOGGER.warn("Sem chegada segura em {} perto de {}.",
@@ -92,6 +138,9 @@ public final class DreamTeleportService {
                 // Task 5.5: a new expedition starts only AFTER a confirmed
                 // sleep journey, never during a failed roll or admin /tp.
                 DreamRespawnService.recordExpedition(teleported, spawn.get());
+                GROUP_ARRIVALS.put(player.getUUID(), new GroupArrival(
+                        player.getUUID(), bedPos, target.dimension(),
+                        BlockPos.containing(spawn.get()), server.overworld().getGameTime()));
                 qa("DREAM_ENTRY_COMPLETED", target.dimension().identifier().toString(),
                         "PASS", "CONFIRMED");
                 DreamsDimensions.LOGGER.info("Jogador {} entrou em {} após sono completo.",
