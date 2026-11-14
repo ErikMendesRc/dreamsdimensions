@@ -42,7 +42,10 @@ def check():
     bedside=load(A/"models/block/dream_bedside.json")
     assert len(bedside["elements"])>=5
     catcher=load(A/"models/block/dreamcatcher.json")
-    assert catcher["parent"]=="minecraft:block/cross"
+    # Task 9.5.7 replaces the flat cross with cutout and actual ring/cord geometry.
+    assert catcher["render_type"]=="cutout"
+    assert len(catcher["elements"])>=10
+    assert "cross" in catcher["textures"]
     # No recipe may fabricate a dream-only Reminiscence or bypass early return.
     for forbidden in ["reminiscence","deep_sleep_stone","trail_marker"]:
         assert not (D/f"recipe/{forbidden}.json").exists(),forbidden
