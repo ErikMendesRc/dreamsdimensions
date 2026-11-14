@@ -13,7 +13,7 @@ PNGS = [(f"textures/item/{n}.png",16) for n in ITEMS] + [(f"textures/block/{n}.p
 
 def check_png(path, size):
     buf=path.read_bytes()
-    assert buf.startswith(b"\\x89PNG\\r\\n\\x1a\\n"),path
+    assert buf.startswith(bytes([137,80,78,71,13,10,26,10])),path
     i=8
     seen=set()
     while i<len(buf):
