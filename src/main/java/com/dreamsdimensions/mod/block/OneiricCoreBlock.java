@@ -1,6 +1,12 @@
 package com.dreamsdimensions.mod.block;
 
 import net.minecraft.core.BlockPos;
+import com.dreamsdimensions.mod.service.CoreChamberPolicy;
+import com.dreamsdimensions.mod.registry.ModItems;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import com.dreamsdimensions.mod.menu.OneiricCoreMenu;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,11 +28,35 @@ import net.minecraft.world.level.block.state.BlockState;
  * client-side for visible nearby blocks; no server listeners or radius scan.
  */
 public final class OneiricCoreBlock extends Block {
+    public static final BooleanProperty ATTUNED = BooleanProperty.create("attuned");
     private static final DustParticleOptions CORE_DUST =
             new DustParticleOptions(0x82CED2, 0.65F);
 
     public OneiricCoreBlock(Properties properties) {
         super(properties);
+        registerDefaultState(stateDefinition.any().setValue(ATTUNED,false));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder) {
+        builder.add(ATTUNED);
+    }
+
+    @Override
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level,
+            BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!stack.is(ModItems.REMINISCENCE.get())) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (!CoreChamberPolicy.canAttune(level,pos)) {
+            if (!level.isClientSide()) player.sendSystemMessage(
+                    Component.translatable("message.dreamsdimensions.chamber.attunement_missing"));
+            return InteractionResult.SUCCESS;
+        }
+        if (!level.isClientSide()) {
+            level.setBlock(pos,state.setValue(ATTUNED,true),3);
+            if(!player.getAbilities().instabuild)stack.shrink(1);
+            player.sendSystemMessage(Component.translatable("message.dreamsdimensions.chamber.attuned"));
+        }
+        return InteractionResult.SUCCESS;
     }
 
     @Override

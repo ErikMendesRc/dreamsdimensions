@@ -5,6 +5,7 @@ import com.dreamsdimensions.mod.effect.PactoVigiliaEffect;
 import com.dreamsdimensions.mod.effect.DreamHangoverEffect;
 import com.dreamsdimensions.mod.effect.LightnessEffect;
 import com.dreamsdimensions.mod.effect.VigilInfusionEffect;
+import com.dreamsdimensions.mod.effect.RouteEffect;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
 import net.neoforged.bus.api.IEventBus;
@@ -30,6 +31,9 @@ public final class ModEffects {
 
     public static final DeferredHolder<MobEffect, VigilInfusionEffect> VIGIL_INFUSION =
             EFFECTS.register("vigil_infusion", VigilInfusionEffect::new);
+
+    public static final DeferredHolder<MobEffect,RouteEffect> ROUTE =
+            EFFECTS.register("route",RouteEffect::new);
 
     private ModEffects() {}
 

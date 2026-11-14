@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "decorations",
+  "pattern": [
+    "PWP",
+    " D ",
+    "P P"
+  ],
+  "key": {
+    "P": "#minecraft:planks",
+    "W": "#minecraft:wool",
+    "D": "dreamsdimensions:dream_dust"
+  },
+  "result": {
+    "id": "dreamsdimensions:dream_bedside",
+    "count": 1
+  }
+}

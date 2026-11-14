@@ -42,7 +42,27 @@ class VisualAssetTest(unittest.TestCase):
         self.assertEqual(result["status"], "PASS")
         self.assertEqual(result["visual_review"], "NOT_RUN")
         self.assertEqual(result["counts"]["rotation_materials"], len(ROTATED_NATURAL))
-        self.assertEqual(result["counts"]["creative_entries"], 38)
+        self.assertEqual(result["counts"]["creative_entries"], 50)
+
+    def test_task_9_5_item_silhouettes_and_materials(self):
+        assets = ROOT / "src/main/resources/assets/dreamsdimensions"
+        for name in ("serene_vial", "dream_thread", "dormant_ember",
+                     "dreamy_herb", "dreamcatcher", "resonance_probe",
+                     "marked_lining", "dream_journal", "infusion_route"):
+            file = assets / "textures/item" / (name + ".png")
+            detail = png_details(file)
+            self.assertEqual((detail["width"], detail["height"], detail["color_type"]), (16, 16, 6), name)
+            assert_png_integrity(file)
+        for name in ("bedside_top", "bedside_side", "deep_sleep_stone",
+                     "trail_marker_side", "trail_marker_top"):
+            file = assets / "textures/block" / (name + ".png")
+            detail = png_details(file)
+            self.assertEqual((detail["width"], detail["height"]), (16, 16), name)
+            assert_png_integrity(file)
+        effect = assets / "textures/mob_effect/route.png"
+        detail = png_details(effect)
+        self.assertEqual((detail["width"], detail["height"]), (18, 18))
+        assert_png_integrity(effect)
 
     def test_task_9_4_native_pixel_assets(self):
         assets = ROOT / "src/main/resources/assets/dreamsdimensions"
@@ -159,7 +179,7 @@ class VisualAssetTest(unittest.TestCase):
         self.assertEqual(report["counts"]["curated_terrain_16_textures"], 17)
         self.assertEqual(report["counts"]["oversized_or_non16_assets"], 0)
         self.assertEqual(report["counts"]["orphan_model_candidates"], 0)
-        self.assertEqual(report["counts"]["png_textures"], 53)
+        self.assertEqual(report["counts"]["png_textures"], 68)
         self.assertGreater(report["counts"]["pixel_art_16_textures"], 20)
 
     def test_cutout_vegetation_and_log_orientations(self):

@@ -6,6 +6,8 @@ import com.dreamsdimensions.mod.config.DreamsConfig;
 import com.dreamsdimensions.mod.service.DreamEntryPolicy;
 import com.dreamsdimensions.mod.service.DreamHangoverService;
 import com.dreamsdimensions.mod.service.DreamAwakenerInventory;
+import com.dreamsdimensions.mod.service.DreamIncubationService;
+import com.dreamsdimensions.mod.service.DreamMineralSleepService;
 import com.dreamsdimensions.mod.registry.ModItems;
 import net.minecraft.network.chat.Component;
 import com.dreamsdimensions.mod.service.DreamNecklaceEquipmentPolicy;
@@ -48,6 +50,10 @@ public final class SleepTeleportHandler {
         BedOrigin completedWakeup = COMPLETED_WAKEUPS.remove(uuid);
         if (completedWakeup != null) {
             CYCLES.onAwake(uuid);
+            if (player.isAlive() && player.level().dimension() == Level.OVERWORLD) {
+                DreamIncubationService.afterFullNight(player, completedWakeup.pos());
+                DreamMineralSleepService.afterFullNight(player, completedWakeup.pos());
+            }
             if (player.isAlive() && player.level().dimension() == Level.OVERWORLD && !player.isSleeping()) {
                 attemptEntry(player, completedWakeup);
             }

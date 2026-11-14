@@ -8,6 +8,8 @@ import com.dreamsdimensions.mod.block.PlumiteBlock;
 import com.dreamsdimensions.mod.block.OneiricKettleBlock;
 import com.dreamsdimensions.mod.block.TemporaryPlumeBridgeBlock;
 import com.dreamsdimensions.mod.block.DreamLeavesBlock;
+import com.dreamsdimensions.mod.block.DreamBedsideBlock;
+import com.dreamsdimensions.mod.block.TrailMarkerBlock;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -195,6 +197,26 @@ public final class ModBlocks {
             BLOCKS.registerBlock("temporary_plume_bridge", TemporaryPlumeBridgeBlock::new,
                     () -> BlockBehaviour.Properties.ofFullCopy(Blocks.CALCITE)
                             .strength(-1.0f,3600000.0f).noLootTable());
+
+    public static final DeferredBlock<DreamBedsideBlock> DREAM_BEDSIDE =
+            BLOCKS.registerBlock("dream_bedside",DreamBedsideBlock::new,
+                    ()->BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)
+                            .strength(2.0f,3.0f).noOcclusion());
+
+    public static final DeferredBlock<Block> DREAMCATCHER =
+            BLOCKS.registerSimpleBlock("dreamcatcher",
+                    ()->BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)
+                            .noCollision().instabreak().noOcclusion());
+
+    public static final DeferredBlock<Block> DEEP_SLEEP_STONE =
+            BLOCKS.registerSimpleBlock("deep_sleep_stone",
+                    ()->BlockBehaviour.Properties.ofFullCopy(Blocks.DEEPSLATE)
+                            .requiresCorrectToolForDrops().strength(3.0f,6.0f));
+
+    public static final DeferredBlock<TrailMarkerBlock> TRAIL_MARKER =
+            BLOCKS.registerBlock("trail_marker",TrailMarkerBlock::new,
+                    ()->BlockBehaviour.Properties.ofFullCopy(Blocks.STONE_BRICKS)
+                            .strength(2.5f,6.0f).lightLevel(state->9).noOcclusion());
 
     private ModBlocks() {
     }

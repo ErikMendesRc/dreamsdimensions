@@ -2,6 +2,7 @@ package com.dreamsdimensions.mod.block.entity;
 
 import com.dreamsdimensions.mod.registry.ModBlockEntities;
 import com.dreamsdimensions.mod.registry.ModItems;
+import com.dreamsdimensions.mod.registry.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -25,6 +26,7 @@ public final class OneiricKettleBlockEntity extends BlockEntity {
     private int reagent; // 0 = none, 1 = plumite, 2 = toasted herb
     private int progress;
     private boolean ready;
+    private boolean serenity;
 
     public OneiricKettleBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.KETTLE.get(),pos,state);
@@ -44,10 +46,15 @@ public final class OneiricKettleBlockEntity extends BlockEntity {
 
     public boolean addIngredient(ItemStack stack) {
         if(ready||progress>0) return false;
+        if(stack.is(ModItems.SERENE_VIAL.get())) {
+            if(waterBottles>=3||(waterBottles>0&&!serenity))return false;
+            waterBottles++;serenity=true;setChanged();return true;
+        }
         if (stack.is(Items.POTION)
                 && stack.get(net.minecraft.core.component.DataComponents.POTION_CONTENTS)!=null
                 && stack.get(net.minecraft.core.component.DataComponents.POTION_CONTENTS).is(net.minecraft.world.item.alchemy.Potions.WATER)) {
             if(waterBottles>=3)return false;
+            if(waterBottles>0&&serenity)return false;
             waterBottles++;setChanged();return true;
         }
         if(stack.is(ModItems.TOASTED_VIGIL_HERB.get())){
@@ -55,6 +62,9 @@ public final class OneiricKettleBlockEntity extends BlockEntity {
             else if(reagent==0)reagent=2;
             else return false;
             setChanged();return true;
+        }
+        if(stack.is(ModBlocks.MARKED_STONE.get().asItem()) && reagent==0) {
+            reagent=3;setChanged();return true;
         }
         if(stack.is(ModItems.PLUMITE_SHARD.get()) && reagent==0){
             reagent=1;setChanged();return true;
@@ -71,13 +81,24 @@ public final class OneiricKettleBlockEntity extends BlockEntity {
         if(kettle.progress%20==0||kettle.ready) kettle.setChanged();
     }
 
+    private ItemStack createInfusion() {
+        ItemStack output=new ItemStack(reagent==1?ModItems.INFUSION_LIGHTNESS.get()
+                :reagent==2?ModItems.INFUSION_VIGIL.get():ModItems.INFUSION_ROUTE.get());
+        if(serenity){
+            net.minecraft.nbt.CompoundTag tag=new net.minecraft.nbt.CompoundTag();
+            tag.putInt("DreamsDimensionsDuration",7200);
+            output.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                    net.minecraft.world.item.component.CustomData.of(tag));
+        }
+        return output;
+    }
+
     public ItemStack removeOne() {
         if(!ready || waterBottles==0) return ItemStack.EMPTY;
-        ItemStack output = new ItemStack(reagent==1 ? ModItems.INFUSION_LIGHTNESS.get()
-                : ModItems.INFUSION_VIGIL.get());
+        ItemStack output=createInfusion();
         waterBottles--;
         if(waterBottles==0) {
-            herbBase=false;reagent=0;progress=0;ready=false;
+            herbBase=false;reagent=0;progress=0;ready=false;serenity=false;
         }
         setChanged();return output;
     }
@@ -85,12 +106,12 @@ public final class OneiricKettleBlockEntity extends BlockEntity {
     /** Drop what the block truly holds, without duplicating a finished batch. */
     public void dropStored(Level level, BlockPos pos) {
         if(ready) {
-            for(int i=0;i<waterBottles;i++)Block.popResource(level,pos,
-                    new ItemStack(reagent==1?ModItems.INFUSION_LIGHTNESS.get():ModItems.INFUSION_VIGIL.get()));
+            for(int i=0;i<waterBottles;i++)Block.popResource(level,pos,createInfusion());
         } else {
             if(waterBottles>0) {
                 for (int i=0; i<waterBottles; i++) {
-                    Block.popResource(level, pos,
+                    if(serenity)Block.popResource(level,pos,new ItemStack(ModItems.SERENE_VIAL.get()));
+                    else Block.popResource(level, pos,
                             net.minecraft.world.item.alchemy.PotionContents.createItemStack(
                                     Items.POTION, net.minecraft.world.item.alchemy.Potions.WATER));
                 }
@@ -98,8 +119,9 @@ public final class OneiricKettleBlockEntity extends BlockEntity {
             if(herbBase)Block.popResource(level,pos,new ItemStack(ModItems.TOASTED_VIGIL_HERB.get()));
             if(reagent==1)Block.popResource(level,pos,new ItemStack(ModItems.PLUMITE_SHARD.get()));
             if(reagent==2)Block.popResource(level,pos,new ItemStack(ModItems.TOASTED_VIGIL_HERB.get()));
+            if(reagent==3)Block.popResource(level,pos,new ItemStack(ModBlocks.MARKED_STONE.get()));
         }
-        waterBottles=0;herbBase=false;reagent=0;progress=0;ready=false;
+        waterBottles=0;herbBase=false;reagent=0;progress=0;ready=false;serenity=false;
     }
 
     @Override
@@ -115,6 +137,7 @@ public final class OneiricKettleBlockEntity extends BlockEntity {
         output.putInt("reagent",reagent);
         output.putInt("progress",progress);
         output.putBoolean("ready",ready);
+        output.putBoolean("serenity",serenity);
     }
     @Override protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
@@ -122,6 +145,7 @@ public final class OneiricKettleBlockEntity extends BlockEntity {
         herbBase=input.getBooleanOr("herb_base",false);
         reagent=Math.clamp(input.getIntOr("reagent",0),0,2);
         progress=Math.clamp(input.getIntOr("progress",0),0,BREW_TICKS);
+        serenity=input.getBooleanOr("serenity",false);
         ready=input.getBooleanOr("ready",false)
                 && waterBottles>0 && herbBase && reagent!=0;
     }

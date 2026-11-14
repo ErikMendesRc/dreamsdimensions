@@ -31,6 +31,14 @@ public final class ModCreativeTabs {
                         output.accept(ModItems.DREAM_DUST.get());
                         output.accept(ModItems.PLUMITE_SHARD.get());
                         output.accept(ModItems.REMINISCENCE.get());
+                        output.accept(ModItems.SERENE_VIAL.get());
+                        output.accept(ModItems.DREAM_THREAD.get());
+                        output.accept(ModItems.DORMANT_EMBER.get());
+                        output.accept(ModItems.DREAMY_HERB.get());
+                        output.accept(ModItems.RESONANCE_PROBE.get());
+                        output.accept(ModItems.INFUSION_ROUTE.get());
+                        output.accept(ModItems.MARKED_LINING.get());
+                        output.accept(ModItems.DREAM_JOURNAL.get());
                         output.accept(ModItems.INFUSION_LIGHTNESS.get());
                         output.accept(ModItems.INFUSION_VIGIL.get());
                         output.accept(ModItems.PLUME_LINING.get());
@@ -46,6 +54,10 @@ public final class ModCreativeTabs {
                         output.accept(ModBlocks.PLUMITE_ORE.get());
                         output.accept(ModBlocks.PLUMITE_BLOCK.get());
                         output.accept(ModBlocks.ONEIRIC_KETTLE.get());
+                        output.accept(ModBlocks.DREAM_BEDSIDE.get());
+                        output.accept(ModBlocks.DREAMCATCHER.get());
+                        output.accept(ModBlocks.DEEP_SLEEP_STONE.get());
+                        output.accept(ModBlocks.TRAIL_MARKER.get());
                         output.accept(ModBlocks.DEEPSLATE_DREAM_ORE.get());
                         output.accept(ModBlocks.MARKED_STONE.get());
                         output.accept(ModBlocks.CUT_MARKED_STONE.get());

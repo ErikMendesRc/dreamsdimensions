@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:book",
+    "dreamsdimensions:dream_thread",
+    "dreamsdimensions:dream_dust"
+  ],
+  "result": {
+    "id": "dreamsdimensions:dream_journal",
+    "count": 1
+  }
+}

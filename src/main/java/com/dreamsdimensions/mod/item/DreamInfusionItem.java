@@ -15,9 +15,12 @@ import net.minecraft.world.effect.MobEffects;
 
 /** True three-minute consumable with empty-bottle return. */
 public final class DreamInfusionItem extends Item {
-    private final boolean lightness;
-    public DreamInfusionItem(boolean lightness, Properties properties) {
-        super(properties);this.lightness=lightness;
+    private final int kind; // 0=lightness, 1=vigil, 2=route
+    public DreamInfusionItem(boolean lightness,Properties properties){
+        this(lightness?0:1,properties);
+    }
+    public DreamInfusionItem(int kind, Properties properties){
+        super(properties);this.kind=kind;
     }
     @Override public ItemUseAnimation getUseAnimation(ItemStack stack) {return ItemUseAnimation.DRINK;}
     @Override public int getUseDuration(ItemStack stack, LivingEntity entity){return 32;}
@@ -26,8 +29,13 @@ public final class DreamInfusionItem extends Item {
     }
     @Override public ItemStack finishUsingItem(ItemStack stack,Level level,LivingEntity entity){
         if(!level.isClientSide()){
-            entity.addEffect(new MobEffectInstance(lightness?ModEffects.LIGHTNESS:ModEffects.VIGIL_INFUSION,3600));
-            if(lightness)entity.addEffect(new MobEffectInstance(MobEffects.JUMP_BOOST,3600,0));
+            var custom=stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
+            boolean longInfusion=custom!=null
+                    && custom.copyTag().getIntOr("DreamsDimensionsDuration",3600)>=7200;
+            int duration=longInfusion?7200:3600;
+            entity.addEffect(new MobEffectInstance(
+                    kind==0?ModEffects.LIGHTNESS:kind==1?ModEffects.VIGIL_INFUSION:ModEffects.ROUTE,duration));
+            if(kind==0)entity.addEffect(new MobEffectInstance(MobEffects.JUMP_BOOST,duration,0));
         }
         if(entity instanceof Player player && !player.getAbilities().instabuild){
             stack.shrink(1);

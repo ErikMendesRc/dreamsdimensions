@@ -138,6 +138,7 @@ public final class DreamTeleportService {
                 // Task 5.5: a new expedition starts only AFTER a confirmed
                 // sleep journey, never during a failed roll or admin /tp.
                 DreamRespawnService.recordExpedition(teleported, spawn.get());
+                DreamJournalService.recordVisit(teleported,definition);
                 GROUP_ARRIVALS.put(player.getUUID(), new GroupArrival(
                         player.getUUID(), bedPos, target.dimension(),
                         BlockPos.containing(spawn.get()), server.overworld().getGameTime()));

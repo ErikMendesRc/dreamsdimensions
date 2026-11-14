@@ -5,6 +5,8 @@ import com.dreamsdimensions.mod.item.OneiricAwakenerItem;
 import com.dreamsdimensions.mod.item.DreamInfusionItem;
 import com.dreamsdimensions.mod.item.VigilTetherItem;
 import com.dreamsdimensions.mod.item.PlumeBridgeItem;
+import com.dreamsdimensions.mod.item.ResonanceProbeItem;
+import com.dreamsdimensions.mod.item.DreamJournalItem;
 import com.dreamsdimensions.mod.item.CrackedAwakenerItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -200,6 +202,39 @@ public final class ModItems {
     public static final DeferredItem<PlumeBridgeItem> PLUME_BRIDGE = ITEMS.registerItem(
             "plume_bridge",PlumeBridgeItem::new,
             () -> new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON));
+
+    // Incubation materials: each silhouette represents the actual object.
+    public static final DeferredItem<BlockItem> DREAM_BEDSIDE_ITEM =
+            ITEMS.registerSimpleBlockItem(ModBlocks.DREAM_BEDSIDE);
+    public static final DeferredItem<BlockItem> DREAMCATCHER_ITEM =
+            ITEMS.registerSimpleBlockItem(ModBlocks.DREAMCATCHER);
+    public static final DeferredItem<BlockItem> DEEP_SLEEP_STONE_ITEM =
+            ITEMS.registerSimpleBlockItem(ModBlocks.DEEP_SLEEP_STONE);
+    public static final DeferredItem<BlockItem> TRAIL_MARKER_ITEM =
+            ITEMS.registerSimpleBlockItem(ModBlocks.TRAIL_MARKER);
+
+    public static final DeferredItem<Item> SERENE_VIAL =
+            ITEMS.registerItem("serene_vial",Item::new,
+                    ()->new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> DREAM_THREAD =
+            ITEMS.registerItem("dream_thread",Item::new,Item.Properties::new);
+    public static final DeferredItem<Item> DORMANT_EMBER =
+            ITEMS.registerItem("dormant_ember",Item::new,Item.Properties::new);
+    public static final DeferredItem<Item> DREAMY_HERB =
+            ITEMS.registerItem("dreamy_herb",Item::new,Item.Properties::new);
+
+    public static final DeferredItem<ResonanceProbeItem> RESONANCE_PROBE =
+            ITEMS.registerItem("resonance_probe",ResonanceProbeItem::new,
+                    ()->new Item.Properties().durability(16).rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<Item> MARKED_LINING =
+            ITEMS.registerItem("marked_lining",Item::new,
+                    ()->new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<DreamJournalItem> DREAM_JOURNAL =
+            ITEMS.registerItem("dream_journal",DreamJournalItem::new,
+                    ()->new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<DreamInfusionItem> INFUSION_ROUTE =
+            ITEMS.registerItem("infusion_route",p->new DreamInfusionItem(2,p),
+                    ()->new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON));
 
     private ModItems() {
     }
