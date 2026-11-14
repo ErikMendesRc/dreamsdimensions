@@ -13,8 +13,9 @@ import net.minecraft.world.level.block.state.BlockState;
 public final class CoreChamberPolicy {
     private CoreChamberPolicy() {}
 
+    /** Eight pylons at radius two leave a one-block walkable gap around the Core. */
     public static boolean hasLowerRing(Level world, BlockPos core) {
-        for (int dx=-1; dx<=1; dx++) for (int dz=-1; dz<=1; dz++) {
+        for (int dx=-2; dx<=2; dx+=2) for (int dz=-2; dz<=2; dz+=2) {
             if(dx==0 && dz==0) continue;
             if(!world.getBlockState(core.offset(dx,0,dz)).is(ModBlocks.CUT_MARKED_STONE.get())) return false;
         }
@@ -23,15 +24,15 @@ public final class CoreChamberPolicy {
 
     public static boolean hasUpperRing(Level world, BlockPos core) {
         boolean allCut = true;
-        for (int dx=-1; dx<=1; dx++) for (int dz=-1; dz<=1; dz++) {
+        for (int dx=-2; dx<=2; dx+=2) for (int dz=-2; dz<=2; dz+=2) {
             if(dx==0 && dz==0) continue;
             if(!world.getBlockState(core.offset(dx,1,dz)).is(ModBlocks.CUT_MARKED_STONE.get())) allCut=false;
         }
         if(allCut)return true;
-        return world.getBlockState(core.offset(1,1,0)).is(ModBlocks.DEEP_SLEEP_STONE.get())
-            && world.getBlockState(core.offset(-1,1,0)).is(ModBlocks.DEEP_SLEEP_STONE.get())
-            && world.getBlockState(core.offset(0,1,1)).is(ModBlocks.DEEP_SLEEP_STONE.get())
-            && world.getBlockState(core.offset(0,1,-1)).is(ModBlocks.DEEP_SLEEP_STONE.get());
+        return world.getBlockState(core.offset(2,1,0)).is(ModBlocks.DEEP_SLEEP_STONE.get())
+            && world.getBlockState(core.offset(-2,1,0)).is(ModBlocks.DEEP_SLEEP_STONE.get())
+            && world.getBlockState(core.offset(0,1,2)).is(ModBlocks.DEEP_SLEEP_STONE.get())
+            && world.getBlockState(core.offset(0,1,-2)).is(ModBlocks.DEEP_SLEEP_STONE.get());
     }
 
     public static int level(Level world, BlockPos core) {

@@ -49,6 +49,8 @@ def check():
     chamber=java("service/CoreChamberPolicy.java")
     assert "hasLowerRing" in chamber and "hasUpperRing" in chamber
     assert "ATTUNED" in chamber and "CUT_MARKED_STONE" in chamber
+    assert "dx=-2; dx<=2; dx+=2" in chamber and "dz=-2; dz<=2; dz+=2" in chamber
+    assert "core.offset(2,1,0)" in chamber and "core.offset(0,1,-2)" in chamber
     menu=java("menu/OneiricCoreMenu.java")
     for item in ["ONEIRIC_AWAKENER","VIGIL_TETHER","RESONANCE_PROBE",
                  "DREAM_DUST","TOASTED_VIGIL_HERB","DREAMY_HERB","REMINISCENCE"]:

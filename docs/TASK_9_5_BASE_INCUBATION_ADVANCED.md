@@ -7,9 +7,9 @@
 
 - The existing Core ID `oneiric_core_block` is retained; it has NO persistent inventory.
 - N0 remains the existing Awakener and Vigil Tether.
-- N1 requires a ring of **eight Cut Marked Stones** at the Core's Y, diagonals included. The level is sampled **at menu opening**, and two Cargas can be made from 5 Pó + 4 Erva Torrada + 1 Cut Marked Stone.
+- N1 requires **eight Cut Marked Stones at radius 2** around the Core (the corners and cardinal positions of a 5×5 footprint), leaving a walkable one-block gap around the workstation. The level is sampled **at menu opening**, and two Cargas can be made from 5 Pó + 4 Erva Torrada + 1 Cut Marked Stone.
 - N1 also makes Resonance Probe (Compass + Return Charge + Cut Marked Stone) and recharges an existing Probe using one Charge.
-- N2 requires the N1 ring, either a second ring of eight cut stones at Y+1 or four Deep Sleep Stones at cardinal positions Y+1, AND one Reminiscence to attune the Core. The attunement is stored in an added boolean **blockstate**, not a block entity; existing cores keep their original ID and default to unattuned.
+- N2 requires the N1 ring, either a second ring of eight cut stones at radius 2 and Y+1 or four Deep Sleep Stones at radius 2 cardinal positions Y+1, AND one Reminiscence to attune the Core. The 1-block clearance remains open for interaction. The attunement is stored in an added boolean **blockstate**, not a block entity; existing cores keep their original ID and default to unattuned.
 - N2 makes three Cargas from 6 Pó + 2 Erva Sonhada + 1 Reminiscência. The one-time Reminiscence attunement does not unlock recipes in other cores.
 - Menus are per-player, ingredient counts are debited server-side, outputs cannot be shift-crafted and closing returns inputs.
 
