@@ -15,7 +15,11 @@ public final class DreamJournalService {
     private DreamJournalService(){}
 
     public static void recordVisit(ServerPlayer player,DreamDimensionDefinition destination){
-        String key=destination.dimension().identifier().getPath();
+        String traits=destination.traits().stream()
+                .map(trait->trait.name().toLowerCase(java.util.Locale.ROOT))
+                .sorted().collect(java.util.stream.Collectors.joining("+"));
+        String key=destination.dimension().identifier().getPath()
+                +"|"+(traits.isEmpty()?"none":traits);
         for(int slot=0;slot<player.getInventory().getContainerSize();slot++){
             ItemStack journal=player.getInventory().getItem(slot);
             if(!journal.is(ModItems.DREAM_JOURNAL.get()))continue;

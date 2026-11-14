@@ -26,7 +26,22 @@ public final class DreamJournalItem extends Item {
                     "tooltip.dreamsdimensions.journal.none").withStyle(ChatFormatting.DARK_GRAY));
             return;
         }
-        for(String key:visited.split(","))if(!key.isEmpty())
-            tooltip.accept(Component.literal("• "+key).withStyle(ChatFormatting.AQUA));
+        for(String record:visited.split(",")) {
+            if(record.isEmpty())continue;
+            String[] fields=record.split("\\|",2);
+            String name=fields[0];
+            Component line=Component.literal("• ").append(Component.translatable(
+                    "journal.dreamsdimensions.dimension."+name));
+            if(fields.length==2&&!fields[1].isEmpty()) {
+                line=line.copy().append(Component.literal(" — "));
+                String[] traitKeys=fields[1].split("\\+");
+                for(int i=0;i<traitKeys.length;i++) {
+                    if(i>0)line=line.copy().append(Component.literal(", "));
+                    line=line.copy().append(Component.translatable(
+                            "journal.dreamsdimensions.trait."+traitKeys[i]));
+                }
+            }
+            tooltip.accept(line.copy().withStyle(ChatFormatting.AQUA));
+        }
     }
 }

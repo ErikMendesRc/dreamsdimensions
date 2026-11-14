@@ -110,5 +110,13 @@
   "tooltip.dreamsdimensions.journal.none": "No dreams recorded. Bring this journal on your next expedition.",
   "tooltip.dreamsdimensions.marked_lining": "Apply at a Smithing Table, with armor in your offhand.",
   "tooltip.dreamsdimensions.armor.marked_lining": "Marked Lining installed — preparation for Drift",
-  "message.dreamsdimensions.marked_lining.applied": "Marked Lining installed. This gear will respond to the Drift trait."
+  "message.dreamsdimensions.marked_lining.applied": "Marked Lining installed. This gear will respond to the Drift trait.",
+  "journal.dreamsdimensions.dimension.dreamscape": "Fragmented Dream",
+  "journal.dreamsdimensions.dimension.campo_onirico_azul": "Blue Oneiric Field",
+  "journal.dreamsdimensions.trait.none": "Serene",
+  "journal.dreamsdimensions.trait.fall": "Falling",
+  "journal.dreamsdimensions.trait.darkness": "Darkness",
+  "journal.dreamsdimensions.trait.hostility": "Hostility",
+  "journal.dreamsdimensions.trait.torpor": "Torpor",
+  "journal.dreamsdimensions.trait.drift": "Drift"
 }

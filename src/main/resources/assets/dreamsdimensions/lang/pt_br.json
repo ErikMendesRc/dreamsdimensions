@@ -110,5 +110,13 @@
   "tooltip.dreamsdimensions.journal.none": "Nenhum sonho registrado. Leve este diário na expedição.",
   "tooltip.dreamsdimensions.marked_lining": "Aplicar na Mesa de Ferraria, com armadura na mão secundária.",
   "tooltip.dreamsdimensions.armor.marked_lining": "Forro Marcado instalado — preparação contra Deriva",
-  "message.dreamsdimensions.marked_lining.applied": "Forro Marcado instalado. Este equipamento responderá ao Traço Deriva."
+  "message.dreamsdimensions.marked_lining.applied": "Forro Marcado instalado. Este equipamento responderá ao Traço Deriva.",
+  "journal.dreamsdimensions.dimension.dreamscape": "Sonho Fragmentado",
+  "journal.dreamsdimensions.dimension.campo_onirico_azul": "Campo Onírico Azul",
+  "journal.dreamsdimensions.trait.none": "Sereno",
+  "journal.dreamsdimensions.trait.fall": "Queda",
+  "journal.dreamsdimensions.trait.darkness": "Escuridão",
+  "journal.dreamsdimensions.trait.hostility": "Hostilidade",
+  "journal.dreamsdimensions.trait.torpor": "Torpor",
+  "journal.dreamsdimensions.trait.drift": "Deriva"
 }
