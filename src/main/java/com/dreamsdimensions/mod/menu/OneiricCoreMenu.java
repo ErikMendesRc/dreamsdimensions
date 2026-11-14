@@ -165,7 +165,7 @@ public final class OneiricCoreMenu extends AbstractContainerMenu {
 
     @Override public void removed(Player player) {
         super.removed(player);
-        if(!player.level().isClientSide())clearContainer(player,inputs);
+        if(!player.level().isClientSide())clearContainer(player, inputs);
         result.clearContent();
     }
 }

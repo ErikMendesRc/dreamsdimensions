@@ -54,7 +54,7 @@ def check():
                  "DREAM_DUST","TOASTED_VIGIL_HERB","DREAMY_HERB","REMINISCENCE"]:
         assert item in menu,item
     for snippet in ["new Assembly(5,4,1","new Assembly(6,2,1",
-                    "new Assembly(1,2,1","clearContainer(player,inputs)"]:
+                    "new Assembly(1,2,1","clearContainer(player, inputs)"]:
         assert snippet in menu,snippet
     assert "private final DataSlot chamber" in menu
     bedsidejava=java("block/entity/DreamBedsideBlockEntity.java")
