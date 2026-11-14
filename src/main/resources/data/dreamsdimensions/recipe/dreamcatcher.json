@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SFS",
+    "T T",
+    "S S"
+  ],
+  "key": {
+    "S": "minecraft:stick",
+    "F": "minecraft:feather",
+    "T": "dreamsdimensions:dream_thread"
+  },
+  "result": {
+    "id": "dreamsdimensions:dreamcatcher",
+    "count": 1
+  }
+}

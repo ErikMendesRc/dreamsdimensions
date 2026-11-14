@@ -1,25 +1,383 @@
 name: Build
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        seed: [14011, 20261108, -904732, 73199013]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-
-      - name: Setup JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
-
-      - name: Setup Gradle
+          distribution: temurin
+          java-version: '25'
+      - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
+      - name: Build
+        run: ./gradlew --no-daemon clean build
+      - name: Validate Task 9.0 Overworld design and dependency contract
+        run: |
+          python3 scripts/ci/test_overworld_contract_9_0.py
+          python3 scripts/ci/check_overworld_contract_9_0.py --report qa-overworld-design-9-0-seed-${{ matrix.seed }}.json
+      - name: Upload Task 9.0 design validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: overworld-design-9-0-seed-${{ matrix.seed }}
+          path: qa-overworld-design-9-0-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
+      - name: Validate current docs and internal references
+        run: |
+          python3 scripts/ci/test_repository_docs.py
+          python3 scripts/ci/check_repository_docs.py --report qa-repository-docs-${{ matrix.seed }}.json
+      - name: Upload documentation integrity report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: repository-docs-seed-${{ matrix.seed }}
+          path: qa-repository-docs-${{ matrix.seed }}.json
+          if-no-files-found: ignore
+      - name: Audit Task 8 visual assets, localization and creative presentation
+        run: |
+          python3 scripts/ci/test_visual_assets.py
+          python3 scripts/ci/check_task_9_2_1_art.py
+          python3 scripts/ci/check_task_9_2_2_bloom.py
+          python3 scripts/ci/audit_visual_assets.py --report qa-visual-assets-seed-${{ matrix.seed }}.json
+          python3 scripts/ci/test_visual_release_gate.py
+          python3 scripts/ci/visual_release_gate.py --report qa-visual-release-seed-${{ matrix.seed }}.json
+      - name: Upload Task 8 visual asset report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-assets-seed-${{ matrix.seed }}
+          path: |
+            qa-visual-assets-seed-${{ matrix.seed }}.json
+            qa-visual-release-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
+      - name: Validate Task 9.5 chamber, incubation and vanilla+ art
+        run: |
+          python3 scripts/ci/check_task_9_5.py
+          python3 scripts/validate_task_9_5_7_art.py
+      - name: Validate Task 7.2 reusable content & asset contract
+        run: |
+          python3 scripts/ci/test_content_contract.py
+          python3 scripts/ci/check_content_contract.py --report qa-content-contract-${{ matrix.seed }}.json
+      - name: Upload Task 7.2 content contract evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: content-contract-seed-${{ matrix.seed }}
+          path: qa-content-contract-${{ matrix.seed }}.json
+          if-no-files-found: ignore
+      - name: Validate Task 7.3 Marked Stone F0a and full 16x16 PNG
+        run: python3 scripts/ci/check_marked_stone.py --report qa-marked-stone-static-seed-${{ matrix.seed }}.json
+      - name: Upload Task 7.3 static QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: marked-stone-static-seed-${{ matrix.seed }}
+          path: qa-marked-stone-static-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
+      - name: Test Task 7.4 strict four-seed evidence aggregation
+        run: python3 scripts/ci/test_marked_stone_worldgen_aggregate.py
+      - name: Validate Task 7.4 F0b worldgen and stonecutter contract
+        run: python3 scripts/ci/check_marked_stone_7_4.py --report qa-marked-stone-7-4-static-${{ matrix.seed }}.json
+      - name: Upload Task 7.4 static QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: marked-stone-7-4-static-${{ matrix.seed }}
+          path: qa-marked-stone-7-4-static-${{ matrix.seed }}.json
+          if-no-files-found: ignore
+      - name: Validate Task 7.5 F0 economic contracts and regressions
+        run: |
+          python3 scripts/ci/test_f0_homologation.py
+          python3 scripts/ci/f0_homologation.py --static --output qa-f0-static-seed-${{ matrix.seed }}.json
+      - name: Upload Task 7.5 static QA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-f0-static-seed-${{ matrix.seed }}
+          path: qa-f0-static-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
+      - name: Validate reusable Task 7.1 QA contract
+        run: python3 scripts/ci/check_qa_contract.py
+      - name: Validate Task 5.6 Overworld resource economy and Recipe Book
+        run: python3 scripts/ci/check_overworld_resource_chain.py
+      - name: Validate Task 5.7 native structures, binary NBT and recovery loot
+        run: python3 scripts/ci/check_dream_ruins.py
+      - name: Validate echo moss gameplay invariants (TASK 5.1)
+        run: python3 scripts/ci/check_echo_moss.py
+      - name: Validate 26.3 vegetation datapacks (static)
+        run: python3 scripts/ci/check_vegetation.py
+      - name: Validate 26.3 formations (TASK 1.3)
+        run: python3 scripts/ci/check_formations.py
+      - name: Estimate deterministic candidate distribution (MODEL ONLY)
+        run: python3 scripts/ci/check_worldgen_balance.py
+      - name: Validate client-only ambience and 26.3 environment attributes (TASK 2.1)
+        run: python3 scripts/ci/check_atmosphere.py
+      - name: Validate reusable dream engine (TASK 2.2)
+        run: python3 scripts/ci/check_dream_engine.py
+      - name: Validate dream respawn and survival rules (TASK 5.5)
+        run: python3 scripts/ci/check_dream_respawn.py
+      - name: Validate Dreamscape geography and graph (TASK 3.1)
+        run: python3 scripts/ci/check_dreamscape_geography.py
+      - name: Validate Dreamscape ecosystem (TASK 3.2)
+        run: python3 scripts/ci/check_dreamscape_ecosystem.py
+      - name: Validate Dreamscape client atmosphere (TASK 3.3)
+        run: python3 scripts/ci/check_dreamscape_atmosphere.py
+      - name: Validate Dreamscape bridge homologation (TASK 3.4)
+        run: python3 scripts/ci/check_dreamscape_homologation.py
+      - name: Validate Fragmento Errante assets (TASK 4.0)
+        run: python3 scripts/ci/check_fragmento_errante_assets.py
+      - name: Validate Fragmento Errante behaviors (TASK 4.2)
+        run: python3 scripts/ci/check_fragmento_errante_behavior.py
+      - name: Validate reusable Dream Mob Framework (TASK 4.4)
+        run: python3 scripts/ci/check_dream_mob_framework.py
+      - name: Audit hybrid mob spawn and remove unused interactions (TASK 5.3.1)
+        run: python3 scripts/ci/check_spawn_population_contract.py
+      - name: Validate Vigia Adormecido model, animations and AI contracts (TASK 4.5)
+        run: python3 scripts/ci/check_vigia_adormecido.py
+      - name: Validate Vigia mechanics and reusable protections (TASK 4.6)
+        run: python3 scripts/ci/check_vigia_mechanics.py
+      - name: Validate Pacto de Vigília native effect icon (TASK 4.7)
+        run: python3 scripts/ci/check_pacto_vigilia_effect.py
+      - name: Upload mod JAR
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamsdimensions-26.3-seed-${{ matrix.seed }}
+          path: build/libs/*.jar
+          if-no-files-found: error
+      - name: Preflight game assets with bounded retry for transient HTTP 304
+        timeout-minutes: 5
+        shell: bash
+        run: |
+          # NeoForm asset endpoint can occasionally return HTTP 304 on
+          # an uncached object. Only that response is retried; any other
+          # failure remains a hard error. Never skip the actual server test.
+          for attempt in 1 2 3; do
+            if ./gradlew --no-daemon downloadAssets > asset-download.log 2>&1; then
+              echo "Minecraft assets verified (attempt $attempt)"
+              exit 0
+            fi
+            if ! grep -q 'HTTP Status Code 304' asset-download.log; then
+              tail -n 90 asset-download.log
+              exit 1
+            fi
+            echo "::warning::Transient HTTP 304 downloading Minecraft assets, attempt $attempt/3"
+            sleep $((attempt * 3))
+          done
+          tail -n 90 asset-download.log
+          echo "::error::Minecraft asset download still failing after 3 attempts"
+          exit 1
+      - name: Smoke test - initialize a dedicated server and load datapacks
+        timeout-minutes: 20
+        shell: bash
+        run: |
+          mkdir -p run runs/server
+          printf 'enable-rcon=true\nrcon.port=25575\nrcon.password=dd-ci-local-only\nserver-ip=127.0.0.1\nonline-mode=false\nlevel-seed=${{ matrix.seed }}\n' > server.properties
+          cp server.properties run/server.properties
+          cp server.properties runs/server/server.properties
+          printf 'eula=true\n' > eula.txt
+          printf 'eula=true\n' > run/eula.txt
+          printf 'eula=true\n' > runs/server/eula.txt
+          JAVA_TOOL_OPTIONS="-Ddreamsdimensions.worldgenMetrics=true -Ddreamsdimensions.enableBridgeAudit=true -Ddreamsdimensions.enableOreAudit=true -Ddreamsdimensions.enableMarkedStoneAudit=true -Ddreamsdimensions.enableRuinsAudit=true -Ddreamsdimensions.qa.enabled=true -Ddreamsdimensions.qa.runId=ci-seed-${{ matrix.seed }} -Ddreamsdimensions.qa.reportDir=$GITHUB_WORKSPACE/qa-reports" ./gradlew --no-daemon runServer > server-smoke.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true; wait "$server_pid" 2>/dev/null || true; tail -n 180 server-smoke.log || true' EXIT
+          started=0
+          for attempt in $(seq 1 150); do
+            if grep -q 'Done (' server-smoke.log; then
+              started=1
+              break
+            fi
+            if ! kill -0 "$server_pid" 2>/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          if [ "$started" -eq 1 ]; then
+            python3 scripts/ci/check_dimensions.py
+            python3 scripts/ci/check_task_9_2_2_bloom.py --rcon
+            python3 scripts/ci/check_fragmento_errante_behavior.py --rcon
+            python3 scripts/ci/check_dreamscape_geography.py --rcon
+            python3 scripts/ci/check_dreamscape_ecosystem.py --rcon
+            python3 scripts/ci/check_dreamscape_ecosystem.py --log server-smoke.log
+            python3 scripts/ci/check_dreamscape_homologation.py --rcon --expected-seed '${{ matrix.seed }}'
+            # Four disjoint 8x8 regions = 256 ACTUAL fresh Overworld chunks/seed.
+            # This is an opt-in, bounded dedicated-server CI diagnostic, not
+            # a gameplay background scan. Live observed results -> artifact.
+            python3 scripts/ci/audit_overworld_ore_runtime.py \
+              --expected-seed '${{ matrix.seed }}' \
+              --output ore-audit-seed-${{ matrix.seed }}.json
+            # Only a real native structure start and its untouched chest
+            # entity count as success, not a JSON or /place structure success.
+            python3 scripts/ci/audit_dream_ruins_runtime.py \
+              --expected-seed '${{ matrix.seed }}' \
+              --output dream-ruins-seed-${{ matrix.seed }}.json
+            python3 scripts/ci/audit_qa_runtime.py \
+              --seed '${{ matrix.seed }}' \
+              --output qa-reports/dreamqa-ci-seed-${{ matrix.seed }}.json
+            # Task 7.4 reads natural generated voxels; /setblock never proves worldgen.
+            python3 scripts/ci/audit_marked_stone_worldgen_runtime.py \
+              --expected-seed '${{ matrix.seed }}' \
+              --output marked-stone-worldgen-seed-${{ matrix.seed }}.json
+            python3 scripts/ci/audit_marked_stone_runtime.py \
+              --expected-seed '${{ matrix.seed }}' \
+              --output marked-stone-runtime-seed-${{ matrix.seed }}.json
+            # Native engine loot-context proof; NOT a Survival player break action.
+            python3 scripts/ci/audit_f0_loot_runtime.py \
+              --expected-seed '${{ matrix.seed }}' \
+              --output f0-native-loot-seed-${{ matrix.seed }}.json
+          fi
+          if [ "$started" -ne 1 ]; then
+            echo "::error::O servidor não concluiu a inicialização ou falhou ao carregar datapacks."
+            exit 1
+          fi
+          if grep -E 'Errors in currently selected data packs|Failed to load datapacks|Exception loading level|Failed to initialize server' server-smoke.log; then
+            echo "::error::Falha de carregamento detectada no servidor"
+            exit 1
+          fi
+          if grep -E 'loot table element validation problem|Unreachable entry' server-smoke.log; then
+            echo "::error::Loot table inválida detectada na inicialização"
+            exit 1
+          fi
+          echo "Servidor 26.3 iniciou, carregou datapacks e forçou chunks nas duas dimensões."
+      - name: Build versioned Task 7.1 QA report
+        run: |
+          python3 scripts/ci/collect_qa_report.py \
+            --seed '${{ matrix.seed }}' \
+            --runtime qa-reports/dreamqa-ci-seed-${{ matrix.seed }}.json \
+            --ore ore-audit-seed-${{ matrix.seed }}.json \
+            --ruins dream-ruins-seed-${{ matrix.seed }}.json \
+            --out qa-report-seed-${{ matrix.seed }}.json
+      - name: Upload Task 7.1 QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-report-seed-${{ matrix.seed }}
+          path: |
+            qa-report-seed-${{ matrix.seed }}.json
+            qa-reports/dreamqa-ci-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
+      - name: Upload Task 7.3 native block placement evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: marked-stone-runtime-seed-${{ matrix.seed }}
+          path: marked-stone-runtime-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
+      - name: Upload Task 7.4 real natural worldgen survey
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: marked-stone-worldgen-seed-${{ matrix.seed }}
+          path: marked-stone-worldgen-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
+      - name: Upload Task 7.5 native loot context proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: f0-native-loot-seed-${{ matrix.seed }}
+          path: f0-native-loot-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
+      - name: Upload server smoke test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-smoke-log-seed-${{ matrix.seed }}
+          path: server-smoke.log
+          if-no-files-found: ignore
+      - name: Upload real Overworld ore voxel survey
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: overworld-ore-survey-seed-${{ matrix.seed }}
+          path: ore-audit-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
+      - name: Upload Dream Ruins 5.7 natural placement survey
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dream-ruins-survey-seed-${{ matrix.seed }}
+          path: dream-ruins-seed-${{ matrix.seed }}.json
+          if-no-files-found: ignore
 
-      - name: Build with Gradle
-        run: ./gradlew build
+  qa-summary:
+    needs: build
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Download QA reports across four seeds
+        uses: actions/download-artifact@v4
+        with:
+          pattern: qa-report-seed-*
+          path: qa-matrix
+          merge-multiple: true
+      - name: Aggregate versioned QA reports (fail on missing seeds)
+        run: |
+          python3 scripts/ci/collect_qa_report.py \
+            --input-dir qa-matrix \
+            --out qa-summary.json
+      - name: Upload QA four-seed summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamsdimensions-qa-four-seed-summary
+          path: qa-summary.json
+          if-no-files-found: ignore
+      - name: Download Task 7.4 real Overworld surveys
+        uses: actions/download-artifact@v4
+        with:
+          pattern: marked-stone-worldgen-seed-*
+          path: marked-stone-matrix
+          merge-multiple: true
+      - name: Aggregate Task 7.4 natural Marked Stone in four seeds
+        run: |
+          python3 scripts/ci/aggregate_marked_stone_worldgen.py \
+            --input-dir marked-stone-matrix \
+            --output marked-stone-four-seeds-summary.json
+      - name: Upload Task 7.4 natural worldgen summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamsdimensions-marked-stone-7-4-four-seeds
+          path: marked-stone-four-seeds-summary.json
+          if-no-files-found: ignore
+      - name: Download Task 7.5 Dream Ore regressions
+        uses: actions/download-artifact@v4
+        with:
+          pattern: overworld-ore-survey-seed-*
+          path: f0-ore-matrix
+          merge-multiple: true
+      - name: Download Task 7.5 natural ruins regressions
+        uses: actions/download-artifact@v4
+        with:
+          pattern: dream-ruins-survey-seed-*
+          path: f0-ruins-matrix
+          merge-multiple: true
+      - name: Aggregate Task 7.5 F0 economy and compatibility
+        run: |
+          python3 scripts/ci/f0_homologation.py --aggregate \
+            --marked-dir marked-stone-matrix \
+            --ore-dir f0-ore-matrix \
+            --ruins-dir f0-ruins-matrix \
+            --manual docs/F0_TASK_7_5_MANUAL_TEMPLATE.json \
+            --output f0-homologation-summary.json
+      - name: Upload Task 7.5 F0 homologation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dreamsdimensions-f0-7-5-homologation
+          path: f0-homologation-summary.json
+          if-no-files-found: ignore

@@ -1,0 +1,15 @@
+{
+  "type": "dreamsdimensions:dreamscape_ecosystem",
+  "form": "hanging_roots",
+  "stone": "dreamsdimensions:serene_stone",
+  "log": "dreamsdimensions:dream_log_block",
+  "leaves": "dreamsdimensions:dream_leaves_block",
+  "grass": "dreamsdimensions:dream_grass_block",
+  "flower": "dreamsdimensions:dream_flower_block",
+  "moss": "dreamsdimensions:dream_glow_moss",
+  "shimmer": "dreamsdimensions:dream_shimmer_block",
+  "min_height": 6,
+  "max_height": 14,
+  "max_relief": 8,
+  "density": 0.68
+}

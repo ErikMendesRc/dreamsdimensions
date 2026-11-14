@@ -1,0 +1,19 @@
+{
+  "criteria": {
+    "has_toasted_vigil_herb": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "dreamsdimensions:toasted_vigil_herb"
+          }
+        ]
+      }
+    }
+  },
+  "rewards": {
+    "recipes": [
+      "dreamsdimensions:return_charge"
+    ]
+  }
+}

@@ -1,53 +1,35 @@
 package com.dreamsdimensions.mod.client.screen;
 
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.ReceivingLevelScreen;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.LevelLoadingScreen;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-import java.util.function.BooleanSupplier;
+import net.minecraft.client.multiplayer.LevelLoadTracker;
 
 /**
- * Tela de transição exibida ao entrar na dimensão Dreamscape.
- * <p>
- * É uma classe client-only (ver {@link OnlyIn} e {@link Dist#CLIENT}) e registrada via
- * {@link net.neoforged.neoforge.client.event.RegisterDimensionTransitionScreenEvent}.
- * </p>
+ * Mensagem visual de entrada no sonho. O carregamento de nível nunca é bloqueado pelo fade.
  */
-@OnlyIn(Dist.CLIENT)
-public class DreamTransitionScreen extends ReceivingLevelScreen {
-    private static final int MIN_TICKS = 100;
-
+public class DreamTransitionScreen extends LevelLoadingScreen {
+    private static final int FADE_TICKS = 100;
     private int fadeTicks = 0;
 
-    public DreamTransitionScreen(BooleanSupplier levelReceived, Reason reason) {
+    public DreamTransitionScreen(LevelLoadTracker levelReceived, Reason reason) {
         super(levelReceived, reason);
     }
 
     @Override
     public void tick() {
         fadeTicks++;
-
-        if (fadeTicks >= MIN_TICKS) {
-            super.tick();
-        }
+        super.tick();
     }
 
     @Override
-    public void render(GuiGraphics gg, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(gg, mouseX, mouseY, partialTick);
-
-        float progress = Math.min(1.0f, fadeTicks / (float) MIN_TICKS);
-        int alpha = (int) (progress * 255) << 24;
-        gg.fill(0, 0, width, height, alpha);
-
-        gg.drawCenteredString(
-                this.font,
-                Component.literal("Você está sonhando..."),
-                width / 2,
-                height / 2,
-                0xFFFFFF
-        );
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTick);
+        float progress = Math.min(1.0f, fadeTicks / (float) FADE_TICKS);
+        int alpha = (int) (progress * 200) << 24;
+        graphics.fill(0, 0, width, height, alpha);
+        graphics.centeredText(this.font, Component.literal("Você está sonhando..."),
+                width / 2, height / 2, 0xFFFFFFFF);
     }
 }

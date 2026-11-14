@@ -1,112 +1,147 @@
 package com.dreamsdimensions.mod.event;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
+import com.dreamsdimensions.mod.config.DreamEntryConfig;
+import com.dreamsdimensions.mod.config.DreamsConfig;
+import com.dreamsdimensions.mod.service.DreamEntryPolicy;
+import com.dreamsdimensions.mod.service.DreamHangoverService;
+import com.dreamsdimensions.mod.service.DreamAwakenerInventory;
+import com.dreamsdimensions.mod.service.DreamIncubationService;
+import com.dreamsdimensions.mod.service.DreamMineralSleepService;
+import com.dreamsdimensions.mod.registry.ModItems;
+import net.minecraft.network.chat.Component;
+import com.dreamsdimensions.mod.service.DreamNecklaceEquipmentPolicy;
+import com.dreamsdimensions.mod.service.DreamSleepCycle;
+import com.dreamsdimensions.mod.service.DreamTeleportService;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.levelgen.Heightmap;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import org.slf4j.Logger;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 
 /**
- * Handler de teleporte ao dormir, executado no lado servidor.
- * <p>
- * Este listener é registrado no {@link net.neoforged.neoforge.common.NeoForge#EVENT_BUS} e usa
- * {@link PlayerTickEvent.Post} para contar ticks de sono antes de teleportar o jogador.
- * </p>
+ * Server-side sleep adapter: tick/wake callbacks share one cycle and one roll.
+ * Existing safe arrival and weighted dimension selection remain unchanged.
  */
 public final class SleepTeleportHandler {
-    private static final List<ResourceKey<Level>> DREAM_DIMENSIONS = List.of(
-            ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath(DreamsDimensions.MODID, "dreamscape")),
-            ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath(DreamsDimensions.MODID, "campo_onirico_azul"))
-    );
-    private static final Logger LOGGER = DreamsDimensions.LOGGER;
-    private static final int TICKS_BEFORE_TELEPORT = 100;
-    private static final Map<ServerPlayer, Integer> SLEEPING_PLAYERS = new HashMap<>();
-    private static final Random RANDOM = new Random();
+    public static final int TICKS_BEFORE_TELEPORT = 100;
+    private static final DreamSleepCycle CYCLES = new DreamSleepCycle();
+    private static final Set<UUID> TELEPORTING = new HashSet<>();
+    private static final Set<UUID> WARNED = new HashSet<>();
+    private static final Map<UUID, BedOrigin> COMPLETED_WAKEUPS = new HashMap<>();
 
-    private SleepTeleportHandler() {
-    }
+    private record BedOrigin(BlockPos pos, float yaw) {}
 
-    /**
-     * Conta ticks enquanto o jogador está dormindo no Overworld e executa o teleporte após o limite.
-     */
+    private SleepTeleportHandler() {}
+
     public static void onPlayerTick(PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        UUID uuid = player.getUUID();
+
+        BedOrigin completedWakeup = COMPLETED_WAKEUPS.remove(uuid);
+        if (completedWakeup != null) {
+            CYCLES.onAwake(uuid);
+            if (player.isAlive() && player.level().dimension() == Level.OVERWORLD) {
+                DreamIncubationService.afterFullNight(player, completedWakeup.pos());
+                DreamMineralSleepService.afterFullNight(player, completedWakeup.pos());
+            }
+            if (player.isAlive() && player.level().dimension() == Level.OVERWORLD && !player.isSleeping()) {
+                attemptEntry(player, completedWakeup);
+            }
             return;
         }
 
-        if (player.isSleeping() && player.serverLevel().dimension() == Level.OVERWORLD) {
-            int t = SLEEPING_PLAYERS.merge(player, 1, Integer::sum);
-            LOGGER.debug("sleepingPlayers tick #{} para {}", t, player.getGameProfile().getName());
-            if (t >= TICKS_BEFORE_TELEPORT) {
-                LOGGER.info("Chegou em {} ticks de sono para {}, teleportando para uma dimensão dos sonhos",
-                        TICKS_BEFORE_TELEPORT, player.getGameProfile().getName());
-                actuallyTeleport(player);
-                SLEEPING_PLAYERS.remove(player);
-            }
-        } else {
-            if (SLEEPING_PLAYERS.containsKey(player)) {
-                LOGGER.debug("Reset do contador de sono para {} (acordou ou mudou de dimensão)",
-                        player.getGameProfile().getName());
-            }
-            SLEEPING_PLAYERS.remove(player);
-        }
-    }
-
-    /**
-     * Realiza o teleporte efetivo para uma dimensão de sonho aleatória.
-     */
-    public static void actuallyTeleport(ServerPlayer player) {
-        LOGGER.info("actuallyTeleport(): iniciando teleporte de {}", player.getGameProfile().getName());
-        MinecraftServer server = player.server;
-        
-        ResourceKey<Level> targetDimensionKey = DREAM_DIMENSIONS.get(RANDOM.nextInt(DREAM_DIMENSIONS.size()));
-        ServerLevel targetLevel = server.getLevel(targetDimensionKey);
-
-        if (targetLevel == null) {
-            LOGGER.error("Dimensão {} não encontrada para {}",
-                    targetDimensionKey.location(), player.getGameProfile().getName());
+        if (!player.isAlive() || player.level().dimension() != Level.OVERWORLD || !player.isSleeping()) {
+            CYCLES.onAwake(uuid);
+            WARNED.remove(uuid);
             return;
         }
 
-        BlockPos spawn = findSafeSpawnLocation(targetLevel, targetLevel.getSharedSpawnPos());
-        LOGGER.info("findSafeSpawnLocation resultou em {}", spawn);
+        // Warn once per genuine sleeping interval, not on every player tick.
+        if (DreamEntryConfig.enabled() && WARNED.add(uuid)
+                && DreamNecklaceEquipmentPolicy.isEquipped(player)) {
+            boolean hasReturn = DreamAwakenerInventory.hasReturnItem(player, true);
+            if (!hasReturn) {
+                player.sendSystemMessage(Component.translatable(
+                        "message.dreamsdimensions.sleep.risk"));
+            }
+        }
 
-        LOGGER.info("stopSleeping() para {}", player.getGameProfile().getName());
-        player.stopSleeping();
+        if (!CYCLES.onSleeping(uuid, player.getSleepTimer(), TICKS_BEFORE_TELEPORT)) return;
 
-        LOGGER.info("teleportTo() para {} em {}", targetDimensionKey.location(), spawn);
-        player.teleportTo(
-                targetLevel,
-                spawn.getX() + 0.5,
-                spawn.getY(),
-                spawn.getZ() + 0.5,
-                Set.of(),
-                player.getYRot(),
-                player.getXRot(),
-                true
-        );
+        Optional<BlockPos> bed = player.getSleepingPos();
+        if (bed.isEmpty()) {
+            DreamsDimensions.LOGGER.warn("Sono completo sem cama válida para {}", uuid);
+            return;
+        }
+        attemptEntry(player, new BedOrigin(bed.get(), player.getYRot()));
     }
 
-    private static BlockPos findSafeSpawnLocation(ServerLevel level, BlockPos origin) {
-        level.getChunkAt(origin);
-        int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, origin.getX(), origin.getZ());
-        if (y <= level.getMinY()) {
-            LOGGER.warn("findSafeSpawnLocation: fallback para Y=150 pois getHeight retornou {}", y);
-            y = 150;
+    public static void onPlayerWakeUp(PlayerWakeUpEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)
+                || !player.isAlive() || player.level().dimension() != Level.OVERWORLD) return;
+
+        UUID uuid = player.getUUID();
+        if (TELEPORTING.contains(uuid)) return;
+        if (!CYCLES.onWake(uuid, player.getSleepTimer(), TICKS_BEFORE_TELEPORT)) return;
+
+        // Consumes this cycle BEFORE queueing: duplicate wake callbacks cannot reroll.
+        player.getSleepingPos().ifPresent(pos ->
+                COMPLETED_WAKEUPS.put(uuid, new BedOrigin(pos, player.getYRot())));
+    }
+
+    public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        forget(event.getEntity().getUUID());
+    }
+
+    public static void onPlayerClone(PlayerEvent.Clone event) {
+        forget(event.getEntity().getUUID());
+    }
+
+    public static void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        forget(event.getEntity().getUUID());
+    }
+
+    private static void forget(UUID uuid) {
+        CYCLES.forget(uuid);
+        TELEPORTING.remove(uuid);
+        COMPLETED_WAKEUPS.remove(uuid);
+        WARNED.remove(uuid);
+    }
+
+    private static void attemptEntry(ServerPlayer player, BedOrigin origin) {
+        UUID uuid = player.getUUID();
+        if (!TELEPORTING.add(uuid)) return;
+        try {
+            // Disabled by default: no Curios / RNG / destination work in normal Survival.
+            if (!DreamEntryConfig.enabled()) return;
+            // One distinct sleep per night during the recovery penalty.
+            // The attempt remains consumed; retrying within the same night
+            // cannot force entry when the third blocked night ends.
+            if (DreamHangoverService.blockSleepEntry(player)) return;
+            boolean overworld = player.level().dimension() == Level.OVERWORLD;
+            boolean available = overworld && DreamsConfig.getEnabledDefinitions().stream()
+                    .anyMatch(definition ->
+                            ((ServerLevel) player.level()).getServer().getLevel(definition.dimension()) != null);
+            boolean equipped = overworld && player.isAlive() && !player.isSpectator() && available
+                    && DreamNecklaceEquipmentPolicy.isEquipped(player);
+            DreamEntryPolicy.Input input = new DreamEntryPolicy.Input(
+                    true, player.isAlive(), overworld, player.isSpectator(),
+                    true, equipped, available);
+            if (!DreamEntryPolicy.canRoll(input)) return;
+            if (!DreamEntryPolicy.roll(DreamEntryConfig.chance(), ThreadLocalRandom.current()::nextDouble)) return;
+            DreamTeleportService.enterDream(player, origin.pos(), origin.yaw());
+        } finally {
+            TELEPORTING.remove(uuid);
         }
-        return new BlockPos(origin.getX(), y, origin.getZ());
     }
 }

@@ -1,0 +1,19 @@
+{
+  "feature": "dreamsdimensions:dreamscape_stone_ribs",
+  "placement": [
+    {
+      "type": "minecraft:random_chance",
+      "chance": 0.24
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:heightmap",
+      "heightmap": "MOTION_BLOCKING_NO_LEAVES"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

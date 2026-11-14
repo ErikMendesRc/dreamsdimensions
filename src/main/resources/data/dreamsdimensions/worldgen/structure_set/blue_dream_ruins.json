@@ -1,0 +1,15 @@
+{
+  "structures": [
+    {
+      "structure": "dreamsdimensions:blue_dream_ruins",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 16783011,
+    "spacing": 38,
+    "separation": 12,
+    "spread_type": "linear"
+  }
+}

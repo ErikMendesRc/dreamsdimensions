@@ -1,0 +1,48 @@
+{
+  "type": "minecraft:cache",
+  "input": {
+    "type": "minecraft:slice",
+    "axis": "y",
+    "coordinate": 0,
+    "input": {
+      "type": "minecraft:clamp",
+      "input": {
+        "type": "minecraft:div",
+        "left": {
+          "type": "minecraft:add",
+          "left": 50,
+          "right": {
+            "type": "minecraft:add",
+            "left": {
+              "type": "minecraft:mul",
+              "left": 92,
+              "right": {
+                "type": "minecraft:noise",
+                "noise": "dreamsdimensions:terrace_broad",
+                "xz_scale": 1,
+                "y_scale": 0,
+                "shift_x": "dreamsdimensions:warp_x",
+                "shift_z": "dreamsdimensions:warp_z"
+              }
+            },
+            "right": {
+              "type": "minecraft:mul",
+              "left": 20,
+              "right": {
+                "type": "minecraft:noise",
+                "noise": "dreamsdimensions:terrace_elevation",
+                "xz_scale": 1,
+                "y_scale": 0,
+                "shift_x": "dreamsdimensions:warp_x",
+                "shift_z": "dreamsdimensions:warp_z"
+              }
+            }
+          }
+        },
+        "right": 18
+      },
+      "min": 0.65,
+      "max": 8.8
+    }
+  }
+}

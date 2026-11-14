@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:cache",
+  "input": {
+    "type": "minecraft:slice",
+    "axis": "y",
+    "coordinate": 0,
+    "input": {
+      "type": "minecraft:mul",
+      "left": "dreamsdimensions:dreamscape_fracture_region",
+      "right": "dreamsdimensions:dreamscape_fracture_width"
+    }
+  }
+}

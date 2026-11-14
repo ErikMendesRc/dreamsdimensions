@@ -1,0 +1,19 @@
+{
+  "feature": "dreamsdimensions:luminescent_garden",
+  "placement": [
+    {
+      "type": "minecraft:random_chance",
+      "chance": 0.27
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:heightmap",
+      "heightmap": "MOTION_BLOCKING_NO_LEAVES"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

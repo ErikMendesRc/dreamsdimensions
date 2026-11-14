@@ -1,0 +1,19 @@
+{
+  "feature": "dreamsdimensions:dream_stone_arch",
+  "placement": [
+    {
+      "type": "minecraft:random_chance",
+      "chance": 0.055
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:heightmap",
+      "heightmap": "MOTION_BLOCKING_NO_LEAVES"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

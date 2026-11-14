@@ -2,6 +2,8 @@ package com.dreamsdimensions.mod.registry;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.attachment.DreamReturnData;
+import com.dreamsdimensions.mod.attachment.DreamHangoverData;
+import com.dreamsdimensions.mod.attachment.DreamExpeditionAnchorData;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -22,6 +24,29 @@ public final class ModAttachments {
                     .copyOnDeath()
                     .build()
     );
+
+    /**
+     * Persistent local dream respawn point. This deliberately does NOT replace
+     * or modify the Overworld-return attachment.
+     */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DreamExpeditionAnchorData>>
+            DREAM_EXPEDITION_ANCHOR = ATTACHMENTS.register(
+                    "dream_expedition_anchor",
+                    () -> AttachmentType.builder(DreamExpeditionAnchorData::new)
+                            .serialize(DreamExpeditionAnchorData.CODEC)
+                            .copyOnDeath()
+                            .build()
+            );
+
+    /** Three-night penalty survives logout and death; never overwrites dream_return. */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DreamHangoverData>>
+            DREAM_HANGOVER = ATTACHMENTS.register(
+                    "dream_hangover",
+                    () -> AttachmentType.builder(() -> new DreamHangoverData(0, Long.MIN_VALUE))
+                            .serialize(DreamHangoverData.CODEC)
+                            .copyOnDeath()
+                            .build()
+            );
 
     private ModAttachments() {
     }

@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:cache",
+  "input": {
+    "type": "minecraft:slice",
+    "axis": "y",
+    "coordinate": 0,
+    "input": {
+      "type": "minecraft:lerp",
+      "alpha": {
+        "type": "minecraft:mul",
+        "left": "dreamsdimensions:mist_strength",
+        "right": {
+          "type": "minecraft:sub",
+          "left": 1,
+          "right": {
+            "type": "minecraft:mul",
+            "left": 0.6,
+            "right": "dreamsdimensions:terrace_presence"
+          }
+        }
+      },
+      "first": {
+        "type": "minecraft:lerp",
+        "alpha": "dreamsdimensions:terrace_presence",
+        "first": "dreamsdimensions:wave_height",
+        "second": "dreamsdimensions:terrace_height"
+      },
+      "second": "dreamsdimensions:ridge_height"
+    }
+  }
+}
