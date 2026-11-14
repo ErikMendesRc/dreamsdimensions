@@ -63,7 +63,9 @@ jobs:
             qa-visual-release-seed-${{ matrix.seed }}.json
           if-no-files-found: ignore
       - name: Validate Task 9.5 chamber, incubation and vanilla+ art
-        run: python3 scripts/ci/check_task_9_5.py
+        run: |
+          python3 scripts/ci/check_task_9_5.py
+          python3 scripts/validate_task_9_5_7_art.py
       - name: Validate Task 7.2 reusable content & asset contract
         run: |
           python3 scripts/ci/test_content_contract.py
