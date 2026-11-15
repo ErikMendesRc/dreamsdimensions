@@ -46,6 +46,19 @@ def check():
     assert catcher["render_type"]=="cutout"
     assert len(catcher["elements"])>=10
     assert "cross" in catcher["textures"]
+    # Task 9.5.9 regression: icon model must not reuse a cutout block model.
+    # 26.3 item model definitions live under assets/<namespace>/items/;
+    # the generated inventory model is separately resolved under models/item/.
+    catcher_item=load(A/"items/dreamcatcher.json")
+    assert catcher_item["model"]=={
+        "type":"minecraft:model","model":"dreamsdimensions:item/dreamcatcher"
+    }, "Dreamcatcher inventory item must use a dedicated item model"
+    catcher_icon=load(A/"models/item/dreamcatcher.json")
+    assert catcher_icon["parent"]=="minecraft:item/generated"
+    assert catcher_icon["textures"]["layer0"]=="dreamsdimensions:item/dreamcatcher"
+    assert (A/"textures/item/dreamcatcher.png").is_file()
+    assert_png_integrity(A/"textures/item/dreamcatcher.png")
+    assert load(A/"blockstates/dreamcatcher.json")["variants"][""]["model"]=="dreamsdimensions:block/dreamcatcher"
     # No recipe may fabricate a dream-only Reminiscence or bypass early return.
     for forbidden in ["reminiscence","deep_sleep_stone","trail_marker"]:
         assert not (D/f"recipe/{forbidden}.json").exists(),forbidden
