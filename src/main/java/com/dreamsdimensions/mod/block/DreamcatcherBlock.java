@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -23,7 +23,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * No block entity, ticking service, or global neighbor polling required.
  */
 public final class DreamcatcherBlock extends Block {
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     // A narrow hitbox around the hanging mesh, with no player collision.
     private static final VoxelShape NORTH_SOUTH = Block.box(1, 0, 6, 15, 16, 10);
