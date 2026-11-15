@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 AS = ROOT / "src/main/resources/assets/dreamsdimensions"
 ITEMS = "serene_vial dream_thread dormant_ember dreamy_herb dreamcatcher resonance_probe marked_lining dream_journal infusion_route".split()
-BLOCKS = "deep_sleep_stone bedside_side bedside_top bedside_drawer bedside_niche bedside_metal trail_marker_side trail_marker_top trail_marker_brass trail_marker_gem".split()
+BLOCKS = "deep_sleep_stone dreamcatcher bedside_side bedside_top bedside_drawer bedside_niche bedside_metal trail_marker_side trail_marker_top trail_marker_brass trail_marker_gem".split()
 PNGS = [(f"textures/item/{n}.png",16) for n in ITEMS] + [(f"textures/block/{n}.png",16) for n in BLOCKS] + [("textures/mob_effect/route.png",18)]
 
 def check_png(path, size):
@@ -49,6 +49,7 @@ for name in ("dream_bedside","dreamcatcher","trail_marker"):
         ns,tex=val.split(":",1)
         assert ns=="dreamsdimensions"
         assert (AS/"textures"/f"{tex}.png").is_file(),(path,val)
+        assert not (path.name == "dreamcatcher.json" and tex.startswith("item/")), (path,"Wrong texture atlas",val)
 
 print(f"PASS: {len(PNGS)} PNGs (signature, CRC, RGBA, dimensions); 3 models; all texture references")
 print("NOT RUN: Gradle build / client render / Survival gameplay / dedicated server")

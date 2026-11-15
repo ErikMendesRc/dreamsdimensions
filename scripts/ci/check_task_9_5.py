@@ -43,9 +43,14 @@ def check():
     assert len(bedside["elements"])>=5
     catcher=load(A/"models/block/dreamcatcher.json")
     # Task 9.5.7 replaces the flat cross with cutout and actual ring/cord geometry.
-    assert catcher["render_type"]=="cutout"
+    assert catcher.get("render_type") is None  # 26.1+ detects cutout from the sprite alpha
     assert len(catcher["elements"])>=10
-    assert "cross" in catcher["textures"]
+    assert catcher["textures"]["cross"]=="dreamsdimensions:block/dreamcatcher"
+    assert catcher["textures"]["particle"]=="dreamsdimensions:block/dreamcatcher"
+    assert all(ref.startswith("dreamsdimensions:block/") for ref in catcher["textures"].values()), "Block-model textures must be in the blocks atlas"
+    block_sprite=A/"textures/block/dreamcatcher.png"
+    assert (png_details(block_sprite)["width"],png_details(block_sprite)["height"])==(16,16)
+    assert_png_integrity(block_sprite)
     # Task 9.5.9 regression: icon model must not reuse a cutout block model.
     # 26.3 item model definitions live under assets/<namespace>/items/;
     # the generated inventory model is separately resolved under models/item/.

@@ -1,9 +1,8 @@
 {
-  "render_type": "cutout",
   "ambientocclusion": false,
   "textures": {
-    "particle": "dreamsdimensions:item/dreamcatcher",
-    "cross": "dreamsdimensions:item/dreamcatcher",
+    "particle": "dreamsdimensions:block/dreamcatcher",
+    "cross": "dreamsdimensions:block/dreamcatcher",
     "rim": "dreamsdimensions:block/trail_marker_brass",
     "cord": "dreamsdimensions:block/bedside_metal"
   },

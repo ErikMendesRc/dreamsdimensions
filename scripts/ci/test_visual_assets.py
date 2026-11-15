@@ -180,7 +180,7 @@ class VisualAssetTest(unittest.TestCase):
         self.assertEqual(report["counts"]["oversized_or_non16_assets"], 0)
         self.assertEqual(report["counts"]["orphan_model_candidates"], 0)
         # Task 9.5.7 added five genuine supporting textures for 3D furniture/navigation models.
-        self.assertEqual(report["counts"]["png_textures"], 73)
+        self.assertEqual(report["counts"]["png_textures"], 74)
         self.assertGreater(report["counts"]["pixel_art_16_textures"], 20)
 
     def test_cutout_vegetation_and_log_orientations(self):
