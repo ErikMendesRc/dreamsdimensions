@@ -63,7 +63,29 @@ def check():
     assert catcher_icon["textures"]["layer0"]=="dreamsdimensions:item/dreamcatcher"
     assert (A/"textures/item/dreamcatcher.png").is_file()
     assert_png_integrity(A/"textures/item/dreamcatcher.png")
-    assert load(A/"blockstates/dreamcatcher.json")["variants"][""]["model"]=="dreamsdimensions:block/dreamcatcher"
+    # Task 9.5.11 — ceiling-only, four orientations, support and survival guards.
+    variants=load(A/"blockstates/dreamcatcher.json")["variants"]
+    expected={"facing=north":0,"facing=east":90,"facing=south":180,"facing=west":270}
+    assert set(variants)==set(expected)
+    for facing,y in expected.items():
+        assert variants[facing]["model"]=="dreamsdimensions:block/dreamcatcher"
+        assert variants[facing]["y"]==y
+    catcher_java=java("block/DreamcatcherBlock.java")
+    for snippet in (
+            "context.getClickedFace() != Direction.DOWN",
+            "return null;",
+            "Block.canSupportCenter(level, pos.above(), Direction.DOWN)",
+            "directionToNeighbour == Direction.UP",
+            "Blocks.AIR.defaultBlockState()",
+            "BlockStateProperties.HORIZONTAL_FACING",
+            "getHorizontalDirection().getOpposite()",
+            "getShape(", "rotate(", "mirror("):
+        assert snippet in catcher_java, snippet
+    registry=java("registry/ModBlocks.java")
+    assert 'BLOCKS.registerBlock("dreamcatcher", DreamcatcherBlock::new' in registry
+    assert ".noCollision().instabreak().noOcclusion()" in registry
+    incubation=java("service/DreamIncubationEnvironment.java")
+    assert "height <= 4" in incubation and "bed.above(height)" in incubation
     # No recipe may fabricate a dream-only Reminiscence or bypass early return.
     for forbidden in ["reminiscence","deep_sleep_stone","trail_marker"]:
         assert not (D/f"recipe/{forbidden}.json").exists(),forbidden

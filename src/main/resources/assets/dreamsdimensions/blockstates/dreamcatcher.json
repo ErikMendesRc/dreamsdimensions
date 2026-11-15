@@ -1,7 +1,20 @@
 {
   "variants": {
-    "": {
-      "model": "dreamsdimensions:block/dreamcatcher"
+    "facing=north": {
+      "model": "dreamsdimensions:block/dreamcatcher",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "dreamsdimensions:block/dreamcatcher",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "dreamsdimensions:block/dreamcatcher",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "dreamsdimensions:block/dreamcatcher",
+      "y": 270
     }
   }
 }

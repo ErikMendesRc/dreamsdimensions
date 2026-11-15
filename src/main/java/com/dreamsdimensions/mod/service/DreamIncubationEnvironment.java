@@ -24,8 +24,16 @@ public final class DreamIncubationEnvironment {
     }
 
     public static boolean dreamcatcher(Level world, BlockPos bed) {
-        return world.getBlockState(bed.above()).is(ModBlocks.DREAMCATCHER.get())
-                || world.getBlockState(bed.above(2)).is(ModBlocks.DREAMCATCHER.get());
+        // Ceiling-mounted objects occupy the block directly below the roof.
+        // A roof 2..5 blocks above the bed can grant the Dreamcatcher bonus.
+        for (int height = 1; height <= 4; height++) {
+            BlockPos hanging = bed.above(height);
+            if (world.hasChunkAt(hanging)
+                    && world.getBlockState(hanging).is(ModBlocks.DREAMCATCHER.get())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static Kind detect(Level world, BlockPos bed) {

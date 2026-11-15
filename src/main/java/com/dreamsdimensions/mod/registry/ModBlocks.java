@@ -9,6 +9,7 @@ import com.dreamsdimensions.mod.block.OneiricKettleBlock;
 import com.dreamsdimensions.mod.block.TemporaryPlumeBridgeBlock;
 import com.dreamsdimensions.mod.block.DreamLeavesBlock;
 import com.dreamsdimensions.mod.block.DreamBedsideBlock;
+import com.dreamsdimensions.mod.block.DreamcatcherBlock;
 import com.dreamsdimensions.mod.block.TrailMarkerBlock;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.Block;
@@ -203,8 +204,8 @@ public final class ModBlocks {
                     ()->BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_PLANKS)
                             .strength(2.0f,3.0f).noOcclusion());
 
-    public static final DeferredBlock<Block> DREAMCATCHER =
-            BLOCKS.registerSimpleBlock("dreamcatcher",
+    public static final DeferredBlock<DreamcatcherBlock> DREAMCATCHER =
+            BLOCKS.registerBlock("dreamcatcher", DreamcatcherBlock::new,
                     ()->BlockBehaviour.Properties.ofFullCopy(Blocks.DANDELION)
                             .noCollision().instabreak().noOcclusion());
 
