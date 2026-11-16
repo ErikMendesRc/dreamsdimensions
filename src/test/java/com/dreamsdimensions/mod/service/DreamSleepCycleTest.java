@@ -15,6 +15,29 @@ class DreamSleepCycleTest {
         assertFalse(cycle.onWake(id, 99, COMPLETE));
     }
 
+    @Test void incubationWakeStillFiresAfterEntryAttempt() {
+        DreamSleepCycle cycle = new DreamSleepCycle();
+        UUID id = UUID.randomUUID();
+        assertFalse(cycle.onSleeping(id, 99, COMPLETE));
+        assertTrue(cycle.onSleeping(id, 100, COMPLETE));
+        assertFalse(cycle.onWake(id, 100, COMPLETE)); // entry attempt is already consumed
+        assertTrue(cycle.onCompletedWake(id, 100, COMPLETE)); // incubation must proceed
+        assertFalse(cycle.onCompletedWake(id, 100, COMPLETE)); // no double processing
+        cycle.onAwake(id);
+        assertFalse(cycle.onCompletedWake(id, 100, COMPLETE));
+        assertFalse(cycle.onSleeping(id, 1, COMPLETE));
+        assertTrue(cycle.onCompletedWake(id, 100, COMPLETE)); // new sleep
+    }
+
+    @Test void interruptedSleepCannotCompleteIncubation() {
+        DreamSleepCycle cycle = new DreamSleepCycle();
+        UUID id = UUID.randomUUID();
+        assertFalse(cycle.onSleeping(id, 65, COMPLETE));
+        assertFalse(cycle.onCompletedWake(id, 65, COMPLETE));
+        cycle.onAwake(id);
+        assertFalse(cycle.onCompletedWake(id, 100, COMPLETE));
+    }
+
     @Test void tickAndWakeUseOneAttempt() {
         DreamSleepCycle cycle = new DreamSleepCycle();
         UUID id = UUID.randomUUID();

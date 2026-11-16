@@ -2,6 +2,7 @@ package com.dreamsdimensions.mod.registry;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.menu.OneiricCoreMenu;
+import com.dreamsdimensions.mod.menu.DreamBedsideMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
@@ -18,6 +19,10 @@ public final class ModMenuTypes {
     public static final Supplier<MenuType<OneiricCoreMenu>> ONEIRIC_CORE =
             MENUS.register("oneiric_core", () ->
                     new MenuType<>(OneiricCoreMenu::new, FeatureFlags.VANILLA_SET));
+
+    public static final Supplier<MenuType<DreamBedsideMenu>> DREAM_BEDSIDE =
+            MENUS.register("dream_bedside", () ->
+                    new MenuType<>(DreamBedsideMenu::new, FeatureFlags.VANILLA_SET));
 
     private ModMenuTypes() {}
 

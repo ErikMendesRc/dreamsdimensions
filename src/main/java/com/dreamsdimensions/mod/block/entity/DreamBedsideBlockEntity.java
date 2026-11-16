@@ -3,6 +3,12 @@ package com.dreamsdimensions.mod.block.entity;
 import com.dreamsdimensions.mod.registry.ModBlockEntities;
 import com.dreamsdimensions.mod.registry.ModBlocks;
 import com.dreamsdimensions.mod.registry.ModItems;
+import com.dreamsdimensions.mod.menu.DreamBedsideMenu;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import com.dreamsdimensions.mod.service.DreamIncubationEnvironment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,7 +28,7 @@ import java.util.UUID;
  * units, not a shared player inventory. Both inputs and outputs are persisted.
  * Breaking the block drops only what remains, once.
  */
-public final class DreamBedsideBlockEntity extends BlockEntity {
+public final class DreamBedsideBlockEntity extends BlockEntity implements MenuProvider {
     private UUID owner;
     private int type; // 1 bottle, 2 string, 3 coal, 4 infused stone, 5 toasted herb
     private int inputCount;
@@ -32,6 +38,14 @@ public final class DreamBedsideBlockEntity extends BlockEntity {
     public DreamBedsideBlockEntity(BlockPos pos,BlockState state){
         super(ModBlockEntities.BEDSIDE.get(),pos,state);
     }
+    @Override public Component getDisplayName() {
+        return Component.translatable("container.dreamsdimensions.dream_bedside");
+    }
+
+    @Override public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+        return new DreamBedsideMenu(id, inventory, this);
+    }
+
     public boolean isOwner(ServerPlayer player){
         return owner==null||owner.equals(player.getUUID());
     }
@@ -98,6 +112,27 @@ public final class DreamBedsideBlockEntity extends BlockEntity {
         return finishedCount>0;
     }
 
+    /** Collect results only: the GUI must not silently return raw ingredients. */
+    public ItemStack takeFinished(ServerPlayer player) {
+        if (!isOwner(player) || finishedCount <= 0 || type == 0) return ItemStack.EMPTY;
+        ItemStack out = new ItemStack(outputItem(type), finishedCount);
+        finishedCount = 0;
+        if (inputCount == 0) resetType();
+        setChanged();
+        return out;
+    }
+
+    /** Explicit Cancel button: return deposited materials, never finished products. */
+    public ItemStack takePending(ServerPlayer player) {
+        if (!isOwner(player) || inputCount <= 0 || type == 0) return ItemStack.EMPTY;
+        ItemStack out = new ItemStack(inputItem(type), inputCount);
+        inputCount = 0;
+        if (finishedCount == 0) resetType();
+        setChanged();
+        return out;
+    }
+
+    /** Legacy behavior kept for compatibility with code that still calls take(). */
     public ItemStack take(ServerPlayer player) {
         if(!isOwner(player)||type==0)return ItemStack.EMPTY;
         if(finishedCount>0) {

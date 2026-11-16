@@ -3,6 +3,7 @@ package com.dreamsdimensions.mod.client.event;
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.registry.ModMenuTypes;
 import com.dreamsdimensions.mod.client.screen.OneiricCoreScreen;
+import com.dreamsdimensions.mod.client.screen.DreamBedsideScreen;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -20,6 +21,7 @@ public final class ClientModEvents {
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenuTypes.ONEIRIC_CORE.get(), OneiricCoreScreen::new);
+        event.register(ModMenuTypes.DREAM_BEDSIDE.get(), DreamBedsideScreen::new);
     }
 
     @SubscribeEvent

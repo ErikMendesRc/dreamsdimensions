@@ -118,5 +118,20 @@
   "journal.dreamsdimensions.trait.darkness": "Escuridão",
   "journal.dreamsdimensions.trait.hostility": "Hostilidade",
   "journal.dreamsdimensions.trait.torpor": "Torpor",
-  "journal.dreamsdimensions.trait.drift": "Deriva"
+  "journal.dreamsdimensions.trait.drift": "Deriva",
+  "container.dreamsdimensions.dream_bedside": "Incubação Onírica",
+  "container.dreamsdimensions.bedside.add": "Inserir",
+  "container.dreamsdimensions.bedside.collect": "Coletar",
+  "container.dreamsdimensions.bedside.cancel": "Cancelar",
+  "container.dreamsdimensions.bedside.input": "INSUMO",
+  "container.dreamsdimensions.bedside.output": "PRODUTO",
+  "container.dreamsdimensions.bedside.no_bed": "Sem cama próxima",
+  "container.dreamsdimensions.bedside.counts": "%s/%s  Pronto: %s",
+  "container.dreamsdimensions.bedside.room.none": "Sem ambiente",
+  "container.dreamsdimensions.bedside.room.serene": "Sereno",
+  "container.dreamsdimensions.bedside.room.silence": "Silêncio",
+  "container.dreamsdimensions.bedside.room.ember": "Brasa",
+  "container.dreamsdimensions.bedside.room.deep": "Profundo",
+  "container.dreamsdimensions.bedside.room.garden": "Jardim",
+  "container.dreamsdimensions.bedside.room.ambiguous": "Ambíguo"
 }

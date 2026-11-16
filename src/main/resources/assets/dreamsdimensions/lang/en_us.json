@@ -118,5 +118,20 @@
   "journal.dreamsdimensions.trait.darkness": "Darkness",
   "journal.dreamsdimensions.trait.hostility": "Hostility",
   "journal.dreamsdimensions.trait.torpor": "Torpor",
-  "journal.dreamsdimensions.trait.drift": "Drift"
+  "journal.dreamsdimensions.trait.drift": "Drift",
+  "container.dreamsdimensions.dream_bedside": "Dream Incubation",
+  "container.dreamsdimensions.bedside.add": "Insert",
+  "container.dreamsdimensions.bedside.collect": "Collect",
+  "container.dreamsdimensions.bedside.cancel": "Cancel",
+  "container.dreamsdimensions.bedside.input": "INPUT",
+  "container.dreamsdimensions.bedside.output": "OUTPUT",
+  "container.dreamsdimensions.bedside.no_bed": "No bed nearby",
+  "container.dreamsdimensions.bedside.counts": "%s/%s  Ready: %s",
+  "container.dreamsdimensions.bedside.room.none": "No room type",
+  "container.dreamsdimensions.bedside.room.serene": "Serene",
+  "container.dreamsdimensions.bedside.room.silence": "Silence",
+  "container.dreamsdimensions.bedside.room.ember": "Ember",
+  "container.dreamsdimensions.bedside.room.deep": "Deep",
+  "container.dreamsdimensions.bedside.room.garden": "Garden",
+  "container.dreamsdimensions.bedside.room.ambiguous": "Ambiguous"
 }

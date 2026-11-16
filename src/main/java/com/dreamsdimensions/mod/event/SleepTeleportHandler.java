@@ -37,9 +37,11 @@ public final class SleepTeleportHandler {
     private static final DreamSleepCycle CYCLES = new DreamSleepCycle();
     private static final Set<UUID> TELEPORTING = new HashSet<>();
     private static final Set<UUID> WARNED = new HashSet<>();
-    private static final Map<UUID, BedOrigin> COMPLETED_WAKEUPS = new HashMap<>();
+    private static final Map<UUID, CompletedWake> COMPLETED_WAKEUPS = new HashMap<>();
+    private static final Map<UUID, BedOrigin> ACTIVE_BEDS = new HashMap<>();
 
     private record BedOrigin(BlockPos pos, float yaw) {}
+    private record CompletedWake(BedOrigin origin, boolean canAttemptEntry) {}
 
     private SleepTeleportHandler() {}
 
@@ -47,21 +49,25 @@ public final class SleepTeleportHandler {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         UUID uuid = player.getUUID();
 
-        BedOrigin completedWakeup = COMPLETED_WAKEUPS.remove(uuid);
+        CompletedWake completedWakeup = COMPLETED_WAKEUPS.remove(uuid);
         if (completedWakeup != null) {
             CYCLES.onAwake(uuid);
+            ACTIVE_BEDS.remove(uuid);
             if (player.isAlive() && player.level().dimension() == Level.OVERWORLD) {
-                DreamIncubationService.afterFullNight(player, completedWakeup.pos());
-                DreamMineralSleepService.afterFullNight(player, completedWakeup.pos());
+                DreamIncubationService.afterFullNight(player, completedWakeup.origin().pos());
+                DreamMineralSleepService.afterFullNight(player, completedWakeup.origin().pos());
             }
-            if (player.isAlive() && player.level().dimension() == Level.OVERWORLD && !player.isSleeping()) {
-                attemptEntry(player, completedWakeup);
+            if (completedWakeup.canAttemptEntry()
+                    && player.isAlive() && player.level().dimension() == Level.OVERWORLD
+                    && !player.isSleeping()) {
+                attemptEntry(player, completedWakeup.origin());
             }
             return;
         }
 
         if (!player.isAlive() || player.level().dimension() != Level.OVERWORLD || !player.isSleeping()) {
             CYCLES.onAwake(uuid);
+            ACTIVE_BEDS.remove(uuid);
             WARNED.remove(uuid);
             return;
         }
@@ -76,6 +82,8 @@ public final class SleepTeleportHandler {
             }
         }
 
+        player.getSleepingPos().ifPresent(pos ->
+                ACTIVE_BEDS.put(uuid, new BedOrigin(pos, player.getYRot())));
         if (!CYCLES.onSleeping(uuid, player.getSleepTimer(), TICKS_BEFORE_TELEPORT)) return;
 
         Optional<BlockPos> bed = player.getSleepingPos();
@@ -92,11 +100,16 @@ public final class SleepTeleportHandler {
 
         UUID uuid = player.getUUID();
         if (TELEPORTING.contains(uuid)) return;
-        if (!CYCLES.onWake(uuid, player.getSleepTimer(), TICKS_BEFORE_TELEPORT)) return;
-
-        // Consumes this cycle BEFORE queueing: duplicate wake callbacks cannot reroll.
-        player.getSleepingPos().ifPresent(pos ->
-                COMPLETED_WAKEUPS.put(uuid, new BedOrigin(pos, player.getYRot())));
+        // The dream-entry roll may already have been attempted on sleeping tick 100.
+        // It MUST NOT suppress incubation on a completed normal wake.
+        boolean unattemptedEntry = CYCLES.onWake(uuid, player.getSleepTimer(), TICKS_BEFORE_TELEPORT);
+        if (!CYCLES.onCompletedWake(uuid, player.getSleepTimer(), TICKS_BEFORE_TELEPORT)) return;
+        BedOrigin bed = ACTIVE_BEDS.get(uuid);
+        if (bed == null) {
+            bed = player.getSleepingPos()
+                    .map(pos -> new BedOrigin(pos, player.getYRot())).orElse(null);
+        }
+        if (bed != null) COMPLETED_WAKEUPS.put(uuid, new CompletedWake(bed, unattemptedEntry));
     }
 
     public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
@@ -115,6 +128,7 @@ public final class SleepTeleportHandler {
         CYCLES.forget(uuid);
         TELEPORTING.remove(uuid);
         COMPLETED_WAKEUPS.remove(uuid);
+        ACTIVE_BEDS.remove(uuid);
         WARNED.remove(uuid);
     }
 
