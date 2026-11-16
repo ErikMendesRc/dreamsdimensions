@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:cache",
+  "input": {
+    "type": "minecraft:slice",
+    "axis": "y",
+    "coordinate": 0,
+    "input": {
+      "type": "minecraft:square",
+      "input": {
+        "type": "minecraft:clamp",
+        "input": {
+          "type": "minecraft:mul",
+          "left": 1.45,
+          "right": "dreamsdimensions:terrace_strength"
+        },
+        "min": 0,
+        "max": 1
+      }
+    }
+  }
+}

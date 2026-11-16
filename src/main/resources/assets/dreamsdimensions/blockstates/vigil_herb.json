@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "age=0,open=false": {
+      "model": "dreamsdimensions:block/vigil_herb_closed"
+    },
+    "age=0,open=true": {
+      "model": "dreamsdimensions:block/vigil_herb_closed"
+    },
+    "age=1,open=false": {
+      "model": "dreamsdimensions:block/vigil_herb_closed"
+    },
+    "age=1,open=true": {
+      "model": "dreamsdimensions:block/vigil_herb_closed"
+    },
+    "age=2,open=false": {
+      "model": "dreamsdimensions:block/vigil_herb_closed"
+    },
+    "age=2,open=true": {
+      "model": "dreamsdimensions:block/vigil_herb_closed"
+    },
+    "age=3,open=false": {
+      "model": "dreamsdimensions:block/vigil_herb_closed"
+    },
+    "age=3,open=true": {
+      "model": "dreamsdimensions:block/vigil_herb_open"
+    }
+  }
+}

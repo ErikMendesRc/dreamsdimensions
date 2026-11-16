@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:mul",
+  "left": 3.4,
+  "right": {
+    "type": "minecraft:mul",
+    "left": "dreamsdimensions:terrace_weathering",
+    "right": {
+      "type": "minecraft:mul",
+      "left": 4,
+      "right": {
+        "type": "minecraft:mul",
+        "left": "dreamsdimensions:terrace_ramp",
+        "right": {
+          "type": "minecraft:sub",
+          "left": 1,
+          "right": "dreamsdimensions:terrace_ramp"
+        }
+      }
+    }
+  }
+}

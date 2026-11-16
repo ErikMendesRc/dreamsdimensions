@@ -2,43 +2,30 @@ package com.dreamsdimensions.mod.client.event;
 
 import com.dreamsdimensions.mod.DreamsDimensions;
 import com.dreamsdimensions.mod.client.screen.DreamTransitionScreen;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
+import com.dreamsdimensions.mod.dimension.DreamDimensionCatalog;
+import com.dreamsdimensions.mod.dimension.DreamDimensionDefinition;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterDimensionTransitionScreenEvent;
 
 /**
- * Eventos client-only relacionados à transição de dimensão.
- * <p>
- * O registro usa {@link RegisterDimensionTransitionScreenEvent} no MOD bus do cliente,
- * conforme o javadoc do evento.
- * </p>
+ * Single client MOD-bus handler for configured transition pairs.
+ * Exactly preserves the old Overworld -> Dreamscape loading screen.
  */
-@EventBusSubscriber(
-        modid = DreamsDimensions.MODID,
-        bus = EventBusSubscriber.Bus.MOD,
-        value = Dist.CLIENT
-)
+@EventBusSubscriber(modid = DreamsDimensions.MODID, value = Dist.CLIENT)
 public final class ClientDimensionEvents {
-    private static final ResourceKey<Level> DREAMSCAPE_KEY =
-            ResourceKey.create(
-                    Registries.DIMENSION,
-                    ResourceLocation.fromNamespaceAndPath(DreamsDimensions.MODID, "dreamscape")
-            );
-
-    private ClientDimensionEvents() {
-    }
+    private ClientDimensionEvents() {}
 
     @SubscribeEvent
     public static void onRegisterDimensionTransitionScreen(RegisterDimensionTransitionScreenEvent event) {
-        event.registerConditionalEffect(
-                DREAMSCAPE_KEY,
-                Level.OVERWORLD,
-                DreamTransitionScreen::new
-        );
+        for (DreamDimensionDefinition definition : DreamDimensionCatalog.all()) {
+            definition.transition().ifPresent(transition -> {
+                switch (transition.visual()) {
+                    case DREAM_MESSAGE -> event.registerConditionalEffect(
+                            definition.dimension(), transition.fromDimension(), DreamTransitionScreen::new);
+                }
+            });
+        }
     }
 }

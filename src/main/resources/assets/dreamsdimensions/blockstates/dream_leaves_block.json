@@ -1,5 +1,9 @@
 {
-  "variants": {
-    "": { "model": "dreamsdimensions:block/dream_leaves_block" }
-  }
+  "multipart": [
+    {
+      "apply": {
+        "model": "dreamsdimensions:block/dream_leaves_block"
+      }
+    }
+  ]
 }

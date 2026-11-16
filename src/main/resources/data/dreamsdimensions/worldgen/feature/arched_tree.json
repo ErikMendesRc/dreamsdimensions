@@ -1,0 +1,12 @@
+{
+  "type": "dreamsdimensions:dream_vegetation",
+  "form": "arch",
+  "log": "dreamsdimensions:dream_log_block",
+  "leaves": "dreamsdimensions:dream_leaves_block",
+  "flower": "dreamsdimensions:dream_flower_block",
+  "moss": "dreamsdimensions:dream_glow_moss",
+  "soil": "dreamsdimensions:blue_dream_grass",
+  "min_height": 11,
+  "max_height": 16,
+  "density": 0.2
+}

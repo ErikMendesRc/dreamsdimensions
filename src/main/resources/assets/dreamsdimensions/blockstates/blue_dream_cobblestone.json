@@ -1,5 +1,26 @@
 {
   "variants": {
-    "": { "model": "dreamsdimensions:block/blue_dream_cobblestone" }
+    "": [
+      {
+        "model": "dreamsdimensions:block/blue_dream_cobblestone",
+        "y": 0,
+        "weight": 1
+      },
+      {
+        "model": "dreamsdimensions:block/blue_dream_cobblestone",
+        "y": 90,
+        "weight": 1
+      },
+      {
+        "model": "dreamsdimensions:block/blue_dream_cobblestone",
+        "y": 180,
+        "weight": 1
+      },
+      {
+        "model": "dreamsdimensions:block/blue_dream_cobblestone",
+        "y": 270,
+        "weight": 1
+      }
+    ]
   }
 }

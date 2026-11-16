@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:simple_block",
+  "to_place": {
+    "type": "minecraft:simple",
+    "state": {
+      "id": "dreamsdimensions:vigil_herb",
+      "properties": {
+        "age": "3",
+        "open": "false"
+      }
+    }
+  }
+}

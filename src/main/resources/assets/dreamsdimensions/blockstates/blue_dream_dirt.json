@@ -1,5 +1,26 @@
 {
   "variants": {
-    "": { "model": "dreamsdimensions:block/blue_dream_dirt" }
+    "": [
+      {
+        "model": "dreamsdimensions:block/blue_dream_dirt",
+        "y": 0,
+        "weight": 1
+      },
+      {
+        "model": "dreamsdimensions:block/blue_dream_dirt",
+        "y": 90,
+        "weight": 1
+      },
+      {
+        "model": "dreamsdimensions:block/blue_dream_dirt",
+        "y": 180,
+        "weight": 1
+      },
+      {
+        "model": "dreamsdimensions:block/blue_dream_dirt",
+        "y": 270,
+        "weight": 1
+      }
+    ]
   }
 }

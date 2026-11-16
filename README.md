@@ -1,401 +1,56 @@
-# Dreams Dimensions — Documentação Técnica Completa
+# DreamsDimensions
 
-## Sumário
-- [1. Título e Informações do Projeto](#1-título-e-informações-do-projeto)
-- [2. Visão Geral do Sistema](#2-visão-geral-do-sistema)
-- [3. Instalação e Ambiente de Desenvolvimento](#3-instalação-e-ambiente-de-desenvolvimento)
-- [4. Estrutura de Pacotes / Módulos](#4-estrutura-de-pacotes--módulos)
-- [5. Componentes Principais](#5-componentes-principais)
-- [6. Fluxos de Uso](#6-fluxos-de-uso)
-- [7. Diagramas de Arquitetura](#7-diagramas-de-arquitetura)
-- [8. Teste, Build e Release](#8-teste-build-e-release)
-- [9. Contribuindo](#9-contribuindo)
-- [10. Referências e Recursos](#10-referências-e-recursos)
+**Mod Minecraft 26.3 · NeoForge 26.3.0.101 · Java 25 · GeckoLib 5.5.7 · Curios 17.0.1+26.3**
 
----
+DreamsDimensions é um mod de **exploração e gameplay relacionados aos sonhos**. Seu universo prevê diversas dimensões futuras, incluindo sonhos pacíficos, pesadelos e outras experiências. As **duas dimensões existentes são a fundação técnica inicial, não o limite da identidade do mod**. O Overworld é a base de preparação para expedições imprevisíveis: minério, flora, equipamento, sobrevivência, infraestrutura de retorno e exploração independente dos sonhos.
 
-## 1. Título e Informações do Projeto
+> **Status real:** desenvolvimento na branch `migration/minecraft-26.3`; **sem merge na `main`**. O projeto tem conteúdo e sistemas compiláveis, mas a homologação completa de entrada/retorno em sonhos, experiência Survival, multiplayer e saves antigos ainda exige ensaios manuais. A entrada em sonhos está **desabilitada por padrão** pela configuração `dream_entry_enabled=false`, apesar de seu fluxo e políticas existirem no código.
 
-**Nome do mod:** Dreams Dimensions  
-**mod_id:** `dreamsdimensions`  
-**Versão alvo do Minecraft:** `1.21.4`  
-**API/Loader:** NeoForge (`21.4.124`) com plugin NeoGradle userdev (`7.0.173`)  
-**Linguagem:** Java (toolchain Java 21)  
-**Mappings:** Parchment (`minecraftVersion=1.21.4`, `mappingsVersion=2025.03.23`)  
+## Documentação atual — começar aqui
 
-### Objetivo do mod
-O Dreams Dimensions adiciona dimensões oníricas acessadas pelo ato de dormir no Overworld e fornece uma mecânica de retorno seguro via item ritualístico (`oneiric_awakener`). O foco é oferecer progressão leve de exploração, ambientação diferenciada e ciclo “entrar no sonho → explorar → acordar”.
+| Documento | Finalidade |
+| --- | --- |
+| [Estado atual](docs/ESTADO_ATUAL.md) | O que existe, o que está em teste, o que está desabilitado e o que ainda é experimental |
+| [Gameplay e direção](docs/GAMEPLAY_E_DIRECAO.md) | Identidade universal do mod, Overworld e regras para aprovar novas mecânicas |
+| [Task 9.0 — Contrato Universal do Overworld](docs/TASK_9_0_OVERWORLD_GAMEPLAY_CONTRACT.md) | Preparação para sonhos imprevisíveis, Núcleo reutilizável, economia do Despertador e progressão early/mid/late; **design, não implementação** |
+| [Catálogo 9.0 (JSON)](docs/OVERWORLD_CONTENT_CATALOG_TASK_9_0.json) | 9 entradas implementadas, 4 selecionadas e 38 candidatas com origem, consumidor e critérios de aceite |
+| [Arquitetura atual](docs/ARQUITETURA_ATUAL.md) | Onde estão os sistemas implementados, registros e extensões |
+| [Worldgen e conteúdo](docs/WORLDGEN_E_CONTEUDO.md) | Biomas, dimensões, recursos, estruturas, mobs, Pedra Marcada e limites de evidência |
+| [QA e validação](docs/QA_E_VALIDACAO.md) | Build, testes, seeds, comandos e critérios para diferenciar CI de playtest |
+| [Migração 26.3](docs/MIGRATION_26_3.md) | Histórico de compatibilidade e riscos de mundos/saves |
+| [Task 8 — Qualidade visual](docs/TASK_8_VISUAL_QUALITY_PASS.md) | Correções iniciais de apresentação e auditoria de PNGs |
+| [Tasks 8.4–8.7 — Polimento final](docs/TASK_8_4_TO_8_7.md) | Texturas revisadas, partículas limitadas, remoção de órfãos e QA do cliente |
 
----
+Os documentos técnicos detalhados que permanecem em `docs/` são contratos de **sistemas já implementados**, relatórios de medição real, instruções de QA ou evidências de riscos ainda relevantes. Documentos de design especulativo e roadmaps contraditórios foram retirados da árvore atual; podem ser consultados pelo histórico Git. A **Task 9.0** é uma exceção deliberada: um novo contrato de planejamento verificável, explicitamente marcado **DESIGN_ONLY**, sem alegar novo conteúdo jogável.
 
-## 2. Visão Geral do Sistema
+## Iniciar o projeto
 
-### O que o mod faz em alto nível
-1. Registra blocos, itens, aba criativa e data attachments no ciclo de inicialização do mod.
-2. Monitora jogadores dormindo no Overworld e, após 100 ticks, teleporta para uma dimensão onírica aleatória.
-3. Armazena dados de retorno (cama no Overworld + yaw) para permitir teleporte de volta seguro.
-4. Permite retorno usando o item **Despertador Onírico** após canalização (60 ticks).
-5. Aplica efeitos específicos por dimensão (ex.: *Slow Falling* em `campo_onirico_azul`).
+Em Windows PowerShell, na raiz do repositório:
 
-### Componentes principais
-- **Bootstrap do mod**: `DreamsDimensions`.
-- **Registro de conteúdo**: `ModBlocks`, `ModItems`, `ModCreativeTabs`, `ModAttachments`.
-- **Eventos de runtime**: `SleepTeleportHandler`, `DreamReturnAttachmentHandler`, `DreamDimensionEffectsHandler`, `CommonEvents`.
-- **Retorno seguro**: `DreamReturnHelper` + `DreamReturnData`.
-- **Cliente**: `ClientModEvents`, `ClientDimensionEvents`, `DreamTransitionScreen`.
-- **Data packs do mod**: dimensões, tipos de dimensão, biomas, noise settings, worldgen, receitas, loot tables, tags.
-
-### Diagrama conceitual (alto nível)
-
-```text
-[Player dorme no Overworld]
-          |
-          v
-[SleepTeleportHandler conta ticks]
-          | >= 100 ticks
-          v
-[Escolhe dimensão onírica aleatória]
-          |
-          v
-[Teleporta para dreamscape/campo_onirico_azul]
-          |
-          +--> [DreamDimensionEffectsHandler aplica efeitos por dimensão]
-          |
-          v
-[Player usa OneiricAwakener (60 ticks)]
-          |
-          v
-[DreamReturnHelper resolve destino de retorno]
-          |
-          v
-[Teleporte para Overworld: cama > respawn pessoal > spawn global]
+```powershell
+git switch migration/minecraft-26.3
+git pull origin migration/minecraft-26.3
+.\gradlew.bat --no-daemon clean build
+.\gradlew.bat runClient
 ```
 
----
+Para iniciar um servidor de desenvolvimento:
 
-## 3. Instalação e Ambiente de Desenvolvimento
-
-### Requisitos
-- **JDK 21** (obrigatório para Minecraft 1.21.4).
-- **Gradle Wrapper** do projeto (`./gradlew`).
-- IDE recomendada:
-  - IntelliJ IDEA (com suporte a Gradle), ou
-  - Eclipse (suportado pelo script), ou
-  - VS Code com extensões Java + Gradle.
-
-### Passo a passo para importar o projeto
-1. Clone o repositório.
-2. Abra a pasta raiz (`dreamsdimensions`) na IDE.
-3. Aguarde o sync do Gradle.
-4. Garanta que a IDE está usando **Java 21**.
-5. Execute as tarefas de setup/run conforme necessidade.
-
-### Plugins/extensões úteis
-- **IntelliJ**: Minecraft Development (opcional), Gradle, Lombok (não obrigatório neste projeto), Java.
-- **VS Code**: Extension Pack for Java + Gradle for Java.
-
-### Run configurations (cliente/servidor)
-O `build.gradle` já define os runs:
-- `client`
-- `server` (`--nogui`)
-- `gameTestServer`
-- `clientData` (data generation)
-
-Comandos típicos:
-```bash
-./gradlew runClient
-./gradlew runServer
-./gradlew runGameTestServer
-./gradlew runClientData
+```powershell
+.\gradlew.bat runServer
 ```
 
----
+**Aviso:** não ligue `dream_entry_enabled` em mundos importantes antes de validar a recuperação com jogador real. Execute testes de migração somente em **cópias** de saves, não em seus mundos originais.
 
-## 4. Estrutura de Pacotes / Módulos
+## Onde fica o código
 
-### Convenções de pacote
-Base package: `com.dreamsdimensions.mod`.
+- `src/main/java/com/dreamsdimensions/mod/`: mod, registros, políticas e serviços.
+- `src/main/java/com/dreamsdimensions/mod/dimension/`: catálogo de dimensões extensível.
+- `src/main/java/com/dreamsdimensions/mod/event/`: sono, retorno, efeitos e interações.
+- `src/main/java/com/dreamsdimensions/mod/entity/`: entidades e framework de população/IA.
+- `src/main/java/com/dreamsdimensions/mod/qa/`: telemetria opt-in.
+- `src/main/resources/data/dreamsdimensions/`: worldgen, dimensões, estruturas, receitas, loot.
+- `src/main/resources/assets/dreamsdimensions/`: modelos, texturas, client item definitions e traduções.
+- `scripts/ci/` e `.github/workflows/build.yml`: testes estáticos e sondas de runtime nas quatro seeds.
 
-Subpacotes principais:
-- `attachment`: estado persistente de player para retorno.
-- `block`: implementações custom de bloco (ex.: minério com XP).
-- `client.event` / `client.screen`: lógica client-only.
-- `config`: configuração com `ModConfigSpec`.
-- `event`: listeners de runtime no `NeoForge.EVENT_BUS`.
-- `item`: itens customizados e seus comportamentos.
-- `registry`: `DeferredRegister` para blocos/itens/attachments/creative tab.
-- `util`: helpers de domínio (teleporte de retorno).
-
-### Organização arquitetural e justificativa
-- **Separação por responsabilidade**: registro, regras de jogo, client, utilitários e dados persistentes estão isolados.
-- **Registro declarativo via DeferredRegister**: reduz risco de ordem incorreta de inicialização.
-- **Event-driven design**: comportamento emergente do jogo implementado via listeners de eventos do NeoForge.
-- **Sem DI framework**: construção simples orientada ao ciclo do loader (padrão comum em mods).
-
-### Padrões usados
-- **Singleton estático de registries** (`ModBlocks`, `ModItems` etc.).
-- **Data attachment** com codec para persistência (`DreamReturnData`).
-- **Event subscribers e listeners** no MOD bus e no runtime bus.
-
----
-
-## 5. Componentes Principais
-
-### 5.1 Blocos e Itens
-
-#### Blocos
-- `DreamOreBlock`: minério que concede XP ao ser minerado.
-- Blocos de terreno onírico (`dream_grass_block`, `blue_dream_grass`, `serene_stone`, etc.).
-- Blocos utilitários/crafting (`dream_infused_stone`, `oneiric_core_block`).
-
-Exemplo real de registro de bloco com `DeferredRegister`:
-
-```java
-public static final DeferredBlock<Block> DREAM_SHIMMER_BLOCK = BLOCKS.registerSimpleBlock(
-    "dream_shimmer_block",
-    BlockBehaviour.Properties.ofFullCopy(Blocks.AMETHYST_BLOCK)
-        .mapColor(MapColor.COLOR_LIGHT_BLUE)
-        .strength(1.5F, 6.0F)
-        .requiresCorrectToolForDrops()
-);
-```
-
-#### Itens
-- `DreamDustItem`: recurso base de progressão.
-- `OneiricAwakenerItem`: item de retorno do sonho.
-
-Exemplo simplificado do fluxo do `OneiricAwakenerItem`:
-
-```java
-if (!DreamsConfig.isDreamDimension(level.dimension())) return PASS;
-if (player.getCooldowns().isOnCooldown(stack)) return FAIL;
-player.startUsingItem(hand); // canaliza 60 ticks
-
-// ao finalizar uso no servidor:
-DreamReturnHelper.buildReturnTransition(serverPlayer)
-    .ifPresent(serverPlayer::teleport);
-```
-
-### 5.2 Dimensão Onírica
-
-As dimensões são definidas por JSON em `data/dreamsdimensions/dimension/*.json` e conectadas a:
-- `dimension_type/*.json`
-- `worldgen/biome/*.json`
-- `worldgen/noise_settings/*.json`
-
-Dimensões atuais:
-- `dreamsdimensions:dreamscape`
-- `dreamsdimensions:campo_onirico_azul`
-
-**Registro/lógica de entrada**: não via código de `LevelStem` em Java, mas por datapack JSON + teleporte por evento de sono.
-
-### 5.3 Teleporte e saída
-
-- **Entrada no sonho**: `SleepTeleportHandler` monitora `PlayerTickEvent.Post` e teleporta após 100 ticks dormindo no Overworld.
-- **Saída**: `OneiricAwakenerItem.finishUsingItem` chama `DreamReturnHelper`.
-- **Prioridade de retorno**:
-  1. Cama original no Overworld (attachment).
-  2. Respawn pessoal do jogador.
-  3. Spawn global do Overworld.
-
-### 5.4 Listeners / Eventos
-- `CommonEvents.onServerStarting`: log de boot.
-- `SleepTeleportHandler.onPlayerTick`: entrada na dimensão de sonho.
-- `DreamReturnAttachmentHandler.onPlayerSetSpawn`: captura cama/respawn no Overworld.
-- `DreamDimensionEffectsHandler.onPlayerTick`: aplica efeitos no `campo_onirico_azul`.
-- `ClientDimensionEvents`: tela de transição ao entrar/sair de dimensão.
-- `ClientModEvents`: configura camadas de render.
-
-### 5.5 Configurações e JSON
-
-#### Config (`DreamsConfig`)
-- Chave principal: `dream_dimensions` (lista de `ResourceLocation` válidas).
-- Eventos de load/reload “bake” para `Set<ResourceKey<Level>>` em memória.
-
-#### Data-driven assets
-- `data/dreamsdimensions/dimension/*`
-- `data/dreamsdimensions/dimension_type/*`
-- `data/dreamsdimensions/worldgen/*`
-- `data/dreamsdimensions/recipe/*`
-- `data/dreamsdimensions/loot_tables/*`
-- `assets/dreamsdimensions/*` (modelos, blockstates, texturas, lang)
-
----
-
-## 6. Fluxos de Uso
-
-### Fluxo A — Jogador entra no sonho ao dormir
-
-```text
-Player -> Bed: dormir
-PlayerTickEvent.Post -> SleepTeleportHandler: incrementa contador
-SleepTeleportHandler -> SleepTeleportHandler: contador >= 100?
-alt sim
-  SleepTeleportHandler -> ServerLevel(dream): findSafeSpawnLocation
-  SleepTeleportHandler -> Player: stopSleeping
-  SleepTeleportHandler -> Player: teleportTo(dreamscape/campo_onirico_azul)
-end
-```
-
-### Fluxo B — Jogador usa Oneiric Awakener para retornar
-
-```text
-Player -> OneiricAwakenerItem.use: valida dimensão e cooldown
-OneiricAwakenerItem -> Player: startUsingItem (60 ticks)
-Player -> OneiricAwakenerItem.finishUsingItem: completa canalização
-OneiricAwakenerItem -> DreamReturnHelper: buildReturnTransition
-DreamReturnHelper -> Overworld: resolve destino (cama > respawn > spawn global)
-OneiricAwakenerItem -> Player: teleport + mensagem + cooldown
-```
-
-### Fluxo C — Atualização de ponto de retorno
-
-```text
-PlayerSetSpawnEvent -> DreamReturnAttachmentHandler
-DreamReturnAttachmentHandler -> DreamReturnData: setOverworldBed(pos, yaw)
-```
-
----
-
-## 7. Diagramas de Arquitetura
-
-### 7.1 Diagrama de pacotes
-
-```text
-com.dreamsdimensions.mod
-├── DreamsDimensions (bootstrap)
-├── attachment
-│   └── DreamReturnData
-├── block
-│   └── DreamOreBlock
-├── client
-│   ├── event (ClientModEvents, ClientDimensionEvents)
-│   └── screen (DreamTransitionScreen)
-├── config
-│   └── DreamsConfig
-├── event
-│   ├── CommonEvents
-│   ├── SleepTeleportHandler
-│   ├── DreamReturnAttachmentHandler
-│   └── DreamDimensionEffectsHandler
-├── item
-│   ├── DreamDustItem
-│   └── OneiricAwakenerItem
-├── registry
-│   ├── ModBlocks
-│   ├── ModItems
-│   ├── ModCreativeTabs
-│   └── ModAttachments
-└── util
-    └── DreamReturnHelper
-```
-
-### 7.2 Diagrama de dependências (conceitual)
-
-```text
-DreamsDimensions
- ├─> ModBlocks / ModItems / ModCreativeTabs / ModAttachments
- ├─> DreamsConfig
- └─> NeoForge.EVENT_BUS listeners
-      ├─> SleepTeleportHandler ----> dimension JSONs (ids)
-      ├─> DreamReturnAttachmentHandler --> ModAttachments.DREAM_RETURN
-      └─> DreamDimensionEffectsHandler
-
-OneiricAwakenerItem
- ├─> DreamsConfig (validação de dimensão)
- └─> DreamReturnHelper
-      └─> DreamReturnData attachment
-```
-
----
-
-## 8. Teste, Build e Release
-
-### Build
-```bash
-./gradlew clean build
-```
-
-### Teste local
-- Cliente dev:
-  ```bash
-  ./gradlew runClient
-  ```
-- Servidor dev:
-  ```bash
-  ./gradlew runServer
-  ```
-
-### Checklist de QA pré-release
-1. Abrir jogo com mod carregado sem erros no log de bootstrap.
-2. Validar registro de blocos/itens e creative tab.
-3. Dormir no Overworld por 100 ticks e confirmar teleporte.
-4. Testar uso do `oneiric_awakener` em cada dimensão onírica.
-5. Confirmar fallback de retorno (cama inválida, sem respawn, spawn global).
-6. Verificar receitas, loot e geração de minério no Overworld.
-7. Validar assets (model, blockstate, textura e tradução `pt_br`/`en_us`).
-
----
-
-## 9. Contribuindo
-
-### Guidelines de contribuição
-1. Crie branch de feature/fix (`feat/...`, `fix/...`).
-2. Mantenha commits pequenos e descritivos.
-3. Abra PR com:
-   - objetivo,
-   - impacto em gameplay,
-   - como testar,
-   - riscos/migrações.
-
-### Estilo de código
-- Seguir padrão Java do projeto (classes `final` utilitárias com construtor privado quando apropriado).
-- Prefira nomes explícitos para handlers e registries.
-- Evite lógica client-only em código comum de servidor.
-- Use APIs recomendadas do NeoForge (`DeferredRegister`, event bus, attachments).
-
-### Issues / Pull Requests
-- Issue deve conter contexto, comportamento esperado, comportamento atual e passos de reprodução.
-- PR deve referenciar issue quando aplicável e incluir checklist de testes executados.
-
----
-
-## 10. Referências e Recursos
-
-### Documentação oficial
-- NeoForge Docs: https://docs.neoforged.net/
-- NeoGradle: https://github.com/neoforged/NeoGradle
-- ParchmentMC: https://parchmentmc.org/docs/getting-started
-- Minecraft Wiki (formato datapack/worldgen): https://minecraft.wiki/
-
-### Tópicos relevantes para este mod
-- Deferred Register e registries do NeoForge.
-- Event bus (MOD bus vs runtime bus).
-- Data Attachments para estado persistente de entidades.
-- Data-driven dimensions/biomes/noise settings via JSON.
-
-### Boas práticas de modding (Fabric/Forge/NeoForge)
-Embora este projeto use **NeoForge**, algumas práticas são universais no ecossistema (incluindo Fabric):
-- separar conteúdo data-driven (JSON) de regra de negócio em código;
-- manter lógica autoritativa no servidor;
-- isolar código client-only;
-- registrar conteúdo no momento correto do lifecycle;
-- tratar teleporte e spawn com fallback seguro para evitar soft-lock.
-
----
-
-## Apêndice — Comandos úteis
-
-```bash
-# Build completo
-./gradlew clean build
-
-# Rodar cliente dev
-./gradlew runClient
-
-# Rodar servidor dev
-./gradlew runServer
-
-# Gerar dados (se aplicável)
-./gradlew runClientData
-```
+**Regra para próximas tasks:** primeiro comprovar a função de gameplay e o consumidor de um recurso; depois registrar novos blocos/itens/entidades. Não transformar protótipos ou documentação em funcionalidades declaradas como existentes.

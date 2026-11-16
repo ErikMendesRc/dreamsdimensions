@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dreamsdimensions:block/vigil_herb_open"
+  }
+}

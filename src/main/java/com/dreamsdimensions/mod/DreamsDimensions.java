@@ -1,14 +1,38 @@
 package com.dreamsdimensions.mod;
 
 import com.dreamsdimensions.mod.config.DreamsConfig;
+import com.dreamsdimensions.mod.qa.DreamQaRecorder;
+import com.dreamsdimensions.mod.qa.DreamQaCommand;
+import com.dreamsdimensions.mod.config.DreamEntryConfig;
+import com.dreamsdimensions.mod.dimension.DreamDimensionCatalog;
+import com.dreamsdimensions.mod.diagnostics.DreamscapeBridgeAuditCommand;
+import com.dreamsdimensions.mod.diagnostics.OverworldOreAuditCommand;
+import com.dreamsdimensions.mod.diagnostics.MarkedStoneAuditCommand;
+import com.dreamsdimensions.mod.diagnostics.DreamRuinsAuditCommand;
 import com.dreamsdimensions.mod.event.CommonEvents;
+import com.dreamsdimensions.mod.event.EchoMossInteractionHandler;
 import com.dreamsdimensions.mod.event.DreamDimensionEffectsHandler;
 import com.dreamsdimensions.mod.event.DreamReturnAttachmentHandler;
 import com.dreamsdimensions.mod.event.SleepTeleportHandler;
 import com.dreamsdimensions.mod.registry.ModAttachments;
 import com.dreamsdimensions.mod.registry.ModBlocks;
 import com.dreamsdimensions.mod.registry.ModCreativeTabs;
+import com.dreamsdimensions.mod.registry.ModEntities;
+import com.dreamsdimensions.mod.registry.ModEffects;
+import com.dreamsdimensions.mod.entity.FragmentoIslandPopulation;
+import com.dreamsdimensions.mod.entity.VigiaIslandPopulation;
+import com.dreamsdimensions.mod.entity.behavior.DreamAnchorService;
+import com.dreamsdimensions.mod.entity.spawn.DreamMobPopulationService;
 import com.dreamsdimensions.mod.registry.ModItems;
+import com.dreamsdimensions.mod.registry.ModMenuTypes;
+import com.dreamsdimensions.mod.registry.ModBlockEntities;
+import com.dreamsdimensions.mod.service.DreamTraitEquipment;
+import com.dreamsdimensions.mod.service.DreamTetherService;
+import com.dreamsdimensions.mod.service.DreamRouteService;
+import com.dreamsdimensions.mod.item.OneiricAwakenerItem;
+import com.dreamsdimensions.mod.worldgen.DreamWorldgen;
+import com.dreamsdimensions.mod.service.DreamRespawnService;
+import com.dreamsdimensions.mod.service.DreamTeleportService;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -18,19 +42,7 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
-/**
- * Bootstrap principal do mod Dreams Dimensions.
- * <p>
- * Este construtor registra registries no {@link IEventBus} do MOD (lifecycle) e listeners
- * de runtime no {@link NeoForge#EVENT_BUS}, conforme o padrão descrito nos javadocs de
- * {@link IEventBus#addListener} e do próprio {@link NeoForge#EVENT_BUS}.
- * </p>
- * <p>
- * A configuração é registrada via {@link ModContainer#registerConfig} (ver javadoc de
- * {@link ModConfig}) para garantir que o {@link com.dreamsdimensions.mod.config.DreamsConfig}
- * seja carregado no momento correto do lifecycle.
- * </p>
- */
+/** Registers content on the mod bus and runtime handlers on the game bus. */
 @Mod(DreamsDimensions.MODID)
 public class DreamsDimensions {
     public static final String MODID = "dreamsdimensions";
@@ -38,29 +50,87 @@ public class DreamsDimensions {
 
     public DreamsDimensions(IEventBus modEventBus, ModContainer modContainer) {
         LOGGER.info("Dreams Dimensions Mod está carregando!");
-
-        modContainer.registerConfig(ModConfig.Type.COMMON, DreamsConfig.SPEC);
+        modContainer.registerConfig(ModConfig.Type.LOCAL, DreamsConfig.SPEC);
+        modContainer.registerConfig(ModConfig.Type.SYNCED, DreamEntryConfig.SPEC);
 
         ModItems.register(modEventBus);
+        ModMenuTypes.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         ModAttachments.register(modEventBus);
+        ModEntities.register(modEventBus);
+        ModEffects.register(modEventBus);
+        DreamWorldgen.register(modEventBus);
 
         modEventBus.addListener(this::commonSetup);
 
-        NeoForge.EVENT_BUS.addListener(CommonEvents::onServerStarting);
-        NeoForge.EVENT_BUS.addListener(DreamDimensionEffectsHandler::onPlayerTick);
-        NeoForge.EVENT_BUS.addListener(DreamReturnAttachmentHandler::onPlayerSetSpawn);
-        NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerTick);
+        // Read-only test-server diagnostics; absent in normal mod startup.
+        if (Boolean.getBoolean("dreamsdimensions.enableBridgeAudit")) {
+            NeoForge.EVENT_BUS.addListener(DreamscapeBridgeAuditCommand::register);
+        }
+        // CI/development-only; read-only scan of preloaded Overworld chunks.
+        if (Boolean.getBoolean("dreamsdimensions.enableOreAudit")) {
+            NeoForge.EVENT_BUS.addListener(OverworldOreAuditCommand::register);
+        }
+        // Task 7.4: opt-in read-only natural Marked Stone survey, never loads chunks.
+        if (Boolean.getBoolean("dreamsdimensions.enableMarkedStoneAudit")) {
+            NeoForge.EVENT_BUS.addListener(MarkedStoneAuditCommand::register);
+        }
+        // Task 5.7: read-only, bounded, operator-only; NEVER active by default.
+        if (Boolean.getBoolean("dreamsdimensions.enableRuinsAudit")) {
+            NeoForge.EVENT_BUS.addListener(DreamRuinsAuditCommand::register);
+        }
 
+        // Always register command; telemetry recording stays off until opted in.
+        NeoForge.EVENT_BUS.addListener(DreamQaCommand::register);
+        NeoForge.EVENT_BUS.addListener(DreamQaCommand::onServerStopped);
+        NeoForge.EVENT_BUS.addListener(CommonEvents::onServerStarting);
+        NeoForge.EVENT_BUS.addListener(EchoMossInteractionHandler::onRightClickBlock);
+        NeoForge.EVENT_BUS.addListener(EchoMossInteractionHandler::onPlayerLoggedOut);
+        NeoForge.EVENT_BUS.addListener(EchoMossInteractionHandler::onPlayerClone);
+        NeoForge.EVENT_BUS.addListener(EchoMossInteractionHandler::onChangedDimension);
+        NeoForge.EVENT_BUS.addListener(EchoMossInteractionHandler::onServerStopped);
+        DreamMobPopulationService.register(FragmentoIslandPopulation.profile());
+        DreamMobPopulationService.register(VigiaIslandPopulation.profile());
+        NeoForge.EVENT_BUS.addListener(DreamMobPopulationService::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(DreamMobPopulationService::onServerStopped);
+        NeoForge.EVENT_BUS.addListener(DreamAnchorService::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(DreamAnchorService::onPlayerLoggedOut);
+        NeoForge.EVENT_BUS.addListener(DreamAnchorService::onPlayerClone);
+        NeoForge.EVENT_BUS.addListener(DreamAnchorService::onChangedDimension);
+        NeoForge.EVENT_BUS.addListener(DreamDimensionEffectsHandler::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(DreamDimensionEffectsHandler::onPlayerLoggedOut);
+        NeoForge.EVENT_BUS.addListener(DreamReturnAttachmentHandler::onPlayerSetSpawn);
+        // Pre-clone respawn destination, post-clone diagnostics, and
+        // deferred cleanup of stale anchors from admin dimension changes.
+        NeoForge.EVENT_BUS.addListener(DreamRespawnService::onRespawnPosition);
+        NeoForge.EVENT_BUS.addListener(DreamRespawnService::onRespawnComplete);
+        NeoForge.EVENT_BUS.addListener(DreamRespawnService::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(DreamTraitEquipment::onFall);
+        NeoForge.EVENT_BUS.addListener(DreamTraitEquipment::onTooltip);
+        NeoForge.EVENT_BUS.addListener(DreamTraitEquipment::onSmithing);
+        NeoForge.EVENT_BUS.addListener(DreamTetherService::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(DreamRouteService::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(DreamTetherService::onLogout);
+        NeoForge.EVENT_BUS.addListener(DreamTetherService::onClone);
+        NeoForge.EVENT_BUS.addListener(DreamTetherService::onStopped);
+        NeoForge.EVENT_BUS.addListener(DreamTeleportService::onServerStopped);
+        NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerWakeUp);
+        NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerLoggedOut);
+        NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerClone);
+        NeoForge.EVENT_BUS.addListener(SleepTeleportHandler::onPlayerChangedDimension);
+        NeoForge.EVENT_BUS.addListener(OneiricAwakenerItem::onStoppedUsing);
+        NeoForge.EVENT_BUS.addListener(OneiricAwakenerItem::onPlayerLoggedOut);
+        NeoForge.EVENT_BUS.addListener(OneiricAwakenerItem::onPlayerClone);
+        NeoForge.EVENT_BUS.addListener(OneiricAwakenerItem::onChangedDimension);
+        NeoForge.EVENT_BUS.addListener(OneiricAwakenerItem::onServerStopped);
         LOGGER.info("Registros e listeners de Dreams Dimensions configurados.");
     }
 
-    /**
-     * Setup comum do mod (lifecycle MOD bus) para ajustes que dependem de registries já carregados.
-     */
     private void commonSetup(final FMLCommonSetupEvent event) {
-        LOGGER.info("Executando Common Setup para Dreams Dimensions...");
-        LOGGER.info("Common Setup de Dreams Dimensions concluído.");
+        LOGGER.info("Motor onírico pronto: {} perfis dimensionais lógicos.",
+                DreamDimensionCatalog.all().size());
     }
 }

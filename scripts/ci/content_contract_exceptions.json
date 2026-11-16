@@ -1,0 +1,8 @@
+{
+  "schema_version": "dreamsdimensions.content.v1",
+  "legacy_blocks_without_loot": {
+    "dream_flower_block": "Pre-existing decorative plant with no local loot table; drop policy must be reviewed as a separate gameplay change.",
+    "dream_log_block": "Pre-existing worldgen trunk with no local loot table; do not invent drops while defining validation contract.",
+    "dream_leaves_block": "Pre-existing foliage with no local loot table; leaf drops/decay require a separate Survival design decision."
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:ore",
+  "targets": [
+    {
+      "target": {
+        "predicate_type": "minecraft:tag_match",
+        "tag": "minecraft:stone_ore_replaceables"
+      },
+      "state": "dreamsdimensions:marked_stone"
+    }
+  ],
+  "size": 12,
+  "discard_chance_on_air_exposure": 0
+}

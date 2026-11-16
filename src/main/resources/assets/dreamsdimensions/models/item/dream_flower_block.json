@@ -1,3 +1,6 @@
 {
-  "parent": "dreamsdimensions:block/dream_flower_block"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dreamsdimensions:block/dream_flower_block"
+  }
 }

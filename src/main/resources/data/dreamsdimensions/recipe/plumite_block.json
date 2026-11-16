@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "PPP",
+    "PPP",
+    "PPP"
+  ],
+  "key": {
+    "P": "dreamsdimensions:plumite_shard"
+  },
+  "result": {
+    "id": "dreamsdimensions:plumite_block",
+    "count": 1
+  }
+}

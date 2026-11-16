@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "CCC",
+    " L ",
+    " D "
+  ],
+  "key": {
+    "C": "dreamsdimensions:cut_marked_stone",
+    "L": "minecraft:leather",
+    "D": "dreamsdimensions:dream_dust"
+  },
+  "result": {
+    "id": "dreamsdimensions:marked_lining",
+    "count": 1
+  }
+}

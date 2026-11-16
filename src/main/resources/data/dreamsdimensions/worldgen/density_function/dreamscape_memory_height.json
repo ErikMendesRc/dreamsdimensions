@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:cache",
+  "input": {
+    "type": "minecraft:slice",
+    "axis": "y",
+    "coordinate": 0,
+    "input": {
+      "type": "minecraft:add",
+      "left": {
+        "type": "minecraft:add",
+        "left": {
+          "type": "minecraft:mul",
+          "left": 36,
+          "right": "dreamsdimensions:dreamscape_memory_macro"
+        },
+        "right": {
+          "type": "minecraft:mul",
+          "left": 18,
+          "right": "dreamsdimensions:dreamscape_memory_relief"
+        }
+      },
+      "right": {
+        "type": "minecraft:mul",
+        "left": 7,
+        "right": {
+          "type": "minecraft:abs",
+          "input": "dreamsdimensions:dreamscape_memory_macro"
+        }
+      }
+    }
+  }
+}

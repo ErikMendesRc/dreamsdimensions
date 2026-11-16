@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:mul",
+  "left": {
+    "type": "minecraft:mul",
+    "left": "dreamsdimensions:dreamscape_fracture_activity",
+    "right": {
+      "type": "minecraft:gradient",
+      "axis": "y",
+      "tiling": "clamp_to_edge",
+      "from_coordinate": 6,
+      "to_coordinate": 44,
+      "from_value": 0,
+      "to_value": 1
+    }
+  },
+  "right": {
+    "type": "minecraft:sub",
+    "left": 8.6,
+    "right": {
+      "type": "minecraft:mul",
+      "left": {
+        "type": "minecraft:mul",
+        "left": 8.1,
+        "right": "dreamsdimensions:dreamscape_bridge_strength"
+      },
+      "right": {
+        "type": "minecraft:gradient",
+        "axis": "y",
+        "tiling": "clamp_to_edge",
+        "from_coordinate": 74,
+        "to_coordinate": 112,
+        "from_value": 0,
+        "to_value": 1
+      }
+    }
+  }
+}

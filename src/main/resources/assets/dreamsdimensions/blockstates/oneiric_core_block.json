@@ -1,5 +1,10 @@
 {
   "variants": {
-    "": { "model": "dreamsdimensions:block/oneiric_core_block" }
+    "attuned=false": {
+      "model": "dreamsdimensions:block/oneiric_core_block"
+    },
+    "attuned=true": {
+      "model": "dreamsdimensions:block/oneiric_core_block"
+    }
   }
 }

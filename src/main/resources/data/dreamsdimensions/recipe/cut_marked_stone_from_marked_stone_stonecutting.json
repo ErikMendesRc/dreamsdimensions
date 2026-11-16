@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "dreamsdimensions:marked_stone",
+  "result": {
+    "id": "dreamsdimensions:cut_marked_stone",
+    "count": 1
+  }
+}
