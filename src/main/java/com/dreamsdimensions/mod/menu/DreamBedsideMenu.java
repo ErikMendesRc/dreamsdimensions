@@ -1,38 +1,39 @@
 package com.dreamsdimensions.mod.menu;
 
 import com.dreamsdimensions.mod.block.entity.DreamBedsideBlockEntity;
-import com.dreamsdimensions.mod.registry.ModBlocks;
 import com.dreamsdimensions.mod.registry.ModMenuTypes;
 import com.dreamsdimensions.mod.service.DreamIncubationEnvironment;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BedBlock;
 
 /**
- * Two synchronized PREVIEW slots (not removable inventory), three explicit
- * server-controlled actions. Legacy cabinet contents remain in its BlockEntity,
- * so opening/closing a GUI never extracts ingredients or duplicates outputs.
+ * Real two-slot bedside container: use vanilla click, drag, split, Q and shift
+ * mechanics. Nothing is withdrawn just by opening or closing this screen.
+ * The server-owned BlockEntity is the only durable inventory.
  */
 public final class DreamBedsideMenu extends AbstractContainerMenu {
-    private final DreamBedsideBlockEntity bedside; // null on client
-    private final SimpleContainer preview = new SimpleContainer(2);
-    private final DataSlot type = DataSlot.standalone();
-    private final DataSlot pending = DataSlot.standalone();
-    private final DataSlot finished = DataSlot.standalone();
+    public static final int INPUT_SLOT = 0;
+    public static final int OUTPUT_SLOT = 1;
+    public static final int PLAYER_START = 2;
+    public static final int PLAYER_END = 38;
+
+    private final DreamBedsideBlockEntity bedside; // null on the client
+    private final Container storage;
+    private final Player interactingPlayer;
+
     private final DataSlot capacity = DataSlot.standalone();
     private final DataSlot room = DataSlot.standalone();
-    private final DataSlot access = DataSlot.standalone();
+    private final DataSlot hasBed = DataSlot.standalone();
+    private final DataSlot accessible = DataSlot.standalone();
 
     public DreamBedsideMenu(int id, Inventory inventory) {
         this(id, inventory, null);
@@ -41,146 +42,135 @@ public final class DreamBedsideMenu extends AbstractContainerMenu {
     public DreamBedsideMenu(int id, Inventory inventory, DreamBedsideBlockEntity bedside) {
         super(ModMenuTypes.DREAM_BEDSIDE.get(), id);
         this.bedside = bedside;
-        for (DataSlot data : new DataSlot[] {type, pending, finished, capacity, room, access}) {
-            addDataSlot(data);
-        }
+        this.interactingPlayer = inventory.player;
+        this.storage = bedside == null ? new SimpleContainer(2) : bedside;
+        for (DataSlot status : new DataSlot[] {capacity, room, hasBed, accessible}) addDataSlot(status);
 
-        // These are visible ingredient/output snapshots, NOT movable slots.
-        for (int slot = 0; slot < 2; slot++) {
-            addSlot(new Slot(preview, slot, slot == 0 ? 37 : 120, 31) {
-                @Override public boolean mayPlace(ItemStack stack) { return false; }
-                @Override public boolean mayPickup(Player player) { return false; }
-            });
-        }
+        addSlot(new Slot(storage, INPUT_SLOT, 34, 32) {
+            @Override public boolean mayPlace(ItemStack incoming) {
+                return DreamBedsideBlockEntity.typeOf(incoming) != 0
+                        && (bedside == null || (bedside.isOwner(interactingPlayer)
+                                && bedside.canInsert(incoming)))
+                        && DreamBedsideMenu.this.hasBed();
+            }
+
+            @Override public boolean mayPickup(Player player) {
+                return bedside == null || bedside.isOwner(player);
+            }
+
+            @Override public int getMaxStackSize(ItemStack stack) {
+                return DreamBedsideMenu.this.capacity();
+            }
+
+            @Override public void setChanged() {
+                super.setChanged();
+                if (bedside != null) bedside.claimOwner(interactingPlayer);
+            }
+        });
+
+        addSlot(new Slot(storage, OUTPUT_SLOT, 126, 32) {
+            @Override public boolean mayPlace(ItemStack stack) { return false; }
+            @Override public boolean mayPickup(Player player) {
+                return bedside == null || bedside.isOwner(player);
+            }
+        });
 
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                addSlot(new Slot(inventory, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
+                addSlot(new Slot(inventory, 9 + row * 9 + col,
+                        8 + col * 18, 84 + row * 18));
             }
         }
         for (int col = 0; col < 9; col++) {
             addSlot(new Slot(inventory, col, 8 + col * 18, 142));
         }
-        refresh();
+        refreshStatus();
     }
 
-    public int recipe() { return type.get(); }
-    public int pending() { return pending.get(); }
-    public int ready() { return finished.get(); }
-    public int capacity() { return capacity.get(); }
+    public int capacity() { return Math.max(2, capacity.get()); }
     public int room() { return room.get(); }
-    public boolean hasBed() { return access.get() != 0; }
+    public boolean hasBed() { return hasBed.get() != 0; }
+    public boolean canEdit() { return accessible.get() != 0; }
+    public int pending() { return storage.getItem(INPUT_SLOT).getCount(); }
+    public int ready() { return storage.getItem(OUTPUT_SLOT).getCount(); }
 
     private BlockPos closestBed() {
         if (bedside == null || bedside.getLevel() == null) return null;
-        Level world = bedside.getLevel();
-        BlockPos cabinet = bedside.getBlockPos();
-        BlockPos chosen = null;
-        int minDistance = Integer.MAX_VALUE;
-        for (BlockPos p : BlockPos.betweenClosed(cabinet.offset(-2,-1,-2), cabinet.offset(2,1,2))) {
-            int distance = p.distManhattan(cabinet);
-            if (distance > 2 || distance >= minDistance) continue;
-            if (world.getBlockState(p).getBlock() instanceof BedBlock) {
-                chosen = p.immutable();
-                minDistance = distance;
+        Level level = bedside.getLevel();
+        BlockPos at = bedside.getBlockPos();
+        BlockPos selected = null;
+        int bestDistance = Integer.MAX_VALUE;
+        for (BlockPos pos : BlockPos.betweenClosed(at.offset(-2,-1,-2), at.offset(2,1,2))) {
+            int distance = pos.distManhattan(at);
+            if (distance > 2 || distance >= bestDistance) continue;
+            if (level.getBlockState(pos).getBlock() instanceof BedBlock) {
+                selected = pos.immutable();
+                bestDistance = distance;
             }
         }
-        return chosen;
+        return selected;
     }
 
-    private int currentCapacity() {
+    private int actualCapacity() {
         if (bedside == null || bedside.getLevel() == null) return 2;
-        Level world = bedside.getLevel();
-        BlockPos cabinet = bedside.getBlockPos();
-        for (BlockPos p : BlockPos.betweenClosed(cabinet.offset(-2,-1,-2), cabinet.offset(2,1,2))) {
-            if (p.distManhattan(cabinet) <= 2
-                    && world.getBlockState(p).getBlock() instanceof BedBlock
-                    && DreamIncubationEnvironment.dreamcatcher(world, p)) return 3;
+        Level level = bedside.getLevel();
+        BlockPos at = bedside.getBlockPos();
+        for (BlockPos pos : BlockPos.betweenClosed(at.offset(-2,-1,-2), at.offset(2,1,2))) {
+            if (pos.distManhattan(at) <= 2
+                    && level.getBlockState(pos).getBlock() instanceof BedBlock
+                    && DreamIncubationEnvironment.dreamcatcher(level, pos)) return 3;
         }
         return 2;
     }
 
-    private void refresh() {
+    private void refreshStatus() {
         if (bedside == null || bedside.getLevel() == null) return;
         BlockPos bed = closestBed();
-        type.set(bedside.recipe());
-        pending.set(bedside.pending());
-        finished.set(bedside.finished());
-        capacity.set(currentCapacity());
-        access.set(bed == null ? 0 : 1);
+        capacity.set(actualCapacity());
+        hasBed.set(bed == null ? 0 : 1);
         room.set(bed == null ? 0 : DreamIncubationEnvironment.detect(
                 bedside.getLevel(), bed).ordinal());
-        ItemStack input = bedside.pending() > 0
-                ? new ItemStack(DreamBedsideBlockEntity.inputItem(bedside.recipe()), bedside.pending())
-                : ItemStack.EMPTY;
-        ItemStack output = bedside.finished() > 0
-                ? new ItemStack(DreamBedsideBlockEntity.outputItem(bedside.recipe()), bedside.finished())
-                : ItemStack.EMPTY;
-        if (!ItemStack.matches(preview.getItem(0), input)) preview.setItem(0, input);
-        if (!ItemStack.matches(preview.getItem(1), output)) preview.setItem(1, output);
+        accessible.set(bedside.isOwner(interactingPlayer) ? 1 : 0);
     }
 
     @Override public void broadcastChanges() {
-        refresh();
+        refreshStatus();
         super.broadcastChanges();
     }
 
-    // Screen buttons are routed through vanilla inventory-button packets.
-    @Override public boolean clickMenuButton(Player player, int buttonId) {
-        if (!(player instanceof ServerPlayer server) || bedside == null || !stillValid(player)) {
-            return false;
-        }
-        if (buttonId == 0) {
-            if (closestBed() == null) {
-                server.sendSystemMessage(Component.translatable(
-                        "message.dreamsdimensions.bedside.no_bed"));
-                return false;
-            }
-            ItemStack held = server.getMainHandItem();
-            if (!bedside.load(server, held, currentCapacity())) {
-                server.sendSystemMessage(Component.translatable(
-                        "message.dreamsdimensions.bedside.invalid"));
-                return false;
-            }
-        } else if (buttonId == 1 || buttonId == 2) {
-            ItemStack returned = buttonId == 1
-                    ? bedside.takeFinished(server) : bedside.takePending(server);
-            if (returned.isEmpty()) return false;
-            if (!server.getInventory().add(returned)) {
-                net.minecraft.world.level.block.Block.popResource(
-                        server.level(), bedside.getBlockPos(), returned);
-            }
-        } else return false;
-        refresh();
-        broadcastChanges();
-        return true;
-    }
-
-    // Shift-click from inventory is a convenience for loading one material
-    // family. Never transfers to the display slots or to an unowned cabinet.
     @Override public ItemStack quickMoveStack(Player player, int index) {
-        if (!(player instanceof ServerPlayer server) || bedside == null
-                || index < 2 || index >= slots.size() || !stillValid(player)
-                || closestBed() == null) return ItemStack.EMPTY;
+        if (index < 0 || index >= slots.size() || !stillValid(player)) return ItemStack.EMPTY;
         Slot source = slots.get(index);
-        if (!source.hasItem()) return ItemStack.EMPTY;
-        ItemStack item = source.getItem();
-        ItemStack old = item.copy();
-        int inserted = 0;
-        while (!item.isEmpty() && inserted < 3 && bedside.load(server, item, currentCapacity())) {
-            inserted++;
+        if (!source.hasItem() || !source.mayPickup(player)) return ItemStack.EMPTY;
+
+        ItemStack moving = source.getItem();
+        ItemStack previous = moving.copy();
+
+        if (index == INPUT_SLOT || index == OUTPUT_SLOT) {
+            if (!moveItemStackTo(moving, PLAYER_START, PLAYER_END, true))
+                return ItemStack.EMPTY;
+        } else {
+            // Input first. Invalid/filled inputs can be rearranged normally
+            // between the hotbar and player inventory.
+            boolean moved = slots.get(INPUT_SLOT).mayPlace(moving)
+                    && moveItemStackTo(moving, INPUT_SLOT, INPUT_SLOT + 1, false);
+            if (!moved) {
+                if (index < PLAYER_START + 27) {
+                    if (!moveItemStackTo(moving, PLAYER_START + 27, PLAYER_END, false))
+                        return ItemStack.EMPTY;
+                } else if (!moveItemStackTo(moving, PLAYER_START,
+                        PLAYER_START + 27, false)) return ItemStack.EMPTY;
+            }
         }
-        if (inserted == 0) return ItemStack.EMPTY;
-        source.setChanged();
-        refresh();
-        broadcastChanges();
-        return old;
+
+        if (moving.isEmpty()) source.setByPlayer(ItemStack.EMPTY);
+        else source.setChanged();
+        if (moving.getCount() == previous.getCount()) return ItemStack.EMPTY;
+        source.onTake(player, moving);
+        return previous;
     }
 
     @Override public boolean stillValid(Player player) {
-        if (bedside == null) return true; // client resolves through menu sync
-        if (bedside.getLevel() == null) return false;
-        return stillValid(ContainerLevelAccess.create(
-                bedside.getLevel(), bedside.getBlockPos()), player, ModBlocks.DREAM_BEDSIDE.get());
+        return bedside == null || bedside.stillValid(player);
     }
 }

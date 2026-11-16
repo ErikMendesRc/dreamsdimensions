@@ -103,8 +103,8 @@ def check():
         assert snippet in menu,snippet
     assert "private final DataSlot chamber" in menu
     bedsidejava=java("block/entity/DreamBedsideBlockEntity.java")
-    for symbol in ["lastNight","owner","finishedCount","inputCount",
-                   "preRemoveSideEffects","saveAdditional","loadAdditional"]:
+    for symbol in ["lastNight","owner","NonNullList<ItemStack>","preRemoveSideEffects",
+                   "saveAdditional","loadAdditional","ItemStack.CODEC"]:
         assert symbol in bedsidejava,symbol
     sleep=java("event/SleepTeleportHandler.java")
     assert "DreamIncubationService.afterFullNight" in sleep
@@ -120,24 +120,29 @@ def check():
     bedblock=java("block/DreamBedsideBlock.java")
     assert "server.openMenu(bedside)" in bedblock
     entity=java("block/entity/DreamBedsideBlockEntity.java")
-    assert "implements MenuProvider" in entity
+    assert "implements MenuProvider, Container" in entity
     assert "new DreamBedsideMenu(id, inventory, this)" in entity
-    assert "takeFinished(ServerPlayer player)" in entity
-    assert "takePending(ServerPlayer player)" in entity
+    assert "getContainerSize()" in entity
+    assert "removeItem(" in entity and "setItem(" in entity
     bedside_menu=java("menu/DreamBedsideMenu.java")
-    assert "new SimpleContainer(2)" in bedside_menu
-    assert "boolean clickMenuButton(Player player, int buttonId)" in bedside_menu
-    assert "boolean mayPickup(Player player) { return false; }" in bedside_menu
-    assert "bedside.load(server, held, currentCapacity())" in bedside_menu
-    assert "bedside.takeFinished(server)" in bedside_menu
-    assert "bedside.takePending(server)" in bedside_menu
+    assert "bedside == null ? new SimpleContainer(2) : bedside" in bedside_menu
+    assert "mayPlace(ItemStack incoming)" in bedside_menu
+    assert "mayPickup(Player player)" in bedside_menu
+    assert "getMaxStackSize(ItemStack stack)" in bedside_menu
+    assert "moveItemStackTo(moving, INPUT_SLOT, INPUT_SLOT + 1" in bedside_menu
+    assert "moveItemStackTo(moving, PLAYER_START, PLAYER_END" in bedside_menu
     assert "boolean stillValid(Player player)" in bedside_menu
+    assert "clickMenuButton(" not in bedside_menu
+    assert "bedside.load(" not in bedside_menu
+    assert "bedside.takePending(" not in bedside_menu
     menu_registry=java("registry/ModMenuTypes.java")
     assert 'MENUS.register("dream_bedside"' in menu_registry
     client_registry=java("client/event/ClientModEvents.java")
     assert "event.register(ModMenuTypes.DREAM_BEDSIDE.get()" in client_registry
     screen=java("client/screen/DreamBedsideScreen.java")
-    assert "handleInventoryButtonClick" in screen
+    assert "handleInventoryButtonClick" not in screen
+    assert "Button.builder" not in screen
+    assert "font.width(title)" in screen
     assert "textures/gui/container/dream_bedside_gui.png" in screen
     gui=A/"textures/gui/container/dream_bedside_gui.png"
     assert_png_integrity(gui)
@@ -145,9 +150,8 @@ def check():
     for lang in ("pt_br","en_us"):
         texts=load(A/f"lang/{lang}.json")
         for key in ("container.dreamsdimensions.dream_bedside",
-                    "container.dreamsdimensions.bedside.add",
-                    "container.dreamsdimensions.bedside.collect",
-                    "container.dreamsdimensions.bedside.cancel",
+                    "container.dreamsdimensions.bedside.state",
+                    "container.dreamsdimensions.bedside.restricted",
                     "container.dreamsdimensions.bedside.room.serene",
                     "container.dreamsdimensions.bedside.room.ambiguous"):
             assert key in texts

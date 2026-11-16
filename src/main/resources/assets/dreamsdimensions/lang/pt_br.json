@@ -133,5 +133,7 @@
   "container.dreamsdimensions.bedside.room.ember": "Brasa",
   "container.dreamsdimensions.bedside.room.deep": "Profundo",
   "container.dreamsdimensions.bedside.room.garden": "Jardim",
-  "container.dreamsdimensions.bedside.room.ambiguous": "Ambíguo"
+  "container.dreamsdimensions.bedside.room.ambiguous": "Ambíguo",
+  "container.dreamsdimensions.bedside.state": "%s · %s/%s · Pronto: %s",
+  "container.dreamsdimensions.bedside.restricted": "Acesso restrito"
 }
