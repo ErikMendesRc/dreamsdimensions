@@ -54,18 +54,22 @@ public final class DreamBedsideScreen extends AbstractContainerScreen<DreamBedsi
             case 6 -> "ambiguous";
             default -> "none";
         };
-        Component room = Component.translatable(
-                menu.hasBed() ? "container.dreamsdimensions.bedside.room." + name
-                        : "container.dreamsdimensions.bedside.no_bed");
-        Component state = Component.translatable("container.dreamsdimensions.bedside.state",
-                room, menu.pending(), menu.capacity(), menu.ready());
+        // Keep the single-line status within 176px in both localizations.
+        // A missing bed never prevents pre-loading the input inventory.
+        Component state = !menu.canEdit()
+                ? Component.translatable("container.dreamsdimensions.bedside.restricted")
+                : !menu.hasBed()
+                        ? Component.translatable("container.dreamsdimensions.bedside.awaiting_bed",
+                                menu.pending(), menu.capacity())
+                        : Component.translatable("container.dreamsdimensions.bedside.state",
+                                Component.translatable("container.dreamsdimensions.bedside.room." + name),
+                                menu.pending(), menu.capacity(), menu.ready());
 
         int color = !menu.canEdit() ? 0xFFED9A88
                 : !menu.hasBed() || menu.room() == 6 || menu.room() == 0
                         ? 0xFFF2AF70 : menu.ready() > 0 ? 0xFF8BE9C2 : 0xFFE9D5AC;
         graphics.text(font, state, (imageWidth - font.width(state)) / 2,
                 60, color, false);
-        graphics.text(font, playerInventoryTitle,
-                inventoryLabelX, inventoryLabelY, 0xFFE7CC9D, false);
+        // Omit the inventory heading: the painted separator occupies its baseline.
     }
 }

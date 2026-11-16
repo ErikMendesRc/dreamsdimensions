@@ -48,10 +48,11 @@ public final class DreamBedsideMenu extends AbstractContainerMenu {
 
         addSlot(new Slot(storage, INPUT_SLOT, 34, 32) {
             @Override public boolean mayPlace(ItemStack incoming) {
+                // Depositing is allowed before a bed is built. The bed and room
+                // are prerequisites for incubation, not for inventory storage.
                 return DreamBedsideBlockEntity.typeOf(incoming) != 0
                         && (bedside == null || (bedside.isOwner(interactingPlayer)
-                                && bedside.canInsert(incoming)))
-                        && DreamBedsideMenu.this.hasBed();
+                                && bedside.canInsert(incoming)));
             }
 
             @Override public boolean mayPickup(Player player) {

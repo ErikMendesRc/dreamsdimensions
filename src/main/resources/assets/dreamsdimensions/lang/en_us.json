@@ -135,5 +135,6 @@
   "container.dreamsdimensions.bedside.room.garden": "Garden",
   "container.dreamsdimensions.bedside.room.ambiguous": "Ambiguous",
   "container.dreamsdimensions.bedside.state": "%s · %s/%s · Ready: %s",
-  "container.dreamsdimensions.bedside.restricted": "Owner only"
+  "container.dreamsdimensions.bedside.restricted": "Owner only",
+  "container.dreamsdimensions.bedside.awaiting_bed": "No bed · %s/%s"
 }

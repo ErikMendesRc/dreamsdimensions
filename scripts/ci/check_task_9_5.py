@@ -127,6 +127,9 @@ def check():
     bedside_menu=java("menu/DreamBedsideMenu.java")
     assert "bedside == null ? new SimpleContainer(2) : bedside" in bedside_menu
     assert "mayPlace(ItemStack incoming)" in bedside_menu
+    # Task 9.5.13.1: inputs can be pre-loaded before a bed is placed.
+    assert "DreamBedsideMenu.this.hasBed()" not in bedside_menu
+    assert "prerequisites for incubation, not for inventory storage" in bedside_menu
     assert "mayPickup(Player player)" in bedside_menu
     assert "getMaxStackSize(ItemStack stack)" in bedside_menu
     assert "moveItemStackTo(moving, INPUT_SLOT, INPUT_SLOT + 1" in bedside_menu
@@ -143,6 +146,8 @@ def check():
     assert "handleInventoryButtonClick" not in screen
     assert "Button.builder" not in screen
     assert "font.width(title)" in screen
+    assert "container.dreamsdimensions.bedside.awaiting_bed" in screen
+    assert "graphics.text(font, playerInventoryTitle" not in screen
     assert "textures/gui/container/dream_bedside_gui.png" in screen
     gui=A/"textures/gui/container/dream_bedside_gui.png"
     assert_png_integrity(gui)
@@ -152,6 +157,7 @@ def check():
         for key in ("container.dreamsdimensions.dream_bedside",
                     "container.dreamsdimensions.bedside.state",
                     "container.dreamsdimensions.bedside.restricted",
+                    "container.dreamsdimensions.bedside.awaiting_bed",
                     "container.dreamsdimensions.bedside.room.serene",
                     "container.dreamsdimensions.bedside.room.ambiguous"):
             assert key in texts
